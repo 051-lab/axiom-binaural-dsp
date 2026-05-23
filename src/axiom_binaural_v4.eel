@@ -1,0 +1,212 @@
+desc: Immersive Trance DSP (5-Layer)
+//tags: immersive bass spatializer crossfeed loudness
+author: AI DSP Architect
+
+// --- UI PARAMETERS ---
+subGain:6<-12,12,0.5>Sub Harmonics Gain (dB)
+sideWidth:150<0,200,5>Side Width (%)
+loudnessSens:50<0,100,5>Fletcher-Munson Sensitivity (%)
+crossfeedAmt:40<0,100,5>Crossfeed Amount (%)
+
+@init
+// --- CONSTANTS & MEMORY ALLOCATION ---
+DB_2_LOG = 0.11512925464970228;
+PI = 3.14159265358979; // Fallback PI to avoid any $pi parser quirks
+
+// Assign UI defaults (Required by EelParser to prevent 0-gain on startup)
+subGain = 6;
+sideWidth = 150;
+loudnessSens = 50;
+crossfeedAmt = 40;
+
+// Manual Circular Buffer Allocation for Crossfeed Delay
+ptr = 1000; // Start at 1000 to avoid host memory overlap
+maxDelay = ceil(0.002 * srate); // 2ms max delay buffer safety margin
+buf_l = ptr; ptr += maxDelay;   // Allocate Left buffer
+buf_r = ptr; ptr += maxDelay;   // Allocate Right buffer
+del_idx = 0;                    // Write head index
+delaySamples = floor(0.0003 * srate); // 0.3ms Interaural Delay
+
+// Envelope Follower State
+env = 0;
+
+// --- BIQUAD FILTER FUNCTIONS ---
+// NOTE: local() declarations are CRITICAL in EEL2 to prevent global namespace pollution!
+
+function LowPassFilter_Set(frequency qFactor) local(x, sinX, cosX, alpha, _a0, _a1, _a2, _b0, _b1, _b2) (
+    x = (frequency * 2.0 * PI) / srate;
+    sinX = sin(x); cosX = cos(x);
+    alpha = sinX / (qFactor * 2.0);
+    
+    _a0 = 1.0 + alpha;
+    _a1 = -2.0 * cosX;
+    _a2 = 1.0 - alpha;
+    
+    _b0 = (1.0 - cosX) / 2.0;
+    _b1 = 1.0 - cosX;
+    _b2 = (1.0 - cosX) / 2.0;
+    
+    this.b0 = _b0 / _a0;
+    this.b1 = _b1 / _a0;
+    this.b2 = _b2 / _a0;
+    this.a1 = -_a1 / _a0;
+    this.a2 = -_a2 / _a0;
+    
+    this.y_2 = 0; this.y_1 = 0; this.x_2 = 0; this.x_1 = 0;
+);
+
+function LowPassFilter_ProcessSample(sample) local(out) (
+    out = sample * this.b0 + this.x_1 * this.b1 + this.x_2 * this.b2 + this.y_1 * this.a1 + this.y_2 * this.a2;
+    this.y_2 = this.y_1; this.y_1 = out;
+    this.x_2 = this.x_1; this.x_1 = sample;
+    out;
+);
+
+function HighPassFilter_Set(frequency qFactor) local(x, sinX, cosX, alpha, _a0, _a1, _a2, _b0, _b1, _b2) (
+    x = (frequency * 2.0 * PI) / srate;
+    sinX = sin(x); cosX = cos(x);
+    alpha = sinX / (qFactor * 2.0);
+    
+    _a0 = 1.0 + alpha;
+    _a1 = -2.0 * cosX;
+    _a2 = 1.0 - alpha;
+    
+    _b0 = (1.0 + cosX) / 2.0;
+    _b1 = -(1.0 + cosX);
+    _b2 = (1.0 + cosX) / 2.0;
+    
+    this.b0 = _b0 / _a0;
+    this.b1 = _b1 / _a0;
+    this.b2 = _b2 / _a0;
+    this.a1 = -_a1 / _a0;
+    this.a2 = -_a2 / _a0;
+    
+    this.y_2 = 0; this.y_1 = 0; this.x_2 = 0; this.x_1 = 0;
+);
+
+function HighPassFilter_ProcessSample(sample) local(out) (
+    out = sample * this.b0 + this.x_1 * this.b1 + this.x_2 * this.b2 + this.y_1 * this.a1 + this.y_2 * this.a2;
+    this.y_2 = this.y_1; this.y_1 = out;
+    this.x_2 = this.x_1; this.x_1 = sample;
+    out;
+);
+
+// --- INITIALIZE ALL FILTER INSTANCES ---
+q = 0.707; // Butterworth Q
+
+side_hpf.HighPassFilter_Set(300, q);
+
+lpf_sub_l.LowPassFilter_Set(90, q);
+lpf_sub_r.LowPassFilter_Set(90, q);
+hpf_orig_l.HighPassFilter_Set(90, q);
+hpf_orig_r.HighPassFilter_Set(90, q);
+hpf_harm_l.HighPassFilter_Set(90, q);
+hpf_harm_r.HighPassFilter_Set(90, q);
+
+hpf_exc_l.HighPassFilter_Set(10000, q);
+hpf_exc_r.HighPassFilter_Set(10000, q);
+
+lpf_cross_l.LowPassFilter_Set(2000, q);
+lpf_cross_r.LowPassFilter_Set(2000, q);
+
+
+@sample
+// ==========================================
+// LAYER 1: MID/SIDE SPATIALIZER
+// ==========================================
+mid = (spl0 + spl1) * 0.5;
+side = (spl0 - spl1) * 0.5;
+
+side_hp = side_hpf.HighPassFilter_ProcessSample(side);
+side_wide = side_hp * (sideWidth / 100.0);
+
+spl0 = mid + side_wide;
+spl1 = mid - side_wide;
+
+
+// ==========================================
+// LAYER 2: VIRTUAL SUB-BASS GENERATOR
+// ==========================================
+// 1. Extract original highs (phase matched)
+orig_hp_l = hpf_orig_l.HighPassFilter_ProcessSample(spl0);
+orig_hp_r = hpf_orig_r.HighPassFilter_ProcessSample(spl1);
+
+// 2. Extract sub-bass
+sub_l = lpf_sub_l.LowPassFilter_ProcessSample(spl0);
+sub_r = lpf_sub_r.LowPassFilter_ProcessSample(spl1);
+
+// 3. Non-linear Saturation (Soft Asymmetric Clipper)
+drive = 4.0;
+sat_l = (sub_l * drive) / (1.0 + abs(sub_l * drive));
+sat_r = (sub_r * drive) / (1.0 + abs(sub_r * drive));
+
+// 4. HPF on harmonics to remove the fundamental, keeping only overtones
+harm_l = hpf_harm_l.HighPassFilter_ProcessSample(sat_l);
+harm_r = hpf_harm_r.HighPassFilter_ProcessSample(sat_r);
+
+// 5. Recombine (Blending original sub-bass back in to prevent perceived muting/hollowness)
+subGainLin = exp(subGain * DB_2_LOG);
+spl0 = orig_hp_l + sub_l + (harm_l * subGainLin);
+spl1 = orig_hp_r + sub_r + (harm_r * subGainLin);
+
+
+// ==========================================
+// LAYER 3: DYNAMIC EXCITER (FLETCHER-MUNSON)
+// ==========================================
+// 1. RMS Envelope Follower
+rms_sq = (spl0 * spl0) + (spl1 * spl1);
+env = env * 0.9995 + rms_sq * 0.0005;
+rms_db = 10.0 * log10(env + 0.0000000001); // Safe fallback to prevent log10(0) NaN errors
+
+// 2. Calculate Adaptive Boost (Target: -24 dBFS)
+target_db = -24.0;
+boost_db = max(0, target_db - rms_db) * (loudnessSens / 100.0);
+boost_db = min(boost_db, 12.0); // Cap at +12dB 
+
+// 3. Extract >10kHz "Air" band
+highs_l = hpf_exc_l.HighPassFilter_ProcessSample(spl0);
+highs_r = hpf_exc_r.HighPassFilter_ProcessSample(spl1);
+
+// 4. Inject boosted highs
+boostLin = exp(boost_db * DB_2_LOG);
+add_amt = boostLin - 1.0;
+spl0 += highs_l * add_amt;
+spl1 += highs_r * add_amt;
+
+
+// ==========================================
+// LAYER 4: RECONSTRUCTION CROSSFEED MATRIX
+// ==========================================
+// 1. Write current samples into the circular buffers
+buf_l[del_idx] = spl0;
+buf_r[del_idx] = spl1;
+
+// 2. Calculate the delayed read index
+read_idx = del_idx - delaySamples;
+read_idx < 0 ? read_idx += maxDelay; // Wrap around if negative
+
+// 3. Read delayed samples (L goes to R, R goes to L)
+del_r = buf_l[read_idx]; 
+del_l = buf_r[read_idx];
+
+// 4. Advance write head and wrap (Safe ternary instead of modulo)
+del_idx += 1;
+del_idx >= maxDelay ? del_idx = 0;
+
+// 5. Skull Attenuation (LPF < 2kHz)
+cross_l = lpf_cross_l.LowPassFilter_ProcessSample(del_l);
+cross_r = lpf_cross_r.LowPassFilter_ProcessSample(del_r);
+
+// 6. Mix crossfeed into main paths (Additive to preserve dry signal)
+crossAmtLin = (crossfeedAmt / 100.0) * 0.6; 
+spl0 += cross_l * crossAmtLin;
+spl1 += cross_r * crossAmtLin;
+
+
+// ==========================================
+// LAYER 5: OUTPUT PROTECTION LIMITER
+// ==========================================
+// Hard clamp at -0.5dB (0.94 linear) to prevent Intersample Peaks (ISP)
+limit_thresh = 0.94; 
+spl0 = min(max(spl0, -limit_thresh), limit_thresh);
+spl1 = min(max(spl1, -limit_thresh), limit_thresh);
