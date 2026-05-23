@@ -1,0 +1,234 @@
+desc: Immersive Trance DSP v3.0 (Audiophile)
+//tags: immersive bass spatializer crossfeed loudness mastering
+author: AI DSP Architect
+
+// --- UI PARAMETERS ---
+subGain:4<-12,12,0.5>Sub Harmonics Gain (dB)
+sideWidth:135<0,200,5>Side Width (%)
+loudnessSens:50<0,100,5>Fletcher-Munson Sensitivity (%)
+crossfeedAmt:60<0,100,5>Crossfeed Amount (%)
+
+@init
+// --- CONSTANTS & MEMORY ALLOCATION ---
+DB_2_LOG = 0.11512925464970228;
+PI = 3.14159265358979; 
+
+// Assign UI defaults
+subGain = 4;
+sideWidth = 135;
+loudnessSens = 50;
+crossfeedAmt = 60;
+
+// Manual Circular Buffer Allocation for Crossfeed Delay
+ptr = 1000; 
+maxDelay = ceil(0.002 * srate); 
+buf_l = ptr; ptr += maxDelay;   
+buf_r = ptr; ptr += maxDelay;   
+del_idx = 0;                    
+delaySamples = floor(0.00065 * srate); // 0.65ms BS2B Delay
+
+// State Variables
+env = 0;      
+lim_env = 0;  
+smooth_gain = 1.0;
+add_amt = 0.0;
+
+// --- BIQUAD FILTER FUNCTIONS ---
+function LowPassFilter_Set(frequency qFactor) local(x, sinX, cosX, alpha, _a0, _a1, _a2, _b0, _b1, _b2) (
+    x = (frequency * 2.0 * PI) / srate;
+    sinX = sin(x); cosX = cos(x);
+    alpha = sinX / (qFactor * 2.0);
+    _a0 = 1.0 + alpha; _a1 = -2.0 * cosX; _a2 = 1.0 - alpha;
+    _b0 = (1.0 - cosX) / 2.0; _b1 = 1.0 - cosX; _b2 = (1.0 - cosX) / 2.0;
+    this.b0 = _b0 / _a0; this.b1 = _b1 / _a0; this.b2 = _b2 / _a0;
+    this.a1 = -_a1 / _a0; this.a2 = -_a2 / _a0;
+    this.y_2 = 0; this.y_1 = 0; this.x_2 = 0; this.x_1 = 0;
+);
+
+function LowPassFilter_ProcessSample(sample) local(out) (
+    out = sample * this.b0 + this.x_1 * this.b1 + this.x_2 * this.b2 + this.y_1 * this.a1 + this.y_2 * this.a2;
+    this.y_2 = this.y_1; this.y_1 = out; this.x_2 = this.x_1; this.x_1 = sample;
+    out;
+);
+
+function HighPassFilter_Set(frequency qFactor) local(x, sinX, cosX, alpha, _a0, _a1, _a2, _b0, _b1, _b2) (
+    x = (frequency * 2.0 * PI) / srate;
+    sinX = sin(x); cosX = cos(x);
+    alpha = sinX / (qFactor * 2.0);
+    _a0 = 1.0 + alpha; _a1 = -2.0 * cosX; _a2 = 1.0 - alpha;
+    _b0 = (1.0 + cosX) / 2.0; _b1 = -(1.0 + cosX); _b2 = (1.0 + cosX) / 2.0;
+    this.b0 = _b0 / _a0; this.b1 = _b1 / _a0; this.b2 = _b2 / _a0;
+    this.a1 = -_a1 / _a0; this.a2 = -_a2 / _a0;
+    this.y_2 = 0; this.y_1 = 0; this.x_2 = 0; this.x_1 = 0;
+);
+
+function HighPassFilter_ProcessSample(sample) local(out) (
+    out = sample * this.b0 + this.x_1 * this.b1 + this.x_2 * this.b2 + this.y_1 * this.a1 + this.y_2 * this.a2;
+    this.y_2 = this.y_1; this.y_1 = out; this.x_2 = this.x_1; this.x_1 = sample;
+    out;
+);
+
+// --- INITIALIZE ALL FILTER INSTANCES ---
+q = 0.7071; // Butterworth Q (Cascading two yields Linkwitz-Riley 4th Order)
+
+// Input DC Blocker (Protects mastering headroom)
+dc_block_l.HighPassFilter_Set(15, q);
+dc_block_r.HighPassFilter_Set(15, q);
+
+// Layer 1: M/S Spatializer
+side_hpf.HighPassFilter_Set(300, q);
+
+// Layer 2: 4th-Order Linkwitz-Riley Sub-Bass Crossover (24dB/oct)
+lpf_sub_l_1.LowPassFilter_Set(90, q); lpf_sub_l_2.LowPassFilter_Set(90, q);
+lpf_sub_r_1.LowPassFilter_Set(90, q); lpf_sub_r_2.LowPassFilter_Set(90, q);
+hpf_orig_l_1.HighPassFilter_Set(90, q); hpf_orig_l_2.HighPassFilter_Set(90, q);
+hpf_orig_r_1.HighPassFilter_Set(90, q); hpf_orig_r_2.HighPassFilter_Set(90, q);
+hpf_harm_l_1.HighPassFilter_Set(90, q); hpf_harm_l_2.HighPassFilter_Set(90, q);
+hpf_harm_r_1.HighPassFilter_Set(90, q); hpf_harm_r_2.HighPassFilter_Set(90, q);
+
+// Layer 3: 4th-Order Air-Band Exciter (Isolates >11kHz pure shimmer)
+hpf_exc_l_1.HighPassFilter_Set(11000, q); hpf_exc_l_2.HighPassFilter_Set(11000, q);
+hpf_exc_r_1.HighPassFilter_Set(11000, q); hpf_exc_r_2.HighPassFilter_Set(11000, q);
+
+// Layer 4: 4th-Order Surgical BS2B Crossfeed
+lpf_cross_l_1.LowPassFilter_Set(1500, q); lpf_cross_l_2.LowPassFilter_Set(1500, q);
+lpf_cross_r_1.LowPassFilter_Set(1500, q); lpf_cross_r_2.LowPassFilter_Set(1500, q);
+hpf_cross_l_1.HighPassFilter_Set(150, q); hpf_cross_l_2.HighPassFilter_Set(150, q);
+hpf_cross_r_1.HighPassFilter_Set(150, q); hpf_cross_r_2.HighPassFilter_Set(150, q);
+
+
+@sample
+// ==========================================
+// INPUT: DC OFFSET PROTECTION
+// ==========================================
+spl0 = dc_block_l.HighPassFilter_ProcessSample(spl0);
+spl1 = dc_block_r.HighPassFilter_ProcessSample(spl1);
+
+
+// ==========================================
+// LAYER 1: MID/SIDE SPATIALIZER
+// ==========================================
+mid = (spl0 + spl1) * 0.5;
+side = (spl0 - spl1) * 0.5;
+
+side_hp = side_hpf.HighPassFilter_ProcessSample(side);
+side_wide = side_hp * (sideWidth / 100.0);
+
+spl0 = mid + side_wide;
+spl1 = mid - side_wide;
+
+
+// ==========================================
+// LAYER 2: VIRTUAL SUB-BASS (4TH ORDER LR)
+// ==========================================
+// 4th Order HPF (Dry Path)
+orig_hp_l = hpf_orig_l_1.HighPassFilter_ProcessSample(spl0);
+orig_hp_l = hpf_orig_l_2.HighPassFilter_ProcessSample(orig_hp_l);
+orig_hp_r = hpf_orig_r_1.HighPassFilter_ProcessSample(spl1);
+orig_hp_r = hpf_orig_r_2.HighPassFilter_ProcessSample(orig_hp_r);
+
+// 4th Order LPF (Sub Extraction)
+sub_l = lpf_sub_l_1.LowPassFilter_ProcessSample(spl0);
+sub_l = lpf_sub_l_2.LowPassFilter_ProcessSample(sub_l);
+sub_r = lpf_sub_r_1.LowPassFilter_ProcessSample(spl1);
+sub_r = lpf_sub_r_2.LowPassFilter_ProcessSample(sub_r);
+
+// Saturation
+drive = 4.0;
+sat_l = (sub_l * drive) / (1.0 + abs(sub_l * drive));
+sat_r = (sub_r * drive) / (1.0 + abs(sub_r * drive));
+
+// 4th Order HPF (Harmonic Isolation)
+harm_l = hpf_harm_l_1.HighPassFilter_ProcessSample(sat_l);
+harm_l = hpf_harm_l_2.HighPassFilter_ProcessSample(harm_l);
+harm_r = hpf_harm_r_1.HighPassFilter_ProcessSample(sat_r);
+harm_r = hpf_harm_r_2.HighPassFilter_ProcessSample(harm_r);
+
+// Recombine (Linkwitz-Riley guarantees perfect phase alignment)
+subGainLin = exp(subGain * DB_2_LOG);
+spl0 = orig_hp_l + (sub_l * 0.5) + (harm_l * subGainLin); // *0.5 compensates for LR -6dB node
+spl1 = orig_hp_r + (sub_r * 0.5) + (harm_r * subGainLin);
+
+
+// ==========================================
+// LAYER 3: DYNAMIC EXCITER (4TH ORDER AIR)
+// ==========================================
+rms_sq = (spl0 * spl0) + (spl1 * spl1);
+attack_coeff = 0.99;   
+release_coeff = 0.9998; 
+env = (rms_sq > env) ? (env * attack_coeff + rms_sq * (1.0 - attack_coeff)) : (env * release_coeff + rms_sq * (1.0 - release_coeff));
+
+rms_db = 10.0 * log10(env + 0.0000000001);
+target_db = -24.0;
+boost_db = max(0, target_db - rms_db) * (loudnessSens / 100.0);
+boost_db = min(boost_db, 12.0); 
+
+// 4th Order Air Band Extraction
+highs_l = hpf_exc_l_1.HighPassFilter_ProcessSample(spl0);
+highs_l = hpf_exc_l_2.HighPassFilter_ProcessSample(highs_l);
+highs_r = hpf_exc_r_1.HighPassFilter_ProcessSample(spl1);
+highs_r = hpf_exc_r_2.HighPassFilter_ProcessSample(highs_r);
+
+// Micro-smoothed Gain Application (Prevents Zipper Noise)
+boostLin = exp(boost_db * DB_2_LOG);
+add_amt_target = boostLin - 1.0;
+add_amt = add_amt * 0.995 + add_amt_target * 0.005;
+
+spl0 += highs_l * add_amt;
+spl1 += highs_r * add_amt;
+
+
+// ==========================================
+// LAYER 4: BS2B CROSSFEED (4TH ORDER SURGICAL)
+// ==========================================
+buf_l[del_idx] = spl0;
+buf_r[del_idx] = spl1;
+
+read_idx = del_idx - delaySamples;
+read_idx < 0 ? read_idx += maxDelay; 
+
+del_r = buf_l[read_idx]; 
+del_l = buf_r[read_idx];
+
+del_idx += 1;
+del_idx >= maxDelay ? del_idx = 0;
+
+// 4th Order HPF + LPF Cascade
+cross_l = hpf_cross_l_1.HighPassFilter_ProcessSample(del_l);
+cross_l = hpf_cross_l_2.HighPassFilter_ProcessSample(cross_l);
+cross_l = lpf_cross_l_1.LowPassFilter_ProcessSample(cross_l);
+cross_l = lpf_cross_l_2.LowPassFilter_ProcessSample(cross_l);
+
+cross_r = hpf_cross_r_1.HighPassFilter_ProcessSample(del_r);
+cross_r = hpf_cross_r_2.HighPassFilter_ProcessSample(cross_r);
+cross_r = lpf_cross_r_1.LowPassFilter_ProcessSample(cross_r);
+cross_r = lpf_cross_r_2.LowPassFilter_ProcessSample(cross_r);
+
+crossAmtLin = (crossfeedAmt / 100.0) * 0.6; 
+spl0 += cross_l * crossAmtLin;
+spl1 += cross_r * crossAmtLin;
+
+
+// ==========================================
+// LAYER 5: VCA-STYLE MASTERING LIMITER
+// ==========================================
+thresh = 0.92; // ~ -0.7 dB
+peak = max(abs(spl0), abs(spl1));
+
+// Ballistics: Fast Attack (~2ms), Smooth Release (~300ms)
+lim_env = (peak > lim_env) ? (lim_env * 0.7 + peak * 0.3) : (lim_env * 0.99985 + peak * 0.00015);
+
+lim_gain = 1.0;
+lim_env > thresh ? (
+    lim_gain = thresh / lim_env;
+);
+
+// 1-Pole Gain Smoothing (Prevents TIM / Clicks)
+smooth_gain = smooth_gain * 0.75 + lim_gain * 0.25;
+
+spl0 *= smooth_gain;
+spl1 *= smooth_gain;
+
+// Absolute ISP Safety Clamp
+spl0 = min(max(spl0, -0.999), 0.999);
+spl1 = min(max(spl1, -0.999), 0.999);
