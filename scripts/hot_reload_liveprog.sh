@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.1.eel}"
+script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.2.eel}"
 preset_name="${2:-Axiom-v5}"
 liveprog_link="${HOME}/.config/jamesdsp/liveprog/axiom_current.eel"
 
