@@ -94,3 +94,30 @@ MIT License - see LICENSE for details.
 - Bauer BS2B crossfeed algorithm
 - Fletcher-Munson equal-loudness research
 - JamesDSP EEL2 runtime by James34602
+
+---
+
+## AI Agent Setup
+
+This repository is configured for AI agent collaboration. The following files provide complete context for any AI assistant working on this codebase:
+
+| File | Purpose |
+|------|---------|
+| [`AGENTS.md`](AGENTS.md) | **Start here** — complete operating instructions, EEL2 constraints, file editing rules |
+| [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | GitHub Copilot workspace context (auto-loaded) |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Commit conventions, code standards, testing checklist |
+| [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
+| [`docs/architecture.md`](docs/architecture.md) | 5-layer signal chain documentation |
+
+### Quick Reference for AI Agents
+
+```eel2
+// Critical rules (violations cause mute/crash):
+// 1. Never assign to $pi
+// 2. No FractionalDelayLineInit (use manual circular buffers)
+// 3. No % modulo (use conditional wrap)
+// 4. Use this.* for persistent state inside function()
+// 5. Additive mixing only (never replace spl0/spl1 mid-chain)
+// 6. Final @sample lines MUST be: spl0 = out_L; spl1 = out_R;
+// 7. Initialize ALL variables in @init
+```
