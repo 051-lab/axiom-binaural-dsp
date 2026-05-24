@@ -4,6 +4,41 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [4.1.4.6] - 2026-05-24 - Phase-Preserving Bass Injection Candidate
+
+### Changed
+- Removed the redundant 90 Hz high-pass dry reconstruction from the bass harmonic stage.
+- Preserved low-band saturation and additive harmonic injection while leaving the spatializer dry output intact.
+- Removed four unused dry-path biquad instances and two sample-state variables from the new candidate.
+- Removed two redundant per-sample constant assignments without changing their initialized values.
+- Kept internal crossfeed absent; JamesDSP crossfeed is now a manual playback choice only.
+- Corrected the hot-reload helper to reload a changed script even when its file path is unchanged.
+
+### Validation
+- Added bass-path analysis showing the removed LP+HP dry reconstruction was level-neutral within `0.001 dB` but added approximately `5.0 ms` group delay at `90 Hz`.
+
+---
+
+## [4.1.4.5] - 2026-05-23 - Device-Neutral Core Baseline
+
+### Changed
+- Removed the manual EEL crossfeed delay buffers, band-pass filters, additive mix, and crossfeed slider.
+- Established crossfeed as an optional JamesDSP control rather than an always-on Axiom stage.
+- Kept the accepted `v4.1.4.4` sound-shaping and host-limiter architecture unchanged outside crossfeed ownership.
+
+### Validation
+- Added crossfeed transfer analysis: the removed default path ranged from approximately `-3.34 dB` to `+2.31 dB` on correlated mono at 48 kHz; JDSP BS2B introduces no positive gain peak at the selected setting.
+
+---
+
+## [4.1.4.4] - 2026-05-23 - Host Limiter Baseline
+
+### Changed
+- Removed the script-local limiter and hard clamp so JDSP supplies the single terminal output limiter.
+- Removed initialized-but-unused resonance/limiter state while preserving the active spatial, sub, exciter, and STFT processing.
+
+---
+
 ## [3.0] - 2025 - Audiophile Mastering Edition
 
 ### Added

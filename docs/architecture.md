@@ -1,138 +1,142 @@
 # Axiom Binaural DSP Architecture
 
 ## Overview
-Axiom Binaural DSP is a phase-coherent, mastering-grade audio processing pipeline designed for JamesDSP's EEL2 (Expressive Embedded Language 2) runtime. The architecture consists of five cascading processing layers that transform stereo input into an enhanced binaural output optimized for headphone listening.
 
-**Version:** 3.0 (Audiophile Mastering Edition)  
-**Target Platform:** JamesDSP (Android/Linux)  
-**Sample Rate:** Any (all filters are sample-rate adaptive)  
+Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.5` is the accepted device-neutral baseline after internal crossfeed was removed. `v4.1.4.6` is the next candidate: it removes a phase-only dry reconstruction from the bass harmonic stage while preserving the generated harmonic branch.
 
----
+Target priorities:
 
-## Signal Chain Diagram
-```
-INPUT: spl0 (L), spl1 (R)
-         |
-         v
-[LAYER 1: M/S SPATIALIZER]
-  Mid/Side Encode -> HPF 300Hz (Side) -> Width Scale -> Reconstruct L/R
-         |
-         v
-[LAYER 2: VIRTUAL SUB-BASS GENERATOR]
-  LPF 90Hz -> Soft-Clip Saturation -> HPF 90Hz -> Blend with original
-         |
-         v
-[LAYER 3: FLETCHER-MUNSON EXCITER]
-  Asymmetric Env Follower -> Boost Compute -> HPF 10kHz -> Add Air Band
-         |
-         v
-[LAYER 4: BS2B CROSSFEED MATRIX]
-  Circular Buffer (1024) -> Delay ~0.3ms -> Dual LPF 1500Hz -> Mix
-         |
-         v
-[LAYER 5: VCA SOFT-KNEE LIMITER]
-  Threshold: 0.92 (~-0.7 dB) | Fast Attack ~2ms | Smooth Release ~300ms
-         |
-         v
-OUTPUT: spl0 (L), spl1 (R) - Phase-coherent, binaurally enhanced
+- Low artifact risk over maximum effect strength
+- Phase-stable stereo processing
+- Conservative CPU and latency for Android testing devices
+- JDSP-safe EEL2 only: no crash-prone polyphase or fractional-delay helper APIs
+
+## Signal Chain
+
+```text
+spl0/spl1 input
+  -> DC protection
+  -> 3-way cascaded biquad M/S spatializer
+  -> additive bass harmonic generator
+  -> dynamic loudness-contingent exciter
+  -> STFT dynamic resonance suppressor
+  -> JDSP terminal output limiter (host)
+  -> spl0/spl1 output
 ```
 
----
+JamesDSP crossfeed may be enabled manually after Axiom for headphone listening; it is not part of the measured core baseline.
 
-## Layer-by-Layer Technical Description
+## Processing Layers
 
-### Layer 1: M/S Spatializer
-**Purpose:** Convert stereo to Mid/Side domain, apply high-pass filtering to the side channel to remove low-frequency phase issues, then scale side width and reconstruct to L/R.
+### Input DC Protection
 
-- Mid = (L + R) * 0.5
-- Side = (L - R) * 0.5
-- Side channel filtered with HPF at 300Hz (Q=0.707)
-- Side width controlled by slider2 (100-200%)
-- Reconstruction: L = Mid + Side_filtered * width, R = Mid - Side_filtered * width
+Each channel passes through a 15 Hz high-pass biquad before nonlinear or dynamic stages. This protects headroom and keeps downstream dynamics from reacting to DC offset.
 
-### Layer 2: Virtual Sub-Bass Generator
-**Purpose:** Generate psychoacoustic sub-bass harmonics for systems with limited low-end response.
+### 3-Way M/S Spatializer
 
-- Sub extraction: LPF at 90Hz (Q=0.707, Butterworth)
-- Soft-clip saturation: x / (1 + |x|) with 4x drive
-- Harmonic isolation: HPF at 90Hz removes fundamental, keeps harmonics
-- Additive blend: original + sub + harmonics * subGainLin
+The script splits stereo input into low, mid, and high regions using cascaded biquad filters:
 
-### Layer 3: Fletcher-Munson Exciter
-**Purpose:** Apply dynamic high-frequency excitation based on equal-loudness contours. Quieter passages receive more high-frequency boost.
+- Low region: below 150 Hz, summed to mono
+- Mid region: 150 Hz to 4 kHz, M/S width controlled by `slider5 * slider2`
+- High region: above 4 kHz, M/S width controlled by `slider6 * slider2`
 
-- Asymmetric envelope follower: attack 1ms, release 300ms
-- boost_db = loudnessSens * (1.0 - env_sqrt) * 6.0 / 100.0
-- Air band: HPF at 10kHz extracts high-frequency content
-- Additive: spl += air_band * (exp(boost_db * 0.115129) - 1.0)
+The low mono fold improves headphone bass stability. Mid/high width are independent so perceived space can be increased without widening sub-bass.
 
-### Layer 4: BS2B Crossfeed Matrix
-**Purpose:** Simulate natural speaker listening via Bauer Stereophonic-to-Binaural conversion.
+### Additive Bass Harmonic Generator
 
-- Circular buffer: 1024 samples per channel
-- Interaural delay: floor(0.0003 * srate) samples (~0.3ms at 44.1kHz)
-- Skull attenuation: dual-stage LPF cascade at 1500Hz (4th-order effective)
-- HPF at 150Hz on crossfeed path (removes low-frequency crosstalk)
-- Mix: spl0 += cross_l * crossAmtLin, spl1 += cross_r * crossAmtLin
+The bass stage extracts content below 90 Hz, applies soft saturation, high-passes the generated harmonic path, and adds those harmonics to the spatializer output.
 
-### Layer 5: VCA Soft-Knee Limiter
-**Purpose:** Prevent clipping after all processing stages with transparent gain reduction.
+In `v4.1.4.5`, this stage also split the dry signal into cascaded low-pass and high-pass 90 Hz paths and recombined them before adding harmonics. Analysis shows that reconstruction is level-neutral within `0.001 dB`, but adds approximately `5.0 ms` of group delay at 90 Hz. `v4.1.4.6` removes the redundant dry split, its four high-pass biquads, and its two sample state values. The intended harmonic generation remains active.
 
-- Threshold: 0.92 (~-0.7 dBFS)
-- Ballistics: fast attack (~2ms), smooth release (~300ms)
-- 1-pole gain smoothing to prevent TIM/clicks
-- Hard clip safety net at ±0.999
+Important controls:
 
----
+- `slider1`: harmonic gain in dB
+- `drive`: fixed conservative saturation drive
+- 90 Hz extraction/isolation filters: cascaded biquad pairs on the generated branch only
 
-## DSP Math: Biquad Filter Coefficients
-All filters use Direct Form I biquad structure with bilinear transform:
+### Dynamic Exciter
+
+The exciter tracks stereo-averaged RMS and applies more high-frequency enhancement at lower levels. The current candidates use sample-rate-derived attack/release and gain smoothing coefficients so the behavior is closer across 44.1, 48, and 96 kHz.
+
+Current timing:
+
+- Loudness attack: 10 ms
+- Loudness release: 400 ms
+- Exciter gain smoothing: 20 ms
+- Exciter band: above 11 kHz
+
+### STFT Dynamic Resonance Suppressor
+
+The suppressor processes the 2-6 kHz region in the STFT domain. The current candidates track per-bin state instead of using one band-global threshold:
+
+- `resBinFloor[bin]`: adaptive magnitude floor
+- `resBinGain[bin]`: smoothed per-bin gain
+- Stereo-linked magnitude from L/R real and imaginary bin values
+- Identical gain applied to L/R real and imaginary parts to preserve stereo phase relationship
+
+This stage is intentionally conservative. It should reduce short harsh resonances without broad pumping or left/right imbalance.
+
+### Crossfeed Ownership
+
+`v4.1.4.4` contains a manual crossfeed path: a delayed opposite-channel signal is band-passed from 150 Hz to 1500 Hz and additively mixed at a default coefficient of `0.33`. For correlated mono material, transfer analysis shows a range of approximately `-3.34 dB` to `+2.31 dB` at 48 kHz, with the peak near 285 Hz. That both spends headroom and alters centered midrange tonality.
+
+`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`; this removal was accepted as the new baseline. `v4.1.4.6` retains that device-neutral core. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
+
+For reference, host BS2B custom mode at `700 Hz / 6.0 dB` uses complementary filtered paths with gain normalization. Under the same correlated-mono analysis it produces no positive gain peak, avoiding the removed manual path's limiter-driving boost.
+
+### Output Limiter Ownership
+
+`v4.1.4.3` contains a script-local limiter followed by a hard clamp. `v4.1.4.4` removed that processing path. `v4.1.4.5` and `v4.1.4.6` retain the same host-only limiter ownership.
+
+JDSP always applies its output limiter after Liveprog and postgain. The fixed comparison baseline is:
+
+- Limiter threshold: `0` in JDSP4Linux configuration, applied by the engine as approximately `-0.09 dB`; use `-0.10 dB` on RootlessJamesDSP where fractional entry is available
+- Limiter release: `60 ms`
+- Post gain: `0 dB`
+- Host crossfeed: disabled for the Axiom comparison baseline; enable manually only when desired
+- Stereo widening, reverb, compander, bass, EQ, convolver, DDC, and tube processing: disabled
+
+## Sliders
+
+| Slider | Default | Range | Purpose |
+|---|---:|---:|---|
+| `slider1` | 4 dB | -12 to 12 dB | Sub harmonic blend gain |
+| `slider2` | 135% | 0 to 200% | Global side width multiplier |
+| `slider3` | 50% | 0 to 100% | Loudness-contingent exciter sensitivity |
+| `slider5` | 140% | 0 to 200% | Low-mid width multiplier |
+| `slider6` | 110% | 0 to 150% | High-frequency width multiplier |
+| `slider7` | 50% | 0 to 100% | STFT resonance suppression depth |
+
+## Validation
+
+Run static EEL safety checks:
+
+```bash
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.3.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.4.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.5.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.6.eel
 ```
-y[n] = b0*x[n] + b1*x[n-1] + b2*x[n-2] - a1*y[n-1] - a2*y[n-2]
+
+Run coefficient and crossover response analysis:
+
+```bash
+scripts/analyze_axiom_response.py
+scripts/analyze_axiom_crossfeed.py
+scripts/analyze_axiom_bass_path.py
 ```
 
-### Filter Summary Table
-| Filter | Frequency | Q | Type | Purpose |
-|--------|-----------|---|------|---------|
-| HPF300 | 300 Hz | 0.707 | 2nd-order HPF | Side channel cleanup |
-| LPF90 | 90 Hz | 0.707 | 2nd-order LPF | Sub-bass extraction |
-| HPF90 | 90 Hz | 0.707 | 2nd-order HPF | Harmonic isolation |
-| HPF10k | 10 kHz | 0.707 | 2nd-order HPF | Air band extraction |
-| LPF1500 | 1500 Hz | 0.707 | 4th-order LPF (x2) | BS2B skull attenuation |
-| HPF150 | 150 Hz | 0.707 | 2nd-order HPF | Crossfeed low-cut |
+Load and save the accepted baseline and phase-preserving bass candidate:
 
----
+```bash
+scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.5.eel
+scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.6.eel
+```
 
-## Parameter Tuning Guide
+## Engineering Constraints
 
-### Slider Reference
-| Slider | Parameter | Default | Range | Effect |
-|--------|-----------|---------|-------|--------|
-| slider1 | Sub Harmonics Gain | 3 dB | 0-12 dB | Sub-bass harmonic blend level |
-| slider2 | Side Width | 135% | 100-200% | Stereo width multiplier |
-| slider3 | Fletcher-Munson Sensitivity | 45% | 0-100% | Dynamic air-band boost amount |
-| slider4 | Crossfeed Amount | 60% | 0-100% | BS2B crossfeed blend ratio |
-
-### Presets
-- **Trance/EDM:** Sub Gain 6-9dB, Side Width 150-180%, FM Sens 40%, Crossfeed 60%
-- **Audiophile:** Sub Gain 3dB, Side Width 120%, FM Sens 50%, Crossfeed 40-50%
-- **Late Night:** Sub Gain 0-3dB, Side Width 110%, FM Sens 60-80%, Crossfeed 50%
-
----
-
-## Known Limitations
-1. **Fixed Delay Resolution:** BS2B uses integer sample delays (~22.7us at 44.1kHz)
-2. **Static Filter Coefficients:** Q/type hardcoded at init
-3. **Single-Band Dynamics:** Exciter uses broadband RMS
-4. **No Oversampling:** Operates at native sample rate
-5. **Circular Buffer Size:** Fixed at 1024 samples
-
----
-
-## v4.0 Roadmap
-1. **STFT Integration:** Linear-phase EQ and surgical processing
-2. **Polyphase Filterbank:** Efficient multi-band processing
-3. **Fractional Delay Lines:** Lagrange/Thiran interpolation
-4. **Real-Time Spectrum Analyzer:** Visual feedback
-5. **Preset Memory Slots:** Internal configuration storage
-6. **Mid-Side EQ:** Independent channel shaping
+- Do not assign to `$pi`, `$e`, or `$eps`.
+- Do not use `%`; wrap indices with explicit comparisons.
+- Do not use `FractionalDelayLineInit`, `pfb_init`, or `InitPolyphaseFilterbank`.
+- Keep final executable lines of `@sample` as `spl0 = out_L;` and `spl1 = out_R;`.
+- Use flat pointer arithmetic for memory blocks and never overlap allocations.
