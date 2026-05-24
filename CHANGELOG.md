@@ -16,6 +16,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ### Validation
 - Added bass-path analysis showing the removed LP+HP dry reconstruction was level-neutral within `0.001 dB` but added approximately `5.0 ms` group delay at `90 Hz`.
+- Added a real-JDSP A/B testbench with deterministic stimuli, isolated processed-output capture, state restoration, and JSON/Markdown difference reports.
+- Executed the host suite comparing `v4.1.4.5` with `v4.1.4.6`; all five candidate captures remained unclipped, with the side-only probe reaching `-0.115 dBFS`.
 
 ---
 

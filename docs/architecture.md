@@ -126,6 +126,18 @@ scripts/analyze_axiom_crossfeed.py
 scripts/analyze_axiom_bass_path.py
 ```
 
+Run real-host A/B capture through JDSP Liveprog:
+
+```bash
+scripts/run_jdsp_ab_testbench.py \
+  src/axiom_binaural_dsp_v4.1.4.5.eel \
+  src/axiom_binaural_dsp_v4.1.4.6.eel \
+  /tmp/axiom-v45-v46-host-suite \
+  --pulse-server unix:/run/user/1000/pulse/native
+```
+
+The suite exercises impulse, bass transient, sweep, correlated mono, and side-only inputs. `render_jdsp_host.py` targets an explicit Pulse server, captures only a private temporary sink fed by JDSP's processed-output stream, and restores all host keys it temporarily normalizes. Liveprog reloads still reinitialize internal DSP history, so execute the suite in a dedicated development JDSP session. Generated captures and reports belong outside the repository, such as under `/tmp`.
+
 Load and save the accepted baseline and phase-preserving bass candidate:
 
 ```bash

@@ -48,6 +48,20 @@ Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1
 1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.6.eel`.
 2. The script loads Liveprog with crossfeed disabled and saves `Axiom-v4.1.4.6-phase-preserving-bass`.
 
+### Real-Host A/B Testbench
+
+For development comparisons, run both scripts through the actual JDSP Liveprog engine:
+
+```bash
+scripts/run_jdsp_ab_testbench.py \
+  src/axiom_binaural_dsp_v4.1.4.5.eel \
+  src/axiom_binaural_dsp_v4.1.4.6.eel \
+  /tmp/axiom-v45-v46-host-suite \
+  --pulse-server unix:/run/user/1000/pulse/native
+```
+
+The testbench generates deterministic probes, routes only JDSP's processed output into a private temporary capture sink, and produces WAV, JSON, and Markdown comparisons. Each render snapshots and restores the loaded Liveprog file and every neutral-host setting it changes. Loading a script necessarily reinitializes its internal DSP history, so run this in a dedicated development JDSP session rather than during normal listening. The specified Pulse server must be the server used by the running JDSP process.
+
 ## Quick Start: Default Slider Settings
 
 | Slider | Parameter | Default | Range |
@@ -70,6 +84,10 @@ axiom-binaural-dsp/
     hot_reload_liveprog.sh            # JDSP A/B preset loader
     analyze_axiom_crossfeed.py        # Crossfeed transfer audit
     analyze_axiom_bass_path.py        # Removed dry-phase reconstruction audit
+    generate_jdsp_stimuli.py          # Deterministic stereo capture probes
+    render_jdsp_host.py               # Isolated real-JDSP WAV renderer
+    compare_jdsp_captures.py          # Capture metrics and difference reports
+    run_jdsp_ab_testbench.py          # End-to-end host A/B suite
   docs/
     architecture.md           # Technical architecture documentation
   README.md
