@@ -18,6 +18,9 @@ case "$(basename "$script_path")" in
   axiom_binaural_dsp_v4.1.4.6.eel)
     default_preset_name="Axiom-v4.1.4.6-phase-preserving-bass"
     ;;
+  axiom_binaural_dsp_v4.1.4.7.eel)
+    default_preset_name="Axiom-v4.1.4.7-transparent-headroom"
+    ;;
   *)
     default_preset_name="Axiom-custom"
     ;;

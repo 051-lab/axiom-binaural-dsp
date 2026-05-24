@@ -29,6 +29,13 @@ def metric_db(value: float | None) -> str:
     return "-inf" if value is None else f"{value:.3f}"
 
 
+def require_audible_capture(report: dict, stimulus: str) -> None:
+    for label in ("reference", "candidate"):
+        combined = report["captures"][label]["channels"]["combined"]
+        if combined["silent"]:
+            raise TestbenchError(f"{stimulus} {label} capture is silent; host render is invalid")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("baseline_eel", type=pathlib.Path)
@@ -39,6 +46,12 @@ def main() -> int:
     parser.add_argument("--duration", type=float, default=2.0)
     parser.add_argument("--pre-roll-ms", type=int, default=500)
     parser.add_argument("--tail-ms", type=int, default=2000)
+    parser.add_argument(
+        "--max-lag-ms",
+        type=float,
+        default=100.0,
+        help="maximum capture alignment offset searched by the comparator",
+    )
     args = parser.parse_args()
 
     script_dir = pathlib.Path(__file__).resolve().parent
@@ -55,8 +68,8 @@ def main() -> int:
     for eel in (baseline, candidate):
         if not eel.is_file():
             parser.error(f"EEL script not found: {eel}")
-    if args.pre_roll_ms < 0 or args.tail_ms < 0:
-        parser.error("--pre-roll-ms and --tail-ms must be non-negative")
+    if args.pre_roll_ms < 0 or args.tail_ms < 0 or args.max_lag_ms < 0:
+        parser.error("--pre-roll-ms, --tail-ms, and --max-lag-ms must be non-negative")
 
     output_dir.mkdir(parents=True, exist_ok=True)
     run(
@@ -108,10 +121,13 @@ def main() -> int:
                 str(json_path),
                 "--markdown",
                 str(markdown_path),
+                "--max-lag-ms",
+                str(args.max_lag_ms),
             ],
             f"{name} capture comparison",
         )
         reports[name] = json.loads(json_path.read_text(encoding="ascii"))
+        require_audible_capture(reports[name], name)
 
     aggregate = {
         "generated_at": dt.datetime.now(tz=dt.timezone.utc).isoformat(),
@@ -119,6 +135,7 @@ def main() -> int:
         "candidate_eel": str(candidate),
         "pulse_server": args.pulse_server,
         "sample_rate_hz": args.sample_rate,
+        "max_lag_ms": args.max_lag_ms,
         "stimuli": reports,
     }
     (output_dir / "summary.json").write_text(
@@ -131,8 +148,8 @@ def main() -> int:
         "",
         f"Candidate: `{candidate}`",
         "",
-        "| Stimulus | Status | Delay (ms) | Difference RMS (dBFS) | Candidate peak (dBFS) | Candidate clipped |",
-        "| --- | --- | ---: | ---: | ---: | ---: |",
+        "| Stimulus | Status | Delay (ms) | Correlation | Difference RMS (dBFS) | Candidate peak (dBFS) | Candidate clipped |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: |",
     ]
     for name in STIMULUS_NAMES:
         report = reports[name]
@@ -141,6 +158,7 @@ def main() -> int:
         rows.append(
             f"| {name} | {report['status']} | "
             f"{comparison['alignment']['candidate_delay_ms']:.6f} | "
+            f"{comparison['alignment']['normalized_correlation']:.6f} | "
             f"{metric_db(comparison['difference']['rms_difference_dbfs'])} | "
             f"{metric_db(candidate_metrics['peak_dbfs'])} | "
             f"{candidate_metrics['clipped_samples']} |"

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.5` is the accepted device-neutral baseline after internal crossfeed was removed. `v4.1.4.6` is the next candidate: it removes a phase-only dry reconstruction from the bass harmonic stage while preserving the generated harmonic branch.
+Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.6` is the accepted device-neutral baseline: it removes a phase-only dry reconstruction from the bass harmonic stage while preserving the generated harmonic branch. `v4.1.4.7` is the next candidate, adding fixed output reserve without retuning the accepted processing architecture.
 
 Target priorities:
 
@@ -20,6 +20,7 @@ spl0/spl1 input
   -> additive bass harmonic generator
   -> dynamic loudness-contingent exciter
   -> STFT dynamic resonance suppressor
+  -> transparent output reserve (`v4.1.4.7`)
   -> JDSP terminal output limiter (host)
   -> spl0/spl1 output
 ```
@@ -80,13 +81,19 @@ This stage is intentionally conservative. It should reduce short harsh resonance
 
 `v4.1.4.4` contains a manual crossfeed path: a delayed opposite-channel signal is band-passed from 150 Hz to 1500 Hz and additively mixed at a default coefficient of `0.33`. For correlated mono material, transfer analysis shows a range of approximately `-3.34 dB` to `+2.31 dB` at 48 kHz, with the peak near 285 Hz. That both spends headroom and alters centered midrange tonality.
 
-`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`; this removal was accepted as the new baseline. `v4.1.4.6` retains that device-neutral core. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
+`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`. `v4.1.4.6` retains that device-neutral core and is the accepted listening baseline. `v4.1.4.7` does not alter crossfeed ownership. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
 
 For reference, host BS2B custom mode at `700 Hz / 6.0 dB` uses complementary filtered paths with gain normalization. Under the same correlated-mono analysis it produces no positive gain peak, avoiding the removed manual path's limiter-driving boost.
 
 ### Output Limiter Ownership
 
-`v4.1.4.3` contains a script-local limiter followed by a hard clamp. `v4.1.4.4` removed that processing path. `v4.1.4.5` and `v4.1.4.6` retain the same host-only limiter ownership.
+`v4.1.4.3` contains a script-local limiter followed by a hard clamp. `v4.1.4.4` removed that processing path. `v4.1.4.5`, `v4.1.4.6`, and `v4.1.4.7` retain the same host-only limiter ownership.
+
+### Transparent Output Reserve
+
+`v4.1.4.7` applies a fixed `-1.0 dB` gain immediately before the final output assignment. The change is deliberately terminal and linear: it preserves the `.6` bass generation, width ratios, exciter, STFT behavior, and stereo phase relationship while providing margin before JDSP's terminal limiter.
+
+The real-host stress probe identified the need for this margin. Under the default controls, the `.6` side-only capture reached `-0.128 dBFS`; `.7` reduced the same probe to `-1.128 dBFS` with no clipped samples. This is a headroom candidate, not a new tonal feature.
 
 JDSP always applies its output limiter after Liveprog and postgain. The fixed comparison baseline is:
 
@@ -116,6 +123,7 @@ scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.3.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.4.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.5.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.6.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.7.eel
 ```
 
 Run coefficient and crossover response analysis:
@@ -130,19 +138,20 @@ Run real-host A/B capture through JDSP Liveprog:
 
 ```bash
 scripts/run_jdsp_ab_testbench.py \
-  src/axiom_binaural_dsp_v4.1.4.5.eel \
   src/axiom_binaural_dsp_v4.1.4.6.eel \
-  /tmp/axiom-v45-v46-host-suite \
+  src/axiom_binaural_dsp_v4.1.4.7.eel \
+  /tmp/axiom-v46-v47-host-suite \
   --pulse-server unix:/run/user/1000/pulse/native
 ```
 
-The suite exercises impulse, bass transient, sweep, correlated mono, and side-only inputs. `render_jdsp_host.py` targets an explicit Pulse server, captures only a private temporary sink fed by JDSP's processed-output stream, and restores all host keys it temporarily normalizes. Liveprog reloads still reinitialize internal DSP history, so execute the suite in a dedicated development JDSP session. Generated captures and reports belong outside the repository, such as under `/tmp`.
+The suite exercises impulse, bass transient, sweep, correlated mono, and side-only inputs. `render_jdsp_host.py` targets an explicit Pulse server, captures only a private temporary sink fed by JDSP's processed-output stream, and restores all host keys it temporarily normalizes. The orchestrator rejects silent reference or candidate captures instead of accepting a broken routing run as analysis. Liveprog reloads still reinitialize internal DSP history, so execute the suite in a dedicated development JDSP session. Continuous probes are suitable for output/gain comparisons; the impulse probe is retained primarily for transient, mute, and corruption checks because separately scheduled live captures can vary in alignment. Generated captures and reports belong outside the repository, such as under `/tmp`.
 
-Load and save the accepted baseline and phase-preserving bass candidate:
+Load the earlier core, the accepted baseline, or the transparent-headroom candidate:
 
 ```bash
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.5.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.6.eel
+scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.7.eel
 ```
 
 ## Engineering Constraints

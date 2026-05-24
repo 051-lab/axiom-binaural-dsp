@@ -1,12 +1,12 @@
 # Axiom Binaural DSP
 
-[![Version](https://img.shields.io/badge/version-v4.1.4.6-blue.svg)](https://github.com/051-lab/axiom-binaural-dsp/releases)
+[![Version](https://img.shields.io/badge/version-v4.1.4.7-blue.svg)](https://github.com/051-lab/axiom-binaural-dsp/releases)
 [![Platform](https://img.shields.io/badge/platform-JamesDSP-green.svg)](https://github.com/james34602/JamesDSPManager)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 **Phase-coherent mastering-grade binaural processing for JamesDSP**
 
-Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.5` is the accepted baseline after removing internal crossfeed; `v4.1.4.6` is the current candidate, removing an unnecessary phase-rotating dry reconstruction from the bass harmonic stage.
+Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.6` is the accepted listening baseline after removing an unnecessary phase-rotating dry reconstruction from the bass harmonic stage. `v4.1.4.7` is the current candidate, adding transparent output reserve to reduce avoidable host-limiter activity.
 
 ## Features
 
@@ -17,7 +17,7 @@ Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1
 ### Virtual Sub-Bass Generator
 - Psychoacoustic sub-bass synthesis via soft-clip saturation
 - 90 Hz low-band extraction and harmonic isolation with cascaded biquads
-- Direct dry path in `v4.1.4.6`; generated harmonics are additive only
+- Direct dry path in `v4.1.4.6` and later; generated harmonics are additive only
 - Harmonic blending for perceived bass extension on small drivers
 - Gain control: -12 to 12 dB
 
@@ -33,20 +33,21 @@ Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1
 
 ### Host-Owned Output Stages
 - Crossfeed is not part of the Axiom script; enable JamesDSP crossfeed manually when wanted
+- `v4.1.4.7` adds a fixed `-1.0 dB` transparent output reserve before the host stage
 - JDSP supplies the terminal limiter at approximately `-0.1 dB`, `60 ms` release, `0 dB` postgain
 
 ## Installation
 
 ### JamesDSP Android
-1. Copy `src/axiom_binaural_dsp_v4.1.4.6.eel` to your JamesDSP liveprog directory
-2. Open JamesDSP -> Liveprog -> Load script -> select `axiom_binaural_dsp_v4.1.4.6.eel`
+1. Copy `src/axiom_binaural_dsp_v4.1.4.7.eel` to your JamesDSP liveprog directory
+2. Open JamesDSP -> Liveprog -> Load script -> select `axiom_binaural_dsp_v4.1.4.7.eel`
 3. Enable the Liveprog engine
 4. Set output limiter threshold near `-0.10 dB`, release `60 ms`, and postgain `0.00 dB`
 5. For headphones only, enable JamesDSP crossfeed manually if desired
 
 ### JamesDSP Linux
-1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.6.eel`.
-2. The script loads Liveprog with crossfeed disabled and saves `Axiom-v4.1.4.6-phase-preserving-bass`.
+1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.7.eel`.
+2. The script loads Liveprog with crossfeed disabled and saves `Axiom-v4.1.4.7-transparent-headroom`.
 
 ### Real-Host A/B Testbench
 
@@ -54,13 +55,13 @@ For development comparisons, run both scripts through the actual JDSP Liveprog e
 
 ```bash
 scripts/run_jdsp_ab_testbench.py \
-  src/axiom_binaural_dsp_v4.1.4.5.eel \
   src/axiom_binaural_dsp_v4.1.4.6.eel \
-  /tmp/axiom-v45-v46-host-suite \
+  src/axiom_binaural_dsp_v4.1.4.7.eel \
+  /tmp/axiom-v46-v47-host-suite \
   --pulse-server unix:/run/user/1000/pulse/native
 ```
 
-The testbench generates deterministic probes, routes only JDSP's processed output into a private temporary capture sink, and produces WAV, JSON, and Markdown comparisons. Each render snapshots and restores the loaded Liveprog file and every neutral-host setting it changes. Loading a script necessarily reinitializes its internal DSP history, so run this in a dedicated development JDSP session rather than during normal listening. The specified Pulse server must be the server used by the running JDSP process.
+The testbench generates deterministic probes, routes only JDSP's processed output into a private temporary capture sink, rejects silent captures, and produces WAV, JSON, and Markdown comparisons. Each render snapshots and restores the loaded Liveprog file and every neutral-host setting it changes. Loading a script necessarily reinitializes its internal DSP history, so run this in a dedicated development JDSP session rather than during normal listening. The specified Pulse server must be the server used by the running JDSP process.
 
 ## Quick Start: Default Slider Settings
 
@@ -78,8 +79,8 @@ The testbench generates deterministic probes, routes only JDSP's processed outpu
 ```
 axiom-binaural-dsp/
   src/
-    axiom_binaural_dsp_v4.1.4.5.eel  # Accepted device-neutral baseline
-    axiom_binaural_dsp_v4.1.4.6.eel  # Current phase-preserving bass candidate
+    axiom_binaural_dsp_v4.1.4.6.eel  # Accepted phase-preserving bass baseline
+    axiom_binaural_dsp_v4.1.4.7.eel  # Current transparent-headroom candidate
   scripts/
     hot_reload_liveprog.sh            # JDSP A/B preset loader
     analyze_axiom_crossfeed.py        # Crossfeed transfer audit

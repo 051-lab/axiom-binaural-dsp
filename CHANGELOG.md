@@ -4,7 +4,23 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
-## [4.1.4.6] - 2026-05-24 - Phase-Preserving Bass Injection Candidate
+## [4.1.4.7] - 2026-05-24 - Transparent Headroom Candidate
+
+### Changed
+- Preserved the accepted `v4.1.4.6` bass, spatial, exciter, and STFT processing without parameter retuning.
+- Added a fixed terminal `-1.0 dB` linear output reserve before JDSP's host-owned limiter.
+- Extended static validation and liveprog preset loading for the new candidate.
+- Increased real-host comparison alignment search to tolerate capture scheduling offsets between independent Liveprog renders.
+- Added an A/B suite failure gate for silent host captures after a WSLg routing attempt returned invalid muted recordings.
+
+### Validation
+- Executed the real-JDSP host suite comparing accepted `v4.1.4.6` against `v4.1.4.7`.
+- Reduced the side-only stress-probe peak from approximately `-0.128 dBFS` to `-1.128 dBFS`, with zero clipped samples.
+- Continuous bass-burst and sweep probes reduced by approximately `1.0 dB` as intended; impulse captures remain safety probes rather than fine gain measurements due to live capture timing variability.
+
+---
+
+## [4.1.4.6] - 2026-05-24 - Phase-Preserving Bass Injection Baseline
 
 ### Changed
 - Removed the redundant 90 Hz high-pass dry reconstruction from the bass harmonic stage.

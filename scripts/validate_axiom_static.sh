@@ -11,14 +11,17 @@ failures=0
 
 if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.4.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ]; then
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ]; then
   host_limiter_only=true
 fi
 if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ]; then
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ]; then
   host_crossfeed_only=true
 fi
-if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ]; then
+if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ]; then
   phase_preserving_bass=true
 fi
 
@@ -212,16 +215,26 @@ fi
 
 if "$phase_preserving_bass"; then
   if grep -Eq 'orig_hp_[lr]|hpf_orig_[lr]' "$script_path"; then
-    fail "v4.1.4.6 contains the removed dry bass crossover reconstruction"
+    fail "phase-preserving bass candidate contains the removed dry bass crossover reconstruction"
   else
     pass "bass harmonic stage leaves the dry path unsplit"
   fi
 
   if ! grep -Fq 'out_L += harm_l * subGainLin;' "$script_path" ||
      ! grep -Fq 'out_R += harm_r * subGainLin;' "$script_path"; then
-    fail "v4.1.4.6 additive harmonic injection is missing"
+    fail "phase-preserving bass candidate additive harmonic injection is missing"
   else
     pass "bass harmonic branch is injected additively"
+  fi
+fi
+
+if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ]; then
+  if ! grep -Fq 'headroomGain = exp(-1.0 * DB_2_LOG);' "$script_path" ||
+     ! grep -Fq 'out_L *= headroomGain;' "$script_path" ||
+     ! grep -Fq 'out_R *= headroomGain;' "$script_path"; then
+    fail "v4.1.4.7 terminal transparent headroom reserve is missing"
+  else
+    pass "terminal transparent headroom reserve is present"
   fi
 fi
 
