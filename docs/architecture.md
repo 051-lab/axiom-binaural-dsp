@@ -152,6 +152,8 @@ Use `scripts/analyze_jdsp_transfer.py` only with low-level deterministic stimuli
 
 The transfer report retains timing against the known stimulus playback timeline without correlation alignment. When `--capture-pre-roll-ms` is supplied, it represents a known intentional lead-in in that timeline, not measured host latency. A pure mono probe identifies `M->M` and `M->S`; a pure side-only probe identifies `S->M` and `S->S`. General stereo material energizes both input components and cannot identify an individual transfer-matrix column from a single render, so those matrix values are deliberately invalidated.
 
+`scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
+
 Example offline qualification commands:
 
 ```bash
@@ -167,6 +169,10 @@ scripts/analyze_jdsp_transfer.py \
   --label v4.1.4.7-mono-probe \
   --json /tmp/axiom-transfer/transfer.json \
   --markdown /tmp/axiom-transfer/transfer.md
+
+scripts/analyze_axiom_subharmonics.py \
+  --json /tmp/axiom-subharmonics.json \
+  --markdown /tmp/axiom-subharmonics.md
 ```
 
 Load the earlier core, the accepted baseline, or the transparent-headroom candidate:

@@ -90,6 +90,16 @@ scripts/analyze_jdsp_transfer.py \
 
 This report measures the complete processed host path, not Axiom in isolation. It rejects silent, clipped, or louder-than-`-6 dBFS` output and reports identifiable `M->M`, `M->S`, `S->M`, and `S->S` matrix elements only when a pure mono or side-only probe makes that matrix column observable.
 
+To investigate the user-adjustable bass branch before creating a new DSP revision, sweep its exact nonlinear injection topology over tone level and slider gain:
+
+```bash
+scripts/analyze_axiom_subharmonics.py \
+  --json /tmp/axiom-subharmonics.json \
+  --markdown /tmp/axiom-subharmonics.md
+```
+
+This is a branch-local model of the `.7` bass generator and terminal reserve. It identifies settings that should be verified through real-host captures, but it does not model exciter, STFT, limiter, or music-program behavior.
+
 ## Quick Start: Default Slider Settings
 
 | Slider | Parameter | Default | Range |
@@ -118,9 +128,11 @@ axiom-binaural-dsp/
     run_jdsp_ab_testbench.py          # End-to-end host A/B suite
     qualify_jdsp_repeatability.py     # Repeated-capture qualification
     analyze_jdsp_transfer.py          # Stimulus-conditioned host-path matrix analysis
+    analyze_axiom_subharmonics.py     # Sub Harmonics Gain branch characterization
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
+    test_analyze_axiom_subharmonics.py
   docs/
     architecture.md           # Technical architecture documentation
   README.md
