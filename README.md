@@ -63,6 +63,33 @@ scripts/run_jdsp_ab_testbench.py \
 
 The testbench generates deterministic probes, routes only JDSP's processed output into a private temporary capture sink, rejects silent captures, and produces WAV, JSON, and Markdown comparisons. Each render snapshots and restores the loaded Liveprog file and every neutral-host setting it changes. Loading a script necessarily reinitializes its internal DSP history, so run this in a dedicated development JDSP session rather than during normal listening. The specified Pulse server must be the server used by the running JDSP process.
 
+### Measurement Qualification
+
+Before treating small A/B differences as DSP behavior, qualify repeated captures of the same script and stimulus:
+
+```bash
+scripts/qualify_jdsp_repeatability.py \
+  /tmp/axiom-repeat/run-1.wav /tmp/axiom-repeat/run-2.wav /tmp/axiom-repeat/run-3.wav \
+  /tmp/axiom-repeat/run-4.wav /tmp/axiom-repeat/run-5.wav \
+  --max-peak-spread-db 0.10 --max-rms-spread-db 0.10 --min-correlation 0.999 \
+  --json /tmp/axiom-repeat/repeatability.json \
+  --markdown /tmp/axiom-repeat/repeatability.md
+```
+
+The acceptance limits are caller-selected policy until enough repeated real-host renders establish tighter tolerances. The report qualifies relative capture repeatability only; it does not establish absolute host latency.
+
+For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
+
+```bash
+scripts/analyze_jdsp_transfer.py \
+  /tmp/axiom-transfer/stimulus.wav /tmp/axiom-transfer/processed.wav \
+  --label v4.1.4.7-mono-probe \
+  --json /tmp/axiom-transfer/transfer.json \
+  --markdown /tmp/axiom-transfer/transfer.md
+```
+
+This report measures the complete processed host path, not Axiom in isolation. It rejects silent, clipped, or louder-than-`-6 dBFS` output and reports identifiable `M->M`, `M->S`, `S->M`, and `S->S` matrix elements only when a pure mono or side-only probe makes that matrix column observable.
+
 ## Quick Start: Default Slider Settings
 
 | Slider | Parameter | Default | Range |
@@ -89,6 +116,11 @@ axiom-binaural-dsp/
     render_jdsp_host.py               # Isolated real-JDSP WAV renderer
     compare_jdsp_captures.py          # Capture metrics and difference reports
     run_jdsp_ab_testbench.py          # End-to-end host A/B suite
+    qualify_jdsp_repeatability.py     # Repeated-capture qualification
+    analyze_jdsp_transfer.py          # Stimulus-conditioned host-path matrix analysis
+  tests/
+    test_qualify_jdsp_repeatability.py
+    test_analyze_jdsp_transfer.py
   docs/
     architecture.md           # Technical architecture documentation
   README.md
