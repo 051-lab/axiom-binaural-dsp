@@ -2,7 +2,7 @@
 
 ## Overview
 
-Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.6` is the accepted device-neutral baseline: it removes a phase-only dry reconstruction from the bass harmonic stage while preserving the generated harmonic branch. `v4.1.4.7` is the next candidate, adding fixed output reserve without retuning the accepted processing architecture.
+Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.7` is the accepted listening reference: it preserves the phase-coherent core and adds fixed output reserve. `v4.1.4.8` is a narrow test candidate that leaves `.7` unchanged at default settings and adds bass-aware output reserve only above the default Sub Harmonics Gain.
 
 Target priorities:
 
@@ -20,7 +20,7 @@ spl0/spl1 input
   -> additive bass harmonic generator
   -> dynamic loudness-contingent exciter
   -> STFT dynamic resonance suppressor
-  -> transparent output reserve (`v4.1.4.7`)
+  -> transparent / bass-aware output reserve (`v4.1.4.7` / `v4.1.4.8`)
   -> JDSP terminal output limiter (host)
   -> spl0/spl1 output
 ```
@@ -81,19 +81,30 @@ This stage is intentionally conservative. It should reduce short harsh resonance
 
 `v4.1.4.4` contains a manual crossfeed path: a delayed opposite-channel signal is band-passed from 150 Hz to 1500 Hz and additively mixed at a default coefficient of `0.33`. For correlated mono material, transfer analysis shows a range of approximately `-3.34 dB` to `+2.31 dB` at 48 kHz, with the peak near 285 Hz. That both spends headroom and alters centered midrange tonality.
 
-`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`. `v4.1.4.6` retains that device-neutral core and is the accepted listening baseline. `v4.1.4.7` does not alter crossfeed ownership. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
+`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`. `v4.1.4.6` retains that device-neutral core. `v4.1.4.7` is the accepted listening reference and `v4.1.4.8` does not alter crossfeed ownership. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
 
 For reference, host BS2B custom mode at `700 Hz / 6.0 dB` uses complementary filtered paths with gain normalization. Under the same correlated-mono analysis it produces no positive gain peak, avoiding the removed manual path's limiter-driving boost.
 
 ### Output Limiter Ownership
 
-`v4.1.4.3` contains a script-local limiter followed by a hard clamp. `v4.1.4.4` removed that processing path. `v4.1.4.5`, `v4.1.4.6`, and `v4.1.4.7` retain the same host-only limiter ownership.
+`v4.1.4.3` contains a script-local limiter followed by a hard clamp. `v4.1.4.4` removed that processing path. `v4.1.4.5` through `v4.1.4.8` retain the same host-only limiter ownership.
 
 ### Transparent Output Reserve
 
 `v4.1.4.7` applies a fixed `-1.0 dB` gain immediately before the final output assignment. The change is deliberately terminal and linear: it preserves the `.6` bass generation, width ratios, exciter, STFT behavior, and stereo phase relationship while providing margin before JDSP's terminal limiter.
 
 The real-host stress probe identified the need for this margin. Under the default controls, the `.6` side-only capture reached `-0.128 dBFS`; `.7` reduced the same probe to `-1.128 dBFS` with no clipped samples. This is a headroom candidate, not a new tonal feature.
+
+### Bass-Aware Output Reserve Candidate
+
+`v4.1.4.8` preserves the `.7` output multiplier exactly while `slider1 <= +4 dB`. When the user requests more generated bass than the accepted default, it adds terminal reserve equal to the amount above default:
+
+```text
+bassReserveDb = max(0, slider1 - 4)
+outputGain = -1 dB fixed reserve - bassReserveDb
+```
+
+This does not compress or retune the generated bass branch; its purpose is to reduce avoidable host-limiter involvement at elevated user-selected bass gain. Consequently `.8` is expected to match `.7` at default, while boosted Sub Harmonics settings will be quieter overall and require listening evaluation.
 
 JDSP always applies its output limiter after Liveprog and postgain. The fixed comparison baseline is:
 
@@ -124,6 +135,7 @@ scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.4.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.5.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.6.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.7.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.8.eel
 ```
 
 Run coefficient and crossover response analysis:
@@ -173,6 +185,11 @@ scripts/analyze_jdsp_transfer.py \
 scripts/analyze_axiom_subharmonics.py \
   --json /tmp/axiom-subharmonics.json \
   --markdown /tmp/axiom-subharmonics.md
+
+scripts/analyze_axiom_subharmonics.py \
+  --reserve-above-slider-db 4 \
+  --json /tmp/axiom-v48-subharmonics.json \
+  --markdown /tmp/axiom-v48-subharmonics.md
 ```
 
 Load the earlier core, the accepted baseline, or the transparent-headroom candidate:
@@ -181,6 +198,7 @@ Load the earlier core, the accepted baseline, or the transparent-headroom candid
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.5.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.6.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.7.eel
+scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.8.eel
 ```
 
 ## Engineering Constraints

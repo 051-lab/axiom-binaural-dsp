@@ -21,6 +21,9 @@ case "$(basename "$script_path")" in
   axiom_binaural_dsp_v4.1.4.7.eel)
     default_preset_name="Axiom-v4.1.4.7-transparent-headroom"
     ;;
+  axiom_binaural_dsp_v4.1.4.8.eel)
+    default_preset_name="Axiom-v4.1.4.8-bass-aware-headroom"
+    ;;
   *)
     default_preset_name="Axiom-custom"
     ;;

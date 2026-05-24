@@ -12,16 +12,19 @@ failures=0
 if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.4.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ]; then
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ]; then
   host_limiter_only=true
 fi
 if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ]; then
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ]; then
   host_crossfeed_only=true
 fi
 if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ]; then
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ]; then
   phase_preserving_bass=true
 fi
 
@@ -235,6 +238,18 @@ if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ]; then
     fail "v4.1.4.7 terminal transparent headroom reserve is missing"
   else
     pass "terminal transparent headroom reserve is present"
+  fi
+fi
+
+if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ]; then
+  if ! grep -Fq 'headroomGain = exp(-1.0 * DB_2_LOG);' "$script_path" ||
+     ! grep -Fq 'defaultSubGainLin = exp(4.0 * DB_2_LOG);' "$script_path" ||
+     ! grep -Fq 'outputGain = (slider1 > 4.0) ? (headroomGain * defaultSubGainLin / subGainLin) : headroomGain;' "$script_path" ||
+     ! grep -Fq 'out_L *= outputGain;' "$script_path" ||
+     ! grep -Fq 'out_R *= outputGain;' "$script_path"; then
+    fail "v4.1.4.8 bass-aware terminal reserve is missing"
+  else
+    pass "bass-aware terminal reserve is present"
   fi
 fi
 

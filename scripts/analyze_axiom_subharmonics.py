@@ -107,13 +107,20 @@ def render_probe(
     slider_db: float,
     input_amplitude: float = 0.35,
     sample_rate: int = SAMPLE_RATE,
+    reserve_above_slider_db: float | None = None,
 ) -> dict:
     lowpass_1 = biquad("lowpass", 90.0, sample_rate)
     lowpass_2 = biquad("lowpass", 90.0, sample_rate)
     highpass_1 = biquad("highpass", 90.0, sample_rate)
     highpass_2 = biquad("highpass", 90.0, sample_rate)
     slider_gain = math.exp(slider_db * DB_2_LOG)
-    headroom_gain = math.exp(HEADROOM_DB * DB_2_LOG)
+    conditional_reserve_db = (
+        max(0.0, slider_db - reserve_above_slider_db)
+        if reserve_above_slider_db is not None
+        else 0.0
+    )
+    final_reserve_db = HEADROOM_DB - conditional_reserve_db
+    headroom_gain = math.exp(final_reserve_db * DB_2_LOG)
     warmup_frames = round(WARMUP_SECONDS * sample_rate)
     measurement_frames = round(MEASURE_SECONDS * sample_rate)
     dry: list[float] = []
@@ -140,6 +147,8 @@ def render_probe(
         "slider_db": slider_db,
         "input_amplitude": input_amplitude,
         "slider_linear_gain": slider_gain,
+        "conditional_bass_reserve_db": conditional_reserve_db,
+        "total_terminal_reserve_db": final_reserve_db,
         "dry_rms_dbfs": db(dry_rms),
         "injection_rms_dbfs": db(injection_rms),
         "injection_relative_to_dry_db": db(injection_rms / dry_rms),
@@ -154,9 +163,10 @@ def create_report(
     frequencies_hz: tuple[float, ...] = DEFAULT_FREQUENCIES_HZ,
     slider_db_values: tuple[float, ...] = DEFAULT_SLIDER_DB,
     input_amplitudes: tuple[float, ...] = DEFAULT_INPUT_AMPLITUDES,
+    reserve_above_slider_db: float | None = None,
 ) -> dict:
     probes = [
-        render_probe(frequency_hz, slider_db, input_amplitude)
+        render_probe(frequency_hz, slider_db, input_amplitude, reserve_above_slider_db=reserve_above_slider_db)
         for input_amplitude in input_amplitudes
         for frequency_hz in frequencies_hz
         for slider_db in slider_db_values
@@ -180,16 +190,21 @@ def create_report(
         key=lambda row: row["terminal_headroom_applied_peak_dbfs_before_downstream_processing"],
     )
     return {
-        "report_type": "axiom_v4_1_4_7_sub_harmonic_branch_characterization",
+        "report_type": (
+            "axiom_v4_1_4_8_bass_aware_headroom_candidate_characterization"
+            if reserve_above_slider_db is not None
+            else "axiom_v4_1_4_7_sub_harmonic_branch_characterization"
+        ),
         "scope": (
-            "Branch-local deterministic model of the v4.1.4.7 LP90 x2, soft saturation, "
-            "HP90 x2, slider gain, and terminal -1 dB reserve; exciter, STFT, host limiter, "
-            "and program-material interactions are not modeled."
+            "Branch-local deterministic model of the LP90 x2, soft saturation, HP90 x2, "
+            "slider gain, terminal -1 dB reserve, and optional bass-aware reserve; exciter, "
+            "STFT, host limiter, and program-material interactions are not modeled."
         ),
         "configuration": {
             "sample_rate_hz": SAMPLE_RATE,
             "drive": DRIVE,
             "terminal_headroom_db": HEADROOM_DB,
+            "reserve_above_slider_db": reserve_above_slider_db,
             "input_amplitudes": input_amplitudes,
             "frequencies_hz": frequencies_hz,
             "slider_db_values": slider_db_values,
@@ -205,7 +220,7 @@ def create_report(
 
 def markdown_report(report: dict) -> str:
     rows = [
-        "# Axiom v4.1.4.7 Sub Harmonics Characterization",
+        "# Axiom Sub Harmonics Characterization",
         "",
         report["scope"],
         "",
@@ -216,12 +231,13 @@ def markdown_report(report: dict) -> str:
         f"Slider gain-law check: `{'PASS' if report['checks']['gain_law_pass'] else 'FAIL'}` "
         f"(maximum error `{report['checks']['maximum_slider_gain_law_error_db']:.12f} dB`).",
         "",
-        "| Input peak | Tone (Hz) | Slider (dB) | Injection / dry (dB) | 3rd harmonic (dBFS) | 5th harmonic (dBFS) | Branch peak with -1 dB reserve (dBFS) |",
-        "| ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Input peak | Tone (Hz) | Slider (dB) | Added reserve (dB) | Injection / dry (dB) | 3rd harmonic (dBFS) | 5th harmonic (dBFS) | Branch peak after reserve (dBFS) |",
+        "| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for probe in report["probes"]:
         rows.append(
             f"| {probe['input_amplitude']:.2f} | {probe['frequency_hz']:.1f} | {probe['slider_db']:.1f} | "
+            f"{probe['conditional_bass_reserve_db']:.1f} | "
             f"{db_text(probe['injection_relative_to_dry_db'])} | "
             f"{db_text(probe['third_harmonic_dbfs'])} | "
             f"{db_text(probe['fifth_harmonic_dbfs'])} | "
@@ -258,12 +274,22 @@ def main() -> int:
     parser.add_argument("--frequencies-hz", type=parse_csv, default=DEFAULT_FREQUENCIES_HZ)
     parser.add_argument("--slider-db", type=parse_csv, default=DEFAULT_SLIDER_DB)
     parser.add_argument("--input-amplitudes", type=parse_csv, default=DEFAULT_INPUT_AMPLITUDES)
+    parser.add_argument(
+        "--reserve-above-slider-db",
+        type=float,
+        help="model matching output reserve for slider gain above this value",
+    )
     parser.add_argument("--json", dest="json_path", type=Path)
     parser.add_argument("--markdown", dest="markdown_path", type=Path)
     args = parser.parse_args()
     if any(not 0.0 < amplitude <= 1.0 for amplitude in args.input_amplitudes):
         parser.error("--input-amplitudes must contain values greater than zero and no greater than one")
-    report = create_report(args.frequencies_hz, args.slider_db, args.input_amplitudes)
+    report = create_report(
+        args.frequencies_hz,
+        args.slider_db,
+        args.input_amplitudes,
+        args.reserve_above_slider_db,
+    )
     if args.json_path:
         args.json_path.parent.mkdir(parents=True, exist_ok=True)
         args.json_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="ascii")

@@ -4,6 +4,23 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [4.1.4.8] - 2026-05-24 - Bass-Aware Headroom Candidate
+
+### Changed
+- Preserved the `v4.1.4.7` signal chain and exact default Sub Harmonics behavior.
+- Added conditional output reserve only when `Sub Harmonics Gain` is raised above its `+4 dB` default.
+- Extended sub-harmonics characterization to model the candidate's bass-aware reserve.
+
+### Rationale
+- Branch-local nonlinear analysis showed increasing headroom pressure for high bass-gain settings near the 90 Hz extraction boundary.
+- The candidate preserves the requested bass ratio and trades total output level for reduced limiter pressure rather than compressing or retuning the bass timbre.
+
+### Validation Status
+- Static EEL safety validation and deterministic analytical tests are required before device listening.
+- Real-JDSP WSL capture is currently unavailable for this candidate because the local JDSP PulseAudio build did not attach to the isolated native test endpoint; Android listening comparison remains required.
+
+---
+
 ## [Unreleased] - Measurement Qualification Expansion
 
 ### Added
