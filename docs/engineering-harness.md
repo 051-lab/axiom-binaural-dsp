@@ -79,6 +79,7 @@ Inside Pi, the primary commands are:
 | `/axiom-audit-baseline` | Run static/tooling gates on accepted `.8` without creating a new DSP file |
 | `/axiom-investigate <observation>` | Open a measurement-backed investigation |
 | `/axiom-hypothesis run-id \| hypothesis \| listening target` | Establish the reason and audible target before coding |
+| `/axiom-measure-limiter run-id` | Capture accepted `.8` across controlled JDSP limiter thresholds for an investigation |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -101,6 +102,13 @@ The real-JDSP qualification runner is guarded by a filesystem lock so two
 agents cannot capture through the host route simultaneously. It always uses
 the tracked host policy: master limiter enabled at `-1.00 dB`, `60 ms`
 release, `0 dB` postgain, and crossfeed disabled for qualification.
+
+For an investigation that questions terminal-limiter involvement before any
+candidate exists, `/axiom-measure-limiter` runs repeated same-`.8` captures of
+the flagged external electronic excerpt at `0`, `-1`, and `-3 dB` limiter
+thresholds. It reports repeatability plus peak, RMS, crest, and 20 ms envelope
+percentile shifts. A detected threshold effect is evidence of host limiter
+participation, not automatically evidence that Axiom's EEL must change.
 
 After listening acceptance, a release branch must contain:
 

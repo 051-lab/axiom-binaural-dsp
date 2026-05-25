@@ -22,6 +22,7 @@ import {
   renderSummary,
   repositoryRoot,
   runAutomatedValidation,
+  runBaselineLimiterSweep,
   setHypothesis,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -250,6 +251,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_measure_baseline_limiter",
+    label: "Measure Baseline Limiter",
+    description: "Run the serialized real-JDSP limiter-threshold sweep on accepted .8 for a hypothesis-bearing investigation without creating a candidate.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runBaselineLimiterSweep(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -279,6 +288,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-audit-baseline", {
     description: "Audit accepted .8 without creating a DSP candidate.",
     handler: async (_args, ctx) => ctx.ui.notify(renderSummary(auditBaseline()), "info"),
+  });
+  pi.registerCommand("axiom-measure-limiter", {
+    description: "Usage: /axiom-measure-limiter run-id; capture accepted .8 across host limiter thresholds.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runBaselineLimiterSweep(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",

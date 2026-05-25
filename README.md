@@ -133,6 +133,23 @@ scripts/analyze_axiom_subharmonics.py \
 
 This is a branch-local model of the `.7` bass generator and terminal reserve. To model the accepted `.8` baseline's additional reserve, pass `--reserve-above-slider-db 4`. It identifies settings that should be verified through real-host captures, but it does not model exciter, STFT, limiter, or music-program behavior.
 
+To investigate whether the accepted host limiter participates at `.8` default
+controls without creating a new DSP candidate, run a repeated same-script
+limiter-threshold sweep against the registered local-material manifest:
+
+```bash
+scripts/run_jdsp_limiter_sweep.py \
+  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  /absolute/path/to/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v48-limiter-sweep
+```
+
+By default this targets the high-energy electronic excerpt and compares `0`,
+`-1`, and `-3 dB` JDSP limiter thresholds with five renders each. It reports
+repeatability and threshold-correlated peak, RMS, crest, and short-window
+envelope shifts; the report identifies host-limiter behavior, not an EEL
+regression by itself.
+
 ### Controlled Pi Engineering Harness
 
 The project includes a local-first Pi harness for disciplined future Axiom
@@ -186,6 +203,7 @@ axiom-binaural-dsp/
     qualify_jdsp_repeatability.py     # Repeated-capture qualification
     analyze_jdsp_transfer.py          # Stimulus-conditioned host-path matrix analysis
     analyze_axiom_subharmonics.py     # Sub Harmonics Gain branch characterization
+    run_jdsp_limiter_sweep.py         # Same-script host-limiter participation probe
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -195,6 +213,7 @@ axiom-binaural-dsp/
     test_run_jdsp_program_corpus.py
     test_run_jdsp_local_material.py
     test_run_jdsp_wsl_qualification.py
+    test_run_jdsp_limiter_sweep.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Accepted-baseline evidence and reproduction record

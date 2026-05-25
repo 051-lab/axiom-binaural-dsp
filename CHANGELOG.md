@@ -43,6 +43,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added a project-owned Pi engineering harness with immutable-baseline checks,
   external candidate worktrees, restricted specialist consultations, serialized
   real-JDSP qualification, and explicit listening/publication/merge gates.
+- Added a same-script JDSP limiter-threshold sweep that evaluates default `.8`
+  limiter participation with repeated external-material captures before any
+  new EEL candidate is justified.
 
 ### Measurement Boundary
 - Captures occur after JDSP host processing and therefore do not prove an Axiom-only transfer function.

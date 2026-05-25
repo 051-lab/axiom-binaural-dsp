@@ -12,6 +12,7 @@ import {
   readRun,
   recordListening,
   runAutomatedValidation,
+  runBaselineLimiterSweep,
   writeRun,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -125,4 +126,12 @@ test("post-listening evidence edits preserve acceptance while DSP edits remain b
   const updated = writeScopedFile(run.id, "docs/qualification-v4.1.4.9.md", "documentation", "accepted evidence\n", fx.config, fx.policy);
   assert.equal(updated.status, "listening_accepted");
   assert.throws(() => writeScopedFile(run.id, run.candidate.path, "candidate-eel", "changed after acceptance\n", fx.config, fx.policy), /active unpublished candidate/);
+});
+
+test("baseline limiter measurement is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Measure default limiter behavior", fx.config, fx.policy);
+  assert.throws(() => runBaselineLimiterSweep(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runBaselineLimiterSweep(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });
