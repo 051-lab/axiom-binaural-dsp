@@ -172,8 +172,13 @@ export default function (pi: ExtensionAPI) {
     parameters: Type.Object({ query: Type.String(), glob: Type.Optional(Type.String()) }),
     async execute(_id, params) {
       const args = ["grep", "-n"];
-      if (params.glob) args.push(`--glob=${params.glob}`);
       args.push("-e", params.query, "--");
+      if (params.glob) {
+        if (params.glob.startsWith("-") || path.isAbsolute(params.glob) || params.glob.includes("..")) {
+          throw new Error("Search pathspec must remain inside the tracked Axiom repository.");
+        }
+        args.push(params.glob);
+      }
       try {
         const output = execFileSync("git", args, { cwd: repositoryRoot, encoding: "utf8", timeout: 10000 });
         return text(output.slice(0, 30000));
