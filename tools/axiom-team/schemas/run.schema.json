@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Axiom Engineering Harness Run Artifact",
+  "type": "object",
+  "required": ["schemaVersion", "id", "status", "createdAt", "baseline", "gates", "approvals"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "id": { "type": "string" },
+    "status": {
+      "enum": ["investigating", "baseline_verified", "candidate_created", "implementing", "automated_validation", "failed", "pass_with_investigation", "ready_for_listening", "listening_rejected", "listening_accepted", "publication_approved", "pull_request_open", "merge_approved", "baseline_merged", "blocked"]
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" },
+    "baseline": { "type": "object" },
+    "candidate": { "type": ["object", "null"] },
+    "gates": { "type": "array" },
+    "approvals": { "type": "object" }
+  }
+}

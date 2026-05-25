@@ -1,0 +1,9 @@
+{
+  "repositoryRoot": "/home/soloarch/dsp-dev/axiom-binaural-dsp",
+  "stateRoot": "/home/soloarch/.local/state/axiom-engineering",
+  "worktreeRoot": "/home/soloarch/.local/state/axiom-engineering/worktrees",
+  "routeHelper": "/home/soloarch/.local/bin/jdsp-audio-reset",
+  "pulseServer": "unix:/tmp/jdsp-win/native",
+  "localMaterialManifest": "/home/soloarch/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json",
+  "githubRepository": "051-lab/axiom-binaural-dsp"
+}

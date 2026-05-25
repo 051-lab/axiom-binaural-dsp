@@ -68,6 +68,8 @@ spl1 = out_R;
 4. `presets/axiom-preset.conf` is a full JDSP `audio.conf`-style key/value template, not a slider JSON document.
 5. Do not commit captured audio, third-party music, local manifests, or generated test reports. Keep those under `/tmp` or a local data directory.
 6. Update `CHANGELOG.md` and relevant documentation with behavioral or qualification changes.
+7. For coordinated Pi experimentation, use `scripts/axiom_team.sh`; its state,
+   captures, worktrees, and local-material manifest remain outside this repository.
 
 ## Validation Workflow
 
@@ -99,6 +101,7 @@ assume the intended host configuration is already active.
 | `docs/architecture.md` | Active DSP architecture and host ownership |
 | `docs/qualification-v4.1.4.8.md` | Accepted `.8` evidence and reproduction record |
 | `docs/JDSP4Linux_Knowledge_Base.md` | EEL2/JDSP runtime and preset reference |
+| `docs/engineering-harness.md` | Controlled Pi workflow, gates, and local-state policy |
 | `CHANGELOG.md` | Version history and decision record |
 
 *Last updated: v4.1.4.8 accepted baseline - 2026-05-25*

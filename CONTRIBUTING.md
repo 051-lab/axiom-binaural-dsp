@@ -65,6 +65,15 @@ Use locally controlled or freely licensed material only through manifests kept
 outside this repository. Device listening remains the acceptance step after the
 measurement suite clears integrity and headroom regressions.
 
+## Pi Engineering Harness
+
+Use `scripts/axiom_team.sh` for agent-coordinated DSP experiments. The harness
+creates versioned candidates in external worktrees and permits local commits
+only after the real-host qualification gate permits evaluation. It never
+replaces device listening acceptance, and push and merge each require a
+separate user confirmation. Its full operating policy is documented in
+`docs/engineering-harness.md`.
+
 ## Commit Format
 
 Use Conventional Commits:

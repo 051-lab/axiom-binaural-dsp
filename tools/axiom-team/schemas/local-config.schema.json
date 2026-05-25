@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Axiom Engineering Harness Local Configuration",
+  "type": "object",
+  "required": ["repositoryRoot", "stateRoot", "worktreeRoot", "routeHelper", "pulseServer", "localMaterialManifest"],
+  "properties": {
+    "repositoryRoot": { "type": "string" },
+    "stateRoot": { "type": "string" },
+    "worktreeRoot": { "type": "string" },
+    "routeHelper": { "type": "string" },
+    "pulseServer": { "type": "string" },
+    "localMaterialManifest": { "type": "string" },
+    "githubRepository": { "type": "string" }
+  },
+  "additionalProperties": false
+}

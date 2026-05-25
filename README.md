@@ -133,6 +133,24 @@ scripts/analyze_axiom_subharmonics.py \
 
 This is a branch-local model of the `.7` bass generator and terminal reserve. To model the accepted `.8` baseline's additional reserve, pass `--reserve-above-slider-db 4`. It identifies settings that should be verified through real-host captures, but it does not model exciter, STFT, limiter, or music-program behavior.
 
+### Controlled Pi Engineering Harness
+
+The project includes a local-first Pi harness for disciplined future Axiom
+experiments. It isolates the session from globally installed agent extensions,
+protects the accepted `.8` file by hash and path, creates candidates in
+external worktrees, serializes real-JDSP capture runs, and requires separate
+human confirmations for listening acceptance, publication, and merge.
+
+```bash
+node tools/axiom-team/bin/axiom-team.mjs init
+node tools/axiom-team/bin/axiom-team.mjs doctor
+scripts/axiom_team.sh
+```
+
+Reports, captures, candidate worktrees, and locally registered audio material
+remain outside git. See [docs/engineering-harness.md](docs/engineering-harness.md)
+for commands and acceptance policy.
+
 ## Quick Start: Default Slider Settings
 
 | Slider | Parameter | Default | Range |
@@ -153,6 +171,7 @@ axiom-binaural-dsp/
     axiom_binaural_dsp_v4.1.4.7.eel  # Transparent-headroom comparison reference
     axiom_binaural_dsp_v4.1.4.8.eel  # Accepted bass-aware headroom baseline
   scripts/
+    axiom_team.sh                     # Isolated Pi engineering-harness launcher
     hot_reload_liveprog.sh            # JDSP A/B preset loader
     analyze_axiom_crossfeed.py        # Crossfeed transfer audit
     analyze_axiom_bass_path.py        # Removed dry-phase reconstruction audit
@@ -179,6 +198,11 @@ axiom-binaural-dsp/
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Accepted-baseline evidence and reproduction record
+    engineering-harness.md    # Controlled Pi candidate and release workflow
+  tools/axiom-team/
+    extensions/index.ts       # Restricted Pi tools and approval commands
+    policy.json               # Immutable baseline and host-policy anchor
+    lib/core.mjs              # State machine and gated local automation
   presets/
     axiom-preset.conf         # JDSP accepted-baseline configuration template
   README.md
@@ -213,6 +237,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
 | [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
 | [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Accepted `.8` verification record |
+| [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents
 

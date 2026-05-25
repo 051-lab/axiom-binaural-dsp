@@ -40,6 +40,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   optional private-material manifest runner, and a managed WSL qualification
   runner that restores the prior audio route and limiter setting.
 - Added deterministic unit tests for repeatability, clipping/silence rejection, retained known-timeline delay, and `M->S` / `S->M` leakage visibility.
+- Added a project-owned Pi engineering harness with immutable-baseline checks,
+  external candidate worktrees, restricted specialist consultations, serialized
+  real-JDSP qualification, and explicit listening/publication/merge gates.
 
 ### Measurement Boundary
 - Captures occur after JDSP host processing and therefore do not prove an Axiom-only transfer function.
