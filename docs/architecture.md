@@ -146,6 +146,35 @@ scripts/run_jdsp_ab_testbench.py \
 
 The suite exercises impulse, bass transient, sweep, correlated mono, and side-only inputs. `render_jdsp_host.py` targets an explicit Pulse server, captures only a private temporary sink fed by JDSP's processed-output stream, and restores all host keys it temporarily normalizes. The orchestrator rejects silent reference or candidate captures instead of accepting a broken routing run as analysis. Liveprog reloads still reinitialize internal DSP history, so execute the suite in a dedicated development JDSP session. Continuous probes are suitable for output/gain comparisons; the impulse probe is retained primarily for transient, mute, and corruption checks because separately scheduled live captures can vary in alignment. Generated captures and reports belong outside the repository, such as under `/tmp`.
 
+Qualify measurement repeatability before relying on fine differences. `scripts/qualify_jdsp_repeatability.py` accepts three or more captures of one script/stimulus/configuration and recommends five for decision-grade reports. It rejects invalid stereo PCM, frame mismatch, silence, clipping, caller-excessive level spread, and low-confidence alignment. Its optional jitter value is relative content-alignment spread only; it is not an absolute latency measurement. Variance and confidence limits must be supplied by the caller until repeated host measurements provide a defensible tolerance policy.
+
+Use `scripts/analyze_jdsp_transfer.py` only with low-level deterministic stimuli and processed-output WAVs. Since capture occurs after JDSP host processing, its result is a stimulus-conditioned `end_to_end_host_path` measurement, not an Axiom-only transfer function. A report is unqualified when processed output is silent, clipped, or above the default `-6.0 dBFS` ceiling intended to avoid terminal-limiter involvement.
+
+The transfer report retains timing against the known stimulus playback timeline without correlation alignment. When `--capture-pre-roll-ms` is supplied, it represents a known intentional lead-in in that timeline, not measured host latency. A pure mono probe identifies `M->M` and `M->S`; a pure side-only probe identifies `S->M` and `S->S`. General stereo material energizes both input components and cannot identify an individual transfer-matrix column from a single render, so those matrix values are deliberately invalidated.
+
+`scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
+
+Example offline qualification commands:
+
+```bash
+scripts/qualify_jdsp_repeatability.py \
+  /tmp/axiom-repeat/run-1.wav /tmp/axiom-repeat/run-2.wav /tmp/axiom-repeat/run-3.wav \
+  /tmp/axiom-repeat/run-4.wav /tmp/axiom-repeat/run-5.wav \
+  --max-peak-spread-db 0.10 --max-rms-spread-db 0.10 --min-correlation 0.999 \
+  --json /tmp/axiom-repeat/repeatability.json \
+  --markdown /tmp/axiom-repeat/repeatability.md
+
+scripts/analyze_jdsp_transfer.py \
+  /tmp/axiom-transfer/stimulus.wav /tmp/axiom-transfer/processed.wav \
+  --label v4.1.4.7-mono-probe \
+  --json /tmp/axiom-transfer/transfer.json \
+  --markdown /tmp/axiom-transfer/transfer.md
+
+scripts/analyze_axiom_subharmonics.py \
+  --json /tmp/axiom-subharmonics.json \
+  --markdown /tmp/axiom-subharmonics.md
+```
+
 Load the earlier core, the accepted baseline, or the transparent-headroom candidate:
 
 ```bash

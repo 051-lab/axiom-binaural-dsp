@@ -4,6 +4,20 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [Unreleased] - Measurement Qualification Expansion
+
+### Added
+- Added an offline repeated-capture qualifier that rejects invalid, muted, clipped, unstable, or low-confidence real-host measurements before fine A/B interpretation.
+- Added a stimulus-conditioned end-to-end host-path analyzer with low-level output qualification and identifiable mid/side transfer-matrix reporting.
+- Added branch-local nonlinear characterization for the user-adjustable `Sub Harmonics Gain` path across bass tone levels and slider values.
+- Added deterministic unit tests for repeatability, clipping/silence rejection, retained known-timeline delay, and `M->S` / `S->M` leakage visibility.
+
+### Measurement Boundary
+- Captures occur after JDSP host processing and therefore do not prove an Axiom-only transfer function.
+- Transfer measurements are qualified only below the default `-6.0 dBFS` processed-output ceiling and do not infer absolute host latency from caller-supplied pre-roll.
+
+---
+
 ## [4.1.4.7] - 2026-05-24 - Transparent Headroom Candidate
 
 ### Changed
