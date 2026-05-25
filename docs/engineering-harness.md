@@ -50,6 +50,10 @@ specialist consultation, candidate creation, scoped candidate edits, validation,
 and qualified local commits. Publication and merge are interactive commands
 with separate confirmations.
 
+Coordinator project reads and searches are restricted to tracked repository
+content. The only untracked worktree content it may read directly is the
+recorded versioned candidate EEL file.
+
 ## Setup
 
 Initialize the local configuration and inspect prerequisites:

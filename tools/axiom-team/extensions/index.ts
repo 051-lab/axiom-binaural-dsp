@@ -57,6 +57,12 @@ function withinRepository(relativePath: string) {
   return filename;
 }
 
+function trackedRepositoryFile(relativePath: string) {
+  const filename = withinRepository(relativePath);
+  execFileSync("git", ["ls-files", "--error-unmatch", "--", relativePath], { cwd: repositoryRoot, encoding: "utf8", timeout: 10000 });
+  return filename;
+}
+
 function statusText() {
   const runs = listRuns();
   return runs.length ? runs.slice(0, 8).map(renderSummary).join("\n\n") : "No Axiom harness runs recorded.";
@@ -136,10 +142,25 @@ export default function (pi: ExtensionAPI) {
   pi.registerTool({
     name: "axiom_read_project_file",
     label: "Read Axiom File",
-    description: "Read a text file from the Axiom repository only.",
-    parameters: Type.Object({ path: Type.String({ description: "Repository-relative text file path" }) }),
+    description: "Read a tracked text file from the Axiom repository only.",
+    parameters: Type.Object({ path: Type.String({ description: "Tracked repository-relative text file path" }) }),
     async execute(_id, params) {
-      const filename = withinRepository(params.path);
+      const filename = trackedRepositoryFile(params.path);
+      return text(fs.readFileSync(filename, "utf8"));
+    },
+  });
+
+  pi.registerTool({
+    name: "axiom_read_candidate_file",
+    label: "Read Candidate File",
+    description: "Read the controlled versioned EEL candidate in a recorded external worktree.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) {
+      const run = readRun(params.runId);
+      if (!run.candidate?.path || !run.candidate?.worktree) throw new Error("Run has no candidate worktree.");
+      const worktree = path.resolve(run.candidate.worktree);
+      const filename = path.resolve(worktree, run.candidate.path);
+      if (!filename.startsWith(worktree + path.sep)) throw new Error("Candidate path escapes its worktree.");
       return text(fs.readFileSync(filename, "utf8"));
     },
   });
@@ -147,13 +168,14 @@ export default function (pi: ExtensionAPI) {
   pi.registerTool({
     name: "axiom_search_project",
     label: "Search Axiom",
-    description: "Search Axiom repository text using ripgrep without mutation.",
+    description: "Search tracked Axiom repository text without mutation.",
     parameters: Type.Object({ query: Type.String(), glob: Type.Optional(Type.String()) }),
     async execute(_id, params) {
-      const args = ["--line-number", "--no-heading", params.query];
-      if (params.glob) args.unshift("--glob", params.glob);
+      const args = ["grep", "-n"];
+      if (params.glob) args.push(`--glob=${params.glob}`);
+      args.push("-e", params.query, "--");
       try {
-        const output = execFileSync("rg", args, { cwd: repositoryRoot, encoding: "utf8", timeout: 10000 });
+        const output = execFileSync("git", args, { cwd: repositoryRoot, encoding: "utf8", timeout: 10000 });
         return text(output.slice(0, 30000));
       } catch (error: any) {
         if (error.status === 1) return text("No matches.");
