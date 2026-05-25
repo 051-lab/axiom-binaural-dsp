@@ -11,7 +11,14 @@ import subprocess
 import sys
 
 
-STIMULUS_NAMES = ("impulse", "bass_burst", "sweep", "correlated_mono", "side_only")
+STIMULUS_NAMES = (
+    "impulse",
+    "bass_burst",
+    "bass_pressure_90hz",
+    "sweep",
+    "correlated_mono",
+    "side_only",
+)
 
 
 class TestbenchError(RuntimeError):
@@ -42,6 +49,7 @@ def main() -> int:
     parser.add_argument("candidate_eel", type=pathlib.Path)
     parser.add_argument("output_dir", type=pathlib.Path)
     parser.add_argument("--pulse-server", required=True)
+    parser.add_argument("--master-limiter-threshold-db", type=float, default=-1.0)
     parser.add_argument("--sample-rate", type=int, default=48000)
     parser.add_argument("--duration", type=float, default=2.0)
     parser.add_argument("--pre-roll-ms", type=int, default=500)
@@ -106,6 +114,8 @@ def main() -> int:
                     str(args.pre_roll_ms),
                     "--tail-ms",
                     str(args.tail_ms),
+                    "--master-limiter-threshold-db",
+                    str(args.master_limiter_threshold_db),
                 ],
                 f"{name} {label} host render",
             )
@@ -134,6 +144,7 @@ def main() -> int:
         "baseline_eel": str(baseline),
         "candidate_eel": str(candidate),
         "pulse_server": args.pulse_server,
+        "master_limiter_threshold_db": args.master_limiter_threshold_db,
         "sample_rate_hz": args.sample_rate,
         "max_lag_ms": args.max_lag_ms,
         "stimuli": reports,

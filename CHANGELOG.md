@@ -4,12 +4,41 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [4.1.4.8] - 2026-05-24 - Accepted Bass-Aware Headroom Baseline
+
+### Changed
+- Preserved the `v4.1.4.7` signal chain and exact default Sub Harmonics behavior.
+- Added conditional output reserve only when `Sub Harmonics Gain` is raised above its `+4 dB` default.
+- Extended sub-harmonics characterization to model the baseline's bass-aware reserve.
+- Established JDSP master processing at `-1.00 dB` limiter threshold, `60 ms`
+  release, and `0 dB` postgain as the accepted host-owned terminal stage.
+
+### Rationale
+- Branch-local nonlinear analysis showed increasing headroom pressure for high bass-gain settings near the 90 Hz extraction boundary.
+- The baseline preserves the requested bass ratio and trades total output level for reduced limiter pressure rather than compressing or retuning the bass timbre.
+
+### Validation
+- Passed the managed real-JDSP WSL qualification at a persistent `-1.00 dB`
+  terminal-limiter threshold: default transparency, elevated-bass reserve,
+  maximum-boundary margin, and generated program-corpus checks passed.
+- Checked four externally stored CC0 high-energy music excerpts through the
+  real host path with zero clipped candidate samples. The densest electronic
+  excerpt reached `-0.474 dBFS` and remains documented as terminal-limiter
+  involvement rather than concealed by further script attenuation.
+- Accepted after device listening confirmed the `.8` result across multiple
+  songs without an audible issue.
+
+---
+
 ## [Unreleased] - Measurement Qualification Expansion
 
 ### Added
 - Added an offline repeated-capture qualifier that rejects invalid, muted, clipped, unstable, or low-confidence real-host measurements before fine A/B interpretation.
 - Added a stimulus-conditioned end-to-end host-path analyzer with low-level output qualification and identifiable mid/side transfer-matrix reporting.
 - Added branch-local nonlinear characterization for the user-adjustable `Sub Harmonics Gain` path across bass tone levels and slider values.
+- Added a sustained `90 Hz` pressure probe, deterministic program-like corpus,
+  optional private-material manifest runner, and a managed WSL qualification
+  runner that restores the prior audio route and limiter setting.
 - Added deterministic unit tests for repeatability, clipping/silence rejection, retained known-timeline delay, and `M->S` / `S->M` leakage visibility.
 
 ### Measurement Boundary
@@ -125,13 +154,10 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
-## Upcoming: v4.0 Roadmap
+## Future Work Policy
 
-1. **STFT Integration** - Linear-phase EQ and surgical frequency processing
-2. **Polyphase Filterbank** - Efficient multi-band parallel processing
-3. **Fractional Delay Lines** - Lagrange/Thiran interpolation for sub-sample accuracy
-4. **Real-Time Spectrum Analyzer** - Visual frequency feedback via EEL2 GFX
-5. **Preset Memory Slots** - Internal configuration storage (8 slots)
-6. **Mid-Side EQ** - Independent frequency shaping per M/S channel
-7. **Oversampling** - 2x/4x oversampling for saturation stages
-8. **HRTF Convolution** - Head-related transfer function for personalized binaural
+The accepted `.8` chain is optimized before introducing additional DSP stages.
+Any new audio behavior must be proposed against measurement evidence and device
+listening. `FractionalDelayLineInit`, `pfb_init`, and
+`InitPolyphaseFilterbank` remain excluded because they are not safe for the
+target JDSP host.

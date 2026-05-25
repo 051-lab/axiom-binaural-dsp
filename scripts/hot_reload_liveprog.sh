@@ -21,6 +21,9 @@ case "$(basename "$script_path")" in
   axiom_binaural_dsp_v4.1.4.7.eel)
     default_preset_name="Axiom-v4.1.4.7-transparent-headroom"
     ;;
+  axiom_binaural_dsp_v4.1.4.8.eel)
+    default_preset_name="Axiom-v4.1.4.8-accepted"
+    ;;
   *)
     default_preset_name="Axiom-custom"
     ;;
@@ -82,6 +85,7 @@ mkdir -p "$(dirname "$liveprog_link")"
 ln -sf "$script_path" "$liveprog_link"
 
 for setting in \
+  'master_enable true' \
   'tube_enable false' \
   'compander_enable false' \
   'bass_enable false' \
@@ -91,7 +95,7 @@ for setting in \
   'ddc_enable false' \
   'stereowide_enable false' \
   'reverb_enable false' \
-  'master_limthreshold 0' \
+  'master_limthreshold -1.0' \
   'master_limrelease 60' \
   'master_postgain 0'; do
   set_config "${setting%% *}" "${setting#* }"

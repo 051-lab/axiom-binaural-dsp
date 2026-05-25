@@ -1,12 +1,12 @@
 # Axiom Binaural DSP
 
-[![Version](https://img.shields.io/badge/version-v4.1.4.7-blue.svg)](https://github.com/051-lab/axiom-binaural-dsp/releases)
+[![Version](https://img.shields.io/badge/version-v4.1.4.8-blue.svg)](https://github.com/051-lab/axiom-binaural-dsp/releases)
 [![Platform](https://img.shields.io/badge/platform-JamesDSP-green.svg)](https://github.com/james34602/JamesDSPManager)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 **Phase-coherent mastering-grade binaural processing for JamesDSP**
 
-Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.6` is the accepted listening baseline after removing an unnecessary phase-rotating dry reconstruction from the bass harmonic stage. `v4.1.4.7` is the current candidate, adding transparent output reserve to reduce avoidable host-limiter activity.
+Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.8` is the accepted listening baseline: it preserves the transparent default behavior established in `.7` and adds bass-aware output reserve when Sub Harmonics Gain is raised above its `+4 dB` default.
 
 ## Features
 
@@ -34,20 +34,23 @@ Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1
 ### Host-Owned Output Stages
 - Crossfeed is not part of the Axiom script; enable JamesDSP crossfeed manually when wanted
 - `v4.1.4.7` adds a fixed `-1.0 dB` transparent output reserve before the host stage
-- JDSP supplies the terminal limiter at approximately `-0.1 dB`, `60 ms` release, `0 dB` postgain
+- `v4.1.4.8` retains the `.7` reserve and adds matching output reserve only for Sub Harmonics gain above `+4 dB`
+- JDSP supplies the terminal limiter; the qualified Axiom baseline now uses `-1.00 dB`, `60 ms` release, `0 dB` postgain
 
 ## Installation
 
 ### JamesDSP Android
-1. Copy `src/axiom_binaural_dsp_v4.1.4.7.eel` to your JamesDSP liveprog directory
-2. Open JamesDSP -> Liveprog -> Load script -> select `axiom_binaural_dsp_v4.1.4.7.eel`
+1. Copy `src/axiom_binaural_dsp_v4.1.4.8.eel` to your JamesDSP liveprog directory
+2. Open JamesDSP -> Liveprog -> Load script -> select `axiom_binaural_dsp_v4.1.4.8.eel`
 3. Enable the Liveprog engine
-4. Set output limiter threshold near `-0.10 dB`, release `60 ms`, and postgain `0.00 dB`
+4. Set output limiter threshold to `-1.00 dB`, release `60 ms`, and postgain `0.00 dB`
 5. For headphones only, enable JamesDSP crossfeed manually if desired
 
 ### JamesDSP Linux
-1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.7.eel`.
-2. The script loads Liveprog with crossfeed disabled and saves `Axiom-v4.1.4.7-transparent-headroom`.
+1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.8.eel`.
+2. The script loads Liveprog with crossfeed disabled, the qualified host limiter settings, and saves `Axiom-v4.1.4.8-accepted`.
+
+`presets/axiom-preset.conf` records the neutral accepted-baseline host configuration as a JDSP `audio.conf`-style template. Update its `liveprog_file` path before loading it directly; the hot-reload script writes the active absolute path automatically.
 
 ### Real-Host A/B Testbench
 
@@ -55,13 +58,43 @@ For development comparisons, run both scripts through the actual JDSP Liveprog e
 
 ```bash
 scripts/run_jdsp_ab_testbench.py \
-  src/axiom_binaural_dsp_v4.1.4.6.eel \
   src/axiom_binaural_dsp_v4.1.4.7.eel \
-  /tmp/axiom-v46-v47-host-suite \
+  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  /tmp/axiom-v47-v48-host-suite \
   --pulse-server unix:/run/user/1000/pulse/native
 ```
 
-The testbench generates deterministic probes, routes only JDSP's processed output into a private temporary capture sink, rejects silent captures, and produces WAV, JSON, and Markdown comparisons. Each render snapshots and restores the loaded Liveprog file and every neutral-host setting it changes. Loading a script necessarily reinitializes its internal DSP history, so run this in a dedicated development JDSP session rather than during normal listening. The specified Pulse server must be the server used by the running JDSP process.
+The testbench generates deterministic probes, including a sustained `90 Hz` bass-pressure input that exposes default-setting terminal-limiter pressure, routes only JDSP's processed output into a private temporary capture sink, rejects silent captures, and produces WAV, JSON, and Markdown comparisons. Each render snapshots and restores the loaded Liveprog file and every neutral-host setting it changes. Loading a script necessarily reinitializes its internal DSP history, so run this in a dedicated development JDSP session rather than during normal listening. The specified Pulse server must be the server used by the running JDSP process.
+
+On this WSL development workstation, run the managed qualification workflow to set up the capture route, exercise the default and elevated Sub Harmonics cases, and restore ordinary PipeWire-Pulse audio afterward:
+
+```bash
+scripts/run_jdsp_wsl_qualification.py \
+  src/axiom_binaural_dsp_v4.1.4.7.eel \
+  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  /tmp/axiom-v47-v48-wsl-qualification
+```
+
+This command expects the local route launcher at `~/.local/bin/jdsp-audio-reset`, which provides a native PulseAudio `JamesDSP` sink backed by the Windows output route. It sets the qualified host limiter threshold to `-1.00 dB` once for the managed test session, restores the preceding setting afterward, and creates temporary `+8 dB` and `+12 dB` slider fixtures in its output directory without modifying source EEL files. It also renders an original deterministic three-passage, bass-heavy program-like corpus at default controls; these are engineering stimuli, not commercial music excerpts. At default controls, any pressure or corpus capture above `-0.50 dBFS` is reported as `PASS_WITH_INVESTIGATION`: it records probable terminal-limiter involvement rather than asserting an EEL regression. Use `--skip-route-start` only when an equivalent JamesDSP route is already active, and `--keep-route-running` only when the dedicated test audio session should remain active.
+
+To include private excerpts from locally owned audio, create a manifest outside the repository, for example `/tmp/axiom-local-material.json`:
+
+```json
+{
+  "tracks": [
+    {
+      "label": "bass-heavy excerpt 1",
+      "path": "/absolute/path/to/local-track.flac",
+      "start_seconds": 30.0,
+      "duration_seconds": 20.0
+    }
+  ]
+}
+```
+
+Then add `--local-material-manifest /tmp/axiom-local-material.json` to `run_jdsp_wsl_qualification.py`. The runner decodes only the selected excerpt windows to temporary analysis WAVs without gain normalization, and does not copy source audio or manifest paths into the repository.
+
+The accepted `.8` baseline was additionally checked with four CC0 high-energy music excerpts outside the repository. With a persistent JDSP limiter threshold of `-1.00 dB`, all four candidate captures remained unclipped; dense electronic material remained close enough to the ceiling to be recorded as limiter involvement rather than hidden by further EEL attenuation.
 
 ### Measurement Qualification
 
@@ -98,7 +131,7 @@ scripts/analyze_axiom_subharmonics.py \
   --markdown /tmp/axiom-subharmonics.md
 ```
 
-This is a branch-local model of the `.7` bass generator and terminal reserve. It identifies settings that should be verified through real-host captures, but it does not model exciter, STFT, limiter, or music-program behavior.
+This is a branch-local model of the `.7` bass generator and terminal reserve. To model the accepted `.8` baseline's additional reserve, pass `--reserve-above-slider-db 4`. It identifies settings that should be verified through real-host captures, but it does not model exciter, STFT, limiter, or music-program behavior.
 
 ## Quick Start: Default Slider Settings
 
@@ -116,16 +149,21 @@ This is a branch-local model of the `.7` bass generator and terminal reserve. It
 ```
 axiom-binaural-dsp/
   src/
-    axiom_binaural_dsp_v4.1.4.6.eel  # Accepted phase-preserving bass baseline
-    axiom_binaural_dsp_v4.1.4.7.eel  # Current transparent-headroom candidate
+    axiom_binaural_dsp_v4.1.4.6.eel  # Phase-preserving bass predecessor
+    axiom_binaural_dsp_v4.1.4.7.eel  # Transparent-headroom comparison reference
+    axiom_binaural_dsp_v4.1.4.8.eel  # Accepted bass-aware headroom baseline
   scripts/
     hot_reload_liveprog.sh            # JDSP A/B preset loader
     analyze_axiom_crossfeed.py        # Crossfeed transfer audit
     analyze_axiom_bass_path.py        # Removed dry-phase reconstruction audit
     generate_jdsp_stimuli.py          # Deterministic stereo capture probes
+    generate_axiom_program_corpus.py  # Original deterministic bass-heavy passages
     render_jdsp_host.py               # Isolated real-JDSP WAV renderer
     compare_jdsp_captures.py          # Capture metrics and difference reports
     run_jdsp_ab_testbench.py          # End-to-end host A/B suite
+    run_jdsp_program_corpus.py        # Default-control corpus margin report
+    run_jdsp_local_material.py        # Private local-excerpt margin report
+    run_jdsp_wsl_qualification.py     # Managed WSL route and bass-headroom qualification
     qualify_jdsp_repeatability.py     # Repeated-capture qualification
     analyze_jdsp_transfer.py          # Stimulus-conditioned host-path matrix analysis
     analyze_axiom_subharmonics.py     # Sub Harmonics Gain branch characterization
@@ -133,8 +171,16 @@ axiom-binaural-dsp/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
     test_analyze_axiom_subharmonics.py
+    test_generate_axiom_program_corpus.py
+    test_generate_jdsp_stimuli.py
+    test_run_jdsp_program_corpus.py
+    test_run_jdsp_local_material.py
+    test_run_jdsp_wsl_qualification.py
   docs/
     architecture.md           # Technical architecture documentation
+    qualification-v4.1.4.8.md # Accepted-baseline evidence and reproduction record
+  presets/
+    axiom-preset.conf         # JDSP accepted-baseline configuration template
   README.md
   CHANGELOG.md
 ```
@@ -165,7 +211,8 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | GitHub Copilot workspace context (auto-loaded) |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Commit conventions, code standards, testing checklist |
 | [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
-| [`docs/architecture.md`](docs/architecture.md) | 5-layer signal chain documentation |
+| [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
+| [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Accepted `.8` verification record |
 
 ### Quick Reference for AI Agents
 

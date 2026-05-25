@@ -26,6 +26,27 @@ class SubHarmonicsAnalyzerTests(unittest.TestCase):
         )
         self.assertAlmostEqual(delta, 1.0, places=9)
 
+    def test_bass_aware_reserve_is_inactive_at_accepted_default(self) -> None:
+        baseline = analyzer.render_probe(70.0, 4.0)
+        candidate = analyzer.render_probe(70.0, 4.0, reserve_above_slider_db=4.0)
+        self.assertEqual(candidate["conditional_bass_reserve_db"], 0.0)
+        self.assertAlmostEqual(
+            candidate["terminal_headroom_applied_peak_dbfs_before_downstream_processing"],
+            baseline["terminal_headroom_applied_peak_dbfs_before_downstream_processing"],
+            places=12,
+        )
+
+    def test_bass_aware_reserve_offsets_boost_above_default(self) -> None:
+        baseline = analyzer.render_probe(90.0, 12.0, 0.65)
+        candidate = analyzer.render_probe(90.0, 12.0, 0.65, reserve_above_slider_db=4.0)
+        self.assertEqual(candidate["conditional_bass_reserve_db"], 8.0)
+        improvement = (
+            baseline["terminal_headroom_applied_peak_dbfs_before_downstream_processing"]
+            - candidate["terminal_headroom_applied_peak_dbfs_before_downstream_processing"]
+        )
+        self.assertAlmostEqual(improvement, 8.0, places=9)
+        self.assertLess(candidate["terminal_headroom_applied_peak_dbfs_before_downstream_processing"], 0.0)
+
     def test_representative_report_is_finite_and_passes_gain_law(self) -> None:
         report = analyzer.create_report((45.0, 90.0), (0.0, 4.0), (0.20, 0.35))
         self.assertTrue(report["checks"]["gain_law_pass"])

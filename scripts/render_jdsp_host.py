@@ -22,6 +22,7 @@ DEFAULT_PLAYBACK_SINK = "JamesDSP"
 JDSP_APPLICATION_ID = "com.github.gstmgr"
 JDSP_APPLICATION_NAME = "jamesdsp"
 NEUTRAL_SETTINGS = {
+    "master_enable": "true",
     "tube_enable": "false",
     "compander_enable": "false",
     "bass_enable": "false",
@@ -31,7 +32,7 @@ NEUTRAL_SETTINGS = {
     "ddc_enable": "false",
     "stereowide_enable": "false",
     "reverb_enable": "false",
-    "master_limthreshold": "0",
+    "master_limthreshold": "-1",
     "master_limrelease": "60",
     "master_postgain": "0",
     "crossfeed_enable": "false",
@@ -91,8 +92,10 @@ def snapshot_host_state() -> dict[str, str]:
     return {key: read_setting(key) for key in keys}
 
 
-def load_neutral_liveprog(eel_path: pathlib.Path) -> None:
-    for key, value in NEUTRAL_SETTINGS.items():
+def load_neutral_liveprog(eel_path: pathlib.Path, master_limiter_threshold_db: float) -> None:
+    settings = dict(NEUTRAL_SETTINGS)
+    settings["master_limthreshold"] = f"{master_limiter_threshold_db:g}"
+    for key, value in settings.items():
         set_setting(key, value)
     set_setting("liveprog_enable", "false")
     set_setting("liveprog_file", str(eel_path.resolve()), force=True)
@@ -403,7 +406,15 @@ def main() -> int:
     parser.add_argument("--playback-sink", default=DEFAULT_PLAYBACK_SINK)
     parser.add_argument("--pre-roll-ms", type=non_negative_int, default=500)
     parser.add_argument("--tail-ms", type=non_negative_int, default=2000)
+    parser.add_argument(
+        "--master-limiter-threshold-db",
+        type=float,
+        default=-1.0,
+        help="host limiter threshold used for this render; lower values are diagnostic only",
+    )
     args = parser.parse_args()
+    if not -30.0 <= args.master_limiter_threshold_db <= 0.0:
+        parser.error("--master-limiter-threshold-db must be in [-30, 0] dB")
     eel_path = args.eel_script.resolve()
     snapshot: dict[str, str] | None = None
     error: Exception | None = None
@@ -414,7 +425,7 @@ def main() -> int:
         read_wav(args.input_wav.resolve())
         object_id(args.playback_sink, "sinks", pulse_env)
         snapshot = snapshot_host_state()
-        load_neutral_liveprog(eel_path)
+        load_neutral_liveprog(eel_path, args.master_limiter_threshold_db)
         rate, input_frames, output_frames, capture_source = render_isolated(
             args.input_wav.resolve(),
             args.output_wav.resolve(),
