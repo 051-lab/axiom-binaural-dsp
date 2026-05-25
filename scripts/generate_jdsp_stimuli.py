@@ -50,6 +50,13 @@ def bass_burst(frame, sample_rate, total_frames):
     return value, value
 
 
+def bass_pressure_90hz(frame, sample_rate, total_frames):
+    time_s = frame / sample_rate
+    envelope = fade_envelope(frame, total_frames, max(1, int(round(sample_rate * 0.025))))
+    value = 0.65 * envelope * math.sin(2.0 * math.pi * 90.0 * time_s)
+    return value, value
+
+
 def sweep(frame, sample_rate, total_frames):
     duration_s = total_frames / sample_rate
     time_s = frame / sample_rate
@@ -86,6 +93,7 @@ def side_only(frame, sample_rate, total_frames):
 STIMULI = (
     ("impulse", impulse),
     ("bass_burst", bass_burst),
+    ("bass_pressure_90hz", bass_pressure_90hz),
     ("sweep", sweep),
     ("correlated_mono", correlated_mono),
     ("side_only", side_only),

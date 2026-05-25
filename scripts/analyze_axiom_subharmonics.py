@@ -191,7 +191,7 @@ def create_report(
     )
     return {
         "report_type": (
-            "axiom_v4_1_4_8_bass_aware_headroom_candidate_characterization"
+            "axiom_v4_1_4_8_bass_aware_headroom_baseline_characterization"
             if reserve_above_slider_db is not None
             else "axiom_v4_1_4_7_sub_harmonic_branch_characterization"
         ),
