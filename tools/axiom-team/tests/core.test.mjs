@@ -15,6 +15,7 @@ import {
   runAutomatedValidation,
   runBaselineLimiterSweep,
   runReserveLawScreen,
+  runReserveRangeQualification,
   runSubSliderMap,
   writeRun,
   writeScopedFile,
@@ -161,4 +162,12 @@ test("reserve-law screen is blocked until hypothesis exists and after candidate 
   assert.throws(() => runReserveLawScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runReserveLawScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("reserve-range qualification is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Range-qualify reduced bass reserve laws", fx.config, fx.policy);
+  assert.throws(() => runReserveRangeQualification(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runReserveRangeQualification(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });

@@ -3,8 +3,8 @@ import {
   approveMerge, approvePublication, auditBaseline, commitCandidate, createCandidate,
   createInvestigation, doctor, listRuns, loadLocalConfig, mergePullRequest,
   publishPullRequest, readRun, recordListening, renderSummary, runAutomatedValidation,
-  runAcceptedStressBaseline, runBaselineLimiterSweep, runReserveLawScreen, runSubSliderMap,
-  saveLocalConfig, setHypothesis
+  runAcceptedStressBaseline, runBaselineLimiterSweep, runReserveLawScreen, runReserveRangeQualification,
+  runSubSliderMap, saveLocalConfig, setHypothesis
 } from "../lib/core.mjs";
 
 function out(value) {
@@ -52,6 +52,9 @@ async function main() {
     case "screen-reserve-law":
       out(renderSummary(runReserveLawScreen(required(args[0], "run id"))));
       return;
+    case "qualify-reserve-range":
+      out(renderSummary(runReserveRangeQualification(required(args[0], "run id"))));
+      return;
     case "investigate":
       out(renderSummary(createInvestigation(required(args.join(" "), "observation"))));
       return;
@@ -83,7 +86,7 @@ async function main() {
       out(renderSummary(mergePullRequest(required(args[0], "run id"))));
       return;
     default:
-      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|investigate|hypothesis|create-candidate|qualify|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
+      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|qualify-reserve-range|investigate|hypothesis|create-candidate|qualify|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
       process.exitCode = 2;
   }
 }

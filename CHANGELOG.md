@@ -57,6 +57,10 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   repeat-captured critical music excerpts before candidate creation, with an
   excluded conditioning render to prevent cold host initialization from
   contaminating measured level repeatability.
+- Added a reduced-reserve range qualifier that screens focused-test survivors
+  across all registered material and elevated bass settings, testing the
+  highest-risk setting first, retrying unstable scalar evidence once, and
+  stopping headroom-rejected slopes early.
 
 ### Measurement Boundary
 - Captures occur after JDSP host processing and therefore do not prove an Axiom-only transfer function.

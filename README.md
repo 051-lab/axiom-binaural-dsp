@@ -204,6 +204,23 @@ repeatable RMS level without clipping or exceeding the `-0.50 dBFS` peak
 observation boundary. Passing this screen justifies broader qualification; it
 does not create or accept a new Axiom script.
 
+To range-qualify the slopes selected by that focused screen, test every
+registered material excerpt over elevated bass settings:
+
+```bash
+scripts/run_jdsp_reserve_range_qualification.py \
+  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  /absolute/path/to/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v48-reserve-range
+```
+
+The default qualification tests slopes `0.750` and `0.500`, beginning at
+`+12 dB` and descending through `+10`, `+8`, and `+6 dB` only while the slope
+remains safe. A verified clipping or peak-margin rejection ends that slope
+immediately because it cannot qualify for the full control range. A scalar
+repeatability failure receives one fresh conditioned retry before it fails the
+measurement, because unstable capture evidence is not a reserve-law rejection.
+
 ### Controlled Pi Engineering Harness
 
 The project includes a local-first Pi harness for disciplined future Axiom
@@ -261,6 +278,7 @@ axiom-binaural-dsp/
     run_jdsp_accepted_stress.py        # Repeated accepted-setting dense-material baseline
     run_jdsp_sub_slider_map.py         # Real-music Sub Harmonics Gain range map
     run_jdsp_reserve_law_screen.py     # Experimental elevated-bass reserve-law screen
+    run_jdsp_reserve_range_qualification.py # Reduced-reserve elevated-range qualifier
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -274,6 +292,7 @@ axiom-binaural-dsp/
     test_run_jdsp_accepted_stress.py
     test_run_jdsp_sub_slider_map.py
     test_run_jdsp_reserve_law_screen.py
+    test_run_jdsp_reserve_range_qualification.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Accepted-baseline evidence and reproduction record

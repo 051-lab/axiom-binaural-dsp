@@ -127,6 +127,28 @@ baseline or establish a production reserve law; it justifies a broader
 control-range and material qualification of slopes `0.750` and `0.500`
 before creating a listening candidate.
 
+## Reduced-Reserve Elevated-Range Qualification
+
+The two surviving focused-screen slopes were then measured against every
+registered external excerpt at `+12`, `+10`, `+8`, and `+6 dB` Sub Harmonics
+Gain, beginning with the highest setting and retaining the accepted `-1.00 dB`
+host limiter. Every measured set included one excluded conditioning render and
+three captured renders. A preliminary run was discarded when one otherwise
+safe jazz/bass set produced unstable RMS evidence; the qualification runner
+now permits one fresh conditioned retry for that case while still rejecting a
+verified peak-margin failure immediately.
+
+| Reserve slope | Coverage completed | Highest peak by slider tier | Result |
+|--------------:|--------------------|-----------------------------|--------|
+| `0.750` | All 16 material/slider combinations | `+12: -0.960`, `+10: -0.912`, `+8: -0.780`, `+6: -0.669 dBFS` | Eligible for a listening candidate |
+| `0.500` | Passed all material through `+8`; stopped at `+6` electronic | `+12: -0.807`, `+10: -0.741`, `+8: -0.739`, `+6: -0.473 dBFS` | Rejected above `-0.500 dBFS` observation boundary |
+
+All reported captures had zero clipped samples. Result:
+**VIABLE_REDUCED_RESERVE_RANGE_IDENTIFIED** with slope `0.750` as the only
+full-range survivor. This remains temporary-fixture evidence; the accepted
+baseline remains `.8` until a separate candidate is created, qualified, and
+accepted by listening.
+
 ## Listening Acceptance
 
 After the measurement checks, device listening on multiple songs confirmed no

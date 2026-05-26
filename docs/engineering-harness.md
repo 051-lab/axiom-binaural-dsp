@@ -83,6 +83,7 @@ Inside Pi, the primary commands are:
 | `/axiom-stress-accepted run-id` | Establish repeated dense-material behavior for accepted `.8` at `-1.00 dB` |
 | `/axiom-map-sub-gain run-id` | Map dense-material behavior from `+4` through `+12 dB` Sub Harmonics Gain |
 | `/axiom-screen-reserve-law run-id` | Screen reduced elevated-bass reserve slopes in temporary fixtures |
+| `/axiom-qualify-reserve-range run-id` | Range-qualify viable reduced reserve slopes before a candidate |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -141,6 +142,14 @@ fixture cannot contaminate the repeated metrics. A reduced slope advances only w
 screened excerpt recovers repeatable RMS level while remaining unclipped and
 below the `-0.50 dBFS` observation boundary. The screen is pre-candidate
 evidence; broader boundary qualification and user listening remain mandatory.
+
+After a viable focused result, `/axiom-qualify-reserve-range` renders slopes
+`0.750` and `0.500` against all registered excerpts at `+12`, `+10`, `+8`,
+and `+6 dB`, starting with the highest-risk setting. It uses the same excluded
+conditioning render and accepted host settings. Unstable scalar measurement
+receives one fresh conditioned retry; a verified headroom rejection halts
+further renders for that slope, because a law that fails one elevated setting
+cannot qualify for a full-range candidate.
 
 After listening acceptance, a release branch must contain:
 

@@ -25,6 +25,7 @@ import {
   runAutomatedValidation,
   runBaselineLimiterSweep,
   runReserveLawScreen,
+  runReserveRangeQualification,
   runSubSliderMap,
   setHypothesis,
   writeScopedFile,
@@ -286,6 +287,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_qualify_reserve_range",
+    label: "Qualify Reserve Range",
+    description: "Range-qualify reduced reserve slopes across elevated bass settings before creating a DSP candidate.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runReserveRangeQualification(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -331,6 +340,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-screen-reserve-law", {
     description: "Usage: /axiom-screen-reserve-law run-id; test reduced elevated-bass reserve slopes without creating a candidate.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runReserveLawScreen(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-qualify-reserve-range", {
+    description: "Usage: /axiom-qualify-reserve-range run-id; test reduced reserve slopes over the elevated bass-control range.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runReserveRangeQualification(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",
