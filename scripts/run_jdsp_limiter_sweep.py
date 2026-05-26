@@ -71,7 +71,32 @@ def mean(values: list[float | None]) -> float | None:
 
 def aggregate_capture_metrics(captures: list[dict[str, Any]]) -> dict[str, float | None]:
     fields = ("peak_dbfs", "rms_dbfs", "crest_db", "p95_rms_dbfs", "p99_rms_dbfs")
-    return {f"mean_{field}": mean([capture[field] for capture in captures]) for field in fields}
+    aggregate: dict[str, float | None] = {}
+    for field in fields:
+        values = [capture[field] for capture in captures]
+        aggregate[f"mean_{field}"] = mean(values)
+        aggregate[f"spread_{field}"] = max(values) - min(values) if all(value is not None for value in values) else None
+    return aggregate
+
+
+def qualified_metrics(captures: list[dict[str, Any]], max_spread_db: float) -> dict[str, Any]:
+    aggregate = aggregate_capture_metrics(captures)
+    clipped = sum(capture["clipped_samples"] for capture in captures)
+    fields = ("peak_dbfs", "rms_dbfs", "crest_db", "p95_rms_dbfs", "p99_rms_dbfs")
+    return {
+        "clipped_samples": clipped,
+        "max_spread_db": max_spread_db,
+        "metrics": {
+            field: {
+                "mean_db": aggregate[f"mean_{field}"],
+                "spread_db": aggregate[f"spread_{field}"],
+                "qualified": clipped == 0
+                and aggregate[f"spread_{field}"] is not None
+                and aggregate[f"spread_{field}"] <= max_spread_db,
+            }
+            for field in fields
+        },
+    }
 
 
 def delta(lower: float | None, reference: float | None) -> float | None:
@@ -90,18 +115,24 @@ def classify(
         thresholds = track["thresholds"]
         reference = thresholds[str(reference_threshold_db)]
         accepted = thresholds[str(accepted_threshold_db)]
-        if reference["repeatability"]["status"] != "pass" or accepted["repeatability"]["status"] != "pass":
-            failures.append(f"{track['label']}: repeatability failed at the reference or accepted threshold")
+        reference_metrics = reference["metric_qualification"]
+        accepted_metrics = accepted["metric_qualification"]
+        if reference_metrics["clipped_samples"] or accepted_metrics["clipped_samples"]:
+            failures.append(f"{track['label']}: clipped samples prevent reference-to-accepted comparison")
             continue
-        changes = {
-            "peak_db": delta(accepted["aggregate"]["mean_peak_dbfs"], reference["aggregate"]["mean_peak_dbfs"]),
-            "rms_db": delta(accepted["aggregate"]["mean_rms_dbfs"], reference["aggregate"]["mean_rms_dbfs"]),
-            "crest_db": delta(accepted["aggregate"]["mean_crest_db"], reference["aggregate"]["mean_crest_db"]),
-            "p95_rms_db": delta(accepted["aggregate"]["mean_p95_rms_dbfs"], reference["aggregate"]["mean_p95_rms_dbfs"]),
-            "p99_rms_db": delta(accepted["aggregate"]["mean_p99_rms_dbfs"], reference["aggregate"]["mean_p99_rms_dbfs"]),
-        }
+        changes: dict[str, float | None] = {}
+        reliable: list[str] = []
+        for field in ("peak_dbfs", "rms_dbfs", "crest_db", "p95_rms_dbfs", "p99_rms_dbfs"):
+            reference_metric = reference_metrics["metrics"][field]
+            accepted_metric = accepted_metrics["metrics"][field]
+            if reference_metric["qualified"] and accepted_metric["qualified"]:
+                reliable.append(field)
+                changes[field] = delta(accepted_metric["mean_db"], reference_metric["mean_db"])
+        if not reliable:
+            failures.append(f"{track['label']}: no common metric meets repeated-capture spread policy")
+            continue
         if any(value is not None and abs(value) >= min_effect_db for value in changes.values()):
-            affected.append({"label": track["label"], "accepted_minus_reference": changes})
+            affected.append({"label": track["label"], "qualified_metrics": reliable, "accepted_minus_reference": changes})
     if failures:
         return {"status": "unqualified", "failures": failures, "affected_tracks": affected}
     return {
@@ -119,6 +150,7 @@ def render_track(
     pulse_server: str,
     thresholds_db: list[float],
     repetitions: int,
+    max_metric_spread_db: float,
 ) -> dict[str, Any]:
     excerpt = output_dir / "excerpt.wav"
     convert_excerpt(item, excerpt)
@@ -167,6 +199,8 @@ def render_track(
                 "0.10",
                 "--min-correlation",
                 "0.999",
+                "--max-lag-ms",
+                "0",
                 "--json",
                 str(repeat_json),
                 "--markdown",
@@ -182,6 +216,7 @@ def render_track(
             "threshold_db": threshold,
             "captures": captures,
             "aggregate": aggregate_capture_metrics(captures),
+            "metric_qualification": qualified_metrics(captures, max_metric_spread_db),
             "repeatability": json.loads(repeat_json.read_text(encoding="ascii")),
             "report": str(repeat_md),
         }
@@ -206,6 +241,8 @@ def markdown(report: dict[str, Any]) -> str:
         "",
         "This is a same-script host-path measurement. A threshold-correlated difference identifies JDSP limiter participation, not an EEL defect by itself.",
         "",
+        "Waveform-alignment repeatability is retained as diagnostic evidence. Classification uses only non-clipping scalar metrics that repeat within the configured spread policy because live-host STFT frame phase may vary across independently loaded renders.",
+        "",
         f"Reference threshold: `{report['reference_threshold_db']:.2f} dB`; accepted threshold: `{report['accepted_threshold_db']:.2f} dB`; reliable-effect floor: `{report['min_effect_db']:.3f} dB`.",
         "",
     ]
@@ -214,15 +251,19 @@ def markdown(report: dict[str, Any]) -> str:
             [
                 f"## {track['label']}",
                 "",
-                "| Limiter threshold (dB) | Repeatability | Mean peak (dBFS) | Mean RMS (dBFS) | Mean crest (dB) | Mean P95 20 ms RMS (dBFS) | Mean P99 20 ms RMS (dBFS) |",
-                "| ---: | --- | ---: | ---: | ---: | ---: | ---: |",
+                "| Limiter threshold (dB) | Waveform repeatability | Qualified scalar metrics | Mean peak (dBFS) | Mean RMS (dBFS) | Mean crest (dB) | Mean P95 20 ms RMS (dBFS) | Mean P99 20 ms RMS (dBFS) |",
+                "| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: |",
             ]
         )
         for threshold in report["thresholds_db"]:
             result = track["thresholds"][str(threshold)]
             aggregate = result["aggregate"]
+            reliable = [
+                name for name, value in result["metric_qualification"]["metrics"].items()
+                if value["qualified"]
+            ]
             lines.append(
-                f"| {threshold:.2f} | {result['repeatability']['status'].upper()} | "
+                f"| {threshold:.2f} | {result['repeatability']['status'].upper()} | {', '.join(reliable) or '-'} | "
                 f"{format_value(aggregate['mean_peak_dbfs'])} | {format_value(aggregate['mean_rms_dbfs'])} | "
                 f"{format_value(aggregate['mean_crest_db'])} | {format_value(aggregate['mean_p95_rms_dbfs'])} | "
                 f"{format_value(aggregate['mean_p99_rms_dbfs'])} |"
@@ -233,10 +274,9 @@ def markdown(report: dict[str, Any]) -> str:
         for affected in report["classification"]["affected_tracks"]:
             values = affected["accepted_minus_reference"]
             lines.append(
-                f"- `{affected['label']}`: peak `{format_value(values['peak_db'])} dB`, "
-                f"RMS `{format_value(values['rms_db'])} dB`, crest `{format_value(values['crest_db'])} dB`, "
-                f"P95 window RMS `{format_value(values['p95_rms_db'])} dB`, "
-                f"P99 window RMS `{format_value(values['p99_rms_db'])} dB`."
+                f"- `{affected['label']}` qualified metrics: `{', '.join(affected['qualified_metrics'])}`. "
+                f"Accepted-minus-reference changes: "
+                + ", ".join(f"{field} `{format_value(value)} dB`" for field, value in values.items()) + "."
             )
     if report["classification"]["failures"]:
         lines.extend(["", "## Qualification Failures", ""])
@@ -259,14 +299,17 @@ def main() -> int:
     parser.add_argument("--accepted-threshold-db", type=float, default=-1.0)
     parser.add_argument("--repetitions", type=int, default=5)
     parser.add_argument("--min-effect-db", type=float, default=0.15)
+    parser.add_argument("--max-metric-spread-db", type=float, default=0.10)
     args = parser.parse_args()
-    thresholds = args.thresholds_db or [-0.1, -1.0, -3.0]
+    thresholds = args.thresholds_db or [-0.5, -1.0, -3.0]
     if len(set(thresholds)) != len(thresholds) or not all(-30.0 <= value <= 0.0 for value in thresholds):
         parser.error("thresholds must be unique values in [-30, 0] dB")
     if args.accepted_threshold_db not in thresholds:
         parser.error("--accepted-threshold-db must be included in --threshold-db values")
     if args.repetitions < 2:
         parser.error("--repetitions must be at least 2")
+    if args.min_effect_db <= 0.0 or args.max_metric_spread_db <= 0.0:
+        parser.error("effect and metric-spread thresholds must be positive")
     eel = args.eel_script.resolve()
     if not eel.is_file():
         parser.error(f"EEL script not found: {eel}")
@@ -288,7 +331,10 @@ def main() -> int:
         validate_route(args.pulse_server)
         script_dir = pathlib.Path(__file__).resolve().parent
         tracks = [
-            render_track(script_dir, eel, item, output_dir / item["name"], args.pulse_server, thresholds, args.repetitions)
+            render_track(
+                script_dir, eel, item, output_dir / item["name"], args.pulse_server,
+                thresholds, args.repetitions, args.max_metric_spread_db
+            )
             for item in items
         ]
         report = {
@@ -300,6 +346,7 @@ def main() -> int:
             "accepted_threshold_db": args.accepted_threshold_db,
             "repetitions": args.repetitions,
             "min_effect_db": args.min_effect_db,
+            "max_metric_spread_db": args.max_metric_spread_db,
             "tracks": tracks,
         }
         report["classification"] = classify(

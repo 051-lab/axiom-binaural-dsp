@@ -144,11 +144,12 @@ scripts/run_jdsp_limiter_sweep.py \
   /tmp/axiom-v48-limiter-sweep
 ```
 
-By default this targets the high-energy electronic excerpt and compares `-0.10`,
+By default this targets the high-energy electronic excerpt and compares `-0.50`,
 `-1`, and `-3 dB` JDSP limiter thresholds with five renders each. It reports
-repeatability and threshold-correlated peak, RMS, crest, and short-window
-envelope shifts; the report identifies host-limiter behavior, not an EEL
-regression by itself.
+waveform-repeatability evidence and threshold-correlated peak, RMS, crest, and
+short-window envelope shifts. The classification uses only non-clipping
+metrics that repeat within policy; it identifies host-limiter behavior, not an
+EEL regression by itself.
 
 ### Controlled Pi Engineering Harness
 

@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import run_jdsp_limiter_sweep as sweep
 
 
-def threshold(peak: float, rms: float, crest: float, p95: float, status: str = "pass") -> dict:
+def threshold(peak: float, rms: float, crest: float, p95: float, qualified: bool = True, clipped: int = 0) -> dict:
     return {
         "aggregate": {
             "mean_peak_dbfs": peak,
@@ -19,7 +19,17 @@ def threshold(peak: float, rms: float, crest: float, p95: float, status: str = "
             "mean_p95_rms_dbfs": p95,
             "mean_p99_rms_dbfs": p95,
         },
-        "repeatability": {"status": status},
+        "metric_qualification": {
+            "clipped_samples": clipped,
+            "metrics": {
+                name: {"mean_db": value, "qualified": qualified}
+                for name, value in {
+                    "peak_dbfs": peak, "rms_dbfs": rms, "crest_db": crest,
+                    "p95_rms_dbfs": p95, "p99_rms_dbfs": p95,
+                }.items()
+            },
+        },
+        "repeatability": {"status": "pass" if qualified else "fail"},
     }
 
 
@@ -34,7 +44,7 @@ class LimiterSweepTests(unittest.TestCase):
         }]
         result = sweep.classify(tracks, 0.0, -1.0, 0.15)
         self.assertEqual(result["status"], "limiter_participation_detected")
-        self.assertEqual(result["affected_tracks"][0]["accepted_minus_reference"]["peak_db"], -0.75)
+        self.assertEqual(result["affected_tracks"][0]["accepted_minus_reference"]["peak_dbfs"], -0.75)
 
     def test_does_not_invent_participation_inside_effect_floor(self) -> None:
         tracks = [{
@@ -51,8 +61,19 @@ class LimiterSweepTests(unittest.TestCase):
         tracks = [{
             "label": "unstable",
             "thresholds": {
-                "0.0": threshold(-0.20, -8.00, 7.80, -5.0, "fail"),
+                "0.0": threshold(-0.20, -8.00, 7.80, -5.0, False),
                 "-1.0": threshold(-0.95, -8.20, 7.25, -5.2),
+            },
+        }]
+        result = sweep.classify(tracks, 0.0, -1.0, 0.15)
+        self.assertEqual(result["status"], "unqualified")
+
+    def test_clipped_reference_prevents_participation_claim(self) -> None:
+        tracks = [{
+            "label": "clipped",
+            "thresholds": {
+                "0.0": threshold(0.0, -8.00, 8.00, -5.0, clipped=4),
+                "-1.0": threshold(-0.60, -8.30, 7.70, -5.3),
             },
         }]
         result = sweep.classify(tracks, 0.0, -1.0, 0.15)
