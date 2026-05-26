@@ -85,8 +85,12 @@ Inside Pi, the primary commands are:
 | `/axiom-screen-reserve-law run-id` | Screen reduced elevated-bass reserve slopes in temporary fixtures |
 | `/axiom-qualify-reserve-range run-id` | Range-qualify viable reduced reserve slopes before a candidate |
 | `/axiom-audit-stft run-id` | Measure same-render pre-STFT versus STFT outputs at unity and accepted suppression |
+| `/axiom-audit-width-mono run-id` | Measure accepted width gain and M/S leakage against temporary unity width |
+| `/axiom-screen-width-material run-id` | Characterize band-specific accepted width behavior on registered material |
+| `/axiom-screen-lowmid-width run-id` | Screen restrained `150 Hz-4 kHz` width settings before a candidate |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
+| `/axiom-qualify-lowmid-candidate run-id` | Qualify a restrained low-mid width candidate with its scoped spatial gate |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
 | `/axiom-record-listening run-id \| accept/reject \| notes` | Record the user's listening decision |
 | `/axiom-commit run-id \| message` | Commit only permitted, qualified candidate changes locally |
@@ -161,6 +165,37 @@ captures. It repeats impulse captures by default to test transient metrics
 against frame/load variation. It gates capture integrity failures only;
 measured behavior must be reviewed before a production-path change is
 proposed.
+
+`/axiom-audit-width-mono` is a non-candidate spatial investigation. It creates
+a temporary unity-width fixture from the accepted baseline and renders
+low-level pure-mid and pure-side probes through both settings. It measures
+accepted `S->S` widening by frequency and observes unexpected `M->S` or
+`S->M` leakage without altering the tracked EEL baseline. Pure-side
+mono cancellation is expected behavior; only unintended cross-coupling,
+integrity failure, or terminal pressure can motivate deeper review.
+
+`/axiom-screen-width-material` follows the controlled probe audit with
+registered program material. It compares accepted and temporary unity-width
+renders using deep-bass, upper-bass, low-mid, and high-band `S/M` energy
+ratios. Since symmetric side gain does not change the mono sum, this screen
+measures stereo bass-image character rather than declaring widened side
+content a mono failure.
+
+`/axiom-screen-lowmid-width` is the next spatial pre-candidate gate. It changes
+only the temporary low-mid width default (`slider5`) to measure accepted
+`1.890x` side gain against restrained `1.701x` and conservative `1.553x`
+alternatives over registered material. Reports divide the affected range into
+body, fundamentals, presence, and articulation bands. A technically safe
+reduction is not automatically preferable; user listening is required before
+promoting any variant into a versioned DSP candidate.
+
+When this screen justifies the `slider5 = 126%` variant, `/axiom-qualify-lowmid-candidate`
+is used after candidate creation instead of `/axiom-qualify`. Generic qualification
+requires default transparency and would incorrectly fail an intentional width
+change. The scoped gate admits only the description line and the two `slider5`
+default-site edits, then requires unclipped real-host material renders and the
+expected restrained side-to-mid reduction across each affected band before
+the candidate may proceed to listening.
 
 After listening acceptance, a release branch must contain:
 

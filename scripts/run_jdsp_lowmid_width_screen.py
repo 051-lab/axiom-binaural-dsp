@@ -1,0 +1,274 @@
+#!/usr/bin/env python3
+"""Screen restrained low-mid width settings on registered material through real JDSP."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import pathlib
+import sys
+from typing import Any
+
+import analyze_jdsp_transfer as transfer
+from run_jdsp_local_material import MaterialError, convert_excerpt, read_manifest
+from run_jdsp_width_material_screen import band_metrics, delta, display
+from run_jdsp_wsl_qualification import (
+    DEFAULT_PULSE_SERVER,
+    DEFAULT_ROUTE_HELPER,
+    QualificationError,
+    run,
+    stop_managed_route,
+    validate_route,
+)
+
+
+GLOBAL_WIDTH = 1.35
+SETTINGS = (
+    ("accepted_140", 140.0, "accepted"),
+    ("restrained_126", 126.0, "restrained"),
+    ("conservative_115", 115.0, "conservative"),
+)
+LOW_MID_BANDS_HZ = (
+    ("body", 150.0, 300.0),
+    ("fundamentals", 300.0, 800.0),
+    ("presence", 800.0, 2000.0),
+    ("articulation", 2000.0, 4000.0),
+)
+
+
+def lowmid_fixture(source: pathlib.Path, destination: pathlib.Path, slider_percent: float) -> None:
+    text = source.read_text(encoding="ascii")
+    slider_signature = "slider5:140<"
+    init_signature = "slider5 = 140;"
+    if text.count(slider_signature) != 1 or text.count(init_signature) != 1:
+        raise QualificationError(
+            f"cannot make low-mid width fixture from {source}: expected slider5 default signatures missing"
+        )
+    value = f"{slider_percent:g}"
+    altered = text.replace(slider_signature, f"slider5:{value}<", 1).replace(
+        init_signature, f"slider5 = {value};", 1
+    )
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(altered, encoding="ascii")
+
+
+def setting_descriptor(key: str, slider_percent: float, label: str) -> dict[str, Any]:
+    product = GLOBAL_WIDTH * slider_percent / 100.0
+    return {
+        "key": key,
+        "label": label,
+        "slider5_percent": slider_percent,
+        "global_slider2_percent": GLOBAL_WIDTH * 100.0,
+        "low_mid_side_product": product,
+    }
+
+
+def analyze_item(
+    item: dict[str, Any],
+    excerpt: pathlib.Path,
+    captures: dict[str, pathlib.Path],
+) -> dict[str, Any]:
+    source = transfer.read_stereo_wav(excerpt)
+    source_bands = band_metrics(source, LOW_MID_BANDS_HZ)
+    outputs = {name: transfer.read_stereo_wav(path) for name, path in captures.items()}
+    output_bands = {
+        name: band_metrics(wav, LOW_MID_BANDS_HZ)
+        for name, wav in outputs.items()
+    }
+    result = {
+        "label": item["label"],
+        "name": item["name"],
+        "start_seconds": item["start_seconds"],
+        "duration_seconds": item["duration_seconds"],
+        "levels": {name: transfer.level_metrics(wav) for name, wav in outputs.items()},
+        "bands": {},
+    }
+    for band, _low, _high in LOW_MID_BANDS_HZ:
+        accepted = output_bands["accepted_140"][band]["side_to_mid_db"]
+        result["bands"][band] = {
+            "source": source_bands[band],
+            **{name: output_bands[name][band] for name in output_bands},
+            "restrained_minus_accepted_side_to_mid_db": delta(
+                output_bands["restrained_126"][band]["side_to_mid_db"], accepted
+            ),
+            "conservative_minus_accepted_side_to_mid_db": delta(
+                output_bands["conservative_115"][band]["side_to_mid_db"], accepted
+            ),
+        }
+    return result
+
+
+def evaluate_items(items: list[dict[str, Any]], ceiling_dbfs: float) -> dict[str, Any]:
+    checks: list[dict[str, str]] = []
+    for item in items:
+        for key, _percent, _label in SETTINGS:
+            levels = item["levels"][key]
+            if levels["clipped_samples"] > 0:
+                status = "fail"
+                detail = f"{levels['clipped_samples']} clipped channel samples"
+            elif levels["peak_dbfs"] is None:
+                status = "fail"
+                detail = "silent output"
+            elif levels["peak_dbfs"] > ceiling_dbfs:
+                status = "investigate"
+                detail = f"peak={levels['peak_dbfs']:.3f} dBFS exceeds observation level {ceiling_dbfs:.3f} dBFS"
+            else:
+                status = "pass"
+                detail = f"peak={levels['peak_dbfs']:.3f} dBFS, clipping=0"
+            checks.append({"name": f"{item['name']}_{key}_integrity", "status": status, "detail": detail})
+    status = "fail" if any(check["status"] == "fail" for check in checks) else (
+        "measurement_complete_with_investigation"
+        if any(check["status"] == "investigate" for check in checks)
+        else "measurement_complete"
+    )
+    return {"status": status, "checks": checks}
+
+
+def markdown(report: dict[str, Any]) -> str:
+    lines = [
+        "# Axiom Low-Mid Width Material Screen",
+        "",
+        f"Status: **{report['evaluation']['status'].upper()}**",
+        "",
+        "This pre-candidate screen compares temporary low-mid width settings through real JDSP on "
+        "registered local material. Only `slider5` changes in temporary fixtures; the accepted `.9` "
+        "script is unchanged.",
+        "",
+        "| Setting | `slider5` | Effective `slider2 * slider5` side product |",
+        "| --- | ---: | ---: |",
+    ]
+    for setting in report["settings"]:
+        lines.append(
+            f"| {setting['label']} | {setting['slider5_percent']:.0f}% | "
+            f"`{setting['low_mid_side_product']:.4f}x` |"
+        )
+    lines.extend(
+        [
+            "",
+            "Band values are output `S/M` RMS ratios. Negative variant-minus-accepted values represent "
+            "less side emphasis than accepted `.9`; they do not establish an improvement without listening.",
+            "",
+            "| Material | Band | Source S/M (dB) | Accepted S/M (dB) | Restrained S/M (dB) | Conservative S/M (dB) | Restrained - accepted (dB) | Conservative - accepted (dB) |",
+            "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        ]
+    )
+    for item in report["items"]:
+        label = item["label"].replace("|", "\\|")
+        for band, _low, _high in LOW_MID_BANDS_HZ:
+            values = item["bands"][band]
+            lines.append(
+                f"| {label} | {band} | {display(values['source']['side_to_mid_db'])} | "
+                f"{display(values['accepted_140']['side_to_mid_db'])} | "
+                f"{display(values['restrained_126']['side_to_mid_db'])} | "
+                f"{display(values['conservative_115']['side_to_mid_db'])} | "
+                f"{display(values['restrained_minus_accepted_side_to_mid_db'])} | "
+                f"{display(values['conservative_minus_accepted_side_to_mid_db'])} |"
+            )
+    lines.extend(["", "## Integrity Checks", "", "| Check | Status | Detail |", "| --- | --- | --- |"])
+    lines.extend(
+        f"| {check['name']} | {check['status'].upper()} | {check['detail']} |"
+        for check in report["evaluation"]["checks"]
+    )
+    lines.extend(
+        [
+            "",
+            "Interpretation boundary: this screen establishes measured spatial alternatives and headroom. "
+            "It cannot determine whether narrowed side balance improves vocal focus or harms the accepted "
+            "immersive presentation; that requires a controlled listening candidate only if the evidence warrants it.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("accepted_eel", type=pathlib.Path)
+    parser.add_argument("manifest", type=pathlib.Path)
+    parser.add_argument("output_dir", type=pathlib.Path)
+    parser.add_argument("--pulse-server", default=DEFAULT_PULSE_SERVER)
+    parser.add_argument("--route-helper", type=pathlib.Path, default=DEFAULT_ROUTE_HELPER)
+    parser.add_argument("--master-limiter-threshold-db", type=float, default=-1.0)
+    parser.add_argument("--ceiling-dbfs", type=float, default=-0.50)
+    parser.add_argument("--skip-route-start", action="store_true")
+    parser.add_argument("--keep-route-running", action="store_true")
+    args = parser.parse_args()
+
+    accepted = args.accepted_eel.resolve()
+    if not accepted.is_file():
+        parser.error(f"EEL script not found: {accepted}")
+    items = read_manifest(args.manifest.resolve())
+    output_dir = args.output_dir.resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    fixtures = {"accepted_140": accepted}
+    for key, percent, _label in SETTINGS[1:]:
+        fixture = output_dir / "fixtures" / f"{accepted.stem}_lowmid_width_{percent:g}.eel"
+        lowmid_fixture(accepted, fixture, percent)
+        fixtures[key] = fixture
+
+    route_started = False
+    try:
+        if not args.skip_route_start:
+            if not args.route_helper.is_file():
+                raise QualificationError(f"route helper not found: {args.route_helper}")
+            run([str(args.route_helper)], "start managed JamesDSP WSL audio route")
+            route_started = True
+        validate_route(args.pulse_server)
+        script_dir = pathlib.Path(__file__).resolve().parent
+        reports = []
+        for item in items:
+            excerpt = output_dir / "excerpts" / f"{item['name']}.wav"
+            convert_excerpt(item, excerpt)
+            captures = {}
+            for key, _percent, label in SETTINGS:
+                output = output_dir / key / f"{item['name']}.wav"
+                run(
+                    [
+                        sys.executable,
+                        str(script_dir / "render_jdsp_host.py"),
+                        str(excerpt),
+                        str(fixtures[key]),
+                        str(output),
+                        "--pulse-server",
+                        args.pulse_server,
+                        "--pre-roll-ms",
+                        "500",
+                        "--tail-ms",
+                        "2000",
+                        "--master-limiter-threshold-db",
+                        str(args.master_limiter_threshold_db),
+                    ],
+                    f"{item['label']} {label} low-mid width host render",
+                )
+                captures[key] = output
+            reports.append(analyze_item(item, excerpt, captures))
+        report = {
+            "scope": "temporary low-mid width settings on registered material through real JDSP",
+            "accepted_eel": str(accepted),
+            "manifest": str(args.manifest.resolve()),
+            "fixtures": {name: str(path) for name, path in fixtures.items()},
+            "settings": [setting_descriptor(*setting) for setting in SETTINGS],
+            "master_limiter_threshold_db": args.master_limiter_threshold_db,
+            "ceiling_dbfs": args.ceiling_dbfs,
+            "bands_hz": LOW_MID_BANDS_HZ,
+            "items": reports,
+        }
+        report["evaluation"] = evaluate_items(reports, args.ceiling_dbfs)
+        (output_dir / "lowmid_width_screen.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+        (output_dir / "lowmid_width_screen.md").write_text(markdown(report), encoding="utf-8")
+        print(output_dir / "lowmid_width_screen.json")
+        print(output_dir / "lowmid_width_screen.md")
+        print(f"status={report['evaluation']['status']}")
+        return 1 if report["evaluation"]["status"] == "fail" else 0
+    finally:
+        if route_started and not args.keep_route_running:
+            for error in stop_managed_route(args.pulse_server):
+                print(f"warning: {error}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except (MaterialError, QualificationError, transfer.AnalysisError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        raise SystemExit(1)

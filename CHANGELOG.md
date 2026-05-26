@@ -67,6 +67,18 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added a serialized STFT stage audit that compares same-render pre-STFT and
   processed paths at unity and accepted suppression without modifying the
   accepted `.9` DSP source.
+- Added a serialized width/mono audit that measures accepted `S->S` widening
+  and unintended `M->S` / `S->M` leakage against a temporary unity-width
+  fixture without changing the accepted `.9` script.
+- Added a registered-material spatial-balance screen that measures
+  band-specific side-to-mid behavior for accepted and temporary unity-width
+  processing before any low-frequency taper candidate is considered.
+- Added a pre-candidate low-mid width screen for restrained `slider5`
+  alternatives, subdividing `150 Hz-4 kHz` material behavior before deciding
+  whether a new listening iteration is warranted.
+- Added a scoped real-JDSP qualification path for a versioned restrained
+  low-mid width candidate, since an intentional spatial change must not be
+  rejected by generic default-transparency gates.
 - Added a project-owned Pi engineering harness with immutable-baseline checks,
   external candidate worktrees, restricted specialist consultations, serialized
   real-JDSP qualification, and explicit listening/publication/merge gates.

@@ -24,10 +24,14 @@ import {
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
+  runLowMidWidthCandidateQualification,
+  runLowMidWidthScreen,
   runReserveLawScreen,
   runReserveRangeQualification,
   runStftStageAudit,
   runSubSliderMap,
+  runWidthMaterialScreen,
+  runWidthMonoAudit,
   setHypothesis,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -304,11 +308,43 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_audit_width_mono",
+    label: "Audit Width and Mono",
+    description: "Measure accepted side-width gain and M/S leakage against a temporary unity-width fixture through serialized real-JDSP capture.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runWidthMonoAudit(params.runId))); },
+  });
+
+  pi.registerTool({
+    name: "axiom_screen_width_material",
+    label: "Screen Width Material",
+    description: "Measure band-specific side-to-mid balance for accepted and unity-width processing on registered local material.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runWidthMaterialScreen(params.runId))); },
+  });
+
+  pi.registerTool({
+    name: "axiom_screen_lowmid_width",
+    label: "Screen Low-Mid Width",
+    description: "Measure restrained low-mid side-width fixtures on registered material before creating an audio candidate.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runLowMidWidthScreen(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
     parameters: Type.Object({ runId: Type.String() }),
     async execute(_id, params) { return text(renderSummary(runAutomatedValidation(params.runId))); },
+  });
+
+  pi.registerTool({
+    name: "axiom_qualify_lowmid_width_candidate",
+    label: "Qualify Low-Mid Width Candidate",
+    description: "Run scoped real-JDSP qualification for a restrained low-mid width candidate without applying generic transparency gates.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runLowMidWidthCandidateQualification(params.runId))); },
   });
 
   pi.registerTool({
@@ -358,6 +394,18 @@ export default function (pi: ExtensionAPI) {
     description: "Usage: /axiom-audit-stft run-id; measure same-render STFT unity and accepted suppression paths.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runStftStageAudit(args.trim())), "info"),
   });
+  pi.registerCommand("axiom-audit-width-mono", {
+    description: "Usage: /axiom-audit-width-mono run-id; measure accepted stereo width and mono compatibility.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runWidthMonoAudit(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-screen-width-material", {
+    description: "Usage: /axiom-screen-width-material run-id; characterize accepted spatial balance on registered material.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runWidthMaterialScreen(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-screen-lowmid-width", {
+    description: "Usage: /axiom-screen-lowmid-width run-id; screen restrained low-mid width fixtures on registered material.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runLowMidWidthScreen(args.trim())), "info"),
+  });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(createInvestigation(args.trim())), "info"),
@@ -379,6 +427,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-qualify", {
     description: "Usage: /axiom-qualify run-id",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runAutomatedValidation(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-qualify-lowmid-candidate", {
+    description: "Usage: /axiom-qualify-lowmid-candidate run-id; qualify a scoped restrained low-mid width candidate.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runLowMidWidthCandidateQualification(args.trim())), "info"),
   });
   pi.registerCommand("axiom-listening-package", {
     description: "Usage: /axiom-listening-package run-id",

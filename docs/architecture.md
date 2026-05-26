@@ -37,11 +37,12 @@ Each channel passes through a 15 Hz high-pass biquad before nonlinear or dynamic
 
 The script splits stereo input into low, mid, and high regions using cascaded biquad filters:
 
-- Low region: below 150 Hz, summed to mono
+- Low-pass region: below 150 Hz, summed to mono; the complementary high-pass
+  crossover skirt retains some side energy near the split
 - Mid region: 150 Hz to 4 kHz, M/S width controlled by `slider5 * slider2`
 - High region: above 4 kHz, M/S width controlled by `slider6 * slider2`
 
-The low mono fold improves headphone bass stability. Mid/high width are independent so perceived space can be increased without widening sub-bass.
+The low mono fold improves headphone bass stability. Mid/high width are independent so perceived space can be increased without substantially widening deep sub-bass. This is not a brick-wall mono boundary: the widened high-pass transition can retain side information in upper sub-bass and low bass near `150 Hz`.
 
 ### Additive Bass Harmonic Generator
 
@@ -193,6 +194,18 @@ The transfer report retains timing against the known stimulus playback timeline 
 
 The completed `.9` STFT audit measured approximately `11.6 ms` of same-render STFT path delay. The unity round trip produced a measurable sweep residual, and accepted suppression increased that sweep difference while leaving bass-burst behavior effectively unchanged. Across three impulse renders, the largest temporal-energy-span change was one sample at `48 kHz`, with no meaningful local-energy loss that justifies bypass or retuning. See `docs/stft-audit-v4.1.4.9.md`.
 
+`scripts/run_jdsp_width_mono_audit.py` measures accepted spatial-control behavior without creating a candidate. It creates a temporary fixture with `slider2`, `slider5`, and `slider6` fixed at `100%`, then renders low-level pure-mid and pure-side multitone probes through that fixture and through accepted `.9`. `M->S` and `S->M` transfer observations expose unintended center/side leakage; accepted-versus-unity `S->S` differences quantify widening by band. A pure-side signal is expected to disappear when downmixed to mono, so cancellation of intended side-only content is not a mono-compatibility fault.
+
+`scripts/run_jdsp_width_material_screen.py` applies the same accepted-versus-unity-width comparison to registered local excerpts and reports side-to-mid RMS balance across deep-bass, upper-bass, low-mid, and high bands. Symmetrical `S` scaling does not change the mono sum; the material screen determines whether the crossover-transition widening is a meaningful stereo bass-image characteristic in actual program material before any taper candidate is considered.
+
+The completed `.9` material screen found that accepted width increases `70-150 Hz` side balance by approximately `+5.0` to `+5.6 dB` relative to a temporary unity-width fixture, but remains no wider than the source material in that band across all four tested CC0 excerpts. This evidence does not justify a low-frequency side taper: it would further narrow an already controlled stereo bass image without establishing a defect. See `docs/width-mono-audit-v4.1.4.9.md`.
+
+`scripts/run_jdsp_lowmid_width_screen.py` addresses the remaining spatial question before any `.10` proposal. It keeps accepted global and high-frequency width behavior fixed, then creates temporary `slider5 = 126%` and `slider5 = 115%` fixtures against accepted `140%`. With global width at `135%`, these correspond to low-mid side products of `1.701x`, `1.553x`, and accepted `1.890x`. It reports registered-material `S/M` balance separately across `150-300`, `300-800`, `800-2000`, and `2000-4000 Hz` so any listening candidate has a measured target in center focus, body, presence, or articulation.
+
+The completed screen found accepted `.9` to be approximately `+5.3 dB` more side-forward than source material on average through `300 Hz-4 kHz` across all four CC0 excerpts. A restrained `slider5 = 126%` fixture reduced that emphasis by approximately `0.8` to `0.9 dB` without an integrity or terminal-pressure finding. A stronger `115%` reduction crossed the `-0.50 dBFS` observation boundary on dense electronic material. This supports one restrained listening candidate, not an automatic baseline replacement; see `docs/lowmid-width-screen-v4.1.4.9.md`.
+
+For that narrowly scoped candidate, `scripts/run_jdsp_lowmid_width_candidate_qualification.py` replaces generic default-transparency qualification. A low-mid width change is deliberately not level-transparent on side-bearing content. The scoped runner allows only the version description and the two `slider5` default sites to change, then renders accepted-versus-candidate registered material through JDSP. It rejects silence, clipping, unscoped EEL differences, or absence of the expected reduced `S/M` balance in any affected band; terminal pressure remains an explicit investigation result. Human listening is still required for acceptance.
+
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 
 Example offline qualification commands:
@@ -214,6 +227,20 @@ scripts/analyze_jdsp_transfer.py \
 scripts/run_jdsp_stft_audit.py \
   src/axiom_binaural_dsp_v4.1.4.9.eel \
   /tmp/axiom-v49-stft-audit
+
+scripts/run_jdsp_width_mono_audit.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  /tmp/axiom-v49-width-mono-audit
+
+scripts/run_jdsp_width_material_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v49-width-material-screen
+
+scripts/run_jdsp_lowmid_width_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v49-lowmid-width-screen
 
 scripts/analyze_axiom_subharmonics.py \
   --json /tmp/axiom-subharmonics.json \

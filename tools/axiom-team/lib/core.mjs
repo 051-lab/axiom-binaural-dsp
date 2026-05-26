@@ -522,6 +522,161 @@ export function runStftStageAudit(id, config = loadLocalConfig(), policy = loadP
   }
 }
 
+export function runWidthMonoAudit(id, config = loadLocalConfig(), policy = loadPolicy()) {
+  const run = readRun(id, config);
+  if (run.status !== "investigating" || run.candidate) {
+    throw new Error("Width/mono audit requires an investigation with no DSP candidate.");
+  }
+  if (!run.hypothesis || !run.listeningTarget) {
+    throw new Error("Record a falsifiable hypothesis and listening target before host measurement.");
+  }
+  ensureLocalDirectories(config);
+  const measurementId = isoNow().replace(/[-:]/g, "").replace(/\..*/, "");
+  const outputDir = path.join(runDirectory(id, config), "width-mono-audits", measurementId);
+  fs.mkdirSync(outputDir, { recursive: true, mode: 0o700 });
+  const lockDir = path.join(config.stateRoot, "locks", "jdsp-host.lock");
+  try {
+    fs.mkdirSync(lockDir);
+  } catch {
+    throw new Error("Another real-host JDSP qualification is already active.");
+  }
+  try {
+    const result = shell(
+      "scripts/run_jdsp_width_mono_audit.py",
+      [
+        policy.acceptedBaseline.path,
+        outputDir,
+        "--pulse-server", config.pulseServer,
+        "--route-helper", config.routeHelper,
+        "--master-limiter-threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
+      ],
+      { cwd: config.repositoryRoot, timeout: 60 * 60 * 1000 }
+    );
+    const reportPath = path.join(outputDir, "width_mono_audit.json");
+    let conclusion = result.exitCode === 0 ? "measurement_complete" : "fail";
+    if (fs.existsSync(reportPath)) conclusion = loadJson(reportPath).evaluation.status;
+    recordGate(run, {
+      name: "accepted_width_mono_audit",
+      status: conclusion === "fail" ? "fail" : "pass",
+      conclusion,
+      exitCode: result.exitCode,
+      reportPath,
+      command: result.command,
+      stdout: result.stdout.slice(-4000),
+      stderr: result.stderr.slice(-4000)
+    });
+    return writeRun(run, config);
+  } finally {
+    fs.rmSync(lockDir, { recursive: true, force: true });
+  }
+}
+
+export function runWidthMaterialScreen(id, config = loadLocalConfig(), policy = loadPolicy()) {
+  const run = readRun(id, config);
+  if (run.status !== "investigating" || run.candidate) {
+    throw new Error("Width material screen requires an investigation with no DSP candidate.");
+  }
+  if (!run.hypothesis || !run.listeningTarget) {
+    throw new Error("Record a falsifiable hypothesis and listening target before host measurement.");
+  }
+  if (!fs.existsSync(config.localMaterialManifest)) {
+    throw new Error("Configured local material manifest is unavailable.");
+  }
+  ensureLocalDirectories(config);
+  const measurementId = isoNow().replace(/[-:]/g, "").replace(/\..*/, "");
+  const outputDir = path.join(runDirectory(id, config), "width-material-screens", measurementId);
+  fs.mkdirSync(outputDir, { recursive: true, mode: 0o700 });
+  const lockDir = path.join(config.stateRoot, "locks", "jdsp-host.lock");
+  try {
+    fs.mkdirSync(lockDir);
+  } catch {
+    throw new Error("Another real-host JDSP qualification is already active.");
+  }
+  try {
+    const result = shell(
+      "scripts/run_jdsp_width_material_screen.py",
+      [
+        policy.acceptedBaseline.path,
+        config.localMaterialManifest,
+        outputDir,
+        "--pulse-server", config.pulseServer,
+        "--route-helper", config.routeHelper,
+        "--master-limiter-threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
+      ],
+      { cwd: config.repositoryRoot, timeout: 60 * 60 * 1000 }
+    );
+    const reportPath = path.join(outputDir, "width_material_screen.json");
+    let conclusion = result.exitCode === 0 ? "measurement_complete" : "fail";
+    if (fs.existsSync(reportPath)) conclusion = loadJson(reportPath).evaluation.status;
+    recordGate(run, {
+      name: "accepted_width_material_screen",
+      status: conclusion === "fail" ? "fail" : "pass",
+      conclusion,
+      exitCode: result.exitCode,
+      reportPath,
+      command: result.command,
+      stdout: result.stdout.slice(-4000),
+      stderr: result.stderr.slice(-4000)
+    });
+    return writeRun(run, config);
+  } finally {
+    fs.rmSync(lockDir, { recursive: true, force: true });
+  }
+}
+
+export function runLowMidWidthScreen(id, config = loadLocalConfig(), policy = loadPolicy()) {
+  const run = readRun(id, config);
+  if (run.status !== "investigating" || run.candidate) {
+    throw new Error("Low-mid width screen requires an investigation with no DSP candidate.");
+  }
+  if (!run.hypothesis || !run.listeningTarget) {
+    throw new Error("Record a falsifiable hypothesis and listening target before host measurement.");
+  }
+  if (!fs.existsSync(config.localMaterialManifest)) {
+    throw new Error("Configured local material manifest is unavailable.");
+  }
+  ensureLocalDirectories(config);
+  const measurementId = isoNow().replace(/[-:]/g, "").replace(/\..*/, "");
+  const outputDir = path.join(runDirectory(id, config), "lowmid-width-screens", measurementId);
+  fs.mkdirSync(outputDir, { recursive: true, mode: 0o700 });
+  const lockDir = path.join(config.stateRoot, "locks", "jdsp-host.lock");
+  try {
+    fs.mkdirSync(lockDir);
+  } catch {
+    throw new Error("Another real-host JDSP qualification is already active.");
+  }
+  try {
+    const result = shell(
+      "scripts/run_jdsp_lowmid_width_screen.py",
+      [
+        policy.acceptedBaseline.path,
+        config.localMaterialManifest,
+        outputDir,
+        "--pulse-server", config.pulseServer,
+        "--route-helper", config.routeHelper,
+        "--master-limiter-threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
+      ],
+      { cwd: config.repositoryRoot, timeout: 60 * 60 * 1000 }
+    );
+    const reportPath = path.join(outputDir, "lowmid_width_screen.json");
+    let conclusion = result.exitCode === 0 ? "measurement_complete" : "fail";
+    if (fs.existsSync(reportPath)) conclusion = loadJson(reportPath).evaluation.status;
+    recordGate(run, {
+      name: "experimental_lowmid_width_screen",
+      status: conclusion === "fail" ? "fail" : "pass",
+      conclusion,
+      exitCode: result.exitCode,
+      reportPath,
+      command: result.command,
+      stdout: result.stdout.slice(-4000),
+      stderr: result.stderr.slice(-4000)
+    });
+    return writeRun(run, config);
+  } finally {
+    fs.rmSync(lockDir, { recursive: true, force: true });
+  }
+}
+
 export function listRuns(config = loadLocalConfig()) {
   const root = path.join(config.stateRoot, "runs");
   if (!fs.existsSync(root)) return [];
@@ -629,6 +784,70 @@ export function runAutomatedValidation(id, options = {}, config = loadLocalConfi
     if (fs.existsSync(reportPath)) normalizedStatus = loadJson(reportPath).status;
     recordGate(run, {
       name: "managed_jdsp_qualification",
+      status: normalizedStatus,
+      exitCode: host.exitCode,
+      reportPath,
+      command: host.command,
+      stdout: host.stdout.slice(-4000),
+      stderr: host.stderr.slice(-4000)
+    });
+    run.status = normalizedStatus === "fail" ? "failed" :
+      normalizedStatus === "pass_with_investigation" ? "pass_with_investigation" : "ready_for_listening";
+  } finally {
+    fs.rmSync(lockDir, { recursive: true, force: true });
+  }
+  return writeRun(run, config);
+}
+
+export function runLowMidWidthCandidateQualification(id, options = {}, config = loadLocalConfig(), policy = loadPolicy()) {
+  const run = readRun(id, config);
+  if (!run.candidate?.worktree) throw new Error("Low-mid width candidate qualification requires a candidate worktree.");
+  const root = run.candidate.worktree;
+  const outputDir = path.join(runDirectory(id, config), "lowmid-candidate-qualification");
+  fs.mkdirSync(outputDir, { recursive: true, mode: 0o700 });
+  run.status = "automated_validation";
+  const tests = shell("python3", ["-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], { cwd: root });
+  const staticGate = shell("scripts/validate_axiom_static.sh", [run.candidate.path], { cwd: root });
+  recordCommandGate(run, "python_unit_suite", tests, outputDir);
+  recordCommandGate(run, "candidate_eel_static_validation", staticGate, outputDir);
+  if (tests.exitCode !== 0 || staticGate.exitCode !== 0) {
+    run.status = "failed";
+    return writeRun(run, config);
+  }
+  if (options.skipHost) {
+    recordGate(run, { name: "managed_lowmid_width_candidate_qualification", status: "skipped", detail: "Host qualification explicitly skipped; candidate cannot advance to listening." });
+    return writeRun(run, config);
+  }
+  if (policy.requiredLocalMaterial && !fs.existsSync(config.localMaterialManifest)) {
+    recordGate(run, { name: "registered_local_material", status: "fail", detail: "Configured local material manifest is unavailable." });
+    run.status = "blocked";
+    return writeRun(run, config);
+  }
+  const lockDir = path.join(config.stateRoot, "locks", "jdsp-host.lock");
+  try {
+    fs.mkdirSync(lockDir);
+  } catch {
+    throw new Error("Another real-host JDSP qualification is already active.");
+  }
+  try {
+    const host = shell(
+      "scripts/run_jdsp_lowmid_width_candidate_qualification.py",
+      [
+        path.join(root, policy.acceptedBaseline.path),
+        path.join(root, run.candidate.path),
+        config.localMaterialManifest,
+        outputDir,
+        "--pulse-server", config.pulseServer,
+        "--route-helper", config.routeHelper,
+        "--master-limiter-threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
+      ],
+      { cwd: root, timeout: 60 * 60 * 1000 }
+    );
+    let normalizedStatus = host.exitCode === 0 ? "pass" : "fail";
+    const reportPath = path.join(outputDir, "lowmid_candidate_qualification.json");
+    if (fs.existsSync(reportPath)) normalizedStatus = loadJson(reportPath).evaluation.status;
+    recordGate(run, {
+      name: "managed_lowmid_width_candidate_qualification",
       status: normalizedStatus,
       exitCode: host.exitCode,
       reportPath,

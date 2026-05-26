@@ -11,6 +11,8 @@ import {
   createInvestigation,
   readRun,
   recordListening,
+  runLowMidWidthCandidateQualification,
+  runLowMidWidthScreen,
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
@@ -18,6 +20,8 @@ import {
   runReserveRangeQualification,
   runStftStageAudit,
   runSubSliderMap,
+  runWidthMaterialScreen,
+  runWidthMonoAudit,
   writeRun,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -179,4 +183,34 @@ test("STFT audit is blocked until hypothesis exists and after candidate creation
   assert.throws(() => runStftStageAudit(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runStftStageAudit(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("width/mono audit is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Audit accepted width and mono behavior", fx.config, fx.policy);
+  assert.throws(() => runWidthMonoAudit(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runWidthMonoAudit(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("width material screen is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Screen accepted spatial material behavior", fx.config, fx.policy);
+  assert.throws(() => runWidthMaterialScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runWidthMaterialScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("low-mid width screen is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Screen restrained low-mid width settings", fx.config, fx.policy);
+  assert.throws(() => runLowMidWidthScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runLowMidWidthScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("low-mid candidate qualification requires a created candidate", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Qualify restrained low-mid width candidate", fx.config, fx.policy);
+  assert.throws(() => runLowMidWidthCandidateQualification(investigation.id, {}, fx.config, fx.policy), /candidate worktree/);
 });

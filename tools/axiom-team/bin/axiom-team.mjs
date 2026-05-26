@@ -4,7 +4,8 @@ import {
   createInvestigation, doctor, listRuns, loadLocalConfig, mergePullRequest,
   publishPullRequest, readRun, recordListening, renderSummary, runAutomatedValidation,
   runAcceptedStressBaseline, runBaselineLimiterSweep, runReserveLawScreen, runReserveRangeQualification,
-  runStftStageAudit, runSubSliderMap, saveLocalConfig, setHypothesis
+  runLowMidWidthCandidateQualification, runLowMidWidthScreen, runStftStageAudit, runSubSliderMap, runWidthMaterialScreen, runWidthMonoAudit,
+  saveLocalConfig, setHypothesis
 } from "../lib/core.mjs";
 
 function out(value) {
@@ -58,6 +59,15 @@ async function main() {
     case "audit-stft":
       out(renderSummary(runStftStageAudit(required(args[0], "run id"))));
       return;
+    case "audit-width-mono":
+      out(renderSummary(runWidthMonoAudit(required(args[0], "run id"))));
+      return;
+    case "screen-width-material":
+      out(renderSummary(runWidthMaterialScreen(required(args[0], "run id"))));
+      return;
+    case "screen-lowmid-width":
+      out(renderSummary(runLowMidWidthScreen(required(args[0], "run id"))));
+      return;
     case "investigate":
       out(renderSummary(createInvestigation(required(args.join(" "), "observation"))));
       return;
@@ -69,6 +79,9 @@ async function main() {
       return;
     case "qualify":
       out(renderSummary(runAutomatedValidation(required(args[0], "run id"), { skipHost: args.includes("--skip-host") })));
+      return;
+    case "qualify-lowmid-candidate":
+      out(renderSummary(runLowMidWidthCandidateQualification(required(args[0], "run id"), { skipHost: args.includes("--skip-host") })));
       return;
     case "record-listening":
       out(renderSummary(recordListening(required(args[0], "run id"), required(args[1], "decision"), args.slice(2).join(" "))));
@@ -89,7 +102,7 @@ async function main() {
       out(renderSummary(mergePullRequest(required(args[0], "run id"))));
       return;
     default:
-      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|qualify-reserve-range|audit-stft|investigate|hypothesis|create-candidate|qualify|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
+      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
       process.exitCode = 2;
   }
 }
