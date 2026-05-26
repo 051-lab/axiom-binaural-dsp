@@ -11,8 +11,9 @@ Harness run: `20260526T200526-determine-whether-accept-e5c3de`
 Conclusion: **no immediate DSP candidate is justified by integrity or channel
 leakage**, but the nominal low-bass mono description requires qualification.
 The accepted width settings measurably widen side energy in the crossover
-transition near `90 Hz`, which is a legitimate future listening investigation
-if tighter bass centering becomes a design priority.
+transition near `90 Hz`. Symmetric side widening does not alter the mono sum;
+this is a stereo bass-image tradeoff to characterize on program material, not
+an established mono-compatibility defect.
 
 ## Method
 
@@ -83,11 +84,28 @@ approximately `+3.4 dB` upper-treble increase agrees with the configured
 
 ## Next Gate
 
-Do not create a new Axiom iteration solely because the width audit passed.
+The follow-on registered-material screen was completed on four CC0 excerpts
+through real JDSP. All accepted and unity-width captures remained unclipped.
 
-If the design objective is to retain the current expansive presentation,
-`v4.1.4.9` remains appropriate. If tighter mono bass or speaker compatibility
-is prioritized, the next controlled investigation should evaluate a
-low-frequency side-width taper or narrower low-mid transition against `.9`,
-with listening focused on kick solidity, bass-image stability, synth width,
-and whether the preferred immersive quality is reduced.
+### Program-Material Upper-Bass Result (`70-150 Hz`)
+
+| Material | Source `S/M` (dB) | Unity-width `S/M` (dB) | Accepted `S/M` (dB) | Accepted - unity (dB) |
+| --- | ---: | ---: | ---: | ---: |
+| Electronic high energy | `-20.570` | `-26.530` | `-21.491` | `+5.039` |
+| Instrumental hip hop | `-6.208` | `-16.489` | `-10.878` | `+5.611` |
+| Upright bass jazz | `-6.991` | `-19.195` | `-13.666` | `+5.530` |
+| Orchestral crescendo | `-7.673` | `-21.582` | `-15.961` | `+5.621` |
+
+Accepted width consistently restores stereo bass body relative to a unity
+fixture, but it does not exceed the source upper-bass `S/M` ratio in this
+material set. It remains approximately `0.9` to `8.3 dB` narrower than the
+original excerpts in the `70-150 Hz` band.
+
+Do not create a low-frequency side-taper iteration from this evidence. Such a
+change would further narrow an upper-bass image that is already no wider than
+the source material measured here, and risks removing part of the accepted
+`.9` bass character without a demonstrated defect.
+
+Future spatial work should move to a different question: whether the stronger
+accepted low-mid widening (`150 Hz-4 kHz`) remains balanced on varied material
+and playback systems.

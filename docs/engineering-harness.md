@@ -86,6 +86,7 @@ Inside Pi, the primary commands are:
 | `/axiom-qualify-reserve-range run-id` | Range-qualify viable reduced reserve slopes before a candidate |
 | `/axiom-audit-stft run-id` | Measure same-render pre-STFT versus STFT outputs at unity and accepted suppression |
 | `/axiom-audit-width-mono run-id` | Measure accepted width gain and M/S leakage against temporary unity width |
+| `/axiom-screen-width-material run-id` | Characterize band-specific accepted width behavior on registered material |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -170,6 +171,13 @@ accepted `S->S` widening by frequency and observes unexpected `M->S` or
 `S->M` leakage without altering the tracked EEL baseline. Pure-side
 mono cancellation is expected behavior; only unintended cross-coupling,
 integrity failure, or terminal pressure can motivate deeper review.
+
+`/axiom-screen-width-material` follows the controlled probe audit with
+registered program material. It compares accepted and temporary unity-width
+renders using deep-bass, upper-bass, low-mid, and high-band `S/M` energy
+ratios. Since symmetric side gain does not change the mono sum, this screen
+measures stereo bass-image character rather than declaring widened side
+content a mono failure.
 
 After listening acceptance, a release branch must contain:
 

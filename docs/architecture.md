@@ -196,6 +196,10 @@ The completed `.9` STFT audit measured approximately `11.6 ms` of same-render ST
 
 `scripts/run_jdsp_width_mono_audit.py` measures accepted spatial-control behavior without creating a candidate. It creates a temporary fixture with `slider2`, `slider5`, and `slider6` fixed at `100%`, then renders low-level pure-mid and pure-side multitone probes through that fixture and through accepted `.9`. `M->S` and `S->M` transfer observations expose unintended center/side leakage; accepted-versus-unity `S->S` differences quantify widening by band. A pure-side signal is expected to disappear when downmixed to mono, so cancellation of intended side-only content is not a mono-compatibility fault.
 
+`scripts/run_jdsp_width_material_screen.py` applies the same accepted-versus-unity-width comparison to registered local excerpts and reports side-to-mid RMS balance across deep-bass, upper-bass, low-mid, and high bands. Symmetrical `S` scaling does not change the mono sum; the material screen determines whether the crossover-transition widening is a meaningful stereo bass-image characteristic in actual program material before any taper candidate is considered.
+
+The completed `.9` material screen found that accepted width increases `70-150 Hz` side balance by approximately `+5.0` to `+5.6 dB` relative to a temporary unity-width fixture, but remains no wider than the source material in that band across all four tested CC0 excerpts. This evidence does not justify a low-frequency side taper: it would further narrow an already controlled stereo bass image without establishing a defect. See `docs/width-mono-audit-v4.1.4.9.md`.
+
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 
 Example offline qualification commands:
@@ -221,6 +225,11 @@ scripts/run_jdsp_stft_audit.py \
 scripts/run_jdsp_width_mono_audit.py \
   src/axiom_binaural_dsp_v4.1.4.9.eel \
   /tmp/axiom-v49-width-mono-audit
+
+scripts/run_jdsp_width_material_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v49-width-material-screen
 
 scripts/analyze_axiom_subharmonics.py \
   --json /tmp/axiom-subharmonics.json \

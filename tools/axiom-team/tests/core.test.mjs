@@ -18,6 +18,7 @@ import {
   runReserveRangeQualification,
   runStftStageAudit,
   runSubSliderMap,
+  runWidthMaterialScreen,
   runWidthMonoAudit,
   writeRun,
   writeScopedFile,
@@ -188,4 +189,12 @@ test("width/mono audit is blocked until hypothesis exists and after candidate cr
   assert.throws(() => runWidthMonoAudit(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runWidthMonoAudit(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("width material screen is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Screen accepted spatial material behavior", fx.config, fx.policy);
+  assert.throws(() => runWidthMaterialScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runWidthMaterialScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });

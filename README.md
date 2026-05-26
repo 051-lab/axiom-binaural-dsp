@@ -131,6 +131,17 @@ scripts/run_jdsp_width_mono_audit.py \
 
 This audit renders low-level pure-mid and pure-side multitone probes through real JDSP with the accepted width controls and with a temporary fixture set to `100%` global, mid, and high width. It reports accepted side gain relative to unity, unintended `M->S` and `S->M` leakage, low-frequency side collapse behavior, and integrity or terminal-level observations. Pure-side cancellation in a mono sum is intentional and is not itself classified as a defect.
 
+To determine whether the measured width behavior is materially active in registered music excerpts:
+
+```bash
+scripts/run_jdsp_width_material_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v49-width-material-screen
+```
+
+The material screen compares accepted and temporary unity-width renders using band-specific side-to-mid energy ratios. An increased stereo side ratio is evidence about image character, not a mono-sum failure: a symmetric side-width change cancels from the output mono sum.
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -303,6 +314,7 @@ axiom-binaural-dsp/
     run_jdsp_reserve_range_qualification.py # Reduced-reserve elevated-range qualifier
     run_jdsp_stft_audit.py         # Same-render STFT round-trip / suppression audit
     run_jdsp_width_mono_audit.py   # Accepted width / mono-compatibility audit
+    run_jdsp_width_material_screen.py # Program-material spatial-balance screen
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -319,6 +331,7 @@ axiom-binaural-dsp/
     test_run_jdsp_reserve_range_qualification.py
     test_run_jdsp_stft_audit.py
     test_run_jdsp_width_mono_audit.py
+    test_run_jdsp_width_material_screen.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record

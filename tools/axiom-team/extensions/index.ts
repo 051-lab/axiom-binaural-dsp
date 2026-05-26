@@ -28,6 +28,7 @@ import {
   runReserveRangeQualification,
   runStftStageAudit,
   runSubSliderMap,
+  runWidthMaterialScreen,
   runWidthMonoAudit,
   setHypothesis,
   writeScopedFile,
@@ -313,6 +314,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_screen_width_material",
+    label: "Screen Width Material",
+    description: "Measure band-specific side-to-mid balance for accepted and unity-width processing on registered local material.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runWidthMaterialScreen(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -370,6 +379,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-audit-width-mono", {
     description: "Usage: /axiom-audit-width-mono run-id; measure accepted stereo width and mono compatibility.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runWidthMonoAudit(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-screen-width-material", {
+    description: "Usage: /axiom-screen-width-material run-id; characterize accepted spatial balance on registered material.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runWidthMaterialScreen(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",

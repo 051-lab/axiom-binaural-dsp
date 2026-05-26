@@ -70,6 +70,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added a serialized width/mono audit that measures accepted `S->S` widening
   and unintended `M->S` / `S->M` leakage against a temporary unity-width
   fixture without changing the accepted `.9` script.
+- Added a registered-material spatial-balance screen that measures
+  band-specific side-to-mid behavior for accepted and temporary unity-width
+  processing before any low-frequency taper candidate is considered.
 - Added a project-owned Pi engineering harness with immutable-baseline checks,
   external candidate worktrees, restricted specialist consultations, serialized
   real-JDSP qualification, and explicit listening/publication/merge gates.
