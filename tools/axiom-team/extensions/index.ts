@@ -24,6 +24,7 @@ import {
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
+  runLowMidWidthCandidateQualification,
   runLowMidWidthScreen,
   runReserveLawScreen,
   runReserveRangeQualification,
@@ -339,6 +340,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_qualify_lowmid_width_candidate",
+    label: "Qualify Low-Mid Width Candidate",
+    description: "Run scoped real-JDSP qualification for a restrained low-mid width candidate without applying generic transparency gates.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runLowMidWidthCandidateQualification(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_commit_candidate",
     label: "Commit Qualified Candidate",
     description: "Commit controlled candidate changes only after real-host qualification permits review.",
@@ -418,6 +427,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-qualify", {
     description: "Usage: /axiom-qualify run-id",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runAutomatedValidation(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-qualify-lowmid-candidate", {
+    description: "Usage: /axiom-qualify-lowmid-candidate run-id; qualify a scoped restrained low-mid width candidate.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runLowMidWidthCandidateQualification(args.trim())), "info"),
   });
   pi.registerCommand("axiom-listening-package", {
     description: "Usage: /axiom-listening-package run-id",

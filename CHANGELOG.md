@@ -76,6 +76,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added a pre-candidate low-mid width screen for restrained `slider5`
   alternatives, subdividing `150 Hz-4 kHz` material behavior before deciding
   whether a new listening iteration is warranted.
+- Added a scoped real-JDSP qualification path for a versioned restrained
+  low-mid width candidate, since an intentional spatial change must not be
+  rejected by generic default-transparency gates.
 - Added a project-owned Pi engineering harness with immutable-baseline checks,
   external candidate worktrees, restricted specialist consultations, serialized
   real-JDSP qualification, and explicit listening/publication/merge gates.

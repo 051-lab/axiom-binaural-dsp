@@ -11,6 +11,7 @@ import {
   createInvestigation,
   readRun,
   recordListening,
+  runLowMidWidthCandidateQualification,
   runLowMidWidthScreen,
   runAcceptedStressBaseline,
   runAutomatedValidation,
@@ -206,4 +207,10 @@ test("low-mid width screen is blocked until hypothesis exists and after candidat
   assert.throws(() => runLowMidWidthScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runLowMidWidthScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("low-mid candidate qualification requires a created candidate", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Qualify restrained low-mid width candidate", fx.config, fx.policy);
+  assert.throws(() => runLowMidWidthCandidateQualification(investigation.id, {}, fx.config, fx.policy), /candidate worktree/);
 });

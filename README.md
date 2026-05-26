@@ -153,6 +153,18 @@ scripts/run_jdsp_lowmid_width_screen.py \
 
 The low-mid screen retains accepted `.9` as the reference and creates temporary `slider5 = 126%` and `slider5 = 115%` fixtures, producing effective low-mid side products of `1.701x` and `1.553x` against accepted `1.890x`. It measures `150-300`, `300-800`, `800-2000`, and `2000-4000 Hz` spatial balance and output integrity; a reduced setting becomes a listening candidate only after the measured tradeoff is defensible.
 
+After creating a versioned `slider5 = 126%` candidate, qualify that intentional width change with its scoped gate rather than the generic default-transparency qualifier:
+
+```bash
+scripts/run_jdsp_lowmid_width_candidate_qualification.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v410-lowmid-candidate-qualification
+```
+
+This qualification rejects any DSP edit beyond the candidate description and the two `slider5` default sites, then verifies real-host integrity and a measurable restrained `S/M` reduction in each affected band. A passing report permits listening; it is not listening acceptance.
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -327,6 +339,7 @@ axiom-binaural-dsp/
     run_jdsp_width_mono_audit.py   # Accepted width / mono-compatibility audit
     run_jdsp_width_material_screen.py # Program-material spatial-balance screen
     run_jdsp_lowmid_width_screen.py # Restrained low-mid width pre-candidate screen
+    run_jdsp_lowmid_width_candidate_qualification.py # Scoped low-mid candidate qualifier
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -345,6 +358,7 @@ axiom-binaural-dsp/
     test_run_jdsp_width_mono_audit.py
     test_run_jdsp_width_material_screen.py
     test_run_jdsp_lowmid_width_screen.py
+    test_run_jdsp_lowmid_width_candidate_qualification.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record

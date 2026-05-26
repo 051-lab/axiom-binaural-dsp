@@ -90,6 +90,7 @@ Inside Pi, the primary commands are:
 | `/axiom-screen-lowmid-width run-id` | Screen restrained `150 Hz-4 kHz` width settings before a candidate |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
+| `/axiom-qualify-lowmid-candidate run-id` | Qualify a restrained low-mid width candidate with its scoped spatial gate |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
 | `/axiom-record-listening run-id \| accept/reject \| notes` | Record the user's listening decision |
 | `/axiom-commit run-id \| message` | Commit only permitted, qualified candidate changes locally |
@@ -187,6 +188,14 @@ alternatives over registered material. Reports divide the affected range into
 body, fundamentals, presence, and articulation bands. A technically safe
 reduction is not automatically preferable; user listening is required before
 promoting any variant into a versioned DSP candidate.
+
+When this screen justifies the `slider5 = 126%` variant, `/axiom-qualify-lowmid-candidate`
+is used after candidate creation instead of `/axiom-qualify`. Generic qualification
+requires default transparency and would incorrectly fail an intentional width
+change. The scoped gate admits only the description line and the two `slider5`
+default-site edits, then requires unclipped real-host material renders and the
+expected restrained side-to-mid reduction across each affected band before
+the candidate may proceed to listening.
 
 After listening acceptance, a release branch must contain:
 

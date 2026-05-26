@@ -799,6 +799,70 @@ export function runAutomatedValidation(id, options = {}, config = loadLocalConfi
   return writeRun(run, config);
 }
 
+export function runLowMidWidthCandidateQualification(id, options = {}, config = loadLocalConfig(), policy = loadPolicy()) {
+  const run = readRun(id, config);
+  if (!run.candidate?.worktree) throw new Error("Low-mid width candidate qualification requires a candidate worktree.");
+  const root = run.candidate.worktree;
+  const outputDir = path.join(runDirectory(id, config), "lowmid-candidate-qualification");
+  fs.mkdirSync(outputDir, { recursive: true, mode: 0o700 });
+  run.status = "automated_validation";
+  const tests = shell("python3", ["-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], { cwd: root });
+  const staticGate = shell("scripts/validate_axiom_static.sh", [run.candidate.path], { cwd: root });
+  recordCommandGate(run, "python_unit_suite", tests, outputDir);
+  recordCommandGate(run, "candidate_eel_static_validation", staticGate, outputDir);
+  if (tests.exitCode !== 0 || staticGate.exitCode !== 0) {
+    run.status = "failed";
+    return writeRun(run, config);
+  }
+  if (options.skipHost) {
+    recordGate(run, { name: "managed_lowmid_width_candidate_qualification", status: "skipped", detail: "Host qualification explicitly skipped; candidate cannot advance to listening." });
+    return writeRun(run, config);
+  }
+  if (policy.requiredLocalMaterial && !fs.existsSync(config.localMaterialManifest)) {
+    recordGate(run, { name: "registered_local_material", status: "fail", detail: "Configured local material manifest is unavailable." });
+    run.status = "blocked";
+    return writeRun(run, config);
+  }
+  const lockDir = path.join(config.stateRoot, "locks", "jdsp-host.lock");
+  try {
+    fs.mkdirSync(lockDir);
+  } catch {
+    throw new Error("Another real-host JDSP qualification is already active.");
+  }
+  try {
+    const host = shell(
+      "scripts/run_jdsp_lowmid_width_candidate_qualification.py",
+      [
+        path.join(root, policy.acceptedBaseline.path),
+        path.join(root, run.candidate.path),
+        config.localMaterialManifest,
+        outputDir,
+        "--pulse-server", config.pulseServer,
+        "--route-helper", config.routeHelper,
+        "--master-limiter-threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
+      ],
+      { cwd: root, timeout: 60 * 60 * 1000 }
+    );
+    let normalizedStatus = host.exitCode === 0 ? "pass" : "fail";
+    const reportPath = path.join(outputDir, "lowmid_candidate_qualification.json");
+    if (fs.existsSync(reportPath)) normalizedStatus = loadJson(reportPath).evaluation.status;
+    recordGate(run, {
+      name: "managed_lowmid_width_candidate_qualification",
+      status: normalizedStatus,
+      exitCode: host.exitCode,
+      reportPath,
+      command: host.command,
+      stdout: host.stdout.slice(-4000),
+      stderr: host.stderr.slice(-4000)
+    });
+    run.status = normalizedStatus === "fail" ? "failed" :
+      normalizedStatus === "pass_with_investigation" ? "pass_with_investigation" : "ready_for_listening";
+  } finally {
+    fs.rmSync(lockDir, { recursive: true, force: true });
+  }
+  return writeRun(run, config);
+}
+
 export function recordListening(id, decision, notes, config = loadLocalConfig()) {
   const run = readRun(id, config);
   if (!["ready_for_listening", "pass_with_investigation"].includes(run.status)) throw new Error("Listening can be recorded only after automated gates permit it.");
