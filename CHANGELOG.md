@@ -73,6 +73,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added a registered-material spatial-balance screen that measures
   band-specific side-to-mid behavior for accepted and temporary unity-width
   processing before any low-frequency taper candidate is considered.
+- Added a pre-candidate low-mid width screen for restrained `slider5`
+  alternatives, subdividing `150 Hz-4 kHz` material behavior before deciding
+  whether a new listening iteration is warranted.
 - Added a project-owned Pi engineering harness with immutable-baseline checks,
   external candidate worktrees, restricted specialist consultations, serialized
   real-JDSP qualification, and explicit listening/publication/merge gates.

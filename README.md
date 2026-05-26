@@ -142,6 +142,17 @@ scripts/run_jdsp_width_material_screen.py \
 
 The material screen compares accepted and temporary unity-width renders using band-specific side-to-mid energy ratios. An increased stereo side ratio is evidence about image character, not a mono-sum failure: a symmetric side-width change cancels from the output mono sum.
 
+To screen restrained low-mid width options before creating an audio candidate:
+
+```bash
+scripts/run_jdsp_lowmid_width_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v49-lowmid-width-screen
+```
+
+The low-mid screen retains accepted `.9` as the reference and creates temporary `slider5 = 126%` and `slider5 = 115%` fixtures, producing effective low-mid side products of `1.701x` and `1.553x` against accepted `1.890x`. It measures `150-300`, `300-800`, `800-2000`, and `2000-4000 Hz` spatial balance and output integrity; a reduced setting becomes a listening candidate only after the measured tradeoff is defensible.
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -315,6 +326,7 @@ axiom-binaural-dsp/
     run_jdsp_stft_audit.py         # Same-render STFT round-trip / suppression audit
     run_jdsp_width_mono_audit.py   # Accepted width / mono-compatibility audit
     run_jdsp_width_material_screen.py # Program-material spatial-balance screen
+    run_jdsp_lowmid_width_screen.py # Restrained low-mid width pre-candidate screen
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -332,6 +344,7 @@ axiom-binaural-dsp/
     test_run_jdsp_stft_audit.py
     test_run_jdsp_width_mono_audit.py
     test_run_jdsp_width_material_screen.py
+    test_run_jdsp_lowmid_width_screen.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
@@ -378,6 +391,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/qualification-v4.1.4.9.md`](docs/qualification-v4.1.4.9.md) | Accepted `.9` verification record |
 | [`docs/stft-audit-v4.1.4.9.md`](docs/stft-audit-v4.1.4.9.md) | Accepted `.9` STFT stage investigation record |
 | [`docs/width-mono-audit-v4.1.4.9.md`](docs/width-mono-audit-v4.1.4.9.md) | Accepted `.9` width and mono-compatibility investigation record |
+| [`docs/lowmid-width-screen-v4.1.4.9.md`](docs/lowmid-width-screen-v4.1.4.9.md) | Accepted `.9` restrained low-mid width candidate rationale |
 | [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents

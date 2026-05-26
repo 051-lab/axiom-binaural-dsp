@@ -11,6 +11,7 @@ import {
   createInvestigation,
   readRun,
   recordListening,
+  runLowMidWidthScreen,
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
@@ -197,4 +198,12 @@ test("width material screen is blocked until hypothesis exists and after candida
   assert.throws(() => runWidthMaterialScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runWidthMaterialScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("low-mid width screen is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Screen restrained low-mid width settings", fx.config, fx.policy);
+  assert.throws(() => runLowMidWidthScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runLowMidWidthScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });

@@ -77,11 +77,14 @@ def ratio_db(numerator: float, denominator: float) -> float | None:
     return 20.0 * math.log10(numerator / denominator) if numerator > 0.0 and denominator > 0.0 else None
 
 
-def band_metrics(wav: transfer.StereoWav) -> dict[str, dict[str, float | None]]:
+def band_metrics(
+    wav: transfer.StereoWav,
+    bands: tuple[tuple[str, float, float], ...] = BANDS_HZ,
+) -> dict[str, dict[str, float | None]]:
     mid = [(left + right) * 0.5 for left, right in zip(wav.left, wav.right)]
     side = [(left - right) * 0.5 for left, right in zip(wav.left, wav.right)]
     result: dict[str, dict[str, float | None]] = {}
-    for name, low, high in BANDS_HZ:
+    for name, low, high in bands:
         hp = coefficients("highpass", low, wav.sample_rate)
         lp = coefficients("lowpass", high, wav.sample_rate)
         filtered_mid = cascaded(cascaded(mid, hp), lp)

@@ -87,6 +87,7 @@ Inside Pi, the primary commands are:
 | `/axiom-audit-stft run-id` | Measure same-render pre-STFT versus STFT outputs at unity and accepted suppression |
 | `/axiom-audit-width-mono run-id` | Measure accepted width gain and M/S leakage against temporary unity width |
 | `/axiom-screen-width-material run-id` | Characterize band-specific accepted width behavior on registered material |
+| `/axiom-screen-lowmid-width run-id` | Screen restrained `150 Hz-4 kHz` width settings before a candidate |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -178,6 +179,14 @@ renders using deep-bass, upper-bass, low-mid, and high-band `S/M` energy
 ratios. Since symmetric side gain does not change the mono sum, this screen
 measures stereo bass-image character rather than declaring widened side
 content a mono failure.
+
+`/axiom-screen-lowmid-width` is the next spatial pre-candidate gate. It changes
+only the temporary low-mid width default (`slider5`) to measure accepted
+`1.890x` side gain against restrained `1.701x` and conservative `1.553x`
+alternatives over registered material. Reports divide the affected range into
+body, fundamentals, presence, and articulation bands. A technically safe
+reduction is not automatically preferable; user listening is required before
+promoting any variant into a versioned DSP candidate.
 
 After listening acceptance, a release branch must contain:
 
