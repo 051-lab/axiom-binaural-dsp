@@ -9,15 +9,14 @@ before changing EEL code or host configuration.
 
 | Item | Detail |
 |------|--------|
-| Current accepted baseline | `src/axiom_binaural_dsp_v4.1.4.9.eel` |
+| Current accepted baseline | `src/axiom_binaural_dsp_v4.1.4.10.eel` |
 | Runtime | JamesDSP / JDSP4Linux EEL2 Liveprog |
 | Device policy | Speaker-neutral script; optional crossfeed belongs to the host |
 | Limiter policy | No script limiter; JDSP terminal limiter owns peak control |
 | Qualified host limiter | enabled, `-1.00 dB` threshold, `60 ms` release, `0 dB` postgain |
 
-`v4.1.4.9` retains the transparent fixed reserve from `.7` and applies
-`0.750 dB/dB` additional terminal reserve only when `Sub Harmonics Gain`
-exceeds its `+4 dB` default.
+`v4.1.4.10` retains the `.9` reduced-reserve law and reduces the default
+low-mid side-width product from `1.890x` to `1.701x`.
 
 ## Current Signal Chain
 
@@ -64,7 +63,7 @@ spl1 = out_R;
 ## Editing Rules
 
 1. Preserve historical `.eel` files. Create a new version for sound-changing DSP work.
-2. Treat `src/axiom_binaural_dsp_v4.1.4.9.eel` as the accepted reference until a new version passes qualification and listening acceptance.
+2. Treat `src/axiom_binaural_dsp_v4.1.4.10.eel` as the accepted reference until a new version passes qualification and listening acceptance.
 3. Keep JDSP host-only stages disabled during Axiom comparison, except the enabled terminal limiter documented above.
 4. `presets/axiom-preset.conf` is a full JDSP `audio.conf`-style key/value template, not a slider JSON document.
 5. Do not commit captured audio, third-party music, local manifests, or generated test reports. Keep those under `/tmp` or a local data directory.
@@ -77,11 +76,11 @@ spl1 = out_R;
 Before accepting DSP behavior or testbench changes:
 
 ```bash
-scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.9.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.10.eel
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-For decision-grade WSL host captures:
+To reproduce the historical `.8` versus `.9` reserve qualification:
 
 ```bash
 scripts/run_jdsp_wsl_qualification.py \
@@ -101,9 +100,10 @@ assume the intended host configuration is already active.
 | `README.md` | User setup and testbench entry points |
 | `docs/architecture.md` | Active DSP architecture and host ownership |
 | `docs/qualification-v4.1.4.8.md` | Previous `.8` evidence and reproduction record |
-| `docs/qualification-v4.1.4.9.md` | Accepted `.9` evidence and reproduction record |
+| `docs/qualification-v4.1.4.9.md` | Previous `.9` evidence and reproduction record |
+| `docs/qualification-v4.1.4.10.md` | Accepted `.10` evidence and reproduction record |
 | `docs/JDSP4Linux_Knowledge_Base.md` | EEL2/JDSP runtime and preset reference |
 | `docs/engineering-harness.md` | Controlled Pi workflow, gates, and local-state policy |
 | `CHANGELOG.md` | Version history and decision record |
 
-*Last updated: v4.1.4.9 accepted baseline - 2026-05-26*
+*Last updated: v4.1.4.10 accepted baseline - 2026-05-26*

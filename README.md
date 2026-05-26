@@ -1,12 +1,12 @@
 # Axiom Binaural DSP
 
-[![Version](https://img.shields.io/badge/version-v4.1.4.9-blue.svg)](https://github.com/051-lab/axiom-binaural-dsp/releases)
+[![Version](https://img.shields.io/badge/version-v4.1.4.10-blue.svg)](https://github.com/051-lab/axiom-binaural-dsp/releases)
 [![Platform](https://img.shields.io/badge/platform-JamesDSP-green.svg)](https://github.com/james34602/JamesDSPManager)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 **Measured psychoacoustic stereo enhancement processing for JamesDSP**
 
-Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.9` is the accepted listening baseline: it preserves `.8` behavior at default controls and reduces excess output retreat when Sub Harmonics Gain is raised above its `+4 dB` default.
+Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.10` is the accepted listening baseline: it retains the `.9` reduced bass-reserve behavior and applies a measured restraint to low-mid stereo width.
 
 ## Features
 
@@ -35,20 +35,21 @@ Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1
 - Crossfeed is not part of the Axiom script; enable JamesDSP crossfeed manually when wanted
 - `v4.1.4.7` adds a fixed `-1.0 dB` transparent output reserve before the host stage
 - `v4.1.4.9` retains the `.7` fixed reserve and applies the accepted `0.750 dB/dB` additional reserve only for Sub Harmonics gain above `+4 dB`
+- `v4.1.4.10` retains the `.9` reserve behavior and reduces default `150 Hz-4 kHz` side width from `1.890x` to `1.701x`
 - JDSP supplies the terminal limiter; the qualified Axiom baseline now uses `-1.00 dB`, `60 ms` release, `0 dB` postgain
 
 ## Installation
 
 ### JamesDSP Android
-1. Copy `src/axiom_binaural_dsp_v4.1.4.9.eel` to your JamesDSP liveprog directory
-2. Open JamesDSP -> Liveprog -> Load script -> select `axiom_binaural_dsp_v4.1.4.9.eel`
+1. Copy `src/axiom_binaural_dsp_v4.1.4.10.eel` to your JamesDSP liveprog directory
+2. Open JamesDSP -> Liveprog -> Load script -> select `axiom_binaural_dsp_v4.1.4.10.eel`
 3. Enable the Liveprog engine
 4. Set output limiter threshold to `-1.00 dB`, release `60 ms`, and postgain `0.00 dB`
 5. For headphones only, enable JamesDSP crossfeed manually if desired
 
 ### JamesDSP Linux
-1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.9.eel`.
-2. The script loads Liveprog with crossfeed disabled, the qualified host limiter settings, and saves `Axiom-v4.1.4.9-accepted`.
+1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.10.eel Axiom-v4.1.4.10-accepted`.
+2. The script loads Liveprog with crossfeed disabled, the qualified host limiter settings, and saves the accepted `.10` preset.
 
 `presets/axiom-preset.conf` records the neutral accepted-baseline host configuration as a JDSP `audio.conf`-style template. Update its `liveprog_file` path before loading it directly; the hot-reload script writes the active absolute path automatically.
 
@@ -187,15 +188,15 @@ scripts/analyze_axiom_subharmonics.py \
 
 This is a branch-local model of the `.7` bass generator and terminal reserve. The historical `.8` full-reserve behavior can be modeled with `--reserve-above-slider-db 4`; the accepted `.9` reserve slope is established by its real-host qualification record. This tool identifies settings that should be verified through real-host captures, but it does not model exciter, STFT, limiter, or music-program behavior.
 
-To investigate whether the accepted host limiter participates at `.9` default
+To investigate whether the accepted host limiter participates at `.10` default
 controls without creating a new DSP candidate, run a repeated same-script
 limiter-threshold sweep against the registered local-material manifest:
 
 ```bash
 scripts/run_jdsp_limiter_sweep.py \
-  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
   /absolute/path/to/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v49-limiter-sweep
+  /tmp/axiom-v410-limiter-sweep
 ```
 
 By default this targets the high-energy electronic excerpt and compares `-0.50`,
@@ -210,9 +211,9 @@ dense-material stress profile at the qualified `-1.00 dB` threshold:
 
 ```bash
 scripts/run_jdsp_accepted_stress.py \
-  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
   /absolute/path/to/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v49-accepted-stress
+  /tmp/axiom-v410-accepted-stress
 ```
 
 This renders every registered excerpt three times at the accepted host
@@ -221,13 +222,13 @@ stable output above the `-0.50 dBFS` observation level is retained as accepted
 limiter-pressure evidence for evaluating later candidates.
 
 To identify the usable real-music range of the user-adjustable bass control,
-run the accepted `.9` Sub Harmonics Gain map:
+run the accepted `.10` Sub Harmonics Gain map:
 
 ```bash
 scripts/run_jdsp_sub_slider_map.py \
-  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
   /absolute/path/to/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v49-sub-slider-map
+  /tmp/axiom-v410-sub-slider-map
 ```
 
 The map renders temporary external fixtures at `+4`, `+6`, `+8`, `+10`, and
@@ -280,7 +281,7 @@ measurement, because unstable capture evidence is not a reserve-law rejection.
 
 The project includes a local-first Pi harness for disciplined future Axiom
 experiments. It isolates the session from globally installed agent extensions,
-protects the accepted `.9` file by hash and path, creates candidates in
+protects the accepted `.10` file by hash and path, creates candidates in
 external worktrees, serializes real-JDSP capture runs, and requires separate
 human confirmations for listening acceptance, publication, and merge.
 
@@ -313,7 +314,8 @@ axiom-binaural-dsp/
     axiom_binaural_dsp_v4.1.4.6.eel  # Phase-preserving bass predecessor
     axiom_binaural_dsp_v4.1.4.7.eel  # Transparent-headroom comparison reference
     axiom_binaural_dsp_v4.1.4.8.eel  # Previous bass-aware headroom baseline
-    axiom_binaural_dsp_v4.1.4.9.eel  # Accepted reduced bass-reserve baseline
+    axiom_binaural_dsp_v4.1.4.9.eel  # Previous reduced bass-reserve baseline
+    axiom_binaural_dsp_v4.1.4.10.eel # Accepted restrained low-mid width baseline
   scripts/
     axiom_team.sh                     # Isolated Pi engineering-harness launcher
     hot_reload_liveprog.sh            # JDSP A/B preset loader
@@ -362,7 +364,8 @@ axiom-binaural-dsp/
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
-    qualification-v4.1.4.9.md # Accepted-baseline evidence and reproduction record
+    qualification-v4.1.4.9.md # Previous-baseline evidence and reproduction record
+    qualification-v4.1.4.10.md # Current accepted-baseline evidence record
     engineering-harness.md    # Controlled Pi candidate and release workflow
   tools/axiom-team/
     extensions/index.ts       # Restricted Pi tools and approval commands
@@ -402,10 +405,11 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
 | [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
 | [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Previous `.8` verification record |
-| [`docs/qualification-v4.1.4.9.md`](docs/qualification-v4.1.4.9.md) | Accepted `.9` verification record |
-| [`docs/stft-audit-v4.1.4.9.md`](docs/stft-audit-v4.1.4.9.md) | Accepted `.9` STFT stage investigation record |
-| [`docs/width-mono-audit-v4.1.4.9.md`](docs/width-mono-audit-v4.1.4.9.md) | Accepted `.9` width and mono-compatibility investigation record |
-| [`docs/lowmid-width-screen-v4.1.4.9.md`](docs/lowmid-width-screen-v4.1.4.9.md) | Accepted `.9` restrained low-mid width candidate rationale |
+| [`docs/qualification-v4.1.4.9.md`](docs/qualification-v4.1.4.9.md) | Previous `.9` verification record |
+| [`docs/qualification-v4.1.4.10.md`](docs/qualification-v4.1.4.10.md) | Accepted `.10` verification and listening record |
+| [`docs/stft-audit-v4.1.4.9.md`](docs/stft-audit-v4.1.4.9.md) | Historical `.9` STFT stage investigation record |
+| [`docs/width-mono-audit-v4.1.4.9.md`](docs/width-mono-audit-v4.1.4.9.md) | Historical `.9` width and mono-compatibility investigation record |
+| [`docs/lowmid-width-screen-v4.1.4.9.md`](docs/lowmid-width-screen-v4.1.4.9.md) | `.9` evidence supporting the accepted `.10` width change |
 | [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents
