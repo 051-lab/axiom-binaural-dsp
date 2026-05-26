@@ -14,6 +14,7 @@ import {
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
+  runReserveLawScreen,
   runSubSliderMap,
   writeRun,
   writeScopedFile,
@@ -152,4 +153,12 @@ test("sub harmonics gain map is blocked until hypothesis exists and after candid
   assert.throws(() => runSubSliderMap(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runSubSliderMap(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("reserve-law screen is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Screen reduced bass reserve laws", fx.config, fx.policy);
+  assert.throws(() => runReserveLawScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runReserveLawScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });

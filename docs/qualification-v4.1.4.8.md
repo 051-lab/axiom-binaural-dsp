@@ -103,6 +103,30 @@ playback level for reserve. A future candidate is justified only if listening
 confirms that this loudness retreat is objectionable or limits practical bass
 adjustment.
 
+## Elevated-Bass Reserve-Law Focused Screen
+
+A pre-candidate screen then held Sub Harmonics Gain at `+8 dB` and tested
+temporary fixtures whose elevated-bass output-reserve slope was `1.000`
+(current `.8` behavior), `0.875`, `0.750`, or `0.500`. The screen targeted
+the electronic and hip-hop excerpts at the accepted `-1.00 dB` host limiter
+setting with three measured renders per fixture and excerpt. One conditioning
+render per set was excluded after an initial unconditioned attempt exposed a
+cold-start RMS outlier in the full-reserve electronic reference.
+
+| Reserve slope | Electronic RMS recovery | Electronic highest peak | Hip-hop RMS recovery | Hip-hop highest peak | Result |
+|--------------:|------------------------:|------------------------:|---------------------:|---------------------:|--------|
+| `1.000` | reference | `-0.854 dBFS` | reference | `-0.951 dBFS` | Qualified reference |
+| `0.875` | `+0.443 dB` | `-0.866 dBFS` | `+0.487 dB` | `-0.960 dBFS` | Below `0.50 dB` recovery floor |
+| `0.750` | `+0.863 dB` | `-0.720 dBFS` | `+0.969 dB` | `-0.902 dBFS` | Viable for broader qualification |
+| `0.500` | `+1.638 dB` | `-0.787 dBFS` | `+1.904 dB` | `-0.848 dBFS` | Viable for broader qualification |
+
+All conditioned measured captures were unclipped, and no peak crossed the
+`-0.50 dBFS` observation boundary. Result:
+**VIABLE_REDUCED_RESERVE_IDENTIFIED**. This does not alter the accepted `.8`
+baseline or establish a production reserve law; it justifies a broader
+control-range and material qualification of slopes `0.750` and `0.500`
+before creating a listening candidate.
+
 ## Listening Acceptance
 
 After the measurement checks, device listening on multiple songs confirmed no

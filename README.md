@@ -184,6 +184,26 @@ fails. The map also flags repeatable whole-output RMS retreat beyond `1 dB`
 relative to default, since added peak reserve can trade playback loudness for
 bass-control headroom.
 
+To screen whether `.8` is over-reserving output above its default without
+creating a DSP candidate, test reduced reserve slopes at practical `+8 dB`
+bass gain:
+
+```bash
+scripts/run_jdsp_reserve_law_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  /absolute/path/to/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v48-reserve-screen
+```
+
+The focused default screen targets the electronic and hip-hop excerpts and
+tests full reserve (`1.000`) against reduced slopes (`0.875`, `0.750`, and
+`0.500`). It excludes one conditioning render before measuring each
+fixture/excerpt set so newly loaded host state is not counted as repeatability
+evidence. A reduced slope is viable only when every screened excerpt recovers
+repeatable RMS level without clipping or exceeding the `-0.50 dBFS` peak
+observation boundary. Passing this screen justifies broader qualification; it
+does not create or accept a new Axiom script.
+
 ### Controlled Pi Engineering Harness
 
 The project includes a local-first Pi harness for disciplined future Axiom
@@ -240,6 +260,7 @@ axiom-binaural-dsp/
     run_jdsp_limiter_sweep.py         # Same-script host-limiter participation probe
     run_jdsp_accepted_stress.py        # Repeated accepted-setting dense-material baseline
     run_jdsp_sub_slider_map.py         # Real-music Sub Harmonics Gain range map
+    run_jdsp_reserve_law_screen.py     # Experimental elevated-bass reserve-law screen
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -252,6 +273,7 @@ axiom-binaural-dsp/
     test_run_jdsp_limiter_sweep.py
     test_run_jdsp_accepted_stress.py
     test_run_jdsp_sub_slider_map.py
+    test_run_jdsp_reserve_law_screen.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Accepted-baseline evidence and reproduction record

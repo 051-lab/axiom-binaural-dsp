@@ -82,6 +82,7 @@ Inside Pi, the primary commands are:
 | `/axiom-measure-limiter run-id` | Capture accepted `.8` across controlled JDSP limiter thresholds for an investigation |
 | `/axiom-stress-accepted run-id` | Establish repeated dense-material behavior for accepted `.8` at `-1.00 dB` |
 | `/axiom-map-sub-gain run-id` | Map dense-material behavior from `+4` through `+12 dB` Sub Harmonics Gain |
+| `/axiom-screen-reserve-law run-id` | Screen reduced elevated-bass reserve slopes in temporary fixtures |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -130,6 +131,16 @@ tested usable-range limit that can justify a narrowly scoped future candidate.
 It separately records repeatable broadband RMS retreat relative to `+4 dB`,
 because safe peak margin is not sufficient evidence that an elevated control
 setting preserves practical listening level.
+
+When that map exposes substantial level retreat, `/axiom-screen-reserve-law`
+generates temporary `+8 dB` fixtures with reserve slopes of `1.000`, `0.875`,
+`0.750`, and `0.500`. It screens the critical electronic and hip-hop excerpts
+at the accepted host setting. One excluded conditioning render is performed
+before each measured fixture/excerpt set so a cold host or newly loaded
+fixture cannot contaminate the repeated metrics. A reduced slope advances only when every
+screened excerpt recovers repeatable RMS level while remaining unclipped and
+below the `-0.50 dBFS` observation boundary. The screen is pre-candidate
+evidence; broader boundary qualification and user listening remain mandatory.
 
 After listening acceptance, a release branch must contain:
 

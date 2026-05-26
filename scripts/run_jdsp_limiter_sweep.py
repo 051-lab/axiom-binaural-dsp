@@ -151,6 +151,7 @@ def render_track(
     thresholds_db: list[float],
     repetitions: int,
     max_metric_spread_db: float,
+    conditioning_renders: int = 0,
 ) -> dict[str, Any]:
     excerpt = output_dir / "excerpt.wav"
     convert_excerpt(item, excerpt)
@@ -160,6 +161,26 @@ def render_track(
         captures: list[dict[str, Any]] = []
         wavs: list[pathlib.Path] = []
         threshold_dir = output_dir / f"threshold_{threshold:g}db"
+        for number in range(1, conditioning_renders + 1):
+            output = threshold_dir / f"conditioning_{number}.wav"
+            run(
+                [
+                    sys.executable,
+                    str(script_dir / "render_jdsp_host.py"),
+                    str(excerpt),
+                    str(eel),
+                    str(output),
+                    "--pulse-server",
+                    pulse_server,
+                    "--pre-roll-ms",
+                    "500",
+                    "--tail-ms",
+                    "2000",
+                    "--master-limiter-threshold-db",
+                    str(threshold),
+                ],
+                f"{item['label']} threshold {threshold:g} dB conditioning render {number}",
+            )
         for number in range(1, repetitions + 1):
             output = threshold_dir / f"render_{number}.wav"
             run(

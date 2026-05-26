@@ -52,6 +52,11 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added a dense-material `Sub Harmonics Gain` map using temporary accepted-`.8`
   fixtures from `+4` through `+12 dB` to identify practical control-range
   boundaries before proposing a sound-changing DSP iteration.
+- Added a focused experimental reserve-law screen that compares reduced
+  elevated-bass output attenuation against the current `.8` reserve law using
+  repeat-captured critical music excerpts before candidate creation, with an
+  excluded conditioning render to prevent cold host initialization from
+  contaminating measured level repeatability.
 
 ### Measurement Boundary
 - Captures occur after JDSP host processing and therefore do not prove an Axiom-only transfer function.
