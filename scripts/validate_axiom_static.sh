@@ -13,18 +13,21 @@ if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.4.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ]; then
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ]; then
   host_limiter_only=true
 fi
 if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ]; then
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ]; then
   host_crossfeed_only=true
 fi
 if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
    [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ]; then
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
+   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ]; then
   phase_preserving_bass=true
 fi
 
@@ -250,6 +253,19 @@ if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ]; then
     fail "v4.1.4.8 bass-aware terminal reserve is missing"
   else
     pass "bass-aware terminal reserve is present"
+  fi
+fi
+
+if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ]; then
+  if ! grep -Fq 'headroomGain = exp(-1.0 * DB_2_LOG);' "$script_path" ||
+     ! grep -Fq 'outputGain = (slider1 > 4.0) ? (headroomGain * exp(-((slider1 - 4.0) * 0.75) * DB_2_LOG)) : headroomGain;' "$script_path" ||
+     ! grep -Fq 'out_L *= outputGain;' "$script_path" ||
+     ! grep -Fq 'out_R *= outputGain;' "$script_path"; then
+    fail "v4.1.4.9 reduced bass-reserve slope is missing"
+  elif grep -Fq 'defaultSubGainLin' "$script_path"; then
+    fail "v4.1.4.9 retains unused full-reserve baseline state"
+  else
+    pass "reduced bass-reserve slope is present without unused state"
   fi
 fi
 

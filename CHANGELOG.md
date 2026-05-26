@@ -4,6 +4,30 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [4.1.4.9] - 2026-05-26 - Accepted Reduced Bass-Reserve Baseline
+
+### Changed
+- Preserved the accepted `.8` signal chain and exact default Sub Harmonics behavior.
+- Reduced the conditional terminal reserve above the `+4 dB` default from
+  `1.000 dB/dB` to `0.750 dB/dB`.
+- Removed the now-unused full-reserve baseline state from the output stage.
+
+### Rationale
+- Real-host external-material screening identified `0.750 dB/dB` as the
+  strongest reduced-reserve slope to pass every tested `+6`, `+8`, `+10`,
+  and `+12 dB` setting without clipping.
+- A more aggressive `0.500 dB/dB` slope exceeded the observation boundary on
+  dense electronic material at `+6 dB`, so it is not used for listening.
+
+### Validation
+- Passed managed real-JDSP qualification with an investigation marker: the
+  external electronic excerpt approached the observation ceiling at default
+  controls under both `.8` and `.9`, with zero clipped samples.
+- Accepted after device A/B listening against `v4.1.4.8` confirmed the
+  reduced-reserve behavior should become the new baseline.
+
+---
+
 ## [4.1.4.8] - 2026-05-24 - Accepted Bass-Aware Headroom Baseline
 
 ### Changed

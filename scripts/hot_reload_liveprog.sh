@@ -24,6 +24,9 @@ case "$(basename "$script_path")" in
   axiom_binaural_dsp_v4.1.4.8.eel)
     default_preset_name="Axiom-v4.1.4.8-accepted"
     ;;
+  axiom_binaural_dsp_v4.1.4.9.eel)
+    default_preset_name="Axiom-v4.1.4.9-accepted"
+    ;;
   *)
     default_preset_name="Axiom-custom"
     ;;
