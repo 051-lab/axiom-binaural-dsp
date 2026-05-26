@@ -11,6 +11,7 @@ import {
   createInvestigation,
   readRun,
   recordListening,
+  runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
   writeRun,
@@ -134,4 +135,12 @@ test("baseline limiter measurement is blocked until hypothesis exists and after 
   assert.throws(() => runBaselineLimiterSweep(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runBaselineLimiterSweep(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("accepted-setting stress measurement is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Stress accepted dense-material behavior", fx.config, fx.policy);
+  assert.throws(() => runAcceptedStressBaseline(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runAcceptedStressBaseline(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });

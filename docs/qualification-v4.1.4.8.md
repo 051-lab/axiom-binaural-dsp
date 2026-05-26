@@ -60,6 +60,24 @@ threshold. All `.8` captures had zero clipped samples.
 The external assets and source manifest are intentionally not committed. Their
 license/source record remains alongside local material used for validation.
 
+## Repeated Accepted-Setting Stress Baseline
+
+A subsequent host-path baseline measurement repeated each registered external
+excerpt three times through accepted `.8` at the tracked `-1.00 dB` limiter
+threshold. All twelve captures were unclipped and supplied repeatable level
+metrics, establishing a dense-material reference for later candidates.
+
+| Excerpt | Mean peak (dBFS) | Highest repeated peak (dBFS) | Clipped samples | Result |
+|---------|-----------------:|-----------------------------:|----------------:|--------|
+| Electronic / high-energy | `-0.606` | `-0.542` | `0` | PASS |
+| Instrumental hip hop | `-0.757` | `-0.706` | `0` | PASS |
+| Jazz/fusion low-end passage | `-0.982` | `-0.980` | `0` | PASS |
+| Orchestral passage | `-0.917` | `-0.881` | `0` | PASS |
+
+This result retains `-1.00 dB` as the qualified host threshold. A separate
+diagnostic run at `-0.50 dB` clipped the electronic excerpt and is therefore
+not acceptable as the host baseline.
+
 ## Listening Acceptance
 
 After the measurement checks, device listening on multiple songs confirmed no

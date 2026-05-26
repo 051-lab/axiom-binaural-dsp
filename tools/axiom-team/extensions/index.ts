@@ -21,6 +21,7 @@ import {
   recordListening,
   renderSummary,
   repositoryRoot,
+  runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
   setHypothesis,
@@ -259,6 +260,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_stress_accepted_setting",
+    label: "Stress Accepted Setting",
+    description: "Render accepted .8 repeatedly on registered dense material at the qualified -1.00 dB host-limiter setting.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runAcceptedStressBaseline(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -292,6 +301,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-measure-limiter", {
     description: "Usage: /axiom-measure-limiter run-id; capture accepted .8 across host limiter thresholds.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runBaselineLimiterSweep(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-stress-accepted", {
+    description: "Usage: /axiom-stress-accepted run-id; repeat dense-material captures at accepted host settings.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runAcceptedStressBaseline(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",

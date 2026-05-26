@@ -151,6 +151,21 @@ short-window envelope shifts. The classification uses only non-clipping
 metrics that repeat within policy; it identifies host-limiter behavior, not an
 EEL regression by itself.
 
+After limiter participation is established, capture the accepted-setting
+dense-material stress profile at the qualified `-1.00 dB` threshold:
+
+```bash
+scripts/run_jdsp_accepted_stress.py \
+  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  /absolute/path/to/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v48-accepted-stress
+```
+
+This renders every registered excerpt three times at the accepted host
+setting. Clipping, silence, or an unrepeatable level profile fails the gate;
+stable output above the `-0.50 dBFS` observation level is retained as accepted
+limiter-pressure evidence for evaluating later candidates.
+
 ### Controlled Pi Engineering Harness
 
 The project includes a local-first Pi harness for disciplined future Axiom
@@ -205,6 +220,7 @@ axiom-binaural-dsp/
     analyze_jdsp_transfer.py          # Stimulus-conditioned host-path matrix analysis
     analyze_axiom_subharmonics.py     # Sub Harmonics Gain branch characterization
     run_jdsp_limiter_sweep.py         # Same-script host-limiter participation probe
+    run_jdsp_accepted_stress.py        # Repeated accepted-setting dense-material baseline
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -215,6 +231,7 @@ axiom-binaural-dsp/
     test_run_jdsp_local_material.py
     test_run_jdsp_wsl_qualification.py
     test_run_jdsp_limiter_sweep.py
+    test_run_jdsp_accepted_stress.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Accepted-baseline evidence and reproduction record

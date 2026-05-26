@@ -46,6 +46,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added a same-script JDSP limiter-threshold sweep that evaluates default `.8`
   limiter participation with repeated external-material captures before any
   new EEL candidate is justified.
+- Added an accepted-setting dense-material stress gate that repeats registered
+  external excerpts at the tracked `-1.00 dB` limiter setting and preserves
+  stable terminal-limiter pressure as regression evidence for future candidates.
 
 ### Measurement Boundary
 - Captures occur after JDSP host processing and therefore do not prove an Axiom-only transfer function.

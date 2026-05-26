@@ -80,6 +80,7 @@ Inside Pi, the primary commands are:
 | `/axiom-investigate <observation>` | Open a measurement-backed investigation |
 | `/axiom-hypothesis run-id \| hypothesis \| listening target` | Establish the reason and audible target before coding |
 | `/axiom-measure-limiter run-id` | Capture accepted `.8` across controlled JDSP limiter thresholds for an investigation |
+| `/axiom-stress-accepted run-id` | Establish repeated dense-material behavior for accepted `.8` at `-1.00 dB` |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -111,6 +112,13 @@ percentile shifts. Classification uses only non-clipping metrics whose
 repeated-capture spread meets policy; waveform alignment remains diagnostic.
 A detected threshold effect is evidence of host limiter participation, not
 automatically evidence that Axiom's EEL must change.
+
+Once participation is established, `/axiom-stress-accepted` runs all
+registered dense-material excerpts through accepted `.8` repeatedly at the
+tracked `-1.00 dB` limiter setting. It fails on clipping, silence, or absence
+of repeatable level metrics. Stable near-ceiling output is recorded as
+`PASS_WITH_INVESTIGATION`, creating the reference behavior future candidate
+qualification must not silently worsen.
 
 After listening acceptance, a release branch must contain:
 
