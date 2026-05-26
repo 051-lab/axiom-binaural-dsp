@@ -78,6 +78,31 @@ This result retains `-1.00 dB` as the qualified host threshold. A separate
 diagnostic run at `-0.50 dB` clipped the electronic excerpt and is therefore
 not acceptable as the host baseline.
 
+## Sub Harmonics Gain Dense-Material Map
+
+The same accepted `.8` baseline was rendered through temporary test fixtures
+at `+4`, `+6`, `+8`, `+10`, and `+12 dB` Sub Harmonics Gain, with three
+captures of every external excerpt at each setting. All sixty captures were
+unclipped, and no repeated peak exceeded the `-0.50 dBFS` terminal-pressure
+observation boundary.
+
+The map also established an important design tradeoff: the bass-aware reserve
+protects peak margin by reducing total rendered RMS as the bass slider rises.
+
+| Slider | Highest peak observed (dBFS) | Clipped samples | Repeatable RMS retreat versus `+4 dB` |
+|-------:|-----------------------------:|----------------:|--------------------------------------|
+| `+4 dB` | `-0.588` | `0` | reference |
+| `+6 dB` | `-0.765` | `0` | `-1.186` to `-1.629 dB` |
+| `+8 dB` | `-0.898` | `0` | `-2.568` to `-3.416 dB` |
+| `+10 dB` | `-0.960` | `0` | `-3.787` to `-5.179 dB` |
+| `+12 dB` | `-1.115` | `0` | `-4.821` to `-5.495 dB` on RMS-qualified excerpts |
+
+Result: **PASS_WITH_INVESTIGATION**. The current design is safe over the
+tested slider range, but elevated bass gain increasingly trades overall
+playback level for reserve. A future candidate is justified only if listening
+confirms that this loudness retreat is objectionable or limits practical bass
+adjustment.
+
 ## Listening Acceptance
 
 After the measurement checks, device listening on multiple songs confirmed no

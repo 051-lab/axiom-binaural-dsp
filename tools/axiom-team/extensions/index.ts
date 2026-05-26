@@ -24,6 +24,7 @@ import {
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
+  runSubSliderMap,
   setHypothesis,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -268,6 +269,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_map_sub_harmonics_gain",
+    label: "Map Sub Harmonics Gain",
+    description: "Render accepted .8 repeatedly across Sub Harmonics Gain settings on registered dense material at accepted host settings.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runSubSliderMap(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -305,6 +314,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-stress-accepted", {
     description: "Usage: /axiom-stress-accepted run-id; repeat dense-material captures at accepted host settings.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runAcceptedStressBaseline(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-map-sub-gain", {
+    description: "Usage: /axiom-map-sub-gain run-id; map dense-material behavior across Sub Harmonics Gain settings.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runSubSliderMap(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",

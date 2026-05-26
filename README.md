@@ -166,6 +166,24 @@ setting. Clipping, silence, or an unrepeatable level profile fails the gate;
 stable output above the `-0.50 dBFS` observation level is retained as accepted
 limiter-pressure evidence for evaluating later candidates.
 
+To identify the usable real-music range of the user-adjustable bass control,
+run the accepted `.8` Sub Harmonics Gain map:
+
+```bash
+scripts/run_jdsp_sub_slider_map.py \
+  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  /absolute/path/to/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v48-sub-slider-map
+```
+
+The map renders temporary external fixtures at `+4`, `+6`, `+8`, `+10`, and
+`+12 dB` Sub Harmonics Gain through the accepted `-1.00 dB` host limiter
+setting. An elevated-gain clipping result identifies a usable-range boundary;
+it does not invalidate the accepted default baseline unless `+4 dB` itself
+fails. The map also flags repeatable whole-output RMS retreat beyond `1 dB`
+relative to default, since added peak reserve can trade playback loudness for
+bass-control headroom.
+
 ### Controlled Pi Engineering Harness
 
 The project includes a local-first Pi harness for disciplined future Axiom
@@ -221,6 +239,7 @@ axiom-binaural-dsp/
     analyze_axiom_subharmonics.py     # Sub Harmonics Gain branch characterization
     run_jdsp_limiter_sweep.py         # Same-script host-limiter participation probe
     run_jdsp_accepted_stress.py        # Repeated accepted-setting dense-material baseline
+    run_jdsp_sub_slider_map.py         # Real-music Sub Harmonics Gain range map
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -232,6 +251,7 @@ axiom-binaural-dsp/
     test_run_jdsp_wsl_qualification.py
     test_run_jdsp_limiter_sweep.py
     test_run_jdsp_accepted_stress.py
+    test_run_jdsp_sub_slider_map.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Accepted-baseline evidence and reproduction record

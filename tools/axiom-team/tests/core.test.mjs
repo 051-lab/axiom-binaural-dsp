@@ -14,6 +14,7 @@ import {
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
+  runSubSliderMap,
   writeRun,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -143,4 +144,12 @@ test("accepted-setting stress measurement is blocked until hypothesis exists and
   assert.throws(() => runAcceptedStressBaseline(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runAcceptedStressBaseline(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("sub harmonics gain map is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Map accepted bass control behavior", fx.config, fx.policy);
+  assert.throws(() => runSubSliderMap(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runSubSliderMap(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });

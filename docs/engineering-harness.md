@@ -81,6 +81,7 @@ Inside Pi, the primary commands are:
 | `/axiom-hypothesis run-id \| hypothesis \| listening target` | Establish the reason and audible target before coding |
 | `/axiom-measure-limiter run-id` | Capture accepted `.8` across controlled JDSP limiter thresholds for an investigation |
 | `/axiom-stress-accepted run-id` | Establish repeated dense-material behavior for accepted `.8` at `-1.00 dB` |
+| `/axiom-map-sub-gain run-id` | Map dense-material behavior from `+4` through `+12 dB` Sub Harmonics Gain |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -119,6 +120,16 @@ tracked `-1.00 dB` limiter setting. It fails on clipping, silence, or absence
 of repeatable level metrics. Stable near-ceiling output is recorded as
 `PASS_WITH_INVESTIGATION`, creating the reference behavior future candidate
 qualification must not silently worsen.
+
+`/axiom-map-sub-gain` then measures the user-controlled bass path on registered
+material using temporary `.8` fixtures at `+4`, `+6`, `+8`, `+10`, and
+`+12 dB` while holding the accepted host configuration fixed. It distinguishes
+a broken default baseline from an elevated-control boundary: default clipping
+or unreliable measurements fail, while elevated clipping is recorded as a
+tested usable-range limit that can justify a narrowly scoped future candidate.
+It separately records repeatable broadband RMS retreat relative to `+4 dB`,
+because safe peak margin is not sufficient evidence that an elevated control
+setting preserves practical listening level.
 
 After listening acceptance, a release branch must contain:
 

@@ -49,6 +49,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added an accepted-setting dense-material stress gate that repeats registered
   external excerpts at the tracked `-1.00 dB` limiter setting and preserves
   stable terminal-limiter pressure as regression evidence for future candidates.
+- Added a dense-material `Sub Harmonics Gain` map using temporary accepted-`.8`
+  fixtures from `+4` through `+12 dB` to identify practical control-range
+  boundaries before proposing a sound-changing DSP iteration.
 
 ### Measurement Boundary
 - Captures occur after JDSP host processing and therefore do not prove an Axiom-only transfer function.
