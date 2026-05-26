@@ -257,7 +257,7 @@ export default function (pi: ExtensionAPI) {
   pi.registerTool({
     name: "axiom_measure_baseline_limiter",
     label: "Measure Baseline Limiter",
-    description: "Run the serialized real-JDSP limiter-threshold sweep on accepted .8 for a hypothesis-bearing investigation without creating a candidate.",
+    description: "Run the serialized real-JDSP limiter-threshold sweep on the accepted baseline for a hypothesis-bearing investigation without creating a candidate.",
     parameters: Type.Object({ runId: Type.String() }),
     async execute(_id, params) { return text(renderSummary(runBaselineLimiterSweep(params.runId))); },
   });
@@ -265,7 +265,7 @@ export default function (pi: ExtensionAPI) {
   pi.registerTool({
     name: "axiom_stress_accepted_setting",
     label: "Stress Accepted Setting",
-    description: "Render accepted .8 repeatedly on registered dense material at the qualified -1.00 dB host-limiter setting.",
+    description: "Render the accepted baseline repeatedly on registered dense material at the qualified -1.00 dB host-limiter setting.",
     parameters: Type.Object({ runId: Type.String() }),
     async execute(_id, params) { return text(renderSummary(runAcceptedStressBaseline(params.runId))); },
   });
@@ -273,7 +273,7 @@ export default function (pi: ExtensionAPI) {
   pi.registerTool({
     name: "axiom_map_sub_harmonics_gain",
     label: "Map Sub Harmonics Gain",
-    description: "Render accepted .8 repeatedly across Sub Harmonics Gain settings on registered dense material at accepted host settings.",
+    description: "Render the accepted baseline repeatedly across Sub Harmonics Gain settings on registered dense material at accepted host settings.",
     parameters: Type.Object({ runId: Type.String() }),
     async execute(_id, params) { return text(renderSummary(runSubSliderMap(params.runId))); },
   });
@@ -322,11 +322,11 @@ export default function (pi: ExtensionAPI) {
     handler: async (_args, ctx) => ctx.ui.notify(statusText(), "info"),
   });
   pi.registerCommand("axiom-audit-baseline", {
-    description: "Audit accepted .8 without creating a DSP candidate.",
+    description: "Audit the accepted baseline without creating a DSP candidate.",
     handler: async (_args, ctx) => ctx.ui.notify(renderSummary(auditBaseline()), "info"),
   });
   pi.registerCommand("axiom-measure-limiter", {
-    description: "Usage: /axiom-measure-limiter run-id; capture accepted .8 across host limiter thresholds.",
+    description: "Usage: /axiom-measure-limiter run-id; capture the accepted baseline across host limiter thresholds.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runBaselineLimiterSweep(args.trim())), "info"),
   });
   pi.registerCommand("axiom-stress-accepted", {

@@ -6,10 +6,10 @@
     "defaultBranch": "main"
   },
   "acceptedBaseline": {
-    "version": "v4.1.4.8",
-    "path": "src/axiom_binaural_dsp_v4.1.4.8.eel",
-    "sha256": "404b09a6a097046482b62682b2ca28b902916e49f75b5fb1bda18ea074c00a01",
-    "qualificationDocument": "docs/qualification-v4.1.4.8.md"
+    "version": "v4.1.4.9",
+    "path": "src/axiom_binaural_dsp_v4.1.4.9.eel",
+    "sha256": "b0bb2a4a399a2279b6c3eb8e40a9861cc11744e38b3002989ab07c3907dcd887",
+    "qualificationDocument": "docs/qualification-v4.1.4.9.md"
   },
   "hostBaseline": {
     "masterEnabled": true,

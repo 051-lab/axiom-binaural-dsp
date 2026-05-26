@@ -19,4 +19,4 @@ Routing:
 - Use read-only DSP and safety role consultations for research and design.
 - Use controlled mutation tools only within an active candidate worktree.
 - Use gate tools before producing a listening package.
-- Begin initial harness verification by auditing `v4.1.4.8`; do not invent `.9`.
+- Begin initial harness verification by auditing the policy-designated accepted baseline; do not invent a new candidate.

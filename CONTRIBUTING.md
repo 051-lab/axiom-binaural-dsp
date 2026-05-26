@@ -13,7 +13,7 @@ measurement tools used to qualify changes.
 
 ## Current Baseline
 
-The accepted source is `src/axiom_binaural_dsp_v4.1.4.8.eel`. It is
+The accepted source is `src/axiom_binaural_dsp_v4.1.4.9.eel`. It is
 device-neutral: crossfeed is not part of Axiom. The only terminal limiter in the
 qualified chain is JDSP's limiter, enabled at `-1.00 dB` threshold, `60 ms`
 release, and `0 dB` postgain.
@@ -47,7 +47,7 @@ capture WAVs, or generated reports.
 Run static and tooling checks before a commit:
 
 ```bash
-scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.8.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.9.eel
 python3 -m unittest discover -s tests -p 'test_*.py'
 git diff --check
 ```
@@ -56,9 +56,9 @@ For host-path comparison on the configured WSL workstation:
 
 ```bash
 scripts/run_jdsp_wsl_qualification.py \
-  src/axiom_binaural_dsp_v4.1.4.7.eel \
   src/axiom_binaural_dsp_v4.1.4.8.eel \
-  /tmp/axiom-v47-v48-wsl-qualification
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  /tmp/axiom-v48-v49-wsl-qualification
 ```
 
 Use locally controlled or freely licensed material only through manifests kept
@@ -85,4 +85,4 @@ type(scope): short imperative summary
 Typical types are `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, and
 `chore`. Typical scopes are `dsp`, `testbench`, `preset`, `docs`, and `host`.
 
-*Maintained by 051-lab - Axiom Binaural DSP v4.1.4.8*
+*Maintained by 051-lab - Axiom Binaural DSP v4.1.4.9*

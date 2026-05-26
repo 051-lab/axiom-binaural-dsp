@@ -64,7 +64,7 @@ node tools/axiom-team/bin/axiom-team.mjs doctor
 ```
 
 Review `~/.config/axiom-engineering/axiom-binaural-dsp.json` if local route or
-test-material locations differ. `doctor` requires the accepted `.8` SHA-256
+test-material locations differ. `doctor` requires the accepted `.9` SHA-256
 recorded in `tools/axiom-team/policy.json`, the JDSP route helper, CLI tools,
 and the configured external-material manifest.
 
@@ -76,11 +76,11 @@ Inside Pi, the primary commands are:
 |---------|---------|
 | `/axiom-doctor` | Check baseline identity and local dependencies |
 | `/axiom-status` | View local engineering run states |
-| `/axiom-audit-baseline` | Run static/tooling gates on accepted `.8` without creating a new DSP file |
+| `/axiom-audit-baseline` | Run static/tooling gates on accepted `.9` without creating a new DSP file |
 | `/axiom-investigate <observation>` | Open a measurement-backed investigation |
 | `/axiom-hypothesis run-id \| hypothesis \| listening target` | Establish the reason and audible target before coding |
-| `/axiom-measure-limiter run-id` | Capture accepted `.8` across controlled JDSP limiter thresholds for an investigation |
-| `/axiom-stress-accepted run-id` | Establish repeated dense-material behavior for accepted `.8` at `-1.00 dB` |
+| `/axiom-measure-limiter run-id` | Capture the accepted baseline across controlled JDSP limiter thresholds for an investigation |
+| `/axiom-stress-accepted run-id` | Establish repeated dense-material behavior for the accepted baseline at `-1.00 dB` |
 | `/axiom-map-sub-gain run-id` | Map dense-material behavior from `+4` through `+12 dB` Sub Harmonics Gain |
 | `/axiom-screen-reserve-law run-id` | Screen reduced elevated-bass reserve slopes in temporary fixtures |
 | `/axiom-qualify-reserve-range run-id` | Range-qualify viable reduced reserve slopes before a candidate |
@@ -108,7 +108,7 @@ the tracked host policy: master limiter enabled at `-1.00 dB`, `60 ms`
 release, `0 dB` postgain, and crossfeed disabled for qualification.
 
 For an investigation that questions terminal-limiter involvement before any
-candidate exists, `/axiom-measure-limiter` runs repeated same-`.8` captures of
+candidate exists, `/axiom-measure-limiter` runs repeated same-baseline captures of
 the flagged external electronic excerpt at `-0.50`, `-1`, and `-3 dB` limiter
 thresholds. It reports repeatability plus peak, RMS, crest, and 20 ms envelope
 percentile shifts. Classification uses only non-clipping metrics whose
@@ -117,14 +117,14 @@ A detected threshold effect is evidence of host limiter participation, not
 automatically evidence that Axiom's EEL must change.
 
 Once participation is established, `/axiom-stress-accepted` runs all
-registered dense-material excerpts through accepted `.8` repeatedly at the
+registered dense-material excerpts through the accepted baseline repeatedly at the
 tracked `-1.00 dB` limiter setting. It fails on clipping, silence, or absence
 of repeatable level metrics. Stable near-ceiling output is recorded as
 `PASS_WITH_INVESTIGATION`, creating the reference behavior future candidate
 qualification must not silently worsen.
 
 `/axiom-map-sub-gain` then measures the user-controlled bass path on registered
-material using temporary `.8` fixtures at `+4`, `+6`, `+8`, `+10`, and
+material using temporary accepted-baseline fixtures at `+4`, `+6`, `+8`, `+10`, and
 `+12 dB` while holding the accepted host configuration fixed. It distinguishes
 a broken default baseline from an elevated-control boundary: default clipping
 or unreliable measurements fail, while elevated clipping is recorded as a
@@ -182,5 +182,5 @@ The initial harness verification audits the accepted baseline only:
 node tools/axiom-team/bin/axiom-team.mjs audit-baseline
 ```
 
-This action records local evidence but creates no `.9` candidate and makes no
+This action records local evidence but creates no new candidate and makes no
 change to the accepted audio processing.

@@ -198,7 +198,7 @@ export function doctor(config = loadLocalConfig(), policy = loadPolicy()) {
 }
 
 export function auditBaseline(config = loadLocalConfig(), policy = loadPolicy()) {
-  const run = createInvestigation("Audit accepted baseline v4.1.4.8 without creating a candidate", config, policy);
+  const run = createInvestigation(`Audit accepted baseline ${policy.acceptedBaseline.version} without creating a candidate`, config, policy);
   const out = path.join(runDirectory(run.id, config), "audit");
   fs.mkdirSync(out, { recursive: true, mode: 0o700 });
   const tests = shell("python3", ["-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"], { cwd: config.repositoryRoot });

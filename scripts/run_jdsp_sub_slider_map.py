@@ -131,7 +131,7 @@ def markdown(report: dict[str, Any]) -> str:
         "",
         f"Status: **{evaluation['status'].upper()}**",
         "",
-        "This report maps accepted `.8` through JDSP while changing only the `Sub Harmonics Gain (dB)` default in temporary external fixtures. "
+        "This report maps the selected accepted EEL script through JDSP while changing only the `Sub Harmonics Gain (dB)` default in temporary external fixtures. "
         "A boundary at elevated gain is a measured usable-range limit, not a failure of the accepted default setting.",
         "",
         f"Host limiter threshold: `{report['threshold_db']:.2f} dB`; repetitions per excerpt and slider value: `{report['repetitions']}`; "

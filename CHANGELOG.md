@@ -201,7 +201,7 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ## Future Work Policy
 
-The accepted `.8` chain is optimized before introducing additional DSP stages.
+The accepted `.9` chain is optimized before introducing additional DSP stages.
 Any new audio behavior must be proposed against measurement evidence and device
 listening. `FractionalDelayLineInit`, `pfb_init`, and
 `InitPolyphaseFilterbank` remain excluded because they are not safe for the

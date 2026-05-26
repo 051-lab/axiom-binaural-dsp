@@ -111,7 +111,7 @@ def markdown(report: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "Use this artifact as the accepted `.8` reference for future dense-material candidate investigations. "
+            "Use this artifact as the selected accepted-baseline reference for future dense-material candidate investigations. "
             "It is host-path evidence and does not establish a defect in the EEL script.",
             "",
         ]
