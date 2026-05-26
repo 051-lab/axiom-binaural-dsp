@@ -28,6 +28,7 @@ import {
   runReserveRangeQualification,
   runStftStageAudit,
   runSubSliderMap,
+  runWidthMonoAudit,
   setHypothesis,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -304,6 +305,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_audit_width_mono",
+    label: "Audit Width and Mono",
+    description: "Measure accepted side-width gain and M/S leakage against a temporary unity-width fixture through serialized real-JDSP capture.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runWidthMonoAudit(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -357,6 +366,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-audit-stft", {
     description: "Usage: /axiom-audit-stft run-id; measure same-render STFT unity and accepted suppression paths.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runStftStageAudit(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-audit-width-mono", {
+    description: "Usage: /axiom-audit-width-mono run-id; measure accepted stereo width and mono compatibility.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runWidthMonoAudit(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",

@@ -4,7 +4,7 @@ import {
   createInvestigation, doctor, listRuns, loadLocalConfig, mergePullRequest,
   publishPullRequest, readRun, recordListening, renderSummary, runAutomatedValidation,
   runAcceptedStressBaseline, runBaselineLimiterSweep, runReserveLawScreen, runReserveRangeQualification,
-  runStftStageAudit, runSubSliderMap, saveLocalConfig, setHypothesis
+  runStftStageAudit, runSubSliderMap, runWidthMonoAudit, saveLocalConfig, setHypothesis
 } from "../lib/core.mjs";
 
 function out(value) {
@@ -58,6 +58,9 @@ async function main() {
     case "audit-stft":
       out(renderSummary(runStftStageAudit(required(args[0], "run id"))));
       return;
+    case "audit-width-mono":
+      out(renderSummary(runWidthMonoAudit(required(args[0], "run id"))));
+      return;
     case "investigate":
       out(renderSummary(createInvestigation(required(args.join(" "), "observation"))));
       return;
@@ -89,7 +92,7 @@ async function main() {
       out(renderSummary(mergePullRequest(required(args[0], "run id"))));
       return;
     default:
-      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|qualify-reserve-range|audit-stft|investigate|hypothesis|create-candidate|qualify|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
+      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|investigate|hypothesis|create-candidate|qualify|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
       process.exitCode = 2;
   }
 }

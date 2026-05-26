@@ -121,6 +121,16 @@ scripts/run_jdsp_stft_audit.py \
 
 The audit creates temporary external fixtures at `0%` and accepted `50%` suppression. For mono probes, each fixture routes the pre-STFT path to one output channel and the corresponding STFT-processed path to the other in the same JDSP render. This exposes round-trip and configured-suppression behavior without comparing independently scheduled stage timelines, and it repeats the impulse capture three times by default to qualify transient observations against STFT frame/load variation. It gates mute and clipping failures, but residual measurements are evidence for investigation rather than automatic justification for a new audio candidate.
 
+To map accepted stereo width and mono compatibility against a temporary unity-width reference:
+
+```bash
+scripts/run_jdsp_width_mono_audit.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  /tmp/axiom-v49-width-mono-audit
+```
+
+This audit renders low-level pure-mid and pure-side multitone probes through real JDSP with the accepted width controls and with a temporary fixture set to `100%` global, mid, and high width. It reports accepted side gain relative to unity, unintended `M->S` and `S->M` leakage, low-frequency side collapse behavior, and integrity or terminal-level observations. Pure-side cancellation in a mono sum is intentional and is not itself classified as a defect.
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -292,6 +302,7 @@ axiom-binaural-dsp/
     run_jdsp_reserve_law_screen.py     # Experimental elevated-bass reserve-law screen
     run_jdsp_reserve_range_qualification.py # Reduced-reserve elevated-range qualifier
     run_jdsp_stft_audit.py         # Same-render STFT round-trip / suppression audit
+    run_jdsp_width_mono_audit.py   # Accepted width / mono-compatibility audit
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -307,6 +318,7 @@ axiom-binaural-dsp/
     test_run_jdsp_reserve_law_screen.py
     test_run_jdsp_reserve_range_qualification.py
     test_run_jdsp_stft_audit.py
+    test_run_jdsp_width_mono_audit.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
@@ -352,6 +364,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Previous `.8` verification record |
 | [`docs/qualification-v4.1.4.9.md`](docs/qualification-v4.1.4.9.md) | Accepted `.9` verification record |
 | [`docs/stft-audit-v4.1.4.9.md`](docs/stft-audit-v4.1.4.9.md) | Accepted `.9` STFT stage investigation record |
+| [`docs/width-mono-audit-v4.1.4.9.md`](docs/width-mono-audit-v4.1.4.9.md) | Accepted `.9` width and mono-compatibility investigation record |
 | [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents

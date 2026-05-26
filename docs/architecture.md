@@ -37,11 +37,12 @@ Each channel passes through a 15 Hz high-pass biquad before nonlinear or dynamic
 
 The script splits stereo input into low, mid, and high regions using cascaded biquad filters:
 
-- Low region: below 150 Hz, summed to mono
+- Low-pass region: below 150 Hz, summed to mono; the complementary high-pass
+  crossover skirt retains some side energy near the split
 - Mid region: 150 Hz to 4 kHz, M/S width controlled by `slider5 * slider2`
 - High region: above 4 kHz, M/S width controlled by `slider6 * slider2`
 
-The low mono fold improves headphone bass stability. Mid/high width are independent so perceived space can be increased without widening sub-bass.
+The low mono fold improves headphone bass stability. Mid/high width are independent so perceived space can be increased without substantially widening deep sub-bass. This is not a brick-wall mono boundary: the widened high-pass transition can retain side information in upper sub-bass and low bass near `150 Hz`.
 
 ### Additive Bass Harmonic Generator
 
@@ -193,6 +194,8 @@ The transfer report retains timing against the known stimulus playback timeline 
 
 The completed `.9` STFT audit measured approximately `11.6 ms` of same-render STFT path delay. The unity round trip produced a measurable sweep residual, and accepted suppression increased that sweep difference while leaving bass-burst behavior effectively unchanged. Across three impulse renders, the largest temporal-energy-span change was one sample at `48 kHz`, with no meaningful local-energy loss that justifies bypass or retuning. See `docs/stft-audit-v4.1.4.9.md`.
 
+`scripts/run_jdsp_width_mono_audit.py` measures accepted spatial-control behavior without creating a candidate. It creates a temporary fixture with `slider2`, `slider5`, and `slider6` fixed at `100%`, then renders low-level pure-mid and pure-side multitone probes through that fixture and through accepted `.9`. `M->S` and `S->M` transfer observations expose unintended center/side leakage; accepted-versus-unity `S->S` differences quantify widening by band. A pure-side signal is expected to disappear when downmixed to mono, so cancellation of intended side-only content is not a mono-compatibility fault.
+
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 
 Example offline qualification commands:
@@ -214,6 +217,10 @@ scripts/analyze_jdsp_transfer.py \
 scripts/run_jdsp_stft_audit.py \
   src/axiom_binaural_dsp_v4.1.4.9.eel \
   /tmp/axiom-v49-stft-audit
+
+scripts/run_jdsp_width_mono_audit.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  /tmp/axiom-v49-width-mono-audit
 
 scripts/analyze_axiom_subharmonics.py \
   --json /tmp/axiom-subharmonics.json \

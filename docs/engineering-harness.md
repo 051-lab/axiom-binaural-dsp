@@ -85,6 +85,7 @@ Inside Pi, the primary commands are:
 | `/axiom-screen-reserve-law run-id` | Screen reduced elevated-bass reserve slopes in temporary fixtures |
 | `/axiom-qualify-reserve-range run-id` | Range-qualify viable reduced reserve slopes before a candidate |
 | `/axiom-audit-stft run-id` | Measure same-render pre-STFT versus STFT outputs at unity and accepted suppression |
+| `/axiom-audit-width-mono run-id` | Measure accepted width gain and M/S leakage against temporary unity width |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -161,6 +162,14 @@ captures. It repeats impulse captures by default to test transient metrics
 against frame/load variation. It gates capture integrity failures only;
 measured behavior must be reviewed before a production-path change is
 proposed.
+
+`/axiom-audit-width-mono` is a non-candidate spatial investigation. It creates
+a temporary unity-width fixture from the accepted baseline and renders
+low-level pure-mid and pure-side probes through both settings. It measures
+accepted `S->S` widening by frequency and observes unexpected `M->S` or
+`S->M` leakage without altering the tracked EEL baseline. Pure-side
+mono cancellation is expected behavior; only unintended cross-coupling,
+integrity failure, or terminal pressure can motivate deeper review.
 
 After listening acceptance, a release branch must contain:
 

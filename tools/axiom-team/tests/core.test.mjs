@@ -18,6 +18,7 @@ import {
   runReserveRangeQualification,
   runStftStageAudit,
   runSubSliderMap,
+  runWidthMonoAudit,
   writeRun,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -179,4 +180,12 @@ test("STFT audit is blocked until hypothesis exists and after candidate creation
   assert.throws(() => runStftStageAudit(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runStftStageAudit(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("width/mono audit is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Audit accepted width and mono behavior", fx.config, fx.policy);
+  assert.throws(() => runWidthMonoAudit(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runWidthMonoAudit(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });
