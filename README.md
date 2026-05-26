@@ -111,6 +111,16 @@ scripts/qualify_jdsp_repeatability.py \
 
 The acceptance limits are caller-selected policy until enough repeated real-host renders establish tighter tolerances. The report qualifies relative capture repeatability only; it does not establish absolute host latency.
 
+To isolate the accepted STFT stage without creating a sound-changing EEL revision, run the stage audit:
+
+```bash
+scripts/run_jdsp_stft_audit.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  /tmp/axiom-v49-stft-audit
+```
+
+The audit creates temporary external fixtures at `0%` and accepted `50%` suppression. For mono probes, each fixture routes the pre-STFT path to one output channel and the corresponding STFT-processed path to the other in the same JDSP render. This exposes round-trip and configured-suppression behavior without comparing independently scheduled stage timelines, and it repeats the impulse capture three times by default to qualify transient observations against STFT frame/load variation. It gates mute and clipping failures, but residual measurements are evidence for investigation rather than automatic justification for a new audio candidate.
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -281,6 +291,7 @@ axiom-binaural-dsp/
     run_jdsp_sub_slider_map.py         # Real-music Sub Harmonics Gain range map
     run_jdsp_reserve_law_screen.py     # Experimental elevated-bass reserve-law screen
     run_jdsp_reserve_range_qualification.py # Reduced-reserve elevated-range qualifier
+    run_jdsp_stft_audit.py         # Same-render STFT round-trip / suppression audit
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -295,6 +306,7 @@ axiom-binaural-dsp/
     test_run_jdsp_sub_slider_map.py
     test_run_jdsp_reserve_law_screen.py
     test_run_jdsp_reserve_range_qualification.py
+    test_run_jdsp_stft_audit.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
@@ -339,6 +351,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
 | [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Previous `.8` verification record |
 | [`docs/qualification-v4.1.4.9.md`](docs/qualification-v4.1.4.9.md) | Accepted `.9` verification record |
+| [`docs/stft-audit-v4.1.4.9.md`](docs/stft-audit-v4.1.4.9.md) | Accepted `.9` STFT stage investigation record |
 | [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents

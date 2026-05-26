@@ -4,7 +4,7 @@ import {
   createInvestigation, doctor, listRuns, loadLocalConfig, mergePullRequest,
   publishPullRequest, readRun, recordListening, renderSummary, runAutomatedValidation,
   runAcceptedStressBaseline, runBaselineLimiterSweep, runReserveLawScreen, runReserveRangeQualification,
-  runSubSliderMap, saveLocalConfig, setHypothesis
+  runStftStageAudit, runSubSliderMap, saveLocalConfig, setHypothesis
 } from "../lib/core.mjs";
 
 function out(value) {
@@ -55,6 +55,9 @@ async function main() {
     case "qualify-reserve-range":
       out(renderSummary(runReserveRangeQualification(required(args[0], "run id"))));
       return;
+    case "audit-stft":
+      out(renderSummary(runStftStageAudit(required(args[0], "run id"))));
+      return;
     case "investigate":
       out(renderSummary(createInvestigation(required(args.join(" "), "observation"))));
       return;
@@ -86,7 +89,7 @@ async function main() {
       out(renderSummary(mergePullRequest(required(args[0], "run id"))));
       return;
     default:
-      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|qualify-reserve-range|investigate|hypothesis|create-candidate|qualify|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
+      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|qualify-reserve-range|audit-stft|investigate|hypothesis|create-candidate|qualify|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
       process.exitCode = 2;
   }
 }

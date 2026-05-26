@@ -84,6 +84,7 @@ Inside Pi, the primary commands are:
 | `/axiom-map-sub-gain run-id` | Map dense-material behavior from `+4` through `+12 dB` Sub Harmonics Gain |
 | `/axiom-screen-reserve-law run-id` | Screen reduced elevated-bass reserve slopes in temporary fixtures |
 | `/axiom-qualify-reserve-range run-id` | Range-qualify viable reduced reserve slopes before a candidate |
+| `/axiom-audit-stft run-id` | Measure same-render pre-STFT versus STFT outputs at unity and accepted suppression |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-listening-package run-id` | Locate the local listening/evidence report |
@@ -150,6 +151,16 @@ conditioning render and accepted host settings. Unstable scalar measurement
 receives one fresh conditioned retry; a verified headroom rejection halts
 further renders for that slope, because a law that fails one elevated setting
 cannot qualify for a full-range candidate.
+
+`/axiom-audit-stft` is a non-candidate stage investigation. It creates
+temporary external fixtures from the accepted baseline at `0%` and accepted
+suppression. With mono probes, each fixture sends its pre-STFT and processed
+paths to separate output channels within one serialized real-JDSP capture, so
+stage delay and residuals are not inferred from independently scheduled
+captures. It repeats impulse captures by default to test transient metrics
+against frame/load variation. It gates capture integrity failures only;
+measured behavior must be reviewed before a production-path change is
+proposed.
 
 After listening acceptance, a release branch must contain:
 

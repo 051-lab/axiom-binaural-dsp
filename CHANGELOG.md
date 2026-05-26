@@ -64,6 +64,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   optional private-material manifest runner, and a managed WSL qualification
   runner that restores the prior audio route and limiter setting.
 - Added deterministic unit tests for repeatability, clipping/silence rejection, retained known-timeline delay, and `M->S` / `S->M` leakage visibility.
+- Added a serialized STFT stage audit that compares same-render pre-STFT and
+  processed paths at unity and accepted suppression without modifying the
+  accepted `.9` DSP source.
 - Added a project-owned Pi engineering harness with immutable-baseline checks,
   external candidate worktrees, restricted specialist consultations, serialized
   real-JDSP qualification, and explicit listening/publication/merge gates.

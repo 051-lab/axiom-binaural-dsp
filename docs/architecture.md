@@ -189,6 +189,10 @@ Use `scripts/analyze_jdsp_transfer.py` only with low-level deterministic stimuli
 
 The transfer report retains timing against the known stimulus playback timeline without correlation alignment. When `--capture-pre-roll-ms` is supplied, it represents a known intentional lead-in in that timeline, not measured host latency. A pure mono probe identifies `M->M` and `M->S`; a pure side-only probe identifies `S->M` and `S->S`. General stereo material energizes both input components and cannot identify an individual transfer-matrix column from a single render, so those matrix values are deliberately invalidated.
 
+`scripts/run_jdsp_stft_audit.py` creates temporary fixtures from accepted `.9` at `0%` and accepted `50%` suppression. With mono probes, each diagnostic fixture routes its pre-STFT path to one output channel and its processed STFT path to the other in the same real-JDSP render. `unity_round_trip` exposes STFT analysis/resynthesis delay and residual behavior; `accepted_suppression` exposes the accepted suppression path against its simultaneous pre-STFT signal. Impulse captures are repeated three times by default and include peak-arrival, peak-level, short-window energy, and temporal-span metrics. The audit fails on mute or clipping only. Residual size is measurement evidence to assess before any production-path change.
+
+The completed `.9` STFT audit measured approximately `11.6 ms` of same-render STFT path delay. The unity round trip produced a measurable sweep residual, and accepted suppression increased that sweep difference while leaving bass-burst behavior effectively unchanged. Across three impulse renders, the largest temporal-energy-span change was one sample at `48 kHz`, with no meaningful local-energy loss that justifies bypass or retuning. See `docs/stft-audit-v4.1.4.9.md`.
+
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 
 Example offline qualification commands:
@@ -206,6 +210,10 @@ scripts/analyze_jdsp_transfer.py \
   --label v4.1.4.7-mono-probe \
   --json /tmp/axiom-transfer/transfer.json \
   --markdown /tmp/axiom-transfer/transfer.md
+
+scripts/run_jdsp_stft_audit.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  /tmp/axiom-v49-stft-audit
 
 scripts/analyze_axiom_subharmonics.py \
   --json /tmp/axiom-subharmonics.json \

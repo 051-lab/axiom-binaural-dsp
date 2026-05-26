@@ -26,6 +26,7 @@ import {
   runBaselineLimiterSweep,
   runReserveLawScreen,
   runReserveRangeQualification,
+  runStftStageAudit,
   runSubSliderMap,
   setHypothesis,
   writeScopedFile,
@@ -295,6 +296,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_audit_stft_stage",
+    label: "Audit STFT Stage",
+    description: "Measure same-render pre-STFT versus processed outputs at unity and accepted suppression through serialized real-JDSP capture.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runStftStageAudit(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -344,6 +353,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-qualify-reserve-range", {
     description: "Usage: /axiom-qualify-reserve-range run-id; test reduced reserve slopes over the elevated bass-control range.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runReserveRangeQualification(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-audit-stft", {
+    description: "Usage: /axiom-audit-stft run-id; measure same-render STFT unity and accepted suppression paths.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runStftStageAudit(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",

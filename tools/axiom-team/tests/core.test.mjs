@@ -16,6 +16,7 @@ import {
   runBaselineLimiterSweep,
   runReserveLawScreen,
   runReserveRangeQualification,
+  runStftStageAudit,
   runSubSliderMap,
   writeRun,
   writeScopedFile,
@@ -170,4 +171,12 @@ test("reserve-range qualification is blocked until hypothesis exists and after c
   assert.throws(() => runReserveRangeQualification(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runReserveRangeQualification(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("STFT audit is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Audit accepted STFT stage", fx.config, fx.policy);
+  assert.throws(() => runStftStageAudit(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runStftStageAudit(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });
