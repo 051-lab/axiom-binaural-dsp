@@ -260,7 +260,7 @@ def main() -> int:
     parser.add_argument("--repetitions", type=int, default=5)
     parser.add_argument("--min-effect-db", type=float, default=0.15)
     args = parser.parse_args()
-    thresholds = args.thresholds_db or [0.0, -1.0, -3.0]
+    thresholds = args.thresholds_db or [-0.1, -1.0, -3.0]
     if len(set(thresholds)) != len(thresholds) or not all(-30.0 <= value <= 0.0 for value in thresholds):
         parser.error("thresholds must be unique values in [-30, 0] dB")
     if args.accepted_threshold_db not in thresholds:

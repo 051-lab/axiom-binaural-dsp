@@ -221,7 +221,8 @@ export function runBaselineLimiterSweep(id, config = loadLocalConfig(), policy =
     throw new Error("Configured local material manifest is unavailable.");
   }
   ensureLocalDirectories(config);
-  const outputDir = path.join(runDirectory(id, config), "limiter-sweep");
+  const measurementId = isoNow().replace(/[-:]/g, "").replace(/\..*/, "");
+  const outputDir = path.join(runDirectory(id, config), "limiter-sweeps", measurementId);
   fs.mkdirSync(outputDir, { recursive: true, mode: 0o700 });
   const lockDir = path.join(config.stateRoot, "locks", "jdsp-host.lock");
   try {

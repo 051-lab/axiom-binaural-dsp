@@ -105,7 +105,7 @@ release, `0 dB` postgain, and crossfeed disabled for qualification.
 
 For an investigation that questions terminal-limiter involvement before any
 candidate exists, `/axiom-measure-limiter` runs repeated same-`.8` captures of
-the flagged external electronic excerpt at `0`, `-1`, and `-3 dB` limiter
+the flagged external electronic excerpt at `-0.10`, `-1`, and `-3 dB` limiter
 thresholds. It reports repeatability plus peak, RMS, crest, and 20 ms envelope
 percentile shifts. A detected threshold effect is evidence of host limiter
 participation, not automatically evidence that Axiom's EEL must change.
