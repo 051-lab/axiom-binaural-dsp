@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "name": "Axiom Binaural DSP",
+    "repository": "051-lab/axiom-binaural-dsp",
+    "defaultBranch": "main"
+  },
+  "acceptedBaseline": {
+    "version": "v4.1.4.9",
+    "path": "src/axiom_binaural_dsp_v4.1.4.9.eel",
+    "sha256": "b0bb2a4a399a2279b6c3eb8e40a9861cc11744e38b3002989ab07c3907dcd887",
+    "qualificationDocument": "docs/qualification-v4.1.4.9.md"
+  },
+  "hostBaseline": {
+    "masterEnabled": true,
+    "masterLimiterThresholdDb": -1.0,
+    "masterLimiterReleaseMs": 60,
+    "masterPostgainDb": 0.0,
+    "crossfeedDuringQualification": false
+  },
+  "costLimits": {
+    "softUsd": 5.0,
+    "hardUsd": 10.0
+  },
+  "writeScopes": {
+    "candidateEel": ["src/axiom_binaural_dsp_v*.eel"],
+    "tooling": ["scripts/**", "tests/**", "tools/axiom-team/**"],
+    "documentation": ["README.md", "AGENTS.md", "CONTRIBUTING.md", "CHANGELOG.md", "docs/**", "presets/**", ".gitignore"]
+  },
+  "requiredLocalMaterial": true,
+  "rules": [
+    "Accepted and historical EEL scripts are immutable; sound changes create a new versioned script.",
+    "A sound-changing candidate cannot be accepted without user listening acceptance.",
+    "Publication and merge require separate explicit user approvals.",
+    "Real-host JDSP qualification runs are serialized.",
+    "Audio, capture output, manifests, local machine paths, credentials, and private notes are not committed."
+  ]
+}

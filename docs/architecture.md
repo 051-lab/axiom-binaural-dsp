@@ -2,7 +2,7 @@
 
 ## Overview
 
-Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.8` is the accepted listening baseline: it retains `.7`'s phase-coherent fixed output reserve at default controls and adds bass-aware output reserve only above the default Sub Harmonics Gain.
+Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.9` is the accepted listening baseline: it retains `.8` behavior at default controls and applies a measured reduced reserve slope above the default Sub Harmonics Gain to retain more elevated-bass output level.
 
 Target priorities:
 
@@ -20,7 +20,7 @@ spl0/spl1 input
   -> additive bass harmonic generator
   -> dynamic loudness-contingent exciter
   -> STFT dynamic resonance suppressor
-  -> transparent / bass-aware output reserve (`v4.1.4.7` / `v4.1.4.8`)
+  -> transparent / bass-aware output reserve (`v4.1.4.7` through `v4.1.4.9`)
   -> JDSP terminal output limiter (host)
   -> spl0/spl1 output
 ```
@@ -81,21 +81,21 @@ This stage is intentionally conservative. It should reduce short harsh resonance
 
 `v4.1.4.4` contains a manual crossfeed path: a delayed opposite-channel signal is band-passed from 150 Hz to 1500 Hz and additively mixed at a default coefficient of `0.33`. For correlated mono material, transfer analysis shows a range of approximately `-3.34 dB` to `+2.31 dB` at 48 kHz, with the peak near 285 Hz. That both spends headroom and alters centered midrange tonality.
 
-`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`. `v4.1.4.6` retains that device-neutral core. `v4.1.4.8` remains device-neutral and does not alter crossfeed ownership. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
+`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`. `v4.1.4.6` retains that device-neutral core. `v4.1.4.9` remains device-neutral and does not alter crossfeed ownership. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
 
 For reference, host BS2B custom mode at `700 Hz / 6.0 dB` uses complementary filtered paths with gain normalization. Under the same correlated-mono analysis it produces no positive gain peak, avoiding the removed manual path's limiter-driving boost.
 
 ### Output Limiter Ownership
 
-`v4.1.4.3` contains a script-local limiter followed by a hard clamp. `v4.1.4.4` removed that processing path. `v4.1.4.5` through `v4.1.4.8` retain the same host-only limiter ownership.
+`v4.1.4.3` contains a script-local limiter followed by a hard clamp. `v4.1.4.4` removed that processing path. `v4.1.4.5` through `v4.1.4.9` retain the same host-only limiter ownership.
 
 ### Transparent Output Reserve
 
 `v4.1.4.7` applies a fixed `-1.0 dB` gain immediately before the final output assignment. The change is deliberately terminal and linear: it preserves the `.6` bass generation, width ratios, exciter, STFT behavior, and stereo phase relationship while providing margin before JDSP's terminal limiter.
 
-The real-host stress probe identified the need for this margin. Under the default controls, the `.6` side-only capture reached `-0.128 dBFS`; `.7` reduced the same probe to `-1.128 dBFS` with no clipped samples. This established the transparent reserve inherited by `.8`.
+The real-host stress probe identified the need for this margin. Under the default controls, the `.6` side-only capture reached `-0.128 dBFS`; `.7` reduced the same probe to `-1.128 dBFS` with no clipped samples. This established the transparent reserve inherited by `.8` and `.9`.
 
-### Bass-Aware Output Reserve Baseline
+### Bass-Aware Output Reserve Evolution
 
 `v4.1.4.8` preserves the `.7` output multiplier exactly while `slider1 <= +4 dB`. When the user requests more generated bass than the accepted default, it adds terminal reserve equal to the amount above default:
 
@@ -106,6 +106,15 @@ outputGain = -1 dB fixed reserve - bassReserveDb
 
 This does not compress or retune the generated bass branch; its purpose is to reduce avoidable host-limiter involvement at elevated user-selected bass gain. Real-host qualification confirmed that `.8` matches `.7` at default and provides the expected additional reserve at elevated Sub Harmonics settings.
 
+`v4.1.4.9` preserves `.8` exactly while `slider1 <= +4 dB` and reduces the additional reserve above default to retain more practical playback level:
+
+```text
+bassReserveDb = max(0, slider1 - 4) * 0.750
+outputGain = -1 dB fixed reserve - bassReserveDb
+```
+
+Real-host range screening rejected a more aggressive `0.500 dB/dB` reserve slope. Managed `.8` versus `.9` qualification passed with an investigation marker for existing near-ceiling host-limiter participation, and device A/B listening accepted `.9` as the new baseline.
+
 JDSP always applies its output limiter after Liveprog and postgain. The fixed comparison baseline is:
 
 - Master processing: enabled
@@ -115,7 +124,7 @@ JDSP always applies its output limiter after Liveprog and postgain. The fixed co
 - Host crossfeed: disabled for the Axiom comparison baseline; enable manually only when desired
 - Stereo widening, reverb, compander, bass, EQ, convolver, DDC, and tube processing: disabled
 
-This baseline was accepted after device listening and two classes of real-host verification. The deterministic managed qualification passed default transparency, `+8 dB` bass-aware reserve, `+12 dB` boundary margin, and program-like corpus checks. A separate four-excerpt CC0 music corpus remained unclipped at a persistent `-1.00 dB` host limiter threshold; its dense electronic passage reached `-0.474 dBFS` and is retained as a limiter-involvement observation.
+The `.9` baseline was accepted after device A/B listening against `.8` and real-host verification. Managed qualification passed default equivalence, recovered elevated-bass level, `+12 dB` terminal margin, and program-like corpus checks. A four-excerpt CC0 music corpus remained unclipped at the persistent `-1.00 dB` host limiter threshold; its dense electronic passage reached `-0.443 dBFS` at default controls and is retained as limiter involvement already present in the `.8` comparison.
 
 ## Sliders
 
@@ -139,6 +148,7 @@ scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.5.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.6.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.7.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.8.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.9.eel
 ```
 
 Run coefficient and crossover response analysis:
@@ -153,23 +163,35 @@ Run real-host A/B capture through JDSP Liveprog:
 
 ```bash
 scripts/run_jdsp_ab_testbench.py \
-  src/axiom_binaural_dsp_v4.1.4.7.eel \
   src/axiom_binaural_dsp_v4.1.4.8.eel \
-  /tmp/axiom-v47-v48-host-suite \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  /tmp/axiom-v48-v49-host-suite \
   --pulse-server unix:/run/user/1000/pulse/native
 ```
 
 The suite exercises impulse, bass transient, sustained correlated `90 Hz` bass pressure at `0.65` peak input, sweep, correlated mono, and side-only inputs. `render_jdsp_host.py` targets an explicit Pulse server, captures only a private temporary sink fed by JDSP's processed-output stream, and restores all host keys it temporarily normalizes. The orchestrator rejects silent reference or candidate captures instead of accepting a broken routing run as analysis. Liveprog reloads still reinitialize internal DSP history, so execute the suite in a dedicated development JDSP session. Continuous probes are suitable for output/gain comparisons; the impulse probe is retained primarily for transient, mute, and corruption checks because separately scheduled live captures can vary in alignment. Generated captures and reports belong outside the repository, such as under `/tmp`.
 
-For the WSL workstation route, `scripts/run_jdsp_wsl_qualification.py` invokes the local `~/.local/bin/jdsp-audio-reset` launcher, verifies that its native PulseAudio server exposes a `JamesDSP` sink, sets the selected host limiter threshold once for the managed session, and restores both the preceding threshold and PipeWire-Pulse on completion or failure. It runs the default-control A/B suite, creates temporary `+8 dB` fixtures to verify the `.8` conditional reserve, performs a `+12 dB` bass-burst boundary capture, and renders a default-control original program-like corpus. `generate_axiom_program_corpus.py` produces three deterministic bass-dense passages: sub/kick transients, a sustained bass-synth phrase, and a dense low-end mix. These passages are reproducible engineering material, not commercial music or an assertion of musical coverage. Default continuous probes and corpus passages are gated for transparent peak behavior; the elevated bass, correlated-mono, and side-only probes are gated for the expected `-4 dB` reserve; elevated bass pressure must move below the `-0.50 dBFS` investigation ceiling; the maximum bass capture is gated for at least `4 dB` additional `.8` margin. When a default pressure or corpus output exceeds `-0.50 dBFS`, the report returns `PASS_WITH_INVESTIGATION`: no EEL regression has been established, but the host limiter is participating enough to record the observation. The fixtures change only slider defaults and never replace source EEL scripts.
+For the WSL workstation route, `scripts/run_jdsp_wsl_qualification.py` invokes the local `~/.local/bin/jdsp-audio-reset` launcher, verifies that its native PulseAudio server exposes a `JamesDSP` sink, sets the selected host limiter threshold once for the managed session, and restores both the preceding threshold and PipeWire-Pulse on completion or failure. It runs the default-control A/B suite, creates temporary elevated-bass fixtures, performs a maximum-bass boundary capture, and renders a default-control original program-like corpus. `generate_axiom_program_corpus.py` produces three deterministic bass-dense passages: sub/kick transients, a sustained bass-synth phrase, and a dense low-end mix. These passages are reproducible engineering material, not commercial music or an assertion of musical coverage. For the accepted `.8` versus `.9` comparison, elevated probes verify expected level recovery from the reduced reserve law and the maximum-bass capture is gated against the terminal observation ceiling. When a default pressure or corpus output exceeds `-0.50 dBFS`, the report returns `PASS_WITH_INVESTIGATION`: no EEL regression has been established, but the host limiter is participating enough to record the observation. The fixtures change only slider defaults and never replace source EEL scripts.
 
-When a private manifest is supplied through `--local-material-manifest`, `run_jdsp_local_material.py` converts only the selected excerpt windows to temporary 48 kHz, 16-bit stereo PCM without normalizing their original decoded level, renders `.7` and `.8` through the same host route at default controls, and merges integrity and terminal-margin observations into the managed report. The manifest and excerpt outputs must remain outside the repository; this permits relevant listening-library checks without distributing source recordings or treating deterministic test arrangements as substitutes for actual program material.
+When a private manifest is supplied through `--local-material-manifest`, `run_jdsp_local_material.py` converts only the selected excerpt windows to temporary 48 kHz, 16-bit stereo PCM without normalizing their original decoded level, renders the selected baseline and candidate through the same host route at default controls, and merges integrity and terminal-margin observations into the managed report. The manifest and excerpt outputs must remain outside the repository; this permits relevant listening-library checks without distributing source recordings or treating deterministic test arrangements as substitutes for actual program material.
+
+`scripts/run_jdsp_accepted_stress.py` characterizes the selected accepted baseline at the tracked `-1.00 dB` host threshold before another DSP candidate is justified. It repeats each registered external excerpt, rejects clipped or unusable level profiles, and records stable peaks above `-0.50 dBFS` as existing limiter-pressure behavior rather than retroactively failing the accepted listening baseline. New investigations use accepted `.9`; the `.8` artifact remains the comparison evidence that justified `.9`.
+
+`scripts/run_jdsp_sub_slider_map.py` expands that measurement across temporary fixtures based on the selected accepted script whose only difference is the `Sub Harmonics Gain` default. Its default grid of `+4`, `+6`, `+8`, `+10`, and `+12 dB` establishes whether real program material remains unclipped as user bass gain rises. A failure at the accepted `+4 dB` default rejects the baseline measurement; clipping found only at elevated settings records an operating-range boundary and supplies evidence for deciding whether a later bass-reserve revision is worthwhile. The original `.8` map exposed repeatable RMS retreat and led to `.9`; future maps start from the accepted `.9` reserve law.
+
+`scripts/run_jdsp_reserve_law_screen.py` evaluates that tradeoff before any versioned DSP edit. At a practical elevated `+8 dB` slider setting, it creates external fixtures whose conditional reserve slope is reduced from the accepted `1.000 dB` attenuation per added slider dB to candidate slopes `0.875`, `0.750`, and `0.500`. It runs one excluded conditioning render before measuring each fixture/excerpt set, then screens critical dense excerpts using repeated real-host captures and rejects a slope that clips or crosses `-0.50 dBFS`. A slope must recover measurable RMS level on every screened excerpt before broader boundary qualification is justified; a passing focused screen is not listening acceptance or a production architecture change.
+
+`scripts/run_jdsp_reserve_range_qualification.py` takes focused-screen survivors through full registered-material coverage before any listening candidate is created. It starts at `+12 dB` Sub Harmonics Gain and descends through `+10`, `+8`, and `+6 dB`, rejecting and stopping a slope at the first clipped or above-boundary result. An unstable scalar measurement receives one fresh conditioned retry before it fails the qualification as unusable evidence. This ordering minimizes unnecessary live-host renders while preserving the actual full-range eligibility decision.
 
 Qualify measurement repeatability before relying on fine differences. `scripts/qualify_jdsp_repeatability.py` accepts three or more captures of one script/stimulus/configuration and recommends five for decision-grade reports. It rejects invalid stereo PCM, frame mismatch, silence, clipping, caller-excessive level spread, and low-confidence alignment. Its optional jitter value is relative content-alignment spread only; it is not an absolute latency measurement. Variance and confidence limits must be supplied by the caller until repeated host measurements provide a defensible tolerance policy.
 
 Use `scripts/analyze_jdsp_transfer.py` only with low-level deterministic stimuli and processed-output WAVs. Since capture occurs after JDSP host processing, its result is a stimulus-conditioned `end_to_end_host_path` measurement, not an Axiom-only transfer function. A report is unqualified when processed output is silent, clipped, or above the default `-6.0 dBFS` ceiling intended to avoid terminal-limiter involvement.
 
 The transfer report retains timing against the known stimulus playback timeline without correlation alignment. When `--capture-pre-roll-ms` is supplied, it represents a known intentional lead-in in that timeline, not measured host latency. A pure mono probe identifies `M->M` and `M->S`; a pure side-only probe identifies `S->M` and `S->S`. General stereo material energizes both input components and cannot identify an individual transfer-matrix column from a single render, so those matrix values are deliberately invalidated.
+
+`scripts/run_jdsp_stft_audit.py` creates temporary fixtures from accepted `.9` at `0%` and accepted `50%` suppression. With mono probes, each diagnostic fixture routes its pre-STFT path to one output channel and its processed STFT path to the other in the same real-JDSP render. `unity_round_trip` exposes STFT analysis/resynthesis delay and residual behavior; `accepted_suppression` exposes the accepted suppression path against its simultaneous pre-STFT signal. Impulse captures are repeated three times by default and include peak-arrival, peak-level, short-window energy, and temporal-span metrics. The audit fails on mute or clipping only. Residual size is measurement evidence to assess before any production-path change.
+
+The completed `.9` STFT audit measured approximately `11.6 ms` of same-render STFT path delay. The unity round trip produced a measurable sweep residual, and accepted suppression increased that sweep difference while leaving bass-burst behavior effectively unchanged. Across three impulse renders, the largest temporal-energy-span change was one sample at `48 kHz`, with no meaningful local-energy loss that justifies bypass or retuning. See `docs/stft-audit-v4.1.4.9.md`.
 
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 
@@ -189,6 +211,10 @@ scripts/analyze_jdsp_transfer.py \
   --json /tmp/axiom-transfer/transfer.json \
   --markdown /tmp/axiom-transfer/transfer.md
 
+scripts/run_jdsp_stft_audit.py \
+  src/axiom_binaural_dsp_v4.1.4.9.eel \
+  /tmp/axiom-v49-stft-audit
+
 scripts/analyze_axiom_subharmonics.py \
   --json /tmp/axiom-subharmonics.json \
   --markdown /tmp/axiom-subharmonics.md
@@ -199,13 +225,14 @@ scripts/analyze_axiom_subharmonics.py \
   --markdown /tmp/axiom-v48-subharmonics.md
 ```
 
-Load an earlier comparison version or the accepted bass-aware baseline:
+Load an earlier comparison version or the accepted baseline:
 
 ```bash
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.5.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.6.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.7.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.8.eel
+scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.9.eel
 ```
 
 ## Engineering Constraints

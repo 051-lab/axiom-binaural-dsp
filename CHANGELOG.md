@@ -4,6 +4,30 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [4.1.4.9] - 2026-05-26 - Accepted Reduced Bass-Reserve Baseline
+
+### Changed
+- Preserved the accepted `.8` signal chain and exact default Sub Harmonics behavior.
+- Reduced the conditional terminal reserve above the `+4 dB` default from
+  `1.000 dB/dB` to `0.750 dB/dB`.
+- Removed the now-unused full-reserve baseline state from the output stage.
+
+### Rationale
+- Real-host external-material screening identified `0.750 dB/dB` as the
+  strongest reduced-reserve slope to pass every tested `+6`, `+8`, `+10`,
+  and `+12 dB` setting without clipping.
+- A more aggressive `0.500 dB/dB` slope exceeded the observation boundary on
+  dense electronic material at `+6 dB`, so it is not used for listening.
+
+### Validation
+- Passed managed real-JDSP qualification with an investigation marker: the
+  external electronic excerpt approached the observation ceiling at default
+  controls under both `.8` and `.9`, with zero clipped samples.
+- Accepted after device A/B listening against `v4.1.4.8` confirmed the
+  reduced-reserve behavior should become the new baseline.
+
+---
+
 ## [4.1.4.8] - 2026-05-24 - Accepted Bass-Aware Headroom Baseline
 
 ### Changed
@@ -40,6 +64,30 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   optional private-material manifest runner, and a managed WSL qualification
   runner that restores the prior audio route and limiter setting.
 - Added deterministic unit tests for repeatability, clipping/silence rejection, retained known-timeline delay, and `M->S` / `S->M` leakage visibility.
+- Added a serialized STFT stage audit that compares same-render pre-STFT and
+  processed paths at unity and accepted suppression without modifying the
+  accepted `.9` DSP source.
+- Added a project-owned Pi engineering harness with immutable-baseline checks,
+  external candidate worktrees, restricted specialist consultations, serialized
+  real-JDSP qualification, and explicit listening/publication/merge gates.
+- Added a same-script JDSP limiter-threshold sweep that evaluates default `.8`
+  limiter participation with repeated external-material captures before any
+  new EEL candidate is justified.
+- Added an accepted-setting dense-material stress gate that repeats registered
+  external excerpts at the tracked `-1.00 dB` limiter setting and preserves
+  stable terminal-limiter pressure as regression evidence for future candidates.
+- Added a dense-material `Sub Harmonics Gain` map using temporary accepted-`.8`
+  fixtures from `+4` through `+12 dB` to identify practical control-range
+  boundaries before proposing a sound-changing DSP iteration.
+- Added a focused experimental reserve-law screen that compares reduced
+  elevated-bass output attenuation against the current `.8` reserve law using
+  repeat-captured critical music excerpts before candidate creation, with an
+  excluded conditioning render to prevent cold host initialization from
+  contaminating measured level repeatability.
+- Added a reduced-reserve range qualifier that screens focused-test survivors
+  across all registered material and elevated bass settings, testing the
+  highest-risk setting first, retrying unstable scalar evidence once, and
+  stopping headroom-rejected slopes early.
 
 ### Measurement Boundary
 - Captures occur after JDSP host processing and therefore do not prove an Axiom-only transfer function.
@@ -156,7 +204,7 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ## Future Work Policy
 
-The accepted `.8` chain is optimized before introducing additional DSP stages.
+The accepted `.9` chain is optimized before introducing additional DSP stages.
 Any new audio behavior must be proposed against measurement evidence and device
 listening. `FractionalDelayLineInit`, `pfb_init`, and
 `InitPolyphaseFilterbank` remain excluded because they are not safe for the

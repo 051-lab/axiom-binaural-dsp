@@ -60,6 +60,95 @@ threshold. All `.8` captures had zero clipped samples.
 The external assets and source manifest are intentionally not committed. Their
 license/source record remains alongside local material used for validation.
 
+## Repeated Accepted-Setting Stress Baseline
+
+A subsequent host-path baseline measurement repeated each registered external
+excerpt three times through accepted `.8` at the tracked `-1.00 dB` limiter
+threshold. All twelve captures were unclipped and supplied repeatable level
+metrics, establishing a dense-material reference for later candidates.
+
+| Excerpt | Mean peak (dBFS) | Highest repeated peak (dBFS) | Clipped samples | Result |
+|---------|-----------------:|-----------------------------:|----------------:|--------|
+| Electronic / high-energy | `-0.606` | `-0.542` | `0` | PASS |
+| Instrumental hip hop | `-0.757` | `-0.706` | `0` | PASS |
+| Jazz/fusion low-end passage | `-0.982` | `-0.980` | `0` | PASS |
+| Orchestral passage | `-0.917` | `-0.881` | `0` | PASS |
+
+This result retains `-1.00 dB` as the qualified host threshold. A separate
+diagnostic run at `-0.50 dB` clipped the electronic excerpt and is therefore
+not acceptable as the host baseline.
+
+## Sub Harmonics Gain Dense-Material Map
+
+The same accepted `.8` baseline was rendered through temporary test fixtures
+at `+4`, `+6`, `+8`, `+10`, and `+12 dB` Sub Harmonics Gain, with three
+captures of every external excerpt at each setting. All sixty captures were
+unclipped, and no repeated peak exceeded the `-0.50 dBFS` terminal-pressure
+observation boundary.
+
+The map also established an important design tradeoff: the bass-aware reserve
+protects peak margin by reducing total rendered RMS as the bass slider rises.
+
+| Slider | Highest peak observed (dBFS) | Clipped samples | Repeatable RMS retreat versus `+4 dB` |
+|-------:|-----------------------------:|----------------:|--------------------------------------|
+| `+4 dB` | `-0.588` | `0` | reference |
+| `+6 dB` | `-0.765` | `0` | `-1.186` to `-1.629 dB` |
+| `+8 dB` | `-0.898` | `0` | `-2.568` to `-3.416 dB` |
+| `+10 dB` | `-0.960` | `0` | `-3.787` to `-5.179 dB` |
+| `+12 dB` | `-1.115` | `0` | `-4.821` to `-5.495 dB` on RMS-qualified excerpts |
+
+Result: **PASS_WITH_INVESTIGATION**. The current design is safe over the
+tested slider range, but elevated bass gain increasingly trades overall
+playback level for reserve. A future candidate is justified only if listening
+confirms that this loudness retreat is objectionable or limits practical bass
+adjustment.
+
+## Elevated-Bass Reserve-Law Focused Screen
+
+A pre-candidate screen then held Sub Harmonics Gain at `+8 dB` and tested
+temporary fixtures whose elevated-bass output-reserve slope was `1.000`
+(current `.8` behavior), `0.875`, `0.750`, or `0.500`. The screen targeted
+the electronic and hip-hop excerpts at the accepted `-1.00 dB` host limiter
+setting with three measured renders per fixture and excerpt. One conditioning
+render per set was excluded after an initial unconditioned attempt exposed a
+cold-start RMS outlier in the full-reserve electronic reference.
+
+| Reserve slope | Electronic RMS recovery | Electronic highest peak | Hip-hop RMS recovery | Hip-hop highest peak | Result |
+|--------------:|------------------------:|------------------------:|---------------------:|---------------------:|--------|
+| `1.000` | reference | `-0.854 dBFS` | reference | `-0.951 dBFS` | Qualified reference |
+| `0.875` | `+0.443 dB` | `-0.866 dBFS` | `+0.487 dB` | `-0.960 dBFS` | Below `0.50 dB` recovery floor |
+| `0.750` | `+0.863 dB` | `-0.720 dBFS` | `+0.969 dB` | `-0.902 dBFS` | Viable for broader qualification |
+| `0.500` | `+1.638 dB` | `-0.787 dBFS` | `+1.904 dB` | `-0.848 dBFS` | Viable for broader qualification |
+
+All conditioned measured captures were unclipped, and no peak crossed the
+`-0.50 dBFS` observation boundary. Result:
+**VIABLE_REDUCED_RESERVE_IDENTIFIED**. This does not alter the accepted `.8`
+baseline or establish a production reserve law; it justifies a broader
+control-range and material qualification of slopes `0.750` and `0.500`
+before creating a listening candidate.
+
+## Reduced-Reserve Elevated-Range Qualification
+
+The two surviving focused-screen slopes were then measured against every
+registered external excerpt at `+12`, `+10`, `+8`, and `+6 dB` Sub Harmonics
+Gain, beginning with the highest setting and retaining the accepted `-1.00 dB`
+host limiter. Every measured set included one excluded conditioning render and
+three captured renders. A preliminary run was discarded when one otherwise
+safe jazz/bass set produced unstable RMS evidence; the qualification runner
+now permits one fresh conditioned retry for that case while still rejecting a
+verified peak-margin failure immediately.
+
+| Reserve slope | Coverage completed | Highest peak by slider tier | Result |
+|--------------:|--------------------|-----------------------------|--------|
+| `0.750` | All 16 material/slider combinations | `+12: -0.960`, `+10: -0.912`, `+8: -0.780`, `+6: -0.669 dBFS` | Eligible for a listening candidate |
+| `0.500` | Passed all material through `+8`; stopped at `+6` electronic | `+12: -0.807`, `+10: -0.741`, `+8: -0.739`, `+6: -0.473 dBFS` | Rejected above `-0.500 dBFS` observation boundary |
+
+All reported captures had zero clipped samples. Result:
+**VIABLE_REDUCED_RESERVE_RANGE_IDENTIFIED** with slope `0.750` as the only
+full-range survivor. This remains temporary-fixture evidence; the accepted
+baseline remains `.8` until a separate candidate is created, qualified, and
+accepted by listening.
+
 ## Listening Acceptance
 
 After the measurement checks, device listening on multiple songs confirmed no

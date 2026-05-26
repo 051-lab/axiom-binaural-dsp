@@ -36,6 +36,23 @@ def boundary_report(reference_peak: float, candidate_peak: float, clipping: int 
     }
 
 
+def local_material_report(status: str, check_status: str, clipping: int = 0, silent: bool = False) -> dict:
+    return {
+        "status": status,
+        "checks": [{"name": "local_track_integrity", "status": check_status, "detail": ""}],
+        "items": [
+            {
+                "report": {
+                    "captures": {
+                        "reference": {"channels": {"combined": {"clipped_samples": 0}}},
+                        "candidate": {"channels": {"combined": {"clipped_samples": clipping, "silent": silent}}},
+                    }
+                }
+            }
+        ],
+    }
+
+
 class QualificationTests(unittest.TestCase):
     def test_ancestor_processes_are_protected_from_route_cleanup_matching(self) -> None:
         protected = qualification.ancestor_pids()
@@ -73,6 +90,53 @@ class QualificationTests(unittest.TestCase):
         )
         self.assertEqual(checks[-1]["status"], "fail")
         self.assertEqual(qualification.report_status(checks), "fail")
+
+    def test_reduced_reserve_candidate_checks_absolute_boundary_margin(self) -> None:
+        default = suite_report({name: 0.0 for name in qualification.CONTINUOUS_PROBES})
+        boosted = suite_report(
+            {"bass_burst": 1.0, "correlated_mono": 1.0, "side_only": 1.0, "bass_pressure_90hz": -1.0}
+        )
+        checks = qualification.check_report(
+            default,
+            boosted,
+            boundary_report(-6.38, -4.38),
+            0.15,
+            8.0,
+            0.10,
+            4.0,
+            -0.50,
+            1.0,
+            "terminal_ceiling",
+        )
+        self.assertTrue(all(check["status"] == "pass" for check in checks))
+        self.assertEqual(checks[-1]["name"], "maximum_bass_boundary_terminal_margin")
+
+    def test_reduced_reserve_candidate_rejects_boundary_near_ceiling(self) -> None:
+        default = suite_report({name: 0.0 for name in qualification.CONTINUOUS_PROBES})
+        boosted = suite_report(
+            {"bass_burst": 1.0, "correlated_mono": 1.0, "side_only": 1.0, "bass_pressure_90hz": -1.0}
+        )
+        checks = qualification.check_report(
+            default,
+            boosted,
+            boundary_report(-2.40, -0.40),
+            0.15,
+            8.0,
+            0.10,
+            4.0,
+            -0.50,
+            1.0,
+            "terminal_ceiling",
+        )
+        self.assertEqual(checks[-1]["status"], "fail")
+
+    def test_local_material_integrity_only_failure_is_retryable_without_clipping(self) -> None:
+        report = local_material_report("fail", "fail")
+        self.assertTrue(qualification.local_material_retry_eligible(report))
+
+    def test_local_material_clipping_failure_is_not_retryable(self) -> None:
+        report = local_material_report("fail", "fail", clipping=1)
+        self.assertFalse(qualification.local_material_retry_eligible(report))
 
     def test_default_pressure_near_ceiling_is_investigation_not_regression(self) -> None:
         default = suite_report({name: 0.0 for name in qualification.CONTINUOUS_PROBES})
