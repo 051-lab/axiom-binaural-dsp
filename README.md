@@ -166,6 +166,23 @@ scripts/run_jdsp_lowmid_width_candidate_qualification.py \
 
 This qualification rejects any DSP edit beyond the candidate description and the two `slider5` default sites, then verifies real-host integrity and a measurable restrained `S/M` reduction in each affected band. A passing report permits listening; it is not listening acceptance.
 
+To screen the remaining high-frequency width control from accepted `.10` without creating a new DSP candidate:
+
+```bash
+scripts/run_jdsp_high_width_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v410-high-width-screen
+```
+
+The high-width screen retains accepted `slider6 = 110%` and creates temporary `105%` and `100%` fixtures, producing effective high-band side products of `1.485x`, `1.4175x`, and `1.350x`. It measures `4-7`, `7-12`, and `12-18 kHz` side balance and terminal integrity; no future candidate is justified without a measurable tradeoff and listening target.
+
+The completed `.10` screen found consistent intentional high-band widening,
+but no defensible retuning candidate: the `105%` fixture reduced tested
+high-band `S/M` by only `0.318 dB` on average and produced the only terminal
+observation on dense electronic material. Accepted `.10` remains unchanged;
+see [`docs/high-width-screen-v4.1.4.10.md`](docs/high-width-screen-v4.1.4.10.md).
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -342,6 +359,7 @@ axiom-binaural-dsp/
     run_jdsp_width_material_screen.py # Program-material spatial-balance screen
     run_jdsp_lowmid_width_screen.py # Restrained low-mid width pre-candidate screen
     run_jdsp_lowmid_width_candidate_qualification.py # Scoped low-mid candidate qualifier
+    run_jdsp_high_width_screen.py # Restrained high-frequency width pre-candidate screen
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -361,6 +379,7 @@ axiom-binaural-dsp/
     test_run_jdsp_width_material_screen.py
     test_run_jdsp_lowmid_width_screen.py
     test_run_jdsp_lowmid_width_candidate_qualification.py
+    test_run_jdsp_high_width_screen.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
@@ -410,6 +429,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/stft-audit-v4.1.4.9.md`](docs/stft-audit-v4.1.4.9.md) | Historical `.9` STFT stage investigation record |
 | [`docs/width-mono-audit-v4.1.4.9.md`](docs/width-mono-audit-v4.1.4.9.md) | Historical `.9` width and mono-compatibility investigation record |
 | [`docs/lowmid-width-screen-v4.1.4.9.md`](docs/lowmid-width-screen-v4.1.4.9.md) | `.9` evidence supporting the accepted `.10` width change |
+| [`docs/high-width-screen-v4.1.4.10.md`](docs/high-width-screen-v4.1.4.10.md) | `.10` high-frequency width screen and no-candidate decision |
 | [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents
