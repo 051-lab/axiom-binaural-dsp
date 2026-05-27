@@ -225,6 +225,11 @@ bass, STFT, and output-reserve settings. Reports divide `4-18 kHz` into
 presence-edge, brilliance, and air bands, measuring both band RMS and `S/M`
 balance so the accepted clarity contribution can be separated from possible
 harshness or terminal-pressure evidence before any listening candidate exists.
+The completed registered-material screen found those temporary changes to be
+effectively level-neutral on the high-energy corpus, so no reduced-exciter
+candidate is justified from that evidence. A future exciter investigation
+should use lower-level material designed to exercise the loudness-contingent
+boost law.
 
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 

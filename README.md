@@ -198,6 +198,12 @@ side balance, and terminal integrity so any exciter retuning proposal is based
 on measured clarity, air, and headroom tradeoffs rather than broad brightness
 preference.
 
+The completed registered-material screen found no defensible retuning
+candidate: reducing or bypassing sensitivity changed tested high-band RMS by
+only `0.013 dB` or `0.008 dB` on average, respectively, and all captures stayed
+below the terminal observation boundary. Accepted `.10` remains unchanged; see
+[`docs/exciter-sensitivity-screen-v4.1.4.10.md`](docs/exciter-sensitivity-screen-v4.1.4.10.md).
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -447,6 +453,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/width-mono-audit-v4.1.4.9.md`](docs/width-mono-audit-v4.1.4.9.md) | Historical `.9` width and mono-compatibility investigation record |
 | [`docs/lowmid-width-screen-v4.1.4.9.md`](docs/lowmid-width-screen-v4.1.4.9.md) | `.9` evidence supporting the accepted `.10` width change |
 | [`docs/high-width-screen-v4.1.4.10.md`](docs/high-width-screen-v4.1.4.10.md) | `.10` high-frequency width screen and no-candidate decision |
+| [`docs/exciter-sensitivity-screen-v4.1.4.10.md`](docs/exciter-sensitivity-screen-v4.1.4.10.md) | `.10` dynamic exciter registered-material screen and no-candidate decision |
 | [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents

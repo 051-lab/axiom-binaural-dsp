@@ -214,6 +214,11 @@ material. It can justify a focused listening target for reduced brightness or
 air only when the measured tradeoff is stronger than simply removing the
 accepted clarity.
 
+The completed `.10` registered-material screen found no such tradeoff:
+reduced and bypassed sensitivity were effectively level-neutral on the tested
+high-energy excerpts. Use lower-level material for any future exciter-specific
+investigation before proposing a versioned candidate.
+
 After listening acceptance, a release branch must contain:
 
 - the versioned candidate EEL script;
