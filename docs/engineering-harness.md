@@ -89,6 +89,7 @@ Inside Pi, the primary commands are:
 | `/axiom-screen-width-material run-id` | Characterize band-specific accepted width behavior on registered material |
 | `/axiom-screen-lowmid-width run-id` | Screen restrained `150 Hz-4 kHz` width settings before a candidate |
 | `/axiom-screen-high-width run-id` | Screen restrained `4 kHz-18 kHz` width settings from accepted `.10` before a candidate |
+| `/axiom-screen-exciter run-id` | Screen dynamic exciter sensitivity from accepted `.10` before a candidate |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-qualify-lowmid-candidate run-id` | Qualify a restrained low-mid width candidate with its scoped spatial gate |
@@ -204,6 +205,14 @@ changes only temporary `slider6` defaults from accepted `110%` to `105%` and
 `4-18 kHz` into presence-edge, brilliance, and air bands. This screen may
 justify a focused listening candidate; it does not alter or supersede `.10`
 on measurement alone.
+
+`/axiom-screen-exciter` is the next post-width pre-candidate stage. It changes
+only temporary `slider3` defaults from accepted `50%` to `35%` and `0%`,
+retaining the accepted spatial, bass, STFT, and reserve settings. Reports
+measure high-band RMS, side balance, and terminal integrity across registered
+material. It can justify a focused listening target for reduced brightness or
+air only when the measured tradeoff is stronger than simply removing the
+accepted clarity.
 
 After listening acceptance, a release branch must contain:
 

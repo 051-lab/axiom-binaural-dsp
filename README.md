@@ -183,6 +183,21 @@ high-band `S/M` by only `0.318 dB` on average and produced the only terminal
 observation on dense electronic material. Accepted `.10` remains unchanged;
 see [`docs/high-width-screen-v4.1.4.10.md`](docs/high-width-screen-v4.1.4.10.md).
 
+To screen the dynamic exciter sensitivity from accepted `.10` without creating a new DSP candidate:
+
+```bash
+scripts/run_jdsp_exciter_sensitivity_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v410-exciter-screen
+```
+
+The exciter screen retains accepted `slider3 = 50%` and creates temporary
+`35%` and `0%` fixtures. It measures `4-7`, `7-12`, and `12-18 kHz` band RMS,
+side balance, and terminal integrity so any exciter retuning proposal is based
+on measured clarity, air, and headroom tradeoffs rather than broad brightness
+preference.
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -360,6 +375,7 @@ axiom-binaural-dsp/
     run_jdsp_lowmid_width_screen.py # Restrained low-mid width pre-candidate screen
     run_jdsp_lowmid_width_candidate_qualification.py # Scoped low-mid candidate qualifier
     run_jdsp_high_width_screen.py # Restrained high-frequency width pre-candidate screen
+    run_jdsp_exciter_sensitivity_screen.py # Dynamic exciter pre-candidate screen
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -380,6 +396,7 @@ axiom-binaural-dsp/
     test_run_jdsp_lowmid_width_screen.py
     test_run_jdsp_lowmid_width_candidate_qualification.py
     test_run_jdsp_high_width_screen.py
+    test_run_jdsp_exciter_sensitivity_screen.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record

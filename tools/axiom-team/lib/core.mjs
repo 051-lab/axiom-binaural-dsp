@@ -730,6 +730,59 @@ export function runHighWidthScreen(id, config = loadLocalConfig(), policy = load
   }
 }
 
+export function runExciterSensitivityScreen(id, config = loadLocalConfig(), policy = loadPolicy()) {
+  const run = readRun(id, config);
+  if (run.status !== "investigating" || run.candidate) {
+    throw new Error("Exciter sensitivity screen requires an investigation with no DSP candidate.");
+  }
+  if (!run.hypothesis || !run.listeningTarget) {
+    throw new Error("Record a falsifiable hypothesis and listening target before host measurement.");
+  }
+  if (!fs.existsSync(config.localMaterialManifest)) {
+    throw new Error("Configured local material manifest is unavailable.");
+  }
+  ensureLocalDirectories(config);
+  const measurementId = isoNow().replace(/[-:]/g, "").replace(/\..*/, "");
+  const outputDir = path.join(runDirectory(id, config), "exciter-sensitivity-screens", measurementId);
+  fs.mkdirSync(outputDir, { recursive: true, mode: 0o700 });
+  const lockDir = path.join(config.stateRoot, "locks", "jdsp-host.lock");
+  try {
+    fs.mkdirSync(lockDir);
+  } catch {
+    throw new Error("Another real-host JDSP qualification is already active.");
+  }
+  try {
+    const result = shell(
+      "scripts/run_jdsp_exciter_sensitivity_screen.py",
+      [
+        policy.acceptedBaseline.path,
+        config.localMaterialManifest,
+        outputDir,
+        "--pulse-server", config.pulseServer,
+        "--route-helper", config.routeHelper,
+        "--master-limiter-threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
+      ],
+      { cwd: config.repositoryRoot, timeout: 60 * 60 * 1000 }
+    );
+    const reportPath = path.join(outputDir, "exciter_sensitivity_screen.json");
+    let conclusion = result.exitCode === 0 ? "measurement_complete" : "fail";
+    if (fs.existsSync(reportPath)) conclusion = loadJson(reportPath).evaluation.status;
+    recordGate(run, {
+      name: "experimental_exciter_sensitivity_screen",
+      status: conclusion === "fail" ? "fail" : "pass",
+      conclusion,
+      exitCode: result.exitCode,
+      reportPath,
+      command: result.command,
+      stdout: result.stdout.slice(-4000),
+      stderr: result.stderr.slice(-4000)
+    });
+    return writeRun(run, config);
+  } finally {
+    fs.rmSync(lockDir, { recursive: true, force: true });
+  }
+}
+
 export function listRuns(config = loadLocalConfig()) {
   const root = path.join(config.stateRoot, "runs");
   if (!fs.existsSync(root)) return [];
