@@ -177,6 +177,12 @@ scripts/run_jdsp_high_width_screen.py \
 
 The high-width screen retains accepted `slider6 = 110%` and creates temporary `105%` and `100%` fixtures, producing effective high-band side products of `1.485x`, `1.4175x`, and `1.350x`. It measures `4-7`, `7-12`, and `12-18 kHz` side balance and terminal integrity; no future candidate is justified without a measurable tradeoff and listening target.
 
+The completed `.10` screen found consistent intentional high-band widening,
+but no defensible retuning candidate: the `105%` fixture reduced tested
+high-band `S/M` by only `0.318 dB` on average and produced the only terminal
+observation on dense electronic material. Accepted `.10` remains unchanged;
+see [`docs/high-width-screen-v4.1.4.10.md`](docs/high-width-screen-v4.1.4.10.md).
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -423,6 +429,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/stft-audit-v4.1.4.9.md`](docs/stft-audit-v4.1.4.9.md) | Historical `.9` STFT stage investigation record |
 | [`docs/width-mono-audit-v4.1.4.9.md`](docs/width-mono-audit-v4.1.4.9.md) | Historical `.9` width and mono-compatibility investigation record |
 | [`docs/lowmid-width-screen-v4.1.4.9.md`](docs/lowmid-width-screen-v4.1.4.9.md) | `.9` evidence supporting the accepted `.10` width change |
+| [`docs/high-width-screen-v4.1.4.10.md`](docs/high-width-screen-v4.1.4.10.md) | `.10` high-frequency width screen and no-candidate decision |
 | [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents
