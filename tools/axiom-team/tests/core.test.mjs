@@ -11,6 +11,7 @@ import {
   createInvestigation,
   readRun,
   recordListening,
+  runHighWidthScreen,
   runLowMidWidthCandidateQualification,
   runLowMidWidthScreen,
   runAcceptedStressBaseline,
@@ -207,6 +208,14 @@ test("low-mid width screen is blocked until hypothesis exists and after candidat
   assert.throws(() => runLowMidWidthScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runLowMidWidthScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("high-frequency width screen is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Screen restrained high-frequency width settings", fx.config, fx.policy);
+  assert.throws(() => runHighWidthScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runHighWidthScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });
 
 test("low-mid candidate qualification requires a created candidate", () => {

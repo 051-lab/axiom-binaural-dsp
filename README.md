@@ -166,6 +166,17 @@ scripts/run_jdsp_lowmid_width_candidate_qualification.py \
 
 This qualification rejects any DSP edit beyond the candidate description and the two `slider5` default sites, then verifies real-host integrity and a measurable restrained `S/M` reduction in each affected band. A passing report permits listening; it is not listening acceptance.
 
+To screen the remaining high-frequency width control from accepted `.10` without creating a new DSP candidate:
+
+```bash
+scripts/run_jdsp_high_width_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
+  /tmp/axiom-v410-high-width-screen
+```
+
+The high-width screen retains accepted `slider6 = 110%` and creates temporary `105%` and `100%` fixtures, producing effective high-band side products of `1.485x`, `1.4175x`, and `1.350x`. It measures `4-7`, `7-12`, and `12-18 kHz` side balance and terminal integrity; no future candidate is justified without a measurable tradeoff and listening target.
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -342,6 +353,7 @@ axiom-binaural-dsp/
     run_jdsp_width_material_screen.py # Program-material spatial-balance screen
     run_jdsp_lowmid_width_screen.py # Restrained low-mid width pre-candidate screen
     run_jdsp_lowmid_width_candidate_qualification.py # Scoped low-mid candidate qualifier
+    run_jdsp_high_width_screen.py # Restrained high-frequency width pre-candidate screen
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -361,6 +373,7 @@ axiom-binaural-dsp/
     test_run_jdsp_width_material_screen.py
     test_run_jdsp_lowmid_width_screen.py
     test_run_jdsp_lowmid_width_candidate_qualification.py
+    test_run_jdsp_high_width_screen.py
   docs/
     architecture.md           # Technical architecture documentation
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record

@@ -88,6 +88,7 @@ Inside Pi, the primary commands are:
 | `/axiom-audit-width-mono run-id` | Measure accepted width gain and M/S leakage against temporary unity width |
 | `/axiom-screen-width-material run-id` | Characterize band-specific accepted width behavior on registered material |
 | `/axiom-screen-lowmid-width run-id` | Screen restrained `150 Hz-4 kHz` width settings before a candidate |
+| `/axiom-screen-high-width run-id` | Screen restrained `4 kHz-18 kHz` width settings from accepted `.10` before a candidate |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-qualify-lowmid-candidate run-id` | Qualify a restrained low-mid width candidate with its scoped spatial gate |
@@ -196,6 +197,13 @@ change. The scoped gate admits only the description line and the two `slider5`
 default-site edits, then requires unclipped real-host material renders and the
 expected restrained side-to-mid reduction across each affected band before
 the candidate may proceed to listening.
+
+`/axiom-screen-high-width` is a separate post-`.10` pre-candidate stage. It
+changes only temporary `slider6` defaults from accepted `110%` to `105%` and
+`100%`, retaining the accepted low-mid spatial setting. Reports divide
+`4-18 kHz` into presence-edge, brilliance, and air bands. This screen may
+justify a focused listening candidate; it does not alter or supersede `.10`
+on measurement alone.
 
 After listening acceptance, a release branch must contain:
 
