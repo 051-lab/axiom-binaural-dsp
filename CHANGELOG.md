@@ -4,6 +4,31 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [4.1.4.10] - 2026-05-26 - Accepted Restrained Low-Mid Width Baseline
+
+### Changed
+- Preserved the accepted `.9` processing chain, reduced bass-reserve law,
+  high-frequency width, and host-output policy.
+- Reduced the default `Low-Mid Width Multiplier` from `140%` to `126%`,
+  moving its effective side product from `1.890x` to `1.701x`.
+- Extended static validation to enforce inherited `.9` architectural
+  invariants for the versioned `.10` candidate.
+
+### Rationale
+- Registered-material measurement identified consistent low-mid side emphasis
+  in `.9`, especially through `300 Hz-4 kHz`.
+- The restrained setting reduced measured affected-band side balance by an
+  average `0.888 dB` relative to `.9` without advancing the more aggressive
+  alternative that showed higher terminal pressure.
+
+### Validation
+- Passed strict EEL static validation and the Python and Pi harness test suites.
+- Passed scoped real-JDSP qualification on four registered CC0 excerpts with
+  zero clipped candidate samples and a highest peak of `-0.586 dBFS`.
+- Accepted after device listening against `v4.1.4.9`.
+
+---
+
 ## [4.1.4.9] - 2026-05-26 - Accepted Reduced Bass-Reserve Baseline
 
 ### Changed

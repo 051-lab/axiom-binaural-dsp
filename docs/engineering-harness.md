@@ -64,7 +64,7 @@ node tools/axiom-team/bin/axiom-team.mjs doctor
 ```
 
 Review `~/.config/axiom-engineering/axiom-binaural-dsp.json` if local route or
-test-material locations differ. `doctor` requires the accepted `.9` SHA-256
+test-material locations differ. `doctor` requires the accepted `.10` SHA-256
 recorded in `tools/axiom-team/policy.json`, the JDSP route helper, CLI tools,
 and the configured external-material manifest.
 
@@ -76,7 +76,7 @@ Inside Pi, the primary commands are:
 |---------|---------|
 | `/axiom-doctor` | Check baseline identity and local dependencies |
 | `/axiom-status` | View local engineering run states |
-| `/axiom-audit-baseline` | Run static/tooling gates on accepted `.9` without creating a new DSP file |
+| `/axiom-audit-baseline` | Run static/tooling gates on the accepted baseline without creating a new DSP file |
 | `/axiom-investigate <observation>` | Open a measurement-backed investigation |
 | `/axiom-hypothesis run-id \| hypothesis \| listening target` | Establish the reason and audible target before coding |
 | `/axiom-measure-limiter run-id` | Capture the accepted baseline across controlled JDSP limiter thresholds for an investigation |
