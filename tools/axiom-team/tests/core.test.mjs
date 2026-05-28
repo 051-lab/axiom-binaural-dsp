@@ -11,6 +11,7 @@ import {
   createInvestigation,
   readRun,
   recordListening,
+  runExciterSensitivityScreen,
   runHighWidthScreen,
   runLowMidWidthCandidateQualification,
   runLowMidWidthScreen,
@@ -216,6 +217,14 @@ test("high-frequency width screen is blocked until hypothesis exists and after c
   assert.throws(() => runHighWidthScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runHighWidthScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("exciter sensitivity screen is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Screen dynamic exciter sensitivity settings", fx.config, fx.policy);
+  assert.throws(() => runExciterSensitivityScreen(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runExciterSensitivityScreen(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });
 
 test("low-mid candidate qualification requires a created candidate", () => {

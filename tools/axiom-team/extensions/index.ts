@@ -24,6 +24,7 @@ import {
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
+  runExciterSensitivityScreen,
   runHighWidthScreen,
   runLowMidWidthCandidateQualification,
   runLowMidWidthScreen,
@@ -341,6 +342,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_screen_exciter_sensitivity",
+    label: "Screen Exciter Sensitivity",
+    description: "Measure temporary Fletcher-Munson exciter sensitivity fixtures on registered material before creating an audio candidate.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runExciterSensitivityScreen(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -418,6 +427,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-screen-high-width", {
     description: "Usage: /axiom-screen-high-width run-id; screen restrained high-frequency width fixtures on registered material.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runHighWidthScreen(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-screen-exciter", {
+    description: "Usage: /axiom-screen-exciter run-id; screen dynamic exciter sensitivity fixtures on registered material.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runExciterSensitivityScreen(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",

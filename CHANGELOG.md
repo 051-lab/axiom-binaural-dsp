@@ -88,6 +88,12 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Recorded that the completed `.10` high-width screen does not justify a new
   DSP candidate: restrained width reduced measured side emphasis modestly and
   caused the only terminal observation on dense electronic material.
+- Added a pre-candidate dynamic exciter sensitivity screen for accepted `.10`
+  that compares temporary `slider3` alternatives across presence-edge,
+  brilliance, and air bands without modifying the accepted baseline.
+- Recorded that the completed registered-material exciter screen does not
+  justify a new DSP candidate because reduced and bypassed sensitivity were
+  effectively level-neutral on the high-energy corpus.
 - Added an offline repeated-capture qualifier that rejects invalid, muted, clipped, unstable, or low-confidence real-host measurements before fine A/B interpretation.
 - Added a stimulus-conditioned end-to-end host-path analyzer with low-level output qualification and identifiable mid/side transfer-matrix reporting.
 - Added branch-local nonlinear characterization for the user-adjustable `Sub Harmonics Gain` path across bass tone levels and slider values.

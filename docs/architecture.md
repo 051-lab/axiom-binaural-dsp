@@ -218,6 +218,19 @@ For that narrowly scoped candidate, `scripts/run_jdsp_lowmid_width_candidate_qua
 
 `scripts/run_jdsp_high_width_screen.py` begins the next spatial investigation from accepted `.10` without modifying it. It retains the accepted `slider6 = 110%` high-frequency width default and creates temporary `105%` and `100%` fixtures while preserving `.10` low-mid width. With global width at `135%`, these correspond to high-band side products of `1.485x`, `1.4175x`, and `1.350x`. Reports divide the affected region into `4-7`, `7-12`, and `12-18 kHz` bands so any later listening proposal is based on measured brilliance and air-band behavior rather than broad subjective retuning.
 
+`scripts/run_jdsp_exciter_sensitivity_screen.py` starts the post-width
+measurement pass on the dynamic exciter. It retains accepted `slider3 = 50%`
+and creates temporary `35%` and `0%` fixtures while preserving all spatial,
+bass, STFT, and output-reserve settings. Reports divide `4-18 kHz` into
+presence-edge, brilliance, and air bands, measuring both band RMS and `S/M`
+balance so the accepted clarity contribution can be separated from possible
+harshness or terminal-pressure evidence before any listening candidate exists.
+The completed registered-material screen found those temporary changes to be
+effectively level-neutral on the high-energy corpus, so no reduced-exciter
+candidate is justified from that evidence. A future exciter investigation
+should use lower-level material designed to exercise the loudness-contingent
+boost law.
+
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 
 Example offline qualification commands:
