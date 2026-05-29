@@ -534,6 +534,86 @@
       font-weight: 900;
     }
 
+    .progress-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .task-card {
+      min-height: 100%;
+    }
+
+    .task-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0;
+    }
+
+    .task-list li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 10px 0;
+      border-bottom: 1px solid #e7e2d6;
+      color: #33423c;
+    }
+
+    .task-list li:last-child {
+      border-bottom: 0;
+    }
+
+    .task-icon {
+      display: grid;
+      place-items: center;
+      width: 23px;
+      height: 23px;
+      border: 1px solid #c9c1b2;
+      border-radius: 50%;
+      color: #7a7060;
+      background: #fbfaf6;
+      font-size: 0.76rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .task-list li.done .task-icon {
+      color: #fff;
+      background: var(--signal);
+      border-color: var(--signal);
+    }
+
+    .task-list li.done .task-title {
+      color: #263b35;
+      text-decoration: line-through;
+      text-decoration-color: rgba(0, 127, 115, 0.72);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 2px;
+    }
+
+    .task-list li.next .task-icon {
+      color: #7e4b00;
+      background: var(--amber-soft);
+      border-color: #e7c486;
+    }
+
+    .task-title {
+      display: block;
+      color: #27342f;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .task-detail {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
     .workflow {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -602,6 +682,7 @@
       .section-head,
       .grid.two,
       .grid.three,
+      .progress-board,
       .workflow {
         grid-template-columns: 1fr;
       }
@@ -666,6 +747,7 @@
         <a href="#chain">Chain</a>
         <a href="#versions">Versions</a>
         <a href="#evidence">Evidence</a>
+        <a href="#progress">Progress</a>
         <a href="#harness">Harness</a>
         <a href="#state">State</a>
       </nav>
@@ -689,8 +771,8 @@
             <span>Accepted listening baseline</span>
           </div>
           <div class="stat">
-            <strong>89 / 18</strong>
-            <span>Python and Pi harness tests after PR #8</span>
+            <strong>96 / 18</strong>
+            <span>Current Python and Pi harness tests</span>
           </div>
           <div class="stat">
             <strong>-1.00 dB</strong>
@@ -965,6 +1047,99 @@
       </div>
     </section>
 
+    <section id="progress">
+      <div class="section-head">
+        <div class="section-label">Roadmap Progress</div>
+        <div>
+          <h2>Completed work is now explicit.</h2>
+          <p>
+            Checkmarked items are already built, documented, or accepted. Open items stay unstruck
+            so the next engineering pass can focus on evidence instead of rediscovering project state.
+          </p>
+        </div>
+      </div>
+
+      <div class="progress-board" aria-label="Axiom completed and open task board">
+        <article class="card task-card">
+          <h3>Baseline and repo hygiene</h3>
+          <ul class="task-list">
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Accept <code>v4.1.4.10</code> as baseline</span><span class="task-detail">Listening acceptance, qualification record, and SHA-256 policy anchor are in place.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Clarify host ownership</span><span class="task-detail">JDSP owns terminal limiting; JamesDSP crossfeed remains optional and outside the script.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Align public source-of-truth docs</span><span class="task-detail">README, current state, architecture, roadmap, harness, and policy docs point at `.10`.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Resolve license visibility</span><span class="task-detail">The repo now contains the advertised MIT license file.</span></span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="card task-card">
+          <h3>Measurement system built</h3>
+          <ul class="task-list">
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Static EEL2 safety gate</span><span class="task-detail">Reserved constants, forbidden APIs, STFT signatures, memory rules, and final sample writes are checked.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Real-JDSP render and comparison path</span><span class="task-detail">Host capture, repeatability, A/B comparison, stress, limiter, and registered-material tooling exist.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Close `.10` width and exciter screens</span><span class="task-detail">High-frequency width and registered-material exciter changes were measured and rejected as weak candidates.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Build stage observability runner</span><span class="task-detail">Same-render diagnostic tap fixtures now expose bass and reserve stage behavior without editing `.10`.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Build low-level exciter probe screen</span><span class="task-detail">Generated low-level probes now test material where the current exciter should actually activate.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Wire new tooling into the Pi harness</span><span class="task-detail">Stage observability is available through the controlled Axiom engineering command flow.</span></span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="card task-card">
+          <h3>Open evidence work</h3>
+          <ul class="task-list">
+            <li class="next">
+              <span class="task-icon" aria-hidden="true">&#8594;</span>
+              <span><span class="task-title">Capture stage observability runs</span><span class="task-detail">Run the bass/reserve taps through real JDSP and summarize what changes at each stage.</span></span>
+            </li>
+            <li class="next">
+              <span class="task-icon" aria-hidden="true">&#8594;</span>
+              <span><span class="task-title">Run low-level exciter probes</span><span class="task-detail">Use the generated probe screen before making any `.11` exciter decision.</span></span>
+            </li>
+            <li class="next">
+              <span class="task-icon" aria-hidden="true">&#8594;</span>
+              <span><span class="task-title">Add perceptual metrics</span><span class="task-detail">Prioritize loudness, true-peak proxy, crest behavior, Bark or ERB bands, transients, and M/S balance.</span></span>
+            </li>
+            <li class="next">
+              <span class="task-icon" aria-hidden="true">&#8594;</span>
+              <span><span class="task-title">Expand corpus and listening records</span><span class="task-detail">Add legally clean material classes and structured notes before another sound-changing candidate.</span></span>
+            </li>
+            <li class="next">
+              <span class="task-icon" aria-hidden="true">&#8594;</span>
+              <span><span class="task-title">Formalize Android validation</span><span class="task-detail">Separate WSL/JDSP lab proof from RootlessJamesDSP phone behavior with a repeatable package.</span></span>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
     <section id="harness">
       <div class="section-head">
         <div class="section-label">Engineering System</div>
@@ -993,7 +1168,7 @@
           <ul class="rule-list">
             <li><span class="check">A</span><span>Static EEL safety checks for reserved constants, STFT signatures, memory layout, and final output writes.</span></li>
             <li><span class="check">B</span><span>Real-host render path through JDSP, Pulse routing, limiter policy, and repeatability qualification.</span></li>
-            <li><span class="check">C</span><span>Specialized screens for reserve law, width behavior, STFT behavior, and dynamic exciter sensitivity.</span></li>
+            <li><span class="check">C</span><span>Specialized screens for reserve law, width behavior, STFT behavior, dynamic exciter sensitivity, stage observability, and low-level exciter probes.</span></li>
             <li><span class="check">D</span><span>Documentation records that explain why a candidate was accepted or why an idea was closed.</span></li>
             <li><span class="check">E</span><span>GitHub PR workflow for draft publication, explicit approval, merge, and post-merge verification.</span></li>
           </ul>
@@ -1030,14 +1205,15 @@
         <article class="card">
           <h3>Best next technical direction</h3>
           <p>
-            If the exciter is revisited, build lower-level controlled material first. The high-energy
-            registered corpus showed the accepted exciter is effectively inactive there, so retuning it
-            from that evidence would be weak engineering.
+            The lower-level exciter probe screen and first stage observability runner are now built.
+            Run those captures through real JDSP before proposing `.11`; the next candidate should come
+            from stage-level evidence, not from adding features to a baseline that is already accepted.
           </p>
           <div class="tagrow">
-            <span class="tag watch">lower-level exciter probes</span>
+            <span class="tag good">exciter probes built</span>
+            <span class="tag good">stage taps built</span>
+            <span class="tag watch">capture evidence next</span>
             <span class="tag">avoid feature creep</span>
-            <span class="tag">protect `.10` sound</span>
           </div>
         </article>
       </div>
