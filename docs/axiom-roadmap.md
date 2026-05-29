@@ -76,7 +76,7 @@ Done when:
 Goal: stop treating WSL/JDSP as proof of Android behavior.
 
 - Create an Android validation document for RootlessJamesDSP with host settings, file deployment, hash/filename checks, reboot persistence, and route sanity checks.
-- Build a phone-test package workflow that exports accepted and candidate scripts, SHA-256 hashes, settings checklist, material list, and listening form.
+- Maintain `docs/android-validation.md` and `scripts/build_android_validation_package.py` so phone-test packages export accepted and candidate scripts, SHA-256 hashes, settings checklist, and listening form.
 - Define manual fallback checks for cases where adb or direct app paths are unavailable.
 - Add a device matrix: primary Android phone, one speaker path, one wired or USB path if available, one Bluetooth path, and WSL/JDSP lab route.
 - Track whether host crossfeed is off for qualification and manually enabled only for compatibility/listening checks.

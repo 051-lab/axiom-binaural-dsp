@@ -90,6 +90,7 @@ first standalone perceptual-proxy analyzer is recorded in
 local-material, and scoped candidate reports as evidence context. Structured
 human listening records are defined in `docs/listening-records.md`; full
 records should remain local unless sanitized. Corpus material taxonomy and
-manifest validation are defined in `docs/corpus-material.md`. The next
-sound-changing candidate should wait until corpus coverage and Android
-validation foundations are stronger.
+manifest validation are defined in `docs/corpus-material.md`. Android
+validation package generation and RootlessJamesDSP phone-side checks are defined
+in `docs/android-validation.md`. The next sound-changing candidate should wait
+until the corpus is populated with broader material coverage.
