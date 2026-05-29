@@ -20,6 +20,7 @@ import {
   runBaselineLimiterSweep,
   runReserveLawScreen,
   runReserveRangeQualification,
+  runStageObservability,
   runStftStageAudit,
   runSubSliderMap,
   runWidthMaterialScreen,
@@ -161,6 +162,14 @@ test("sub harmonics gain map is blocked until hypothesis exists and after candid
   assert.throws(() => runSubSliderMap(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runSubSliderMap(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("stage observability is blocked until hypothesis exists and after candidate creation", () => {
+  const fx = fixture();
+  const investigation = createInvestigation("Observe accepted bass reserve stages", fx.config, fx.policy);
+  assert.throws(() => runStageObservability(investigation.id, fx.config, fx.policy), /hypothesis/);
+  const candidate = candidateRun(fx);
+  assert.throws(() => runStageObservability(candidate.id, fx.config, fx.policy), /no DSP candidate/);
 });
 
 test("reserve-law screen is blocked until hypothesis exists and after candidate creation", () => {

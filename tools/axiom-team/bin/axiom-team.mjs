@@ -4,7 +4,7 @@ import {
   createInvestigation, doctor, listRuns, loadLocalConfig, mergePullRequest,
   publishPullRequest, readRun, recordListening, renderSummary, runAutomatedValidation,
   runAcceptedStressBaseline, runBaselineLimiterSweep, runReserveLawScreen, runReserveRangeQualification,
-  runExciterSensitivityScreen, runHighWidthScreen, runLowMidWidthCandidateQualification, runLowMidWidthScreen, runStftStageAudit, runSubSliderMap, runWidthMaterialScreen, runWidthMonoAudit,
+  runExciterSensitivityScreen, runHighWidthScreen, runLowMidWidthCandidateQualification, runLowMidWidthScreen, runStageObservability, runStftStageAudit, runSubSliderMap, runWidthMaterialScreen, runWidthMonoAudit,
   saveLocalConfig, setHypothesis
 } from "../lib/core.mjs";
 
@@ -49,6 +49,9 @@ async function main() {
       return;
     case "map-sub-gain":
       out(renderSummary(runSubSliderMap(required(args[0], "run id"))));
+      return;
+    case "stage-observability":
+      out(renderSummary(runStageObservability(required(args[0], "run id"))));
       return;
     case "screen-reserve-law":
       out(renderSummary(runReserveLawScreen(required(args[0], "run id"))));
@@ -108,7 +111,7 @@ async function main() {
       out(renderSummary(mergePullRequest(required(args[0], "run id"))));
       return;
     default:
-      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|screen-high-width|screen-exciter|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
+      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|stage-observability|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|screen-high-width|screen-exciter|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
       process.exitCode = 2;
   }
 }

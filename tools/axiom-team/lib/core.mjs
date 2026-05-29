@@ -367,6 +367,55 @@ export function runSubSliderMap(id, config = loadLocalConfig(), policy = loadPol
   }
 }
 
+export function runStageObservability(id, config = loadLocalConfig(), policy = loadPolicy()) {
+  const run = readRun(id, config);
+  if (run.status !== "investigating" || run.candidate) {
+    throw new Error("Stage observability requires an investigation with no DSP candidate.");
+  }
+  if (!run.hypothesis || !run.listeningTarget) {
+    throw new Error("Record a falsifiable hypothesis and listening target before host measurement.");
+  }
+  ensureLocalDirectories(config);
+  const measurementId = isoNow().replace(/[-:]/g, "").replace(/\..*/, "");
+  const outputDir = path.join(runDirectory(id, config), "stage-observability", measurementId);
+  fs.mkdirSync(outputDir, { recursive: true, mode: 0o700 });
+  const lockDir = path.join(config.stateRoot, "locks", "jdsp-host.lock");
+  try {
+    fs.mkdirSync(lockDir);
+  } catch {
+    throw new Error("Another real-host JDSP qualification is already active.");
+  }
+  try {
+    const result = shell(
+      "scripts/run_jdsp_stage_observability.py",
+      [
+        policy.acceptedBaseline.path,
+        outputDir,
+        "--pulse-server", config.pulseServer,
+        "--route-helper", config.routeHelper,
+        "--master-limiter-threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
+      ],
+      { cwd: config.repositoryRoot, timeout: 60 * 60 * 1000 }
+    );
+    const reportPath = path.join(outputDir, "stage_observability.json");
+    let conclusion = result.exitCode === 0 ? "measurement_complete" : "fail";
+    if (fs.existsSync(reportPath)) conclusion = loadJson(reportPath).evaluation.status;
+    recordGate(run, {
+      name: "accepted_bass_reserve_stage_observability",
+      status: conclusion === "fail" ? "fail" : "pass",
+      conclusion,
+      exitCode: result.exitCode,
+      reportPath,
+      command: result.command,
+      stdout: result.stdout.slice(-4000),
+      stderr: result.stderr.slice(-4000)
+    });
+    return writeRun(run, config);
+  } finally {
+    fs.rmSync(lockDir, { recursive: true, force: true });
+  }
+}
+
 export function runReserveLawScreen(id, config = loadLocalConfig(), policy = loadPolicy()) {
   const run = readRun(id, config);
   if (run.status !== "investigating" || run.candidate) {

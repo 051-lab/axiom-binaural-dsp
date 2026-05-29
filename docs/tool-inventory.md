@@ -88,6 +88,7 @@ Run the harness with `scripts/axiom_team.sh` or use
 | `measure-limiter` | Run accepted-baseline limiter threshold sweep. | Yes |
 | `stress-accepted` | Repeat dense-material accepted-baseline captures. | Yes |
 | `map-sub-gain` | Map accepted baseline across Sub Harmonics Gain settings. | Yes |
+| `stage-observability` | Measure accepted `.10` bass/reserve diagnostic taps. | Yes |
 | `screen-reserve-law` | Screen temporary reserve-law fixtures. | Yes |
 | `qualify-reserve-range` | Range-qualify reserve-law survivors. | Yes |
 | `audit-stft` | Run same-render STFT stage audit. | Yes |

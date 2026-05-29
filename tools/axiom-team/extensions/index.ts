@@ -30,6 +30,7 @@ import {
   runLowMidWidthScreen,
   runReserveLawScreen,
   runReserveRangeQualification,
+  runStageObservability,
   runStftStageAudit,
   runSubSliderMap,
   runWidthMaterialScreen,
@@ -286,6 +287,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_stage_observability",
+    label: "Stage Observability",
+    description: "Measure accepted bass/reserve diagnostic taps with temporary same-render fixtures through serialized real-JDSP capture.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runStageObservability(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_screen_reserve_law",
     label: "Screen Reserve Law",
     description: "Screen reduced elevated-bass reserve slopes in temporary fixtures before creating a DSP candidate.",
@@ -399,6 +408,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-map-sub-gain", {
     description: "Usage: /axiom-map-sub-gain run-id; map dense-material behavior across Sub Harmonics Gain settings.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runSubSliderMap(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-stage-observability", {
+    description: "Usage: /axiom-stage-observability run-id; measure same-render bass/reserve diagnostic taps.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runStageObservability(args.trim())), "info"),
   });
   pi.registerCommand("axiom-screen-reserve-law", {
     description: "Usage: /axiom-screen-reserve-law run-id; test reduced elevated-bass reserve slopes without creating a candidate.",

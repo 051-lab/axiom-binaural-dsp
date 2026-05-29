@@ -82,6 +82,7 @@ Inside Pi, the primary commands are:
 | `/axiom-measure-limiter run-id` | Capture the accepted baseline across controlled JDSP limiter thresholds for an investigation |
 | `/axiom-stress-accepted run-id` | Establish repeated dense-material behavior for the accepted baseline at `-1.00 dB` |
 | `/axiom-map-sub-gain run-id` | Map dense-material behavior from `+4` through `+12 dB` Sub Harmonics Gain |
+| `/axiom-stage-observability run-id` | Measure same-render `spatial_out -> bass_post` and `reserve_pre -> reserve_post` diagnostic taps |
 | `/axiom-screen-reserve-law run-id` | Screen reduced elevated-bass reserve slopes in temporary fixtures |
 | `/axiom-qualify-reserve-range run-id` | Range-qualify viable reduced reserve slopes before a candidate |
 | `/axiom-audit-stft run-id` | Measure same-render pre-STFT versus STFT outputs at unity and accepted suppression |
@@ -139,6 +140,14 @@ tested usable-range limit that can justify a narrowly scoped future candidate.
 It separately records repeatable broadband RMS retreat relative to `+4 dB`,
 because safe peak margin is not sufficient evidence that an elevated control
 setting preserves practical listening level.
+
+`/axiom-stage-observability` measures where that behavior appears inside the
+accepted script before any reserve-law candidate is proposed. It creates
+temporary same-render fixtures from the accepted baseline and renders generated
+deterministic probes through the accepted host settings. The first mode records
+`spatial_out -> bass_post` and `reserve_pre -> reserve_post` deltas, including
+peak, RMS, crest, 20 ms envelope, and band-energy changes. This is diagnostic
+stage evidence only; it cannot create or accept a listening candidate.
 
 When that map exposes substantial level retreat, `/axiom-screen-reserve-law`
 generates temporary `+8 dB` fixtures with reserve slopes of `1.000`, `0.875`,
