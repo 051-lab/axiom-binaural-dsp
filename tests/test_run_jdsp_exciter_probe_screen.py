@@ -17,11 +17,19 @@ def summary_item(
     air_bypass: float,
     air_reduced: float,
     presence_bypass: float = 0.0,
+    accepted_air_dbfs: float = -50.0,
+    bypass_air_dbfs: float = -51.0,
 ) -> dict[str, object]:
     bands = {}
     for band, _low, _high in probe_screen.exciter.EXCITER_BANDS_HZ:
         bypass = presence_bypass if band == "presence_edge" else air_bypass
+        accepted_dbfs = accepted_air_dbfs if band == "air" else -50.0
+        bypass_dbfs = bypass_air_dbfs if band == "air" else -51.0
         bands[band] = {
+            "source_band_rms_dbfs": -52.0,
+            "accepted_band_rms_dbfs": accepted_dbfs,
+            "reduced_band_rms_dbfs": -50.5,
+            "bypass_band_rms_dbfs": bypass_dbfs,
             "accepted_minus_bypass_rms_db": bypass,
             "accepted_minus_reduced_rms_db": air_reduced,
             "accepted_minus_bypass_side_to_mid_db": 0.0,
@@ -78,7 +86,7 @@ class ExciterProbeScreenTests(unittest.TestCase):
     def test_activation_evaluation_passes_intended_probe_pattern(self) -> None:
         summary = [
             summary_item("low_level_air_activation", air_bypass=0.25, air_reduced=0.10),
-            summary_item("low_level_dull_control", air_bypass=0.03, air_reduced=0.02),
+            summary_item("low_level_dull_control", air_bypass=0.03, air_reduced=0.02, accepted_air_dbfs=-104.0, bypass_air_dbfs=-104.5),
             summary_item("low_level_sibilance_texture", air_bypass=0.08, air_reduced=0.03, presence_bypass=0.20),
             summary_item("high_level_air_control", air_bypass=0.04, air_reduced=0.02),
         ]
@@ -88,8 +96,8 @@ class ExciterProbeScreenTests(unittest.TestCase):
 
     def test_activation_evaluation_flags_weak_or_excessive_probe_behavior(self) -> None:
         summary = [
-            summary_item("low_level_air_activation", air_bypass=0.01, air_reduced=0.03),
-            summary_item("low_level_dull_control", air_bypass=0.35, air_reduced=0.05),
+            summary_item("low_level_air_activation", air_bypass=0.01, air_reduced=0.30),
+            summary_item("low_level_dull_control", air_bypass=0.35, air_reduced=0.05, accepted_air_dbfs=-60.0, bypass_air_dbfs=-60.4),
             summary_item("low_level_sibilance_texture", air_bypass=0.08, air_reduced=0.03, presence_bypass=0.80),
             summary_item("high_level_air_control", air_bypass=0.31, air_reduced=0.06),
         ]
@@ -101,6 +109,19 @@ class ExciterProbeScreenTests(unittest.TestCase):
         self.assertIn("low_level_dull_control_restraint", investigate)
         self.assertIn("low_level_sibilance_texture_restraint", investigate)
         self.assertIn("high_level_air_control_restraint", investigate)
+
+    def test_activation_evaluation_treats_dull_air_delta_below_floor_as_non_decision_grade(self) -> None:
+        summary = [
+            summary_item("low_level_air_activation", air_bypass=0.25, air_reduced=0.32),
+            summary_item("low_level_dull_control", air_bypass=0.86, air_reduced=0.57, accepted_air_dbfs=-104.0, bypass_air_dbfs=-105.0),
+            summary_item("low_level_sibilance_texture", air_bypass=0.08, air_reduced=0.03, presence_bypass=0.20),
+            summary_item("high_level_air_control", air_bypass=0.04, air_reduced=0.02),
+        ]
+        evaluation = probe_screen.evaluate_activation(summary)
+        self.assertEqual(evaluation["status"], "measurement_complete")
+        dull = next(check for check in evaluation["checks"] if check["name"] == "low_level_dull_control_restraint")
+        self.assertEqual(dull["status"], "pass")
+        self.assertIn("below decision floor", dull["detail"])
 
     def test_combined_evaluation_keeps_integrity_fail_as_failure(self) -> None:
         integrity = {"status": "fail", "checks": [{"name": "clip", "status": "fail", "detail": "clipped"}]}
@@ -120,6 +141,10 @@ class ExciterProbeScreenTests(unittest.TestCase):
                     "label": "Low-level air activation",
                     "bands": {
                         band: {
+                            "source_band_rms_dbfs": -52.0,
+                            "accepted_band_rms_dbfs": -50.0,
+                            "reduced_band_rms_dbfs": -50.5,
+                            "bypass_band_rms_dbfs": -51.0,
                             "accepted_minus_bypass_rms_db": 1.0,
                             "accepted_minus_reduced_rms_db": 0.5,
                             "accepted_minus_bypass_side_to_mid_db": 0.0,
@@ -132,6 +157,7 @@ class ExciterProbeScreenTests(unittest.TestCase):
         }
         text = probe_screen.markdown(report)
         self.assertIn("Low-Level Exciter Probe Screen", text)
+        self.assertIn("Absolute band RMS context", text)
         self.assertIn("Generated", text)
 
 

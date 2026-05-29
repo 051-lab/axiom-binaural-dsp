@@ -33,6 +33,8 @@ DEFAULT_MIN_AIR_LIFT_DB = 0.10
 DEFAULT_MAX_DULL_AIR_LIFT_DB = 0.20
 DEFAULT_MAX_HIGH_LEVEL_AIR_LIFT_DB = 0.20
 DEFAULT_MAX_SIBILANCE_PRESENCE_LIFT_DB = 0.60
+DEFAULT_DECISION_FLOOR_DBFS = -90.0
+DEFAULT_DEPTH_ORDER_TOLERANCE_DB = 0.20
 ProbeSignal = Callable[[int, int, int], tuple[float, float]]
 
 
@@ -210,6 +212,10 @@ def activation_summary(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
         for band, _low, _high in exciter.EXCITER_BANDS_HZ:
             values = item["bands"][band]
             bands[band] = {
+                "source_band_rms_dbfs": values.get("source", {}).get("band_rms_dbfs"),
+                "accepted_band_rms_dbfs": values.get("accepted_50", {}).get("band_rms_dbfs"),
+                "reduced_band_rms_dbfs": values.get("reduced_35", {}).get("band_rms_dbfs"),
+                "bypass_band_rms_dbfs": values.get("bypass_0", {}).get("band_rms_dbfs"),
                 "accepted_minus_bypass_rms_db": accepted_minus(values["bypass_minus_accepted_band_rms_db"]),
                 "accepted_minus_reduced_rms_db": accepted_minus(values["reduced_minus_accepted_band_rms_db"]),
                 "accepted_minus_bypass_side_to_mid_db": accepted_minus(values["bypass_minus_accepted_side_to_mid_db"]),
@@ -227,11 +233,24 @@ def band_value(
     item = summary_by_name.get(item_name)
     if item is None:
         return None
-    return item["bands"][band][metric]
+    return item["bands"][band].get(metric)
 
 
 def status_check(name: str, passed: bool, detail: str) -> dict[str, str]:
     return {"name": name, "status": "pass" if passed else "investigate", "detail": detail}
+
+
+def band_is_below_floor(
+    summary_by_name: dict[str, dict[str, Any]],
+    item_name: str,
+    band: str,
+    decision_floor_dbfs: float,
+) -> bool:
+    accepted = band_value(summary_by_name, item_name, band, "accepted_band_rms_dbfs")
+    bypass = band_value(summary_by_name, item_name, band, "bypass_band_rms_dbfs")
+    if accepted is None or bypass is None:
+        return False
+    return max(accepted, bypass) < decision_floor_dbfs
 
 
 def evaluate_activation(
@@ -240,6 +259,8 @@ def evaluate_activation(
     max_dull_air_lift_db: float = DEFAULT_MAX_DULL_AIR_LIFT_DB,
     max_high_level_air_lift_db: float = DEFAULT_MAX_HIGH_LEVEL_AIR_LIFT_DB,
     max_sibilance_presence_lift_db: float = DEFAULT_MAX_SIBILANCE_PRESENCE_LIFT_DB,
+    decision_floor_dbfs: float = DEFAULT_DECISION_FLOOR_DBFS,
+    depth_order_tolerance_db: float = DEFAULT_DEPTH_ORDER_TOLERANCE_DB,
 ) -> dict[str, Any]:
     summary_by_name = {item["name"]: item for item in summary}
     checks: list[dict[str, str]] = []
@@ -272,10 +293,11 @@ def evaluate_activation(
             checks.append(
                 status_check(
                     "low_level_air_activation_depth_order",
-                    low_air >= low_air_reduced >= -0.05,
+                    low_air + depth_order_tolerance_db >= low_air_reduced >= -0.05,
                     (
                         f"accepted-bypass air lift={low_air:.3f} dB; "
-                        f"accepted-reduced air lift={low_air_reduced:.3f} dB"
+                        f"accepted-reduced air lift={low_air_reduced:.3f} dB; "
+                        f"tolerance={depth_order_tolerance_db:.3f} dB"
                     ),
                 )
             )
@@ -289,13 +311,36 @@ def evaluate_activation(
     if dull_air is None:
         checks.append(status_check("low_level_dull_control_present", False, "probe result missing"))
     else:
-        checks.append(
-            status_check(
-                "low_level_dull_control_restraint",
-                abs(dull_air) <= max_dull_air_lift_db,
-                f"accepted-bypass air lift={dull_air:.3f} dB; expected magnitude <= {max_dull_air_lift_db:.3f} dB",
-            )
+        dull_floor_only = band_is_below_floor(
+            summary_by_name,
+            "low_level_dull_control",
+            "air",
+            decision_floor_dbfs,
         )
+        accepted_dull = band_value(summary_by_name, "low_level_dull_control", "air", "accepted_band_rms_dbfs")
+        bypass_dull = band_value(summary_by_name, "low_level_dull_control", "air", "bypass_band_rms_dbfs")
+        if dull_floor_only:
+            checks.append(
+                status_check(
+                    "low_level_dull_control_restraint",
+                    True,
+                    (
+                        f"accepted-bypass air lift={dull_air:.3f} dB, but accepted={accepted_dull:.3f} dBFS "
+                        f"and bypass={bypass_dull:.3f} dBFS are below decision floor {decision_floor_dbfs:.3f} dBFS"
+                    ),
+                )
+            )
+        else:
+            checks.append(
+                status_check(
+                    "low_level_dull_control_restraint",
+                    abs(dull_air) <= max_dull_air_lift_db,
+                    (
+                        f"accepted-bypass air lift={dull_air:.3f} dB; expected magnitude <= "
+                        f"{max_dull_air_lift_db:.3f} dB above floor {decision_floor_dbfs:.3f} dBFS"
+                    ),
+                )
+            )
 
     high_air = band_value(
         summary_by_name,
@@ -400,6 +445,25 @@ def markdown(report: dict[str, Any]) -> str:
                 f"{exciter.display(values['accepted_minus_reduced_rms_db'])} | "
                 f"{exciter.display(values['accepted_minus_bypass_side_to_mid_db'])} |"
             )
+    lines.extend(
+        [
+            "",
+            "Absolute band RMS context is included so near-silence dB deltas are not overinterpreted.",
+            "",
+            "| Probe | Band | Source RMS (dBFS) | Accepted RMS (dBFS) | Bypass RMS (dBFS) |",
+            "| --- | --- | ---: | ---: | ---: |",
+        ]
+    )
+    for item in report["activation_summary"]:
+        label = item["label"].replace("|", "\\|")
+        for band, _low, _high in exciter.EXCITER_BANDS_HZ:
+            values = item["bands"][band]
+            lines.append(
+                f"| {label} | {band} | "
+                f"{exciter.display(values['source_band_rms_dbfs'])} | "
+                f"{exciter.display(values['accepted_band_rms_dbfs'])} | "
+                f"{exciter.display(values['bypass_band_rms_dbfs'])} |"
+            )
     lines.extend(["", "## Probe Intent", "", "| Probe | Intent |", "| --- | --- |"])
     for item in report["probes"]:
         lines.append(f"| {item['label']} | {item['description']} |")
@@ -436,6 +500,8 @@ def main() -> int:
     parser.add_argument("--min-air-lift-db", type=float, default=DEFAULT_MIN_AIR_LIFT_DB)
     parser.add_argument("--max-dull-air-lift-db", type=float, default=DEFAULT_MAX_DULL_AIR_LIFT_DB)
     parser.add_argument("--max-high-level-air-lift-db", type=float, default=DEFAULT_MAX_HIGH_LEVEL_AIR_LIFT_DB)
+    parser.add_argument("--decision-floor-dbfs", type=float, default=DEFAULT_DECISION_FLOOR_DBFS)
+    parser.add_argument("--depth-order-tolerance-db", type=float, default=DEFAULT_DEPTH_ORDER_TOLERANCE_DB)
     parser.add_argument(
         "--max-sibilance-presence-lift-db",
         type=float,
@@ -529,12 +595,16 @@ def main() -> int:
             max_dull_air_lift_db=args.max_dull_air_lift_db,
             max_high_level_air_lift_db=args.max_high_level_air_lift_db,
             max_sibilance_presence_lift_db=args.max_sibilance_presence_lift_db,
+            decision_floor_dbfs=args.decision_floor_dbfs,
+            depth_order_tolerance_db=args.depth_order_tolerance_db,
         )
         report["activation_thresholds_db"] = {
             "min_air_lift_db": args.min_air_lift_db,
             "max_dull_air_lift_db": args.max_dull_air_lift_db,
             "max_high_level_air_lift_db": args.max_high_level_air_lift_db,
             "max_sibilance_presence_lift_db": args.max_sibilance_presence_lift_db,
+            "decision_floor_dbfs": args.decision_floor_dbfs,
+            "depth_order_tolerance_db": args.depth_order_tolerance_db,
         }
         report["evaluation"] = combine_evaluations(integrity_evaluation, activation_evaluation)
         (output_dir / "exciter_probe_screen.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

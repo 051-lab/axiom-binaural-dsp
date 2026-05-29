@@ -83,7 +83,7 @@ host-limiter candidate work. Use `docs/stage-observability-plan.md` before
 expanding diagnostic stage taps. The first implemented tap runner is
 `scripts/run_jdsp_stage_observability.py` for bass/reserve measurements. The
 generated low-level exciter probe screen has also been run and recorded in
-`docs/exciter-probe-screen-v4.1.4.10.md`; it supports further exciter
-diagnostics rather than an immediate `.11` candidate. The next sound-changing
-candidate should wait until measurement observability, corpus coverage, and
-Android validation foundations are stronger.
+`docs/exciter-probe-screen-v4.1.4.10.md`; floor-aware evaluation supports the
+accepted `.10` exciter behavior rather than an immediate `.11` candidate. The
+next sound-changing candidate should wait until measurement observability,
+corpus coverage, and Android validation foundations are stronger.

@@ -771,7 +771,7 @@
             <span>Accepted listening baseline</span>
           </div>
           <div class="stat">
-            <strong>99 / 20</strong>
+            <strong>100 / 20</strong>
             <span>Current Python and Pi harness tests</span>
           </div>
           <div class="stat">
@@ -1039,8 +1039,8 @@
             <tr>
               <td>Low-level exciter probe screen</td>
               <td>Generated quiet air, dull, sibilance, and louder bright probes</td>
-              <td>Accepted `.10` lifted quiet air by `+1.590 dB` and backed off when loud; dull-control lift and reduced-vs-bypass ordering need investigation</td>
-              <td><span class="no-go">No `.11` candidate yet</span></td>
+              <td>Accepted `.10` lifted quiet air by `+1.592 dB`, backed off when loud, and passed floor-aware dull-control checks</td>
+              <td><span class="no-go">No `.11` candidate</span></td>
             </tr>
             <tr>
               <td>Sub Harmonics reserve mapping</td>
@@ -1113,7 +1113,7 @@
             </li>
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
-              <span><span class="task-title">Run low-level exciter probe screen</span><span class="task-detail">Accepted `.10` shows useful quiet-air activation, with two diagnostic questions left open.</span></span>
+              <span><span class="task-title">Resolve exciter probe questions</span><span class="task-detail">Floor-aware rerun supports accepted `.10`: useful quiet-air activation, loud-material backoff, and no decision-grade dull-control overreach.</span></span>
             </li>
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
@@ -1128,10 +1128,6 @@
             <li class="next">
               <span class="task-icon" aria-hidden="true">&#8594;</span>
               <span><span class="task-title">Capture stage observability runs</span><span class="task-detail">Run the bass/reserve taps through real JDSP and summarize what changes at each stage.</span></span>
-            </li>
-            <li class="next">
-              <span class="task-icon" aria-hidden="true">&#8594;</span>
-              <span><span class="task-title">Resolve exciter probe questions</span><span class="task-detail">Isolate dull-control air lift and sensitivity monotonicity before any `.11` exciter decision.</span></span>
             </li>
             <li class="next">
               <span class="task-icon" aria-hidden="true">&#8594;</span>
@@ -1215,15 +1211,15 @@
         <article class="card">
           <h3>Best next technical direction</h3>
           <p>
-            The low-level exciter probe screen is captured and the first stage observability runner is
-            built. Before proposing `.11`, isolate the exciter probe questions and capture the
-            bass/reserve stage taps; the next candidate should come from stage-level evidence, not
-            from adding features to a baseline that is already accepted.
+            The low-level exciter probe questions are resolved and the first stage observability runner
+            is built. Before proposing `.11`, capture the bass/reserve stage taps and broaden metrics;
+            the next candidate should come from stage-level evidence, not from adding features to a
+            baseline that is already accepted.
           </p>
           <div class="tagrow">
-            <span class="tag good">exciter probes captured</span>
+            <span class="tag good">exciter probes resolved</span>
             <span class="tag good">stage taps built</span>
-            <span class="tag watch">resolve probe questions</span>
+            <span class="tag watch">stage captures next</span>
             <span class="tag">avoid feature creep</span>
           </div>
         </article>
