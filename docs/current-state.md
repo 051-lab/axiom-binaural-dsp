@@ -78,12 +78,12 @@ source of truth.
 
 Follow `docs/axiom-roadmap.md`, continuing Phase 1 measurement foundation work.
 Use `docs/tool-inventory.md` before choosing measurement or harness commands.
-Use `docs/bass-host-limiter-investigation-plan.md` before any bass/reserve or
-host-limiter candidate work. Use `docs/stage-observability-plan.md` before
-expanding diagnostic stage taps. The first implemented tap runner is
-`scripts/run_jdsp_stage_observability.py` for bass/reserve measurements. The
-generated low-level exciter probe screen has also been run and recorded in
+Use `docs/bass-host-limiter-investigation-plan.md` before any elevated
+bass/reserve or host-limiter candidate work. The accepted `.10` bass/reserve
+stage capture is recorded in `docs/stage-observability-v4.1.4.10.md`; it
+supports the accepted default path rather than an immediate low-end candidate.
+The generated low-level exciter probe screen is recorded in
 `docs/exciter-probe-screen-v4.1.4.10.md`; floor-aware evaluation supports the
 accepted `.10` exciter behavior rather than an immediate `.11` candidate. The
-next sound-changing candidate should wait until measurement observability,
-corpus coverage, and Android validation foundations are stronger.
+next sound-changing candidate should wait until perceptual metrics, corpus
+coverage, and Android validation foundations are stronger.

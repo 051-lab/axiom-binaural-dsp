@@ -204,6 +204,13 @@ The transfer report retains timing against the known stimulus playback timeline 
 
 The completed `.9` STFT audit measured approximately `11.6 ms` of same-render STFT path delay. The unity round trip produced a measurable sweep residual, and accepted suppression increased that sweep difference while leaving bass-burst behavior effectively unchanged. Across three impulse renders, the largest temporal-energy-span change was one sample at `48 kHz`, with no meaningful local-energy loss that justifies bypass or retuning. See `docs/stft-audit-v4.1.4.9.md`.
 
+`scripts/run_jdsp_stage_observability.py` creates temporary same-render tap
+fixtures from accepted `.10` to compare `spatial_out -> bass_post` and
+`reserve_pre -> reserve_post`. The completed `.10` run confirmed additive bass
+behavior before reserve and exact `-1.000 dB` fixed reserve behavior at the
+accepted `+4 dB` Sub Harmonics default. No bass or reserve candidate is
+justified from that evidence; see `docs/stage-observability-v4.1.4.10.md`.
+
 `scripts/run_jdsp_width_mono_audit.py` measures accepted spatial-control behavior without creating a candidate. It creates a temporary fixture with `slider2`, `slider5`, and `slider6` fixed at `100%`, then renders low-level pure-mid and pure-side multitone probes through that fixture and through accepted `.9`. `M->S` and `S->M` transfer observations expose unintended center/side leakage; accepted-versus-unity `S->S` differences quantify widening by band. A pure-side signal is expected to disappear when downmixed to mono, so cancellation of intended side-only content is not a mono-compatibility fault.
 
 `scripts/run_jdsp_width_material_screen.py` applies the same accepted-versus-unity-width comparison to registered local excerpts and reports side-to-mid RMS balance across deep-bass, upper-bass, low-mid, and high bands. Symmetrical `S` scaling does not change the mono sum; the material screen determines whether the crossover-transition widening is a meaningful stereo bass-image characteristic in actual program material before any taper candidate is considered.

@@ -317,6 +317,12 @@ using generated deterministic probes through the accepted host limiter policy.
 The report is diagnostic evidence for the bass/host-limiter investigation; it
 does not create or justify a new listening candidate by itself.
 
+The completed `.10` stage-observability capture found additive bass behavior
+where expected and exact `-1.000 dB` fixed reserve behavior at the accepted
+`+4 dB` Sub Harmonics default. No bass or reserve candidate is justified from
+that evidence; see
+[`docs/stage-observability-v4.1.4.10.md`](docs/stage-observability-v4.1.4.10.md).
+
 The following reserve-law commands reproduce the pre-`.9` investigation that
 identified `.8` output retreat. To screen whether `.8` is over-reserving output above its default without
 creating a DSP candidate, test reduced reserve slopes at practical `+8 dB`
@@ -460,6 +466,8 @@ axiom-binaural-dsp/
     axiom-roadmap.md          # 90-day foundations-first roadmap
     tool-inventory.md         # Script and harness command safety map
     bass-host-limiter-investigation-plan.md # Bass reserve and host-limiter measurement plan
+    stage-observability-v4.1.4.10.md # Current bass/reserve stage-tap evidence
+    exciter-probe-screen-v4.1.4.10.md # Current generated low-level exciter probe evidence
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.9.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.10.md # Current accepted-baseline evidence record
@@ -504,6 +512,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/tool-inventory.md`](docs/tool-inventory.md) | Tool purpose, JDSP side effects, and artifact safety map |
 | [`docs/bass-host-limiter-investigation-plan.md`](docs/bass-host-limiter-investigation-plan.md) | Bass reserve and JDSP host-limiter investigation plan before any `.11` candidate |
 | [`docs/stage-observability-plan.md`](docs/stage-observability-plan.md) | Diagnostic stage-tap fixture and reporting plan |
+| [`docs/stage-observability-v4.1.4.10.md`](docs/stage-observability-v4.1.4.10.md) | `.10` bass/reserve stage-tap evidence and no-candidate decision |
 | [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
 | [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
 | [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Previous `.8` verification record |
@@ -514,6 +523,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/lowmid-width-screen-v4.1.4.9.md`](docs/lowmid-width-screen-v4.1.4.9.md) | `.9` evidence supporting the accepted `.10` width change |
 | [`docs/high-width-screen-v4.1.4.10.md`](docs/high-width-screen-v4.1.4.10.md) | `.10` high-frequency width screen and no-candidate decision |
 | [`docs/exciter-sensitivity-screen-v4.1.4.10.md`](docs/exciter-sensitivity-screen-v4.1.4.10.md) | `.10` dynamic exciter registered-material screen and no-candidate decision |
+| [`docs/exciter-probe-screen-v4.1.4.10.md`](docs/exciter-probe-screen-v4.1.4.10.md) | `.10` generated low-level exciter probe evidence and no-candidate decision |
 | [`docs/engineering-harness.md`](docs/engineering-harness.md) | Controlled Pi experimentation and release gates |
 
 ### Quick Reference for AI Agents
