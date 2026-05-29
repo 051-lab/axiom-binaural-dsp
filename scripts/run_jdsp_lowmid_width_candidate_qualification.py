@@ -9,6 +9,7 @@ import pathlib
 import sys
 from typing import Any
 
+import analyze_audio_perceptual_metrics as perceptual
 import analyze_jdsp_transfer as transfer
 from run_jdsp_local_material import MaterialError, convert_excerpt, read_manifest
 from run_jdsp_width_material_screen import band_metrics, delta, display
@@ -68,6 +69,12 @@ def analyze_item(
             "accepted_140": transfer.level_metrics(baseline),
             "candidate_126": transfer.level_metrics(candidate),
         },
+        "perceptual_metrics": perceptual.analyze_pair(
+            baseline_capture,
+            candidate_capture,
+            reference_label=f"{item['name']}-accepted-140",
+            candidate_label=f"{item['name']}-candidate-126",
+        ),
         "bands": {},
     }
     for band, _low, _high in LOW_MID_BANDS_HZ:
@@ -156,6 +163,25 @@ def markdown(report: dict[str, Any]) -> str:
         f"| {check['name']} | {check['status'].upper()} | {check['detail']} |"
         for check in report["evaluation"]["checks"]
     )
+    lines.extend(
+        [
+            "",
+            "## Perceptual Proxy Deltas",
+            "",
+            "| Material | Loudness delta (dB) | True-peak proxy delta (dB) | Transient contrast delta (dB) | S/M delta (dB) |",
+            "| --- | ---: | ---: | ---: | ---: |",
+        ]
+    )
+    for item in report["items"]:
+        label = item["label"].replace("|", "\\|")
+        metrics = item["perceptual_metrics"]["candidate_minus_reference"]
+        lines.append(
+            f"| {label} | "
+            f"{display(metrics['loudness']['ungated_loudness_proxy_lufs_delta'])} | "
+            f"{display(metrics['combined']['true_peak_proxy_db_delta'])} | "
+            f"{display(metrics['combined']['transient_contrast_db_delta'])} | "
+            f"{display(metrics['stereo']['side_to_mid_db_delta'])} |"
+        )
     lines.extend(
         [
             "",

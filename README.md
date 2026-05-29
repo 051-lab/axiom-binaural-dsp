@@ -254,7 +254,9 @@ scripts/analyze_audio_perceptual_metrics.py \
 This reports ungated loudness proxy, true-peak proxy, crest/envelope behavior,
 20 ms transient contrast, ERB-like band energy, and mid/side balance. These are
 engineering proxies, not certified LUFS or true-peak measurements. See
-[`docs/perceptual-metrics.md`](docs/perceptual-metrics.md).
+[`docs/perceptual-metrics.md`](docs/perceptual-metrics.md). The same metric
+bundle is also attached to A/B, generated corpus, private local-material, and
+scoped candidate-qualification reports.
 
 To investigate the user-adjustable bass branch before creating a new DSP revision, sweep its exact nonlinear injection topology over tone level and slider gain:
 

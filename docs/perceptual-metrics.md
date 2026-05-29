@@ -51,8 +51,19 @@ especially useful for:
 - spotting transient-envelope changes that can explain punch or softness;
 - building summarized evidence for future candidate qualification records.
 
-## Current Boundary
+## Report Integration
 
-The analyzer is standalone. The next metrics step is to wire its output into
-candidate and corpus workflows so future reports include the same loudness,
-true-peak proxy, transient, ERB-like band, and M/S context by default.
+The analyzer remains directly usable from the command line, and its output is
+also attached to the primary report paths:
+
+- deterministic real-host A/B summaries;
+- generated program-corpus summaries;
+- private local-material summaries;
+- scoped low-mid candidate qualification records.
+
+These metrics are evidence context, not an automatic approval gate. Current
+pass/fail behavior still comes from existing integrity, clipping, level-margin,
+and scoped-candidate checks.
+
+The next metrics step is policy work: decide which deltas deserve warning
+thresholds after enough repeated measurements exist.

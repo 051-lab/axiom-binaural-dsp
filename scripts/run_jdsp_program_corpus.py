@@ -10,6 +10,8 @@ import subprocess
 import sys
 from typing import Any
 
+import analyze_audio_perceptual_metrics as perceptual
+
 
 PROGRAM_NAMES = ("sub_kick_sequence", "sustained_bass_synth", "dense_low_end_mix")
 
@@ -23,6 +25,10 @@ def run(command: list[str], label: str) -> None:
     if result.returncode != 0:
         detail = result.stderr.strip() or result.stdout.strip() or f"exit {result.returncode}"
         raise CorpusError(f"{label} failed: {detail}")
+
+
+def metric_db(value: float | None) -> str:
+    return "-" if value is None else f"{value:.3f}"
 
 
 def make_checks(reports: dict[str, dict[str, Any]], ceiling_dbfs: float, transparency_db: float) -> list[dict[str, str]]:
@@ -72,16 +78,22 @@ def markdown(report: dict[str, Any]) -> str:
         "",
         "All passages are original deterministic test material generated in-repository; they are not commercial music excerpts.",
         "",
-        "| Passage | Baseline peak (dBFS) | Candidate peak (dBFS) | Candidate clipped | Status |",
-        "| --- | ---: | ---: | ---: | --- |",
+        "| Passage | Baseline peak (dBFS) | Candidate peak (dBFS) | Candidate true-peak proxy (dBFS) | Loudness delta (dB) | S/M delta (dB) | Candidate clipped | Status |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for name in PROGRAM_NAMES:
         item = report["captures"][name]
         reference = item["captures"]["reference"]["channels"]["combined"]
         candidate = item["captures"]["candidate"]["channels"]["combined"]
+        metrics = item.get("perceptual_metrics", {})
+        metric_candidate = metrics.get("candidate", {})
+        metric_delta = metrics.get("candidate_minus_reference", {})
         observation = next(check for check in report["checks"] if check["name"] == f"program_{name}_terminal_margin")
         rows.append(
             f"| {name} | {reference['peak_dbfs']:.3f} | {candidate['peak_dbfs']:.3f} | "
+            f"{metric_db(metric_candidate.get('channels', {}).get('combined', {}).get('true_peak_proxy_dbfs'))} | "
+            f"{metric_db(metric_delta.get('loudness', {}).get('ungated_loudness_proxy_lufs_delta'))} | "
+            f"{metric_db(metric_delta.get('stereo', {}).get('side_to_mid_db_delta'))} | "
             f"{candidate['clipped_samples']} | {observation['status'].upper()} |"
         )
     rows.extend(["", "## Checks", "", "| Check | Status | Detail |", "| --- | --- | --- |"])
@@ -148,6 +160,12 @@ def main() -> int:
             f"{name} compare",
         )
         reports[name] = json.loads(report_path.read_text(encoding="ascii"))
+        reports[name]["perceptual_metrics"] = perceptual.analyze_pair(
+            baseline_wav,
+            candidate_wav,
+            reference_label=f"{name}-baseline",
+            candidate_label=f"{name}-candidate",
+        )
     checks = make_checks(reports, args.ceiling_dbfs, args.transparency_db)
     report = {
         "status": status(checks),

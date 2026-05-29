@@ -11,6 +11,8 @@ import subprocess
 import sys
 from typing import Any
 
+import analyze_audio_perceptual_metrics as perceptual
+
 
 class MaterialError(RuntimeError):
     pass
@@ -21,6 +23,10 @@ def run(command: list[str], label: str) -> None:
     if result.returncode != 0:
         detail = result.stderr.strip() or result.stdout.strip() or f"exit {result.returncode}"
         raise MaterialError(f"{label} failed: {detail}")
+
+
+def metric_db(value: float | None) -> str:
+    return "-" if value is None else f"{value:.3f}"
 
 
 def slug(label: str) -> str:
@@ -138,17 +144,23 @@ def markdown(report: dict[str, Any]) -> str:
         "",
         "Source audio is private local material. Excerpts and reports are generated only in the selected output directory.",
         "",
-        "| Label | Start (s) | Duration (s) | Baseline peak (dBFS) | Candidate peak (dBFS) | Baseline clipped | Candidate clipped | Margin status |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+        "| Label | Start (s) | Duration (s) | Baseline peak (dBFS) | Candidate peak (dBFS) | Candidate true-peak proxy (dBFS) | Loudness delta (dB) | S/M delta (dB) | Baseline clipped | Candidate clipped | Margin status |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
     ]
     for item in report["items"]:
         reference = item["report"]["captures"]["reference"]["channels"]["combined"]
         candidate = item["report"]["captures"]["candidate"]["channels"]["combined"]
+        metrics = item["report"].get("perceptual_metrics", {})
+        metric_candidate = metrics.get("candidate", {})
+        metric_delta = metrics.get("candidate_minus_reference", {})
         margin = next(check for check in report["checks"] if check["name"] == f"local_{item['name']}_terminal_margin")
         label = item["label"].replace("|", "\\|")
         lines.append(
             f"| {label} | {item['start_seconds']:.3f} | {item['duration_seconds']:.3f} | "
             f"{reference['peak_dbfs']:.3f} | {candidate['peak_dbfs']:.3f} | "
+            f"{metric_db(metric_candidate.get('channels', {}).get('combined', {}).get('true_peak_proxy_dbfs'))} | "
+            f"{metric_db(metric_delta.get('loudness', {}).get('ungated_loudness_proxy_lufs_delta'))} | "
+            f"{metric_db(metric_delta.get('stereo', {}).get('side_to_mid_db_delta'))} | "
             f"{reference['clipped_samples']} | {candidate['clipped_samples']} | {margin['status'].upper()} |"
         )
     lines.extend(["", "## Checks", "", "| Check | Status | Detail |", "| --- | --- | --- |"])
@@ -214,6 +226,13 @@ def main() -> int:
             ],
             f"{item['label']} comparison",
         )
+        comparison_report = json.loads(compare_json.read_text(encoding="ascii"))
+        comparison_report["perceptual_metrics"] = perceptual.analyze_pair(
+            baseline_wav,
+            candidate_wav,
+            reference_label=f"{item['name']}-baseline",
+            candidate_label=f"{item['name']}-candidate",
+        )
         reports.append(
             {
                 "label": item["label"],
@@ -221,7 +240,7 @@ def main() -> int:
                 "source_path": str(item["path"]),
                 "start_seconds": item["start_seconds"],
                 "duration_seconds": item["duration_seconds"],
-                "report": json.loads(compare_json.read_text(encoding="ascii")),
+                "report": comparison_report,
             }
         )
     checks = evaluate_reports(reports, args.ceiling_dbfs, args.transparency_db)

@@ -10,6 +10,8 @@ import pathlib
 import subprocess
 import sys
 
+import analyze_audio_perceptual_metrics as perceptual
+
 
 STIMULUS_NAMES = (
     "impulse",
@@ -41,6 +43,15 @@ def require_audible_capture(report: dict, stimulus: str) -> None:
         combined = report["captures"][label]["channels"]["combined"]
         if combined["silent"]:
             raise TestbenchError(f"{stimulus} {label} capture is silent; host render is invalid")
+
+
+def perceptual_pair(reference_wav: pathlib.Path, candidate_wav: pathlib.Path, name: str) -> dict:
+    return perceptual.analyze_pair(
+        reference_wav,
+        candidate_wav,
+        reference_label=f"{name}-baseline",
+        candidate_label=f"{name}-candidate",
+    )
 
 
 def main() -> int:
@@ -138,6 +149,7 @@ def main() -> int:
         )
         reports[name] = json.loads(json_path.read_text(encoding="ascii"))
         require_audible_capture(reports[name], name)
+        reports[name]["perceptual_metrics"] = perceptual_pair(baseline_capture, candidate_capture, name)
 
     aggregate = {
         "generated_at": dt.datetime.now(tz=dt.timezone.utc).isoformat(),
@@ -159,19 +171,25 @@ def main() -> int:
         "",
         f"Candidate: `{candidate}`",
         "",
-        "| Stimulus | Status | Delay (ms) | Correlation | Difference RMS (dBFS) | Candidate peak (dBFS) | Candidate clipped |",
-        "| --- | --- | ---: | ---: | ---: | ---: | ---: |",
+        "| Stimulus | Status | Delay (ms) | Correlation | Difference RMS (dBFS) | Candidate peak (dBFS) | Candidate true-peak proxy (dBFS) | Loudness delta (dB) | S/M delta (dB) | Candidate clipped |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for name in STIMULUS_NAMES:
         report = reports[name]
         comparison = report["comparison"]
         candidate_metrics = report["captures"]["candidate"]["channels"]["combined"]
+        perceptual_metrics = report["perceptual_metrics"]
+        perceptual_candidate = perceptual_metrics["candidate"]
+        perceptual_delta = perceptual_metrics["candidate_minus_reference"]
         rows.append(
             f"| {name} | {report['status']} | "
             f"{comparison['alignment']['candidate_delay_ms']:.6f} | "
             f"{comparison['alignment']['normalized_correlation']:.6f} | "
             f"{metric_db(comparison['difference']['rms_difference_dbfs'])} | "
             f"{metric_db(candidate_metrics['peak_dbfs'])} | "
+            f"{metric_db(perceptual_candidate['channels']['combined']['true_peak_proxy_dbfs'])} | "
+            f"{metric_db(perceptual_delta['loudness']['ungated_loudness_proxy_lufs_delta'])} | "
+            f"{metric_db(perceptual_delta['stereo']['side_to_mid_db_delta'])} | "
             f"{candidate_metrics['clipped_samples']} |"
         )
     rows.extend(["", f"Detailed per-stimulus reports: `{comparison_dir}`", ""])

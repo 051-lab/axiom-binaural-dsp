@@ -82,6 +82,53 @@ class AnalyzeAudioPerceptualMetricsTests(unittest.TestCase):
         combined_peak = report["channels"]["combined"]["true_peak_proxy"]
         self.assertAlmostEqual(combined_peak, max(left_peak, right_peak), places=9)
 
+    def test_compare_reports_exposes_directional_deltas(self) -> None:
+        reference = {
+            "loudness": {"ungated_loudness_proxy_lufs": -18.0, "combined_rms_dbfs": -20.0},
+            "channels": {"combined": {"true_peak_proxy_dbfs": -4.0, "crest_db": 9.0, "transient_contrast_db": 2.0}},
+            "stereo": {"side_to_mid_db": -12.0, "left_right_correlation": 0.4},
+            "erb_like_bands": {
+                "bass": {
+                    "combined_rms_dbfs": -24.0,
+                    "mid_rms_dbfs": -24.0,
+                    "side_rms_dbfs": -42.0,
+                    "side_to_mid_db": -18.0,
+                    "left_right_correlation": 0.8,
+                }
+            },
+        }
+        candidate = {
+            "loudness": {"ungated_loudness_proxy_lufs": -17.0, "combined_rms_dbfs": -19.0},
+            "channels": {"combined": {"true_peak_proxy_dbfs": -3.5, "crest_db": 8.0, "transient_contrast_db": 2.5}},
+            "stereo": {"side_to_mid_db": -10.5, "left_right_correlation": 0.3},
+            "erb_like_bands": {
+                "bass": {
+                    "combined_rms_dbfs": -23.0,
+                    "mid_rms_dbfs": -23.5,
+                    "side_rms_dbfs": -40.0,
+                    "side_to_mid_db": -16.5,
+                    "left_right_correlation": 0.7,
+                }
+            },
+        }
+        comparison = metrics.compare_reports(reference, candidate)
+        self.assertAlmostEqual(comparison["loudness"]["ungated_loudness_proxy_lufs_delta"], 1.0)
+        self.assertAlmostEqual(comparison["combined"]["true_peak_proxy_db_delta"], 0.5)
+        self.assertAlmostEqual(comparison["stereo"]["side_to_mid_db_delta"], 1.5)
+        self.assertAlmostEqual(comparison["erb_like_bands"]["bass"]["side_rms_db_delta"], 2.0)
+
+    def test_analyze_pair_packages_reference_candidate_and_delta(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reference = root / "reference.wav"
+            candidate = root / "candidate.wav"
+            write_wav(reference, [(0.1 * math.sin(2.0 * math.pi * 500.0 * frame / 48000.0),) * 2 for frame in range(4800)])
+            write_wav(candidate, [(0.2 * math.sin(2.0 * math.pi * 500.0 * frame / 48000.0),) * 2 for frame in range(4800)])
+            pair = metrics.analyze_pair(reference, candidate)
+        self.assertEqual(pair["reference"]["label"], "reference")
+        self.assertEqual(pair["candidate"]["label"], "candidate")
+        self.assertGreater(pair["candidate_minus_reference"]["loudness"]["ungated_loudness_proxy_lufs_delta"], 5.0)
+
     def test_markdown_contains_scope_warning_and_band_table(self) -> None:
         report = {
             "label": "test",

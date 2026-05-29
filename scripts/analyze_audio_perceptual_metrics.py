@@ -216,6 +216,79 @@ def analyze(path: Path, label: str | None = None, window_ms: float = DEFAULT_WIN
     }
 
 
+def delta(candidate: float | None, reference: float | None) -> float | None:
+    return None if candidate is None or reference is None else candidate - reference
+
+
+def compare_reports(reference: dict[str, Any], candidate: dict[str, Any]) -> dict[str, Any]:
+    bands: dict[str, Any] = {}
+    for name, candidate_band in candidate["erb_like_bands"].items():
+        reference_band = reference["erb_like_bands"][name]
+        bands[name] = {
+            "combined_rms_db_delta": delta(candidate_band["combined_rms_dbfs"], reference_band["combined_rms_dbfs"]),
+            "mid_rms_db_delta": delta(candidate_band["mid_rms_dbfs"], reference_band["mid_rms_dbfs"]),
+            "side_rms_db_delta": delta(candidate_band["side_rms_dbfs"], reference_band["side_rms_dbfs"]),
+            "side_to_mid_db_delta": delta(candidate_band["side_to_mid_db"], reference_band["side_to_mid_db"]),
+            "left_right_correlation_delta": delta(
+                candidate_band["left_right_correlation"], reference_band["left_right_correlation"]
+            ),
+        }
+    return {
+        "loudness": {
+            "ungated_loudness_proxy_lufs_delta": delta(
+                candidate["loudness"]["ungated_loudness_proxy_lufs"],
+                reference["loudness"]["ungated_loudness_proxy_lufs"],
+            ),
+            "combined_rms_db_delta": delta(
+                candidate["loudness"]["combined_rms_dbfs"],
+                reference["loudness"]["combined_rms_dbfs"],
+            ),
+        },
+        "combined": {
+            "true_peak_proxy_db_delta": delta(
+                candidate["channels"]["combined"]["true_peak_proxy_dbfs"],
+                reference["channels"]["combined"]["true_peak_proxy_dbfs"],
+            ),
+            "crest_db_delta": delta(
+                candidate["channels"]["combined"]["crest_db"],
+                reference["channels"]["combined"]["crest_db"],
+            ),
+            "transient_contrast_db_delta": delta(
+                candidate["channels"]["combined"]["transient_contrast_db"],
+                reference["channels"]["combined"]["transient_contrast_db"],
+            ),
+        },
+        "stereo": {
+            "side_to_mid_db_delta": delta(
+                candidate["stereo"]["side_to_mid_db"],
+                reference["stereo"]["side_to_mid_db"],
+            ),
+            "left_right_correlation_delta": delta(
+                candidate["stereo"]["left_right_correlation"],
+                reference["stereo"]["left_right_correlation"],
+            ),
+        },
+        "erb_like_bands": bands,
+    }
+
+
+def analyze_pair(
+    reference_path: Path,
+    candidate_path: Path,
+    reference_label: str = "reference",
+    candidate_label: str = "candidate",
+    window_ms: float = DEFAULT_WINDOW_MS,
+) -> dict[str, Any]:
+    reference = analyze(reference_path, label=reference_label, window_ms=window_ms)
+    candidate = analyze(candidate_path, label=candidate_label, window_ms=window_ms)
+    return {
+        "metric_scope": reference["metric_scope"],
+        "reference": reference,
+        "candidate": candidate,
+        "candidate_minus_reference": compare_reports(reference, candidate),
+    }
+
+
 def markdown(report: dict[str, Any]) -> str:
     loudness = report["loudness"]
     combined = report["channels"]["combined"]
