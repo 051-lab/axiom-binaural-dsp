@@ -85,7 +85,8 @@ Run the harness with `scripts/axiom_team.sh` or use
 | Command | Purpose | Touches JDSP |
 | --- | --- | --- |
 | `init` | Create local harness configuration. | No |
-| `doctor` | Check repository, accepted baseline hash, route helper, tools, and registered material. | No |
+| `doctor` | Check repository, accepted baseline hash, route helper, tools, and registered material validity. | No |
+| `corpus-status` | Report configured local-material manifest validity and corpus taxonomy coverage. | No |
 | `status` / `show` | Inspect local run state and evidence records. | No |
 | `audit-baseline` | Static/tooling audit of the accepted baseline without a candidate. | No |
 | `investigate` | Create an investigation anchored to the accepted baseline. | No |

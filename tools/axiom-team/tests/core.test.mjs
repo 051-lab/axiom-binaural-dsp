@@ -26,6 +26,7 @@ import {
   runSubSliderMap,
   runWidthMaterialScreen,
   runWidthMonoAudit,
+  validateMaterialManifest,
   writeRun,
   writeScopedFile,
 } from "../lib/core.mjs";
@@ -49,8 +50,22 @@ function fixture() {
   const validator = path.join(repo, "scripts", "validate_axiom_static.sh");
   fs.writeFileSync(validator, "#!/usr/bin/env bash\nexit 0\n", "ascii");
   fs.chmodSync(validator, 0o755);
+  fs.copyFileSync(
+    path.resolve("scripts", "validate_axiom_material_manifest.py"),
+    path.join(repo, "scripts", "validate_axiom_material_manifest.py")
+  );
+  fs.chmodSync(path.join(repo, "scripts", "validate_axiom_material_manifest.py"), 0o755);
+  const audio = path.join(root, "material.wav");
+  fs.writeFileSync(audio, "placeholder", "ascii");
   const manifest = path.join(root, "material.json");
-  fs.writeFileSync(manifest, "{\"tracks\":[]}\n", "ascii");
+  fs.writeFileSync(manifest, JSON.stringify({
+    tracks: [{
+      label: "Fixture dense electronic",
+      path: audio,
+      start_seconds: 0,
+      duration_seconds: 5,
+    }]
+  }) + "\n", "ascii");
   const config = {
     repositoryRoot: repo,
     stateRoot,
@@ -104,6 +119,21 @@ test("baseline audit is verified evidence and never a listening-ready candidate"
   assert.equal(run.status, "baseline_verified");
   assert.equal(run.candidate, null);
   assert.throws(() => recordListening(run.id, "accept", "", fx.config), /after automated gates/);
+});
+
+test("material manifest status reports coverage warnings without failing runner compatibility", () => {
+  const fx = fixture();
+  const result = validateMaterialManifest(fx.config);
+  assert.equal(result.status, "pass_with_warnings");
+  assert.equal(result.report.track_count, 1);
+  assert.ok(result.report.warnings.some((warning) => warning.includes("material_class")));
+});
+
+test("strict material manifest status fails when taxonomy metadata is missing", () => {
+  const fx = fixture();
+  const result = validateMaterialManifest(fx.config, { strictMetadata: true });
+  assert.equal(result.status, "fail");
+  assert.ok(result.report.errors.some((error) => error.includes("material_class")));
 });
 
 test("controlled writes cannot overwrite the accepted baseline", () => {

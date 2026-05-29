@@ -427,6 +427,7 @@ human confirmations for listening acceptance, publication, and merge.
 ```bash
 node tools/axiom-team/bin/axiom-team.mjs init
 node tools/axiom-team/bin/axiom-team.mjs doctor
+node tools/axiom-team/bin/axiom-team.mjs corpus-status --strict-metadata
 scripts/axiom_team.sh
 ```
 

@@ -188,6 +188,14 @@ export function doctor(config = loadLocalConfig(), policy = loadPolicy()) {
   check("repository_root", fs.existsSync(path.join(config.repositoryRoot, ".git")), config.repositoryRoot);
   check("route_helper", fs.existsSync(config.routeHelper), config.routeHelper);
   check("local_material_manifest", fs.existsSync(config.localMaterialManifest), config.localMaterialManifest);
+  if (fs.existsSync(config.localMaterialManifest)) {
+    const manifest = validateMaterialManifest(config);
+    check(
+      "local_material_manifest_validation",
+      manifest.status !== "fail",
+      `${manifest.status}: ${manifest.report?.track_count ?? 0} tracks`
+    );
+  }
   for (const executable of ["pi", "node", "python3", "jamesdsp", "gh", "git"]) {
     const found = shell("bash", ["-lc", `command -v ${executable}`]);
     check(`executable_${executable}`, found.exitCode === 0, found.stdout.trim() || "not found");
@@ -195,6 +203,39 @@ export function doctor(config = loadLocalConfig(), policy = loadPolicy()) {
   const git = shell("git", ["status", "--short", "--branch"], { cwd: config.repositoryRoot });
   check("git_repository_status", git.exitCode === 0, git.stdout.trim());
   return { status: checks.some((item) => item.status === "fail") ? "fail" : "pass", config, baseline, checks };
+}
+
+export function validateMaterialManifest(config = loadLocalConfig(), options = {}) {
+  if (!fs.existsSync(config.localMaterialManifest)) {
+    return {
+      status: "fail",
+      exitCode: 1,
+      command: null,
+      report: null,
+      error: `Configured local material manifest is unavailable: ${config.localMaterialManifest}`,
+    };
+  }
+  const args = ["scripts/validate_axiom_material_manifest.py", config.localMaterialManifest];
+  if (options.strictMetadata) args.push("--strict-metadata");
+  if (options.allowMissingPaths) args.push("--allow-missing-paths");
+  const result = shell("python3", args, { cwd: config.repositoryRoot });
+  let report = null;
+  try {
+    report = JSON.parse(result.stdout);
+  } catch {
+    report = {
+      status: "fail",
+      errors: ["material manifest validator did not return JSON"],
+      warnings: [],
+    };
+  }
+  return {
+    status: report.status || (result.exitCode === 0 ? "pass" : "fail"),
+    exitCode: result.exitCode,
+    command: result.command,
+    report,
+    stderr: result.stderr,
+  };
 }
 
 export function auditBaseline(config = loadLocalConfig(), policy = loadPolicy()) {

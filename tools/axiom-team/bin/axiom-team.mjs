@@ -5,7 +5,7 @@ import {
   publishPullRequest, readRun, recordListening, renderSummary, runAutomatedValidation,
   runAcceptedStressBaseline, runBaselineLimiterSweep, runReserveLawScreen, runReserveRangeQualification,
   runExciterProbeScreen, runExciterSensitivityScreen, runHighWidthScreen, runLowMidWidthCandidateQualification, runLowMidWidthScreen, runStageObservability, runStftStageAudit, runSubSliderMap, runWidthMaterialScreen, runWidthMonoAudit,
-  saveLocalConfig, setHypothesis
+  saveLocalConfig, setHypothesis, validateMaterialManifest
 } from "../lib/core.mjs";
 
 function out(value) {
@@ -28,6 +28,16 @@ async function main() {
         const result = doctor();
         out(result);
         process.exitCode = result.status === "pass" ? 0 : 1;
+      }
+      return;
+    case "corpus-status":
+      {
+        const result = validateMaterialManifest(loadLocalConfig(), {
+          strictMetadata: args.includes("--strict-metadata"),
+          allowMissingPaths: args.includes("--allow-missing-paths"),
+        });
+        out(result);
+        process.exitCode = result.status === "fail" ? 1 : 0;
       }
       return;
     case "status": {
@@ -114,7 +124,7 @@ async function main() {
       out(renderSummary(mergePullRequest(required(args[0], "run id"))));
       return;
     default:
-      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|stage-observability|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|screen-high-width|screen-exciter|screen-exciter-probes|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
+      out("Usage: axiom-team.mjs <init|doctor|corpus-status|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|stage-observability|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|screen-high-width|screen-exciter|screen-exciter-probes|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
       process.exitCode = 2;
   }
 }

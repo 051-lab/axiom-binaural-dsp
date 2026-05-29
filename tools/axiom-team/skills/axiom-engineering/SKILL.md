@@ -8,10 +8,12 @@ description: Operates Axiom Binaural DSP candidate investigation, EEL safety val
 Read `AGENTS.md`, `docs/current-state.md`, `docs/architecture.md`, and
 `docs/qualification-v4.1.4.10.md` before proposing or assessing DSP behavior.
 
-Use `/axiom-doctor` before a new workflow and `/axiom-audit-baseline` for the
-initial harness acceptance run. Use `/axiom-investigate` before creating any
-sound-changing candidate. Host qualification must run through the harness so
-the serialized JDSP route lock and local material policy are enforced.
+Use `/axiom-doctor` before a new workflow and `/axiom-corpus-status
+--strict-metadata` before relying on registered material for candidate
+decisions. Use `/axiom-audit-baseline` for the initial harness acceptance run.
+Use `/axiom-investigate` before creating any sound-changing candidate. Host
+qualification must run through the harness so the serialized JDSP route lock
+and local material policy are enforced.
 
 Do not publish captures, private manifests, local paths, or listening notes
 that the user identifies as private.

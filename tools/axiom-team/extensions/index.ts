@@ -34,6 +34,7 @@ import {
   runStageObservability,
   runStftStageAudit,
   runSubSliderMap,
+  validateMaterialManifest,
   runWidthMaterialScreen,
   runWidthMonoAudit,
   setHypothesis,
@@ -151,6 +152,22 @@ export default function (pi: ExtensionAPI) {
     description: "Show current controlled engineering runs and their gate states.",
     parameters: Type.Object({}),
     async execute() { return text(statusText()); },
+  });
+
+  pi.registerTool({
+    name: "axiom_corpus_status",
+    label: "Axiom Corpus Status",
+    description: "Validate the configured local-material manifest and report corpus taxonomy coverage.",
+    parameters: Type.Object({
+      strictMetadata: Type.Optional(Type.Boolean({ description: "Fail when material-class, failure-mode, provenance, license, or role metadata is missing." })),
+      allowMissingPaths: Type.Optional(Type.Boolean({ description: "Skip filesystem existence checks for manifest paths." })),
+    }),
+    async execute(_id, params) {
+      return text(validateMaterialManifest(loadLocalConfig(), {
+        strictMetadata: params.strictMetadata,
+        allowMissingPaths: params.allowMissingPaths,
+      }));
+    },
   });
 
   pi.registerTool({
@@ -401,6 +418,13 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-status", {
     description: "Show controlled engineering runs.",
     handler: async (_args, ctx) => ctx.ui.notify(statusText(), "info"),
+  });
+  pi.registerCommand("axiom-corpus-status", {
+    description: "Check local-material manifest validity and taxonomy coverage. Add --strict-metadata for decision-grade metadata.",
+    handler: async (args, ctx) => ctx.ui.notify(JSON.stringify(validateMaterialManifest(loadLocalConfig(), {
+      strictMetadata: args.includes("--strict-metadata"),
+      allowMissingPaths: args.includes("--allow-missing-paths"),
+    }), null, 2), "info"),
   });
   pi.registerCommand("axiom-audit-baseline", {
     description: "Audit the accepted baseline without creating a DSP candidate.",

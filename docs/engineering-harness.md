@@ -61,12 +61,16 @@ Initialize the local configuration and inspect prerequisites:
 ```bash
 node tools/axiom-team/bin/axiom-team.mjs init
 node tools/axiom-team/bin/axiom-team.mjs doctor
+node tools/axiom-team/bin/axiom-team.mjs corpus-status --strict-metadata
 ```
 
 Review `~/.config/axiom-engineering/axiom-binaural-dsp.json` if local route or
 test-material locations differ. `doctor` requires the accepted `.10` SHA-256
 recorded in `tools/axiom-team/policy.json`, the JDSP route helper, CLI tools,
-and the configured external-material manifest.
+and the configured external-material manifest. `corpus-status` reports whether
+that manifest is runner-compatible; with `--strict-metadata`, it also enforces
+the material-class, failure-mode, provenance, license, and role metadata needed
+for decision-grade coverage.
 
 ## Commands
 
@@ -75,6 +79,7 @@ Inside Pi, the primary commands are:
 | Command | Purpose |
 |---------|---------|
 | `/axiom-doctor` | Check baseline identity and local dependencies |
+| `/axiom-corpus-status` | Check local-material manifest validity and taxonomy coverage |
 | `/axiom-status` | View local engineering run states |
 | `/axiom-audit-baseline` | Run static/tooling gates on the accepted baseline without creating a new DSP file |
 | `/axiom-investigate <observation>` | Open a measurement-backed investigation |
