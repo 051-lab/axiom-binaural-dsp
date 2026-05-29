@@ -136,6 +136,18 @@ scripts/build_android_validation_package.py \
 
 See [`docs/android-validation.md`](docs/android-validation.md).
 
+To build a local level-matched A/B listening package from matched processed WAV
+folders:
+
+```bash
+scripts/build_axiom_ab_listening_package.py \
+  /tmp/axiom-captures/accepted \
+  /tmp/axiom-captures/candidate \
+  /tmp/axiom-ab-listening-vNEXT
+```
+
+See [`docs/ab-listening-packages.md`](docs/ab-listening-packages.md).
+
 The accepted `.9` baseline was qualified against `.8` with four CC0 high-energy music excerpts outside the repository. With a persistent JDSP limiter threshold of `-1.00 dB`, all four `.9` captures remained unclipped; dense electronic material remained close enough to the ceiling to be recorded as existing limiter involvement rather than hidden by further EEL attenuation.
 
 ### Measurement Qualification
@@ -470,6 +482,7 @@ axiom-binaural-dsp/
     axiom_team.sh                     # Isolated Pi engineering-harness launcher
     hot_reload_liveprog.sh            # JDSP A/B preset loader
     build_android_validation_package.py # RootlessJamesDSP package/checklist builder
+    build_axiom_ab_listening_package.py # Local level-matched A/B listening package builder
     analyze_axiom_crossfeed.py        # Crossfeed transfer audit
     analyze_axiom_bass_path.py        # Removed dry-phase reconstruction audit
     generate_jdsp_stimuli.py          # Deterministic stereo capture probes
@@ -501,6 +514,7 @@ axiom-binaural-dsp/
     run_jdsp_exciter_sensitivity_screen.py # Dynamic exciter pre-candidate screen
     run_jdsp_exciter_probe_screen.py # Generated low-level exciter probe screen
   tests/
+    test_build_axiom_ab_listening_package.py
     test_build_android_validation_package.py
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -531,6 +545,7 @@ axiom-binaural-dsp/
     current-state.md         # Accepted baseline, host policy, and state boundary
     architecture.md           # Technical architecture documentation
     axiom-roadmap.md          # 90-day foundations-first roadmap
+    ab-listening-packages.md  # Local level-matched A/B listening package workflow
     android-validation.md     # RootlessJamesDSP package and validation workflow
     tool-inventory.md         # Script and harness command safety map
     perceptual-metrics.md     # Offline perceptual-proxy metric definitions and use
@@ -580,6 +595,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Commit conventions, code standards, testing checklist |
 | [`docs/current-state.md`](docs/current-state.md) | Current accepted baseline, host policy, product boundary, and local-state rules |
 | [`docs/axiom-roadmap.md`](docs/axiom-roadmap.md) | 90-day roadmap from the current notes and concerns |
+| [`docs/ab-listening-packages.md`](docs/ab-listening-packages.md) | Level-matched local A/B listening package workflow |
 | [`docs/android-validation.md`](docs/android-validation.md) | RootlessJamesDSP validation package and phone-side checklist |
 | [`docs/tool-inventory.md`](docs/tool-inventory.md) | Tool purpose, JDSP side effects, and artifact safety map |
 | [`docs/perceptual-metrics.md`](docs/perceptual-metrics.md) | Offline loudness, true-peak proxy, transient, ERB-like, and M/S metric scope |

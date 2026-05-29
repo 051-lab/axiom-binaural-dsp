@@ -92,5 +92,6 @@ human listening records are defined in `docs/listening-records.md`; full
 records should remain local unless sanitized. Corpus material taxonomy and
 manifest validation are defined in `docs/corpus-material.md`. Android
 validation package generation and RootlessJamesDSP phone-side checks are defined
-in `docs/android-validation.md`. The next sound-changing candidate should wait
-until the corpus is populated with broader material coverage.
+in `docs/android-validation.md`. Local level-matched A/B listening packages are
+defined in `docs/ab-listening-packages.md`. The next sound-changing candidate
+should wait until the corpus is populated with broader material coverage.
