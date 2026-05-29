@@ -158,6 +158,20 @@ scripts/validate_axiom_device_matrix.py \
 
 See [`docs/device-matrix.md`](docs/device-matrix.md).
 
+To check whether the evidence foundation is ready before proposing another
+sound-changing candidate:
+
+```bash
+scripts/evaluate_axiom_candidate_readiness.py \
+  --json /tmp/axiom-candidate-readiness.json \
+  --markdown /tmp/axiom-candidate-readiness.md
+```
+
+This gate verifies the accepted baseline hash, strict corpus metadata, and
+strict device-matrix coverage. A blocked report means fix evidence inputs
+before creating a new EEL candidate. See
+[`docs/candidate-readiness.md`](docs/candidate-readiness.md).
+
 The accepted `.9` baseline was qualified against `.8` with four CC0 high-energy music excerpts outside the repository. With a persistent JDSP limiter threshold of `-1.00 dB`, all four `.9` captures remained unclipped; dense electronic material remained close enough to the ceiling to be recorded as existing limiter involvement rather than hidden by further EEL attenuation.
 
 ### Measurement Qualification
@@ -503,6 +517,7 @@ axiom-binaural-dsp/
     validate_axiom_material_manifest.py # Corpus manifest metadata and coverage validator
     validate_axiom_listening_record.py # Structured listening-record validator
     validate_axiom_device_matrix.py # Local device/route matrix validator
+    evaluate_axiom_candidate_readiness.py # Evidence-readiness gate before new candidates
     run_jdsp_ab_testbench.py          # End-to-end host A/B suite
     run_jdsp_program_corpus.py        # Default-control corpus margin report
     run_jdsp_local_material.py        # Private local-excerpt margin report
@@ -533,6 +548,7 @@ axiom-binaural-dsp/
     test_validate_axiom_material_manifest.py
     test_validate_axiom_listening_record.py
     test_validate_axiom_device_matrix.py
+    test_evaluate_axiom_candidate_readiness.py
     test_analyze_axiom_subharmonics.py
     test_generate_axiom_program_corpus.py
     test_generate_jdsp_stimuli.py
@@ -564,6 +580,7 @@ axiom-binaural-dsp/
     corpus-material.md        # Material-class and failure-mode corpus taxonomy
     listening-records.md      # Structured human listening evidence format
     device-matrix.md          # Local device and route validation matrix
+    candidate-readiness.md    # Baseline/corpus/device readiness gate
     bass-host-limiter-investigation-plan.md # Bass reserve and host-limiter measurement plan
     stage-observability-v4.1.4.10.md # Current bass/reserve stage-tap evidence
     exciter-probe-screen-v4.1.4.10.md # Current generated low-level exciter probe evidence
@@ -615,6 +632,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/corpus-material.md`](docs/corpus-material.md) | Material-class taxonomy and manifest coverage validation |
 | [`docs/listening-records.md`](docs/listening-records.md) | Structured listening evidence format and local privacy rules |
 | [`docs/device-matrix.md`](docs/device-matrix.md) | Device/route coverage matrix and crossfeed qualification rule |
+| [`docs/candidate-readiness.md`](docs/candidate-readiness.md) | Baseline hash, strict corpus, and strict device readiness before new candidates |
 | [`docs/bass-host-limiter-investigation-plan.md`](docs/bass-host-limiter-investigation-plan.md) | Bass reserve and JDSP host-limiter investigation plan before any `.11` candidate |
 | [`docs/stage-observability-plan.md`](docs/stage-observability-plan.md) | Diagnostic stage-tap fixture and reporting plan |
 | [`docs/stage-observability-v4.1.4.10.md`](docs/stage-observability-v4.1.4.10.md) | `.10` bass/reserve stage-tap evidence and no-candidate decision |

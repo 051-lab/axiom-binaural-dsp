@@ -100,10 +100,12 @@ Goal: decide the next DSP direction only after the foundations are stronger.
 - Keep v5 gated by architecture-level change only: adaptive material-aware laws, redesigned gain architecture, major new proven stage, formal device/profile architecture, or validated Clean/Color split.
 - Keep Axiom Color in Axiom Lab until analog processing passes aliasing, IMD, headroom, CPU, mono, side/mid, limiter, and listening tests.
 - Apply the removal policy before adding features: delete or retire complexity that is not audible, measurable, protective, or explanatory.
+- Maintain `docs/candidate-readiness.md` and `scripts/evaluate_axiom_candidate_readiness.py` so accepted-baseline hash, strict corpus metadata, and strict device coverage are checked before another sound-changing candidate.
 
 Done when:
 
 - The next sound-changing candidate has a clear hypothesis, measured target, scoped edit boundary, and listening target.
+- Candidate readiness can be evaluated by a local report before any new EEL file is created.
 - v5 is either explicitly deferred or justified by a written architecture proposal.
 - Axiom Clean remains stable and trusted regardless of lab experiments.
 

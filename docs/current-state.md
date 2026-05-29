@@ -94,5 +94,8 @@ manifest validation are defined in `docs/corpus-material.md`. Android
 validation package generation and RootlessJamesDSP phone-side checks are defined
 in `docs/android-validation.md`. Local level-matched A/B listening packages are
 defined in `docs/ab-listening-packages.md`. Device and route coverage is
-defined in `docs/device-matrix.md`. The next sound-changing candidate should
-wait until the corpus is populated with broader material coverage.
+defined in `docs/device-matrix.md`. Candidate readiness is defined in
+`docs/candidate-readiness.md` and checks the accepted baseline hash, strict
+corpus metadata, and strict device matrix before any new sound-changing EEL
+file is justified. The next sound-changing candidate should wait until the
+corpus is populated with broader material coverage.
