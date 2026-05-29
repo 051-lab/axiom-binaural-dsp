@@ -5,7 +5,8 @@ Last updated: 2026-05-29
 This inventory maps the repository's operational tools so humans and agents can
 choose the right command without guessing. It is descriptive, not an execution
 order. Use `docs/current-state.md` for the accepted baseline and
-`docs/axiom-roadmap.md` for roadmap priority.
+`docs/axiom-roadmap.md` for roadmap priority. Use
+`docs/stage-observability-plan.md` before implementing diagnostic stage taps.
 
 Generated WAV, JSON, Markdown reports, private manifests, local captures, and
 temporary fixtures must remain outside git unless a document explicitly says

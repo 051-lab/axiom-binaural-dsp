@@ -78,7 +78,7 @@ source of truth.
 
 Follow `docs/axiom-roadmap.md`, continuing Phase 1 measurement foundation work.
 Use `docs/tool-inventory.md` before choosing measurement or harness commands.
-The next public roadmap target is stage observability and the bass/host-limiter
-investigation plan. The next sound-changing candidate should wait until
-measurement observability, corpus coverage, and Android validation foundations
-are stronger.
+Use `docs/stage-observability-plan.md` before implementing diagnostic stage
+taps. The next public roadmap target is the bass/host-limiter investigation
+plan. The next sound-changing candidate should wait until measurement
+observability, corpus coverage, and Android validation foundations are stronger.
