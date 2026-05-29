@@ -95,6 +95,20 @@ To include private excerpts from locally owned audio, create a manifest outside 
 
 Then add `--local-material-manifest /tmp/axiom-local-material.json` to `run_jdsp_wsl_qualification.py`. The runner decodes only the selected excerpt windows to temporary analysis WAVs without gain normalization, and does not copy source audio or manifest paths into the repository.
 
+To validate a structured human listening record before using it as acceptance
+evidence:
+
+```bash
+scripts/validate_axiom_listening_record.py \
+  ~/.local/state/axiom-engineering/listening-records/v4.1.4.10-phone.json \
+  --json /tmp/axiom-listening-validation.json \
+  --markdown /tmp/axiom-listening-record.md
+```
+
+Full listening records can contain private material names, timestamps, and
+device route details. Keep them local unless sanitized. See
+[`docs/listening-records.md`](docs/listening-records.md).
+
 The accepted `.9` baseline was qualified against `.8` with four CC0 high-energy music excerpts outside the repository. With a persistent JDSP limiter threshold of `-1.00 dB`, all four `.9` captures remained unclipped; dense electronic material remained close enough to the ceiling to be recorded as existing limiter involvement rather than hidden by further EEL attenuation.
 
 ### Measurement Qualification
@@ -434,6 +448,7 @@ axiom-binaural-dsp/
     render_jdsp_host.py               # Isolated real-JDSP WAV renderer
     compare_jdsp_captures.py          # Capture metrics and difference reports
     analyze_audio_perceptual_metrics.py # Offline loudness, transient, ERB-like, and M/S proxies
+    validate_axiom_listening_record.py # Structured listening-record validator
     run_jdsp_ab_testbench.py          # End-to-end host A/B suite
     run_jdsp_program_corpus.py        # Default-control corpus margin report
     run_jdsp_local_material.py        # Private local-excerpt margin report
@@ -459,6 +474,7 @@ axiom-binaural-dsp/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
     test_analyze_audio_perceptual_metrics.py
+    test_validate_axiom_listening_record.py
     test_analyze_axiom_subharmonics.py
     test_generate_axiom_program_corpus.py
     test_generate_jdsp_stimuli.py
@@ -485,6 +501,7 @@ axiom-binaural-dsp/
     axiom-roadmap.md          # 90-day foundations-first roadmap
     tool-inventory.md         # Script and harness command safety map
     perceptual-metrics.md     # Offline perceptual-proxy metric definitions and use
+    listening-records.md      # Structured human listening evidence format
     bass-host-limiter-investigation-plan.md # Bass reserve and host-limiter measurement plan
     stage-observability-v4.1.4.10.md # Current bass/reserve stage-tap evidence
     exciter-probe-screen-v4.1.4.10.md # Current generated low-level exciter probe evidence
@@ -531,6 +548,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/axiom-roadmap.md`](docs/axiom-roadmap.md) | 90-day roadmap from the current notes and concerns |
 | [`docs/tool-inventory.md`](docs/tool-inventory.md) | Tool purpose, JDSP side effects, and artifact safety map |
 | [`docs/perceptual-metrics.md`](docs/perceptual-metrics.md) | Offline loudness, true-peak proxy, transient, ERB-like, and M/S metric scope |
+| [`docs/listening-records.md`](docs/listening-records.md) | Structured listening evidence format and local privacy rules |
 | [`docs/bass-host-limiter-investigation-plan.md`](docs/bass-host-limiter-investigation-plan.md) | Bass reserve and JDSP host-limiter investigation plan before any `.11` candidate |
 | [`docs/stage-observability-plan.md`](docs/stage-observability-plan.md) | Diagnostic stage-tap fixture and reporting plan |
 | [`docs/stage-observability-v4.1.4.10.md`](docs/stage-observability-v4.1.4.10.md) | `.10` bass/reserve stage-tap evidence and no-candidate decision |

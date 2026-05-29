@@ -60,14 +60,14 @@ Goal: build a small, brutal, legally clean corpus where every item has a job.
 
 - Categorize missing material classes: low-level dynamic material, sibilant vocals, cymbals, dense modern pop/EDM, hip-hop/trap sub bass, rock/metal guitars, acoustic bass, piano, orchestral crescendos, mono/narrow recordings, flawed sources, speech, bass-light material, and already-wide mixes.
 - Record provenance and license rules for every shared test item. Keep private/local tracks outside git.
-- Add a structured listening notes template that captures device, output path, host settings, Axiom version, slider settings, material, comparison version, fatigue, bass, punch, width, center, air, harshness, loudness, and decision.
+- Maintain `docs/listening-records.md` and `scripts/validate_axiom_listening_record.py` so structured listening records capture device, output path, host settings, Axiom version, slider settings, material, comparison version, fatigue, bass, punch, width, center, air, harshness, loudness, artifacts, and decision.
 - Define level-matched A/B package requirements for future listening candidates.
 - Keep subjective listening as the acceptance gate, but make the notes searchable and comparable across versions.
 
 Done when:
 
 - New candidates can be checked against several material classes instead of one favorite track.
-- Listening results can be compared across versions and devices.
+- Listening results can be compared across versions and devices with validated structured records.
 - The corpus explains why each excerpt exists and which failure mode it exposes.
 
 ## Phase 3: Android And Device Validation

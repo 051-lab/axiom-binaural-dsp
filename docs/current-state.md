@@ -87,6 +87,8 @@ The generated low-level exciter probe screen is recorded in
 accepted `.10` exciter behavior rather than an immediate `.11` candidate. The
 first standalone perceptual-proxy analyzer is recorded in
 `docs/perceptual-metrics.md` and is wired into A/B, corpus, private
-local-material, and scoped candidate reports as evidence context. The next
-sound-changing candidate should wait until corpus coverage and Android
-validation foundations are stronger.
+local-material, and scoped candidate reports as evidence context. Structured
+human listening records are defined in `docs/listening-records.md`; full
+records should remain local unless sanitized. The next sound-changing candidate
+should wait until corpus coverage and Android validation foundations are
+stronger.
