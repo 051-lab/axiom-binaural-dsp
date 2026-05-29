@@ -217,7 +217,10 @@ This creates quiet air-bearing, dull-control, sibilance-texture, and louder
 air-control probes, then renders accepted `50%`, reduced `35%`, and bypassed
 `0%` exciter sensitivity through real JDSP. The intent is to verify whether the
 accepted exciter adds measurable air only when low-level material gives it
-something useful to lift.
+something useful to lift. The report now includes activation checks for quiet
+air lift, accepted/reduced/bypass depth order, dull-control restraint,
+high-level-control restraint, and sibilance-presence restraint. These checks
+flag investigation evidence; they do not create a candidate by themselves.
 
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 

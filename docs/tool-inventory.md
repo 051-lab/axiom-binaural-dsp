@@ -62,7 +62,7 @@ the artifact is safe to commit.
 | `scripts/run_jdsp_lowmid_width_screen.py` | Screen restrained low-mid width fixtures before proposing a candidate. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_high_width_screen.py` | Screen restrained high-frequency width fixtures from accepted `.10`. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_exciter_sensitivity_screen.py` | Screen temporary exciter sensitivity fixtures from accepted `.10`. | Yes | No | Temporary fixtures/reports stay outside repo. |
-| `scripts/run_jdsp_exciter_probe_screen.py` | Generate low-level exciter probes and screen accepted/reduced/bypassed sensitivity through JDSP. | Yes | No | Generated probes, fixtures, and reports stay outside repo. |
+| `scripts/run_jdsp_exciter_probe_screen.py` | Generate low-level exciter probes and screen accepted/reduced/bypassed sensitivity with activation and restraint checks through JDSP. | Yes | No | Generated probes, fixtures, and reports stay outside repo. |
 
 ## Candidate Qualification
 

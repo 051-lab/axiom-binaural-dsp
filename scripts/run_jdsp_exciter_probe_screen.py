@@ -29,6 +29,10 @@ ACCEPTED_V410_SHA256 = "2b72288048f3e6a180eb5a0e3d951f34fc463d113bb8d716c03cfda8
 PEAK_SAMPLE = 32767
 DEFAULT_SAMPLE_RATE = 48000
 DEFAULT_DURATION_SECONDS = 4.0
+DEFAULT_MIN_AIR_LIFT_DB = 0.10
+DEFAULT_MAX_DULL_AIR_LIFT_DB = 0.20
+DEFAULT_MAX_HIGH_LEVEL_AIR_LIFT_DB = 0.20
+DEFAULT_MAX_SIBILANCE_PRESENCE_LIFT_DB = 0.60
 ProbeSignal = Callable[[int, int, int], tuple[float, float]]
 
 
@@ -214,6 +218,165 @@ def activation_summary(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return summary
 
 
+def band_value(
+    summary_by_name: dict[str, dict[str, Any]],
+    item_name: str,
+    band: str,
+    metric: str,
+) -> float | None:
+    item = summary_by_name.get(item_name)
+    if item is None:
+        return None
+    return item["bands"][band][metric]
+
+
+def status_check(name: str, passed: bool, detail: str) -> dict[str, str]:
+    return {"name": name, "status": "pass" if passed else "investigate", "detail": detail}
+
+
+def evaluate_activation(
+    summary: list[dict[str, Any]],
+    min_air_lift_db: float = DEFAULT_MIN_AIR_LIFT_DB,
+    max_dull_air_lift_db: float = DEFAULT_MAX_DULL_AIR_LIFT_DB,
+    max_high_level_air_lift_db: float = DEFAULT_MAX_HIGH_LEVEL_AIR_LIFT_DB,
+    max_sibilance_presence_lift_db: float = DEFAULT_MAX_SIBILANCE_PRESENCE_LIFT_DB,
+) -> dict[str, Any]:
+    summary_by_name = {item["name"]: item for item in summary}
+    checks: list[dict[str, str]] = []
+
+    low_air = band_value(
+        summary_by_name,
+        "low_level_air_activation",
+        "air",
+        "accepted_minus_bypass_rms_db",
+    )
+    low_air_reduced = band_value(
+        summary_by_name,
+        "low_level_air_activation",
+        "air",
+        "accepted_minus_reduced_rms_db",
+    )
+    if low_air is None:
+        checks.append(status_check("low_level_air_activation_present", False, "probe result missing"))
+    else:
+        checks.append(
+            status_check(
+                "low_level_air_activation_lift",
+                low_air >= min_air_lift_db,
+                f"accepted-bypass air lift={low_air:.3f} dB; expected >= {min_air_lift_db:.3f} dB",
+            )
+        )
+        if low_air_reduced is None:
+            checks.append(status_check("low_level_air_activation_depth_order", False, "reduced fixture result missing"))
+        else:
+            checks.append(
+                status_check(
+                    "low_level_air_activation_depth_order",
+                    low_air >= low_air_reduced >= -0.05,
+                    (
+                        f"accepted-bypass air lift={low_air:.3f} dB; "
+                        f"accepted-reduced air lift={low_air_reduced:.3f} dB"
+                    ),
+                )
+            )
+
+    dull_air = band_value(
+        summary_by_name,
+        "low_level_dull_control",
+        "air",
+        "accepted_minus_bypass_rms_db",
+    )
+    if dull_air is None:
+        checks.append(status_check("low_level_dull_control_present", False, "probe result missing"))
+    else:
+        checks.append(
+            status_check(
+                "low_level_dull_control_restraint",
+                abs(dull_air) <= max_dull_air_lift_db,
+                f"accepted-bypass air lift={dull_air:.3f} dB; expected magnitude <= {max_dull_air_lift_db:.3f} dB",
+            )
+        )
+
+    high_air = band_value(
+        summary_by_name,
+        "high_level_air_control",
+        "air",
+        "accepted_minus_bypass_rms_db",
+    )
+    if high_air is None:
+        checks.append(status_check("high_level_air_control_present", False, "probe result missing"))
+    else:
+        checks.append(
+            status_check(
+                "high_level_air_control_restraint",
+                abs(high_air) <= max_high_level_air_lift_db,
+                (
+                    f"accepted-bypass air lift={high_air:.3f} dB; "
+                    f"expected magnitude <= {max_high_level_air_lift_db:.3f} dB"
+                ),
+            )
+        )
+
+    sibilance_presence = band_value(
+        summary_by_name,
+        "low_level_sibilance_texture",
+        "presence_edge",
+        "accepted_minus_bypass_rms_db",
+    )
+    if sibilance_presence is None:
+        checks.append(status_check("low_level_sibilance_texture_present", False, "probe result missing"))
+    else:
+        checks.append(
+            status_check(
+                "low_level_sibilance_texture_restraint",
+                sibilance_presence <= max_sibilance_presence_lift_db,
+                (
+                    f"accepted-bypass presence-edge lift={sibilance_presence:.3f} dB; "
+                    f"expected <= {max_sibilance_presence_lift_db:.3f} dB"
+                ),
+            )
+        )
+
+    status = (
+        "measurement_complete_with_investigation"
+        if any(check["status"] == "investigate" for check in checks)
+        else "measurement_complete"
+    )
+    return {"status": status, "checks": checks}
+
+
+def combine_evaluations(integrity: dict[str, Any], activation: dict[str, Any]) -> dict[str, Any]:
+    checks = [
+        {"category": "integrity", **check}
+        for check in integrity["checks"]
+    ] + [
+        {"category": "activation", **check}
+        for check in activation["checks"]
+    ]
+    status = "fail" if integrity["status"] == "fail" else (
+        "measurement_complete_with_investigation"
+        if (
+            integrity["status"] == "measurement_complete_with_investigation"
+            or activation["status"] == "measurement_complete_with_investigation"
+        )
+        else "measurement_complete"
+    )
+    return {
+        "status": status,
+        "integrity_status": integrity["status"],
+        "activation_status": activation["status"],
+        "checks": checks,
+    }
+
+
+def checks_for_category(report: dict[str, Any], category: str) -> list[dict[str, str]]:
+    return [
+        check
+        for check in report["evaluation"]["checks"]
+        if check.get("category") == category
+    ]
+
+
 def markdown(report: dict[str, Any]) -> str:
     lines = [
         "# Axiom Low-Level Exciter Probe Screen",
@@ -240,10 +403,15 @@ def markdown(report: dict[str, Any]) -> str:
     lines.extend(["", "## Probe Intent", "", "| Probe | Intent |", "| --- | --- |"])
     for item in report["probes"]:
         lines.append(f"| {item['label']} | {item['description']} |")
+    lines.extend(["", "## Activation Checks", "", "| Check | Status | Detail |", "| --- | --- | --- |"])
+    lines.extend(
+        f"| {check['name']} | {check['status'].upper()} | {check['detail']} |"
+        for check in checks_for_category(report, "activation")
+    )
     lines.extend(["", "## Integrity Checks", "", "| Check | Status | Detail |", "| --- | --- | --- |"])
     lines.extend(
         f"| {check['name']} | {check['status'].upper()} | {check['detail']} |"
-        for check in report["evaluation"]["checks"]
+        for check in checks_for_category(report, "integrity")
     )
     lines.extend(
         [
@@ -265,6 +433,14 @@ def main() -> int:
     parser.add_argument("--ceiling-dbfs", type=float, default=-6.0)
     parser.add_argument("--sample-rate", type=int, default=DEFAULT_SAMPLE_RATE)
     parser.add_argument("--duration", type=float, default=DEFAULT_DURATION_SECONDS)
+    parser.add_argument("--min-air-lift-db", type=float, default=DEFAULT_MIN_AIR_LIFT_DB)
+    parser.add_argument("--max-dull-air-lift-db", type=float, default=DEFAULT_MAX_DULL_AIR_LIFT_DB)
+    parser.add_argument("--max-high-level-air-lift-db", type=float, default=DEFAULT_MAX_HIGH_LEVEL_AIR_LIFT_DB)
+    parser.add_argument(
+        "--max-sibilance-presence-lift-db",
+        type=float,
+        default=DEFAULT_MAX_SIBILANCE_PRESENCE_LIFT_DB,
+    )
     parser.add_argument("--probe", choices=sorted(PROBES), action="append", dest="probes")
     parser.add_argument("--skip-route-start", action="store_true")
     parser.add_argument("--keep-route-running", action="store_true")
@@ -346,7 +522,21 @@ def main() -> int:
             "items": reports,
         }
         report["activation_summary"] = activation_summary(reports)
-        report["evaluation"] = exciter.evaluate_items(reports, args.ceiling_dbfs)
+        integrity_evaluation = exciter.evaluate_items(reports, args.ceiling_dbfs)
+        activation_evaluation = evaluate_activation(
+            report["activation_summary"],
+            min_air_lift_db=args.min_air_lift_db,
+            max_dull_air_lift_db=args.max_dull_air_lift_db,
+            max_high_level_air_lift_db=args.max_high_level_air_lift_db,
+            max_sibilance_presence_lift_db=args.max_sibilance_presence_lift_db,
+        )
+        report["activation_thresholds_db"] = {
+            "min_air_lift_db": args.min_air_lift_db,
+            "max_dull_air_lift_db": args.max_dull_air_lift_db,
+            "max_high_level_air_lift_db": args.max_high_level_air_lift_db,
+            "max_sibilance_presence_lift_db": args.max_sibilance_presence_lift_db,
+        }
+        report["evaluation"] = combine_evaluations(integrity_evaluation, activation_evaluation)
         (output_dir / "exciter_probe_screen.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
         (output_dir / "exciter_probe_screen.md").write_text(markdown(report), encoding="utf-8")
         print(output_dir / "exciter_probe_screen.json")
