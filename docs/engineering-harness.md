@@ -91,6 +91,7 @@ Inside Pi, the primary commands are:
 | `/axiom-screen-lowmid-width run-id` | Screen restrained `150 Hz-4 kHz` width settings before a candidate |
 | `/axiom-screen-high-width run-id` | Screen restrained `4 kHz-18 kHz` width settings from accepted `.10` before a candidate |
 | `/axiom-screen-exciter run-id` | Screen dynamic exciter sensitivity from accepted `.10` before a candidate |
+| `/axiom-screen-exciter-probes run-id` | Screen generated low-level exciter activation and restraint probes |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
 | `/axiom-qualify-lowmid-candidate run-id` | Qualify a restrained low-mid width candidate with its scoped spatial gate |
@@ -227,6 +228,17 @@ The completed `.10` registered-material screen found no such tradeoff:
 reduced and bypassed sensitivity were effectively level-neutral on the tested
 high-energy excerpts. Use lower-level material for any future exciter-specific
 investigation before proposing a versioned candidate.
+
+`/axiom-screen-exciter-probes` supplies that lower-level follow-up without
+needing a private material manifest. It generates deterministic quiet
+air-bearing, dull-control, sibilance-texture, and louder air-control probes,
+then renders accepted `50%`, reduced `35%`, and bypassed `0%` sensitivity
+through real JDSP. Its activation checks ask whether accepted `.10` produces
+measurable quiet air lift, preserves expected sensitivity depth order, avoids
+manufacturing air on dull material, backs off on louder bright material, and
+does not over-lift presence-edge sibilance. The result is investigation
+evidence only; a versioned candidate still requires a separate hypothesis,
+scoped edit, qualification, and listening acceptance.
 
 After listening acceptance, a release branch must contain:
 

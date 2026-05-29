@@ -366,6 +366,13 @@ Reports, captures, candidate worktrees, and locally registered audio material
 remain outside git. See [docs/engineering-harness.md](docs/engineering-harness.md)
 for commands and acceptance policy.
 
+The generated low-level exciter probe screen is available through the same
+controlled harness flow as:
+
+```bash
+node tools/axiom-team/bin/axiom-team.mjs screen-exciter-probes <run-id>
+```
+
 ## Quick Start: Default Slider Settings
 
 | Slider | Parameter | Default | Range |

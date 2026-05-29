@@ -4,7 +4,7 @@ import {
   createInvestigation, doctor, listRuns, loadLocalConfig, mergePullRequest,
   publishPullRequest, readRun, recordListening, renderSummary, runAutomatedValidation,
   runAcceptedStressBaseline, runBaselineLimiterSweep, runReserveLawScreen, runReserveRangeQualification,
-  runExciterSensitivityScreen, runHighWidthScreen, runLowMidWidthCandidateQualification, runLowMidWidthScreen, runStageObservability, runStftStageAudit, runSubSliderMap, runWidthMaterialScreen, runWidthMonoAudit,
+  runExciterProbeScreen, runExciterSensitivityScreen, runHighWidthScreen, runLowMidWidthCandidateQualification, runLowMidWidthScreen, runStageObservability, runStftStageAudit, runSubSliderMap, runWidthMaterialScreen, runWidthMonoAudit,
   saveLocalConfig, setHypothesis
 } from "../lib/core.mjs";
 
@@ -77,6 +77,9 @@ async function main() {
     case "screen-exciter":
       out(renderSummary(runExciterSensitivityScreen(required(args[0], "run id"))));
       return;
+    case "screen-exciter-probes":
+      out(renderSummary(runExciterProbeScreen(required(args[0], "run id"))));
+      return;
     case "investigate":
       out(renderSummary(createInvestigation(required(args.join(" "), "observation"))));
       return;
@@ -111,7 +114,7 @@ async function main() {
       out(renderSummary(mergePullRequest(required(args[0], "run id"))));
       return;
     default:
-      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|stage-observability|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|screen-high-width|screen-exciter|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
+      out("Usage: axiom-team.mjs <init|doctor|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|stage-observability|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|screen-high-width|screen-exciter|screen-exciter-probes|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
       process.exitCode = 2;
   }
 }

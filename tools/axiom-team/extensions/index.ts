@@ -24,6 +24,7 @@ import {
   runAcceptedStressBaseline,
   runAutomatedValidation,
   runBaselineLimiterSweep,
+  runExciterProbeScreen,
   runExciterSensitivityScreen,
   runHighWidthScreen,
   runLowMidWidthCandidateQualification,
@@ -359,6 +360,14 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.registerTool({
+    name: "axiom_screen_exciter_probes",
+    label: "Screen Exciter Probes",
+    description: "Measure generated low-level exciter activation and restraint probes through serialized real-JDSP capture.",
+    parameters: Type.Object({ runId: Type.String() }),
+    async execute(_id, params) { return text(renderSummary(runExciterProbeScreen(params.runId))); },
+  });
+
+  pi.registerTool({
     name: "axiom_qualify_candidate",
     label: "Qualify Candidate",
     description: "Run unit/static validation and serialized real-JDSP qualification for a candidate.",
@@ -444,6 +453,10 @@ export default function (pi: ExtensionAPI) {
   pi.registerCommand("axiom-screen-exciter", {
     description: "Usage: /axiom-screen-exciter run-id; screen dynamic exciter sensitivity fixtures on registered material.",
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runExciterSensitivityScreen(args.trim())), "info"),
+  });
+  pi.registerCommand("axiom-screen-exciter-probes", {
+    description: "Usage: /axiom-screen-exciter-probes run-id; screen generated low-level exciter activation probes.",
+    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runExciterProbeScreen(args.trim())), "info"),
   });
   pi.registerCommand("axiom-investigate", {
     description: "Usage: /axiom-investigate <observation>",

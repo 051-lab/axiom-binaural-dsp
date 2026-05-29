@@ -98,6 +98,7 @@ Run the harness with `scripts/axiom_team.sh` or use
 | `screen-lowmid-width` | Screen restrained low-mid width fixtures. | Yes |
 | `screen-high-width` | Screen restrained high-frequency width fixtures. | Yes |
 | `screen-exciter` | Screen dynamic exciter sensitivity fixtures. | Yes |
+| `screen-exciter-probes` | Screen generated low-level exciter activation probes. | Yes |
 | `create-candidate` | Create an external candidate worktree and copied versioned EEL file. | No |
 | `qualify` | Run unit/static gates and serialized real-JDSP candidate qualification. | Yes |
 | `qualify-lowmid-candidate` | Run scoped low-mid width candidate qualification. | Yes |
