@@ -9,6 +9,10 @@ Use `scripts/build_android_validation_package.py` to create a local package
 containing the script files, SHA-256 hashes, host-setting checklist, and a
 structured listening-record template.
 
+Use `scripts/validate_axiom_device_matrix.py` and `docs/device-matrix.md` to
+track which Android, speaker, wired/USB, Bluetooth, and WSL/JDSP routes are
+available for validation.
+
 ## Build A Package
 
 Accepted-baseline package:

@@ -78,15 +78,16 @@ Goal: stop treating WSL/JDSP as proof of Android behavior.
 
 - Create an Android validation document for RootlessJamesDSP with host settings, file deployment, hash/filename checks, reboot persistence, and route sanity checks.
 - Maintain `docs/android-validation.md` and `scripts/build_android_validation_package.py` so phone-test packages export accepted and candidate scripts, SHA-256 hashes, settings checklist, and listening form.
-- Define manual fallback checks for cases where adb or direct app paths are unavailable.
-- Add a device matrix: primary Android phone, one speaker path, one wired or USB path if available, one Bluetooth path, and WSL/JDSP lab route.
-- Track whether host crossfeed is off for qualification and manually enabled only for compatibility/listening checks.
+- Maintain `docs/device-matrix.md` and `scripts/validate_axiom_device_matrix.py` for manual fallback checks, route coverage, setup checks, and crossfeed policy when adb or direct app paths are unavailable.
+- Register a device matrix with primary Android phone, one speaker path, one wired or USB path if available, one Bluetooth path, and WSL/JDSP lab route.
+- Track whether host crossfeed is off for qualification and manually enabled only for compatibility/listening checks through the device matrix.
 
 Done when:
 
 - The same candidate can be tested on Android without guessing which file or settings are active.
 - Android listening notes identify device, route, settings, and version with enough detail to reproduce the test.
 - WSL evidence and Android evidence are clearly separated.
+- Device coverage can be strict-validated before using route coverage as candidate evidence.
 
 ## Phase 4: Architecture Decision Gate
 
