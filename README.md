@@ -105,6 +105,9 @@ scripts/validate_axiom_material_manifest.py \
   --markdown /tmp/axiom-material-validation.md
 ```
 
+Use `--write-metadata-template` to create a local enriched draft when a manifest
+has paths and excerpts but not taxonomy metadata yet.
+
 See [`docs/corpus-material.md`](docs/corpus-material.md) for the current
 material-class and failure-mode taxonomy.
 

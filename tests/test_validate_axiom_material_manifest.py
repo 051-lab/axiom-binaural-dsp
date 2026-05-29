@@ -99,6 +99,40 @@ class MaterialManifestValidationTests(unittest.TestCase):
             self.assertIn("pass_with_warnings", report_path.read_text(encoding="utf-8"))
             self.assertIn("Material Class Coverage", markdown_path.read_text(encoding="utf-8"))
 
+    def test_metadata_template_adds_missing_decision_grade_fields(self) -> None:
+        data = manifest(Path("/tmp/example.wav"))
+        enriched = manifest_validator.metadata_template(data)
+        item = enriched["tracks"][0]
+        self.assertEqual(item["material_class"], "TODO")
+        self.assertEqual(item["failure_modes"], [])
+        self.assertEqual(item["license_scope"], "TODO")
+        self.assertEqual(item["provenance"], "TODO")
+        self.assertEqual(item["role"], "TODO")
+
+    def test_cli_writes_metadata_template(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            audio = root / "item.wav"
+            audio.write_bytes(b"placeholder")
+            manifest_path = root / "manifest.json"
+            template_path = root / "manifest-template.json"
+            manifest_path.write_text(json.dumps(manifest(audio)), encoding="utf-8")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(Path(__file__).resolve().parents[1] / "scripts" / "validate_axiom_material_manifest.py"),
+                    str(manifest_path),
+                    "--write-metadata-template",
+                    str(template_path),
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            template = json.loads(template_path.read_text(encoding="utf-8"))
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(template["tracks"][0]["role"], "TODO")
+
 
 if __name__ == "__main__":
     unittest.main()

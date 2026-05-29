@@ -191,6 +191,28 @@ def markdown(report: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def metadata_template(manifest: Any) -> dict[str, Any]:
+    if not isinstance(manifest, dict):
+        raise ValueError("manifest must be a JSON object")
+    tracks = manifest.get("tracks")
+    if not isinstance(tracks, list):
+        raise ValueError("manifest.tracks must be a list")
+    enriched = {key: value for key, value in manifest.items() if key != "tracks"}
+    enriched["tracks"] = []
+    for item in tracks:
+        if not isinstance(item, dict):
+            enriched["tracks"].append(item)
+            continue
+        updated = dict(item)
+        updated.setdefault("material_class", "TODO")
+        updated.setdefault("failure_modes", [])
+        updated.setdefault("license_scope", "TODO")
+        updated.setdefault("provenance", "TODO")
+        updated.setdefault("role", "TODO")
+        enriched["tracks"].append(updated)
+    return enriched
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", type=Path)
@@ -198,6 +220,11 @@ def main() -> int:
     parser.add_argument("--allow-missing-paths", action="store_true")
     parser.add_argument("--json", type=Path)
     parser.add_argument("--markdown", type=Path)
+    parser.add_argument(
+        "--write-metadata-template",
+        type=Path,
+        help="write a copy of the manifest with missing decision-grade metadata fields added as TODO placeholders",
+    )
     args = parser.parse_args()
 
     try:
@@ -205,6 +232,12 @@ def main() -> int:
     except (OSError, json.JSONDecodeError) as exc:
         print(f"error: cannot read material manifest: {exc}")
         return 1
+    if args.write_metadata_template:
+        args.write_metadata_template.parent.mkdir(parents=True, exist_ok=True)
+        args.write_metadata_template.write_text(
+            json.dumps(metadata_template(manifest), indent=2) + "\n",
+            encoding="utf-8",
+        )
     report = validate_manifest(
         manifest,
         manifest_path=args.manifest.resolve(),

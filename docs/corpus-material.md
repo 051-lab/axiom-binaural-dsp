@@ -110,3 +110,14 @@ scripts/validate_axiom_material_manifest.py \
 
 `PASS_WITH_WARNINGS` is expected until every desired material class and failure
 mode has at least one registered item.
+
+To create a local draft from an existing runner-compatible manifest:
+
+```bash
+scripts/validate_axiom_material_manifest.py \
+  ~/.local/share/axiom-test-material/axiom-local-material.json \
+  --write-metadata-template ~/.local/share/axiom-test-material/axiom-local-material.enriched.json
+```
+
+The enriched copy adds `TODO` placeholders for the decision-grade metadata
+fields. Replace those placeholders locally, then rerun strict validation.
