@@ -241,6 +241,21 @@ scripts/analyze_jdsp_transfer.py \
 
 This report measures the complete processed host path, not Axiom in isolation. It rejects silent, clipped, or louder-than-`-6 dBFS` output and reports identifiable `M->M`, `M->S`, `S->M`, and `S->S` matrix elements only when a pure mono or side-only probe makes that matrix column observable.
 
+To add perceptual-proxy context to any local WAV capture without running JDSP:
+
+```bash
+scripts/analyze_audio_perceptual_metrics.py \
+  /tmp/axiom-capture.wav \
+  --label accepted-v4.1.4.10 \
+  --json /tmp/axiom-capture-metrics.json \
+  --markdown /tmp/axiom-capture-metrics.md
+```
+
+This reports ungated loudness proxy, true-peak proxy, crest/envelope behavior,
+20 ms transient contrast, ERB-like band energy, and mid/side balance. These are
+engineering proxies, not certified LUFS or true-peak measurements. See
+[`docs/perceptual-metrics.md`](docs/perceptual-metrics.md).
+
 To investigate the user-adjustable bass branch before creating a new DSP revision, sweep its exact nonlinear injection topology over tone level and slider gain:
 
 ```bash
@@ -416,6 +431,7 @@ axiom-binaural-dsp/
     generate_axiom_program_corpus.py  # Original deterministic bass-heavy passages
     render_jdsp_host.py               # Isolated real-JDSP WAV renderer
     compare_jdsp_captures.py          # Capture metrics and difference reports
+    analyze_audio_perceptual_metrics.py # Offline loudness, transient, ERB-like, and M/S proxies
     run_jdsp_ab_testbench.py          # End-to-end host A/B suite
     run_jdsp_program_corpus.py        # Default-control corpus margin report
     run_jdsp_local_material.py        # Private local-excerpt margin report
@@ -440,6 +456,7 @@ axiom-binaural-dsp/
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
+    test_analyze_audio_perceptual_metrics.py
     test_analyze_axiom_subharmonics.py
     test_generate_axiom_program_corpus.py
     test_generate_jdsp_stimuli.py
@@ -465,6 +482,7 @@ axiom-binaural-dsp/
     architecture.md           # Technical architecture documentation
     axiom-roadmap.md          # 90-day foundations-first roadmap
     tool-inventory.md         # Script and harness command safety map
+    perceptual-metrics.md     # Offline perceptual-proxy metric definitions and use
     bass-host-limiter-investigation-plan.md # Bass reserve and host-limiter measurement plan
     stage-observability-v4.1.4.10.md # Current bass/reserve stage-tap evidence
     exciter-probe-screen-v4.1.4.10.md # Current generated low-level exciter probe evidence
@@ -510,6 +528,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/current-state.md`](docs/current-state.md) | Current accepted baseline, host policy, product boundary, and local-state rules |
 | [`docs/axiom-roadmap.md`](docs/axiom-roadmap.md) | 90-day roadmap from the current notes and concerns |
 | [`docs/tool-inventory.md`](docs/tool-inventory.md) | Tool purpose, JDSP side effects, and artifact safety map |
+| [`docs/perceptual-metrics.md`](docs/perceptual-metrics.md) | Offline loudness, true-peak proxy, transient, ERB-like, and M/S metric scope |
 | [`docs/bass-host-limiter-investigation-plan.md`](docs/bass-host-limiter-investigation-plan.md) | Bass reserve and JDSP host-limiter investigation plan before any `.11` candidate |
 | [`docs/stage-observability-plan.md`](docs/stage-observability-plan.md) | Diagnostic stage-tap fixture and reporting plan |
 | [`docs/stage-observability-v4.1.4.10.md`](docs/stage-observability-v4.1.4.10.md) | `.10` bass/reserve stage-tap evidence and no-candidate decision |

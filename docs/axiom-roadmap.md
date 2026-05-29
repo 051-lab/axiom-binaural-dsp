@@ -44,13 +44,13 @@ Goal: make Axiom's existing stages more observable before proposing more DSP cha
 - Maintain `docs/tool-inventory.md` so every script has a clear purpose, JDSP side-effect label, output policy, and artifact safety rule.
 - Expand the implemented stage-tap fixture runner for pre/post bass, spatial width, exciter, STFT, and output reserve paths from `docs/stage-observability-plan.md`.
 - Follow `docs/bass-host-limiter-investigation-plan.md` for `Sub Harmonics Gain` and host-limiter evidence around `+4`, `+6`, `+8`, `+10`, and `+12 dB`.
-- Specify perceptual metrics to add first: loudness, true-peak proxy, crest/envelope behavior, Bark or ERB band energy, transient measures, and side/mid balance.
+- Keep expanding the first perceptual metrics layer in `scripts/analyze_audio_perceptual_metrics.py`: loudness proxy, true-peak proxy, crest/envelope behavior, ERB-like band energy, transient measures, and side/mid balance now exist as standalone offline metrics; the next step is wiring them into candidate, corpus, and A/B reports.
 - Use `scripts/run_jdsp_exciter_probe_screen.py` for lower-level generated exciter probes because high-energy material does not meaningfully exercise the current exciter behavior.
 
 Done when:
 
 - A future agent can determine which stage caused a measured change.
-- Bass/reserve/host-limiter behavior is measurable beyond sample peak.
+- Bass/reserve/host-limiter behavior and offline capture behavior are measurable beyond sample peak.
 - Exciter usefulness can be tested on material where it should actually activate.
 
 ## Phase 2: Corpus And Listening Evidence

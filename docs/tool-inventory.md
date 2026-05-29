@@ -33,6 +33,7 @@ the artifact is safe to commit.
 | `scripts/generate_jdsp_stimuli.py` | Generate deterministic stereo probes for host capture tests. | No | No | WAV outputs belong in `/tmp` or local artifact folders. |
 | `scripts/generate_axiom_program_corpus.py` | Generate deterministic program-like bass-heavy passages for repeatable engineering tests. | No | No | WAV outputs belong outside repo. |
 | `scripts/analyze_jdsp_transfer.py` | Analyze stimulus-conditioned host-path transfer from an original WAV and processed capture. | No | No | JSON/Markdown reports outside repo unless summarized. |
+| `scripts/analyze_audio_perceptual_metrics.py` | Report offline loudness proxy, true-peak proxy, transient, ERB-like band, and M/S metrics for a stereo WAV. | No | No | JSON/Markdown reports outside repo unless summarized. |
 | `scripts/compare_jdsp_captures.py` | Compare reference and candidate processed WAV captures for level, alignment, clipping, and difference metrics. | No | No | JSON/Markdown reports outside repo unless summarized. |
 | `scripts/qualify_jdsp_repeatability.py` | Check repeated WAV captures for silence, clipping, alignment, metric spread, and correlation confidence. | No | No | JSON/Markdown reports outside repo unless summarized. |
 

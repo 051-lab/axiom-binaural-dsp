@@ -85,5 +85,8 @@ supports the accepted default path rather than an immediate low-end candidate.
 The generated low-level exciter probe screen is recorded in
 `docs/exciter-probe-screen-v4.1.4.10.md`; floor-aware evaluation supports the
 accepted `.10` exciter behavior rather than an immediate `.11` candidate. The
-next sound-changing candidate should wait until perceptual metrics, corpus
-coverage, and Android validation foundations are stronger.
+first standalone perceptual-proxy analyzer is recorded in
+`docs/perceptual-metrics.md`; the next metrics task is wiring that layer into
+candidate, corpus, and A/B qualification reports. The next sound-changing
+candidate should wait until corpus coverage and Android validation foundations
+are stronger.
