@@ -101,6 +101,7 @@ assume the intended host configuration is already active.
 | `docs/current-state.md` | Current accepted baseline, host policy, and repo/local state boundary |
 | `docs/architecture.md` | Active DSP architecture and host ownership |
 | `docs/axiom-roadmap.md` | 90-day foundations-first roadmap |
+| `docs/tool-inventory.md` | Tool purpose, JDSP side effects, and artifact safety map |
 | `docs/qualification-v4.1.4.8.md` | Previous `.8` evidence and reproduction record |
 | `docs/qualification-v4.1.4.9.md` | Previous `.9` evidence and reproduction record |
 | `docs/qualification-v4.1.4.10.md` | Accepted `.10` evidence and reproduction record |

@@ -41,7 +41,7 @@ Done when:
 
 Goal: make Axiom's existing stages more observable before proposing more DSP changes.
 
-- Create a tool inventory that lists every script, what it measures, whether it touches JDSP, what it outputs, and whether artifacts are safe to commit.
+- Maintain `docs/tool-inventory.md` so every script has a clear purpose, JDSP side-effect label, output policy, and artifact safety rule.
 - Design stage-tap fixture generation for pre/post bass, spatial width, exciter, STFT, and output reserve paths.
 - Add a bass/host-limiter investigation plan around `Sub Harmonics Gain` at `+4`, `+6`, `+8`, `+10`, and `+12 dB`.
 - Specify perceptual metrics to add first: loudness, true-peak proxy, crest/envelope behavior, Bark or ERB band energy, transient measures, and side/mid balance.

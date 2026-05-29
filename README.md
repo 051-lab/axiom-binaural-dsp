@@ -407,6 +407,7 @@ axiom-binaural-dsp/
     current-state.md         # Accepted baseline, host policy, and state boundary
     architecture.md           # Technical architecture documentation
     axiom-roadmap.md          # 90-day foundations-first roadmap
+    tool-inventory.md         # Script and harness command safety map
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.9.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.10.md # Current accepted-baseline evidence record
@@ -448,6 +449,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Commit conventions, code standards, testing checklist |
 | [`docs/current-state.md`](docs/current-state.md) | Current accepted baseline, host policy, product boundary, and local-state rules |
 | [`docs/axiom-roadmap.md`](docs/axiom-roadmap.md) | 90-day roadmap from the current notes and concerns |
+| [`docs/tool-inventory.md`](docs/tool-inventory.md) | Tool purpose, JDSP side effects, and artifact safety map |
 | [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
 | [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
 | [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Previous `.8` verification record |
