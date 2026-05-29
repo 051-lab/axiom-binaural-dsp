@@ -6,6 +6,8 @@ This inventory maps the repository's operational tools so humans and agents can
 choose the right command without guessing. It is descriptive, not an execution
 order. Use `docs/current-state.md` for the accepted baseline and
 `docs/axiom-roadmap.md` for roadmap priority. Use
+`docs/bass-host-limiter-investigation-plan.md` before running reserve-law, Sub
+Harmonics, or host-limiter sweeps for candidate decisions. Use
 `docs/stage-observability-plan.md` before implementing diagnostic stage taps.
 
 Generated WAV, JSON, Markdown reports, private manifests, local captures, and

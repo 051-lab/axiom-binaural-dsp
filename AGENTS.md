@@ -102,6 +102,7 @@ assume the intended host configuration is already active.
 | `docs/architecture.md` | Active DSP architecture and host ownership |
 | `docs/axiom-roadmap.md` | 90-day foundations-first roadmap |
 | `docs/tool-inventory.md` | Tool purpose, JDSP side effects, and artifact safety map |
+| `docs/bass-host-limiter-investigation-plan.md` | Bass reserve and JDSP host-limiter investigation plan before any `.11` candidate |
 | `docs/stage-observability-plan.md` | Diagnostic stage-tap fixture and reporting plan |
 | `docs/qualification-v4.1.4.8.md` | Previous `.8` evidence and reproduction record |
 | `docs/qualification-v4.1.4.9.md` | Previous `.9` evidence and reproduction record |

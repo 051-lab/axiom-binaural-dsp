@@ -408,6 +408,7 @@ axiom-binaural-dsp/
     architecture.md           # Technical architecture documentation
     axiom-roadmap.md          # 90-day foundations-first roadmap
     tool-inventory.md         # Script and harness command safety map
+    bass-host-limiter-investigation-plan.md # Bass reserve and host-limiter measurement plan
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.9.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.10.md # Current accepted-baseline evidence record
@@ -450,6 +451,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/current-state.md`](docs/current-state.md) | Current accepted baseline, host policy, product boundary, and local-state rules |
 | [`docs/axiom-roadmap.md`](docs/axiom-roadmap.md) | 90-day roadmap from the current notes and concerns |
 | [`docs/tool-inventory.md`](docs/tool-inventory.md) | Tool purpose, JDSP side effects, and artifact safety map |
+| [`docs/bass-host-limiter-investigation-plan.md`](docs/bass-host-limiter-investigation-plan.md) | Bass reserve and JDSP host-limiter investigation plan before any `.11` candidate |
 | [`docs/stage-observability-plan.md`](docs/stage-observability-plan.md) | Diagnostic stage-tap fixture and reporting plan |
 | [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
 | [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
