@@ -89,6 +89,7 @@ first standalone perceptual-proxy analyzer is recorded in
 `docs/perceptual-metrics.md` and is wired into A/B, corpus, private
 local-material, and scoped candidate reports as evidence context. Structured
 human listening records are defined in `docs/listening-records.md`; full
-records should remain local unless sanitized. The next sound-changing candidate
-should wait until corpus coverage and Android validation foundations are
-stronger.
+records should remain local unless sanitized. Corpus material taxonomy and
+manifest validation are defined in `docs/corpus-material.md`. The next
+sound-changing candidate should wait until corpus coverage and Android
+validation foundations are stronger.

@@ -58,7 +58,8 @@ Done when:
 
 Goal: build a small, brutal, legally clean corpus where every item has a job.
 
-- Categorize missing material classes: low-level dynamic material, sibilant vocals, cymbals, dense modern pop/EDM, hip-hop/trap sub bass, rock/metal guitars, acoustic bass, piano, orchestral crescendos, mono/narrow recordings, flawed sources, speech, bass-light material, and already-wide mixes.
+- Maintain `docs/corpus-material.md` and `scripts/validate_axiom_material_manifest.py` so material classes, failure modes, provenance, and license scope are explicit.
+- Register missing material classes: low-level dynamic material, sibilant vocals, cymbals, dense modern pop/EDM, hip-hop/trap sub bass, rock/metal guitars, acoustic bass, piano, orchestral crescendos, mono/narrow recordings, flawed sources, speech, bass-light material, and already-wide mixes.
 - Record provenance and license rules for every shared test item. Keep private/local tracks outside git.
 - Maintain `docs/listening-records.md` and `scripts/validate_axiom_listening_record.py` so structured listening records capture device, output path, host settings, Axiom version, slider settings, material, comparison version, fatigue, bass, punch, width, center, air, harshness, loudness, artifacts, and decision.
 - Define level-matched A/B package requirements for future listening candidates.
@@ -68,7 +69,7 @@ Done when:
 
 - New candidates can be checked against several material classes instead of one favorite track.
 - Listening results can be compared across versions and devices with validated structured records.
-- The corpus explains why each excerpt exists and which failure mode it exposes.
+- The corpus explains why each excerpt exists and which failure mode it exposes through validated manifest metadata.
 
 ## Phase 3: Android And Device Validation
 
