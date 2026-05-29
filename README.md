@@ -340,7 +340,7 @@ for commands and acceptance policy.
 | slider1 | Sub Harmonics Gain | 4 dB | -12 to 12 dB |
 | slider2 | Global Side Width | 135% | 0 to 200% |
 | slider3 | Fletcher-Munson Sensitivity | 50% | 0 to 100% |
-| slider5 | Low-Mid Width Multiplier | 140% | 0 to 200% |
+| slider5 | Low-Mid Width Multiplier | 126% | 0 to 200% |
 | slider6 | High-Frequency Width Multiplier | 110% | 0 to 150% |
 | slider7 | STFT Resonance Suppression | 50% | 0 to 100% |
 
@@ -404,7 +404,9 @@ axiom-binaural-dsp/
     test_run_jdsp_high_width_screen.py
     test_run_jdsp_exciter_sensitivity_screen.py
   docs/
+    current-state.md         # Accepted baseline, host policy, and state boundary
     architecture.md           # Technical architecture documentation
+    axiom-roadmap.md          # 90-day foundations-first roadmap
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.9.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.10.md # Current accepted-baseline evidence record
@@ -444,6 +446,8 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`AGENTS.md`](AGENTS.md) | **Start here** — complete operating instructions, EEL2 constraints, file editing rules |
 | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | GitHub Copilot workspace context (auto-loaded) |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Commit conventions, code standards, testing checklist |
+| [`docs/current-state.md`](docs/current-state.md) | Current accepted baseline, host policy, product boundary, and local-state rules |
+| [`docs/axiom-roadmap.md`](docs/axiom-roadmap.md) | 90-day roadmap from the current notes and concerns |
 | [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
 | [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
 | [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Previous `.8` verification record |

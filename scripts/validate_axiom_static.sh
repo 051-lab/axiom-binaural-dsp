@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.6.eel}"
+script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.10.eel}"
 script_name="$(basename "$script_path")"
 host_limiter_only=false
 host_crossfeed_only=false

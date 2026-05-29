@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Axiom Binaural DSP System Overview</title>
+  <style>
+    :root {
+      --ink: #161817;
+      --muted: #5e6862;
+      --paper: #f5f3ed;
+      --panel: #ffffff;
+      --line: #d9d4c8;
+      --line-strong: #aaa394;
+      --signal: #007f73;
+      --signal-dark: #005d55;
+      --amber: #b76c00;
+      --red: #b83b2f;
+      --green-soft: #dff1ec;
+      --amber-soft: #fff0d2;
+      --shadow: 0 18px 40px rgba(23, 25, 24, 0.09);
+      --radius: 8px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(0, 127, 115, 0.05) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(0, 127, 115, 0.04) 1px, transparent 1px),
+        var(--paper);
+      background-size: 32px 32px;
+      font-family: "Aptos", "Segoe UI", Tahoma, sans-serif;
+      line-height: 1.5;
+    }
+
+    a {
+      color: var(--signal-dark);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    code {
+      color: #0c4f48;
+      background: #eaf4f0;
+      border: 1px solid #c7dfd8;
+      border-radius: 5px;
+      padding: 0.08rem 0.28rem;
+      font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    .shell {
+      display: block;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(170, 163, 148, 0.55);
+      background: rgba(245, 243, 237, 0.92);
+      backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 220px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .mark {
+      width: 30px;
+      height: 30px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      position: relative;
+      background: var(--green-soft);
+    }
+
+    .mark::before,
+    .mark::after {
+      content: "";
+      position: absolute;
+      top: 12px;
+      width: 9px;
+      height: 2px;
+      background: var(--signal);
+    }
+
+    .mark::before {
+      left: 4px;
+      transform: rotate(38deg);
+    }
+
+    .mark::after {
+      right: 4px;
+      transform: rotate(-38deg);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--muted);
+      padding: 7px 9px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    nav a:hover,
+    nav a:focus-visible {
+      color: var(--ink);
+      background: #e9e4d8;
+      outline: none;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: stretch;
+      min-height: calc(100vh - 58px);
+      padding-top: 42px;
+      padding-bottom: 42px;
+    }
+
+    .hero-main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-left: 4px solid var(--signal);
+      padding-left: 26px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--signal-dark);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.05;
+    }
+
+    h1 {
+      max-width: 860px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 8vw, 6.9rem);
+      letter-spacing: -0.03em;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin: 20px 0 0;
+      color: #2d342f;
+      font-size: clamp(1rem, 1.7vw, 1.26rem);
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .stat {
+      border-top: 2px solid var(--line-strong);
+      padding-top: 10px;
+      min-width: 0;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.18rem;
+      line-height: 1.1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .hero-panel {
+      align-self: center;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .hero-panel h2 {
+      margin-bottom: 14px;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .signal-map {
+      display: grid;
+      gap: 9px;
+    }
+
+    .node {
+      display: grid;
+      grid-template-columns: 46px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #d8d2c6;
+      border-radius: 7px;
+      background: #fbfaf6;
+    }
+
+    .node-index {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      color: #fff;
+      background: var(--ink);
+      border-radius: 50%;
+      font-weight: 900;
+      font-size: 0.8rem;
+    }
+
+    .node-title {
+      display: block;
+      font-weight: 900;
+    }
+
+    .node-note {
+      display: block;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .node-badge {
+      padding: 4px 7px;
+      color: var(--signal-dark);
+      background: var(--green-soft);
+      border: 1px solid #b8dcd2;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    section {
+      padding: 48px 0;
+      border-top: 1px solid rgba(170, 163, 148, 0.45);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.35fr) 1fr;
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 22px;
+    }
+
+    .section-label {
+      color: var(--signal-dark);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+
+    .section-head h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      letter-spacing: -0.02em;
+    }
+
+    .section-head p {
+      margin: 12px 0 0;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.82);
+      padding: 18px;
+      box-shadow: 0 8px 18px rgba(22, 24, 23, 0.04);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 1.08rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .metric {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .tagrow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border: 1px solid #c9c1b2;
+      border-radius: 999px;
+      color: #34423c;
+      background: #fbfaf6;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .tag.good {
+      border-color: #abd8ca;
+      background: var(--green-soft);
+      color: var(--signal-dark);
+    }
+
+    .tag.watch {
+      border-color: #e7c486;
+      background: var(--amber-soft);
+      color: #7e4b00;
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(126px, 1fr));
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .pipe-step {
+      position: relative;
+      min-height: 154px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      padding: 14px;
+    }
+
+    .pipe-step::after {
+      content: "";
+      position: absolute;
+      right: -9px;
+      top: 28px;
+      width: 16px;
+      height: 2px;
+      background: var(--signal);
+    }
+
+    .pipe-step:last-child::after {
+      display: none;
+    }
+
+    .pipe-step span {
+      display: block;
+      color: var(--signal-dark);
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pipe-step strong {
+      display: block;
+      margin-top: 8px;
+      line-height: 1.15;
+    }
+
+    .pipe-step p {
+      margin: 9px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+      position: relative;
+    }
+
+    .release {
+      display: grid;
+      grid-template-columns: 116px 1fr 170px;
+      gap: 16px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.84);
+      padding: 14px;
+    }
+
+    .version {
+      color: #fff;
+      background: var(--ink);
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .release h3 {
+      margin: 0 0 5px;
+      font-size: 1rem;
+    }
+
+    .release p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .release-status {
+      justify-self: end;
+      text-align: right;
+      color: var(--signal-dark);
+      font-weight: 900;
+      font-size: 0.86rem;
+    }
+
+    .matrix {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 12px 13px;
+      border-bottom: 1px solid #e7e2d6;
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.92rem;
+    }
+
+    th {
+      color: #24342e;
+      background: #eee9dd;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .ok {
+      color: var(--signal-dark);
+      font-weight: 900;
+    }
+
+    .no-go {
+      color: var(--amber);
+      font-weight: 900;
+    }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .rule-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 9px;
+    }
+
+    .rule-list li {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: #33423c;
+    }
+
+    .check {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--signal);
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .footer {
+      padding: 36px 0 54px;
+      color: var(--muted);
+      border-top: 1px solid rgba(170, 163, 148, 0.55);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-main,
+      .hero-panel,
+      section {
+        animation: rise 560ms ease both;
+      }
+
+      .hero-panel {
+        animation-delay: 120ms;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .section-head,
+      .grid.two,
+      .grid.three,
+      .workflow {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .status-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .release {
+        grid-template-columns: 1fr;
+      }
+
+      .release-status {
+        justify-self: start;
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .shell {
+        padding: 16px;
+      }
+
+      .topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 10px 16px;
+      }
+
+      nav {
+        justify-content: flex-start;
+      }
+
+      .hero-main {
+        padding-left: 18px;
+      }
+
+      .status-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .node {
+        grid-template-columns: 38px 1fr;
+      }
+
+      .node-badge {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="mark" aria-hidden="true"></span><span>Axiom System Map</span></div>
+      <nav aria-label="Page sections">
+        <a href="#chain">Chain</a>
+        <a href="#versions">Versions</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#harness">Harness</a>
+        <a href="#state">State</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero" id="top">
+      <div class="hero-main">
+        <p class="eyebrow">JamesDSP / EEL2 / RootlessJamesDSP</p>
+        <h1>Axiom Binaural DSP</h1>
+        <p class="hero-copy">
+          A device-neutral headphone and speaker enhancement core with controlled stereo width,
+          additive psychoacoustic bass, a conservative dynamic exciter, STFT resonance suppression,
+          and host-owned terminal limiting. The accepted baseline is
+          <code>v4.1.4.10</code>.
+        </p>
+        <div class="status-strip" aria-label="Current project status">
+          <div class="stat">
+            <strong>v4.1.4.10</strong>
+            <span>Accepted listening baseline</span>
+          </div>
+          <div class="stat">
+            <strong>89 / 18</strong>
+            <span>Python and Pi harness tests after PR #8</span>
+          </div>
+          <div class="stat">
+            <strong>-1.00 dB</strong>
+            <span>Qualified JDSP limiter threshold</span>
+          </div>
+          <div class="stat">
+            <strong>0 clipped</strong>
+            <span>Latest exciter screen captures</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="hero-panel" aria-labelledby="live-baseline">
+        <h2 id="live-baseline">Accepted Runtime Stack</h2>
+        <div class="signal-map">
+          <div class="node">
+            <span class="node-index">01</span>
+            <span><span class="node-title">Liveprog EEL core</span><span class="node-note">Strict JDSP-safe EEL2, flat memory, exact STFT API use</span></span>
+            <span class="node-badge">script</span>
+          </div>
+          <div class="node">
+            <span class="node-index">02</span>
+            <span><span class="node-title">Axiom processing chain</span><span class="node-note">Spatializer, bass harmonics, exciter, STFT suppressor, reserve</span></span>
+            <span class="node-badge">DSP</span>
+          </div>
+          <div class="node">
+            <span class="node-index">03</span>
+            <span><span class="node-title">JDSP terminal limiter</span><span class="node-note">Host-owned peak control at -1.00 dB, 60 ms, 0 dB postgain</span></span>
+            <span class="node-badge">host</span>
+          </div>
+          <div class="node">
+            <span class="node-index">04</span>
+            <span><span class="node-title">Manual playback choices</span><span class="node-note">JamesDSP crossfeed is optional and outside the Axiom script</span></span>
+            <span class="node-badge">user</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="chain">
+      <div class="section-head">
+        <div class="section-label">Signal Chain</div>
+        <div>
+          <h2>What the audio engine does.</h2>
+          <p>
+            The accepted chain is a controlled mastering-style enhancement path. Each stage has an
+            ownership boundary so the script does not fight the host limiter, host crossfeed, or later
+            device-specific playback decisions.
+          </p>
+        </div>
+      </div>
+
+      <div class="pipeline" role="list" aria-label="Axiom DSP signal pipeline">
+        <div class="pipe-step" role="listitem">
+          <span>Input</span>
+          <strong>DC protection</strong>
+          <p>15 Hz high-pass protection before nonlinear and dynamic stages.</p>
+        </div>
+        <div class="pipe-step" role="listitem">
+          <span>Spatial</span>
+          <strong>3-way M/S field</strong>
+          <p>Bass below 150 Hz folds toward mono; low-mid and high side width stay independent.</p>
+        </div>
+        <div class="pipe-step" role="listitem">
+          <span>Bass</span>
+          <strong>Additive harmonics</strong>
+          <p>90 Hz extraction, soft saturation, harmonic isolation, and additive injection.</p>
+        </div>
+        <div class="pipe-step" role="listitem">
+          <span>Air</span>
+          <strong>Dynamic exciter</strong>
+          <p>Level-contingent high-frequency enhancement above 11 kHz with sample-rate timing.</p>
+        </div>
+        <div class="pipe-step" role="listitem">
+          <span>Control</span>
+          <strong>STFT suppressor</strong>
+          <p>Stereo-linked per-bin attenuation in the 2-6 kHz resonance region.</p>
+        </div>
+        <div class="pipe-step" role="listitem">
+          <span>Output</span>
+          <strong>Reserve and host limiter</strong>
+          <p>Fixed -1 dB reserve plus bass-aware reserve above +4 dB Sub Harmonics.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <div class="section-head">
+        <div class="section-label">Architecture</div>
+        <div>
+          <h2>The current baseline is intentionally restrained.</h2>
+          <p>
+            The major improvements have been subtractive or ownership-based: removing internal limiter
+            and crossfeed responsibilities, removing redundant dry-path filtering, then tightening output
+            reserve and low-mid width with real-host evidence.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <h3>Spatial image</h3>
+          <span class="metric">1.701x</span>
+          <p>Effective accepted low-mid side product after `.10`, reduced from `.9` at `1.890x`.</p>
+          <div class="tagrow">
+            <span class="tag good">150 Hz-4 kHz refined</span>
+            <span class="tag">high width retained</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Bass ownership</h3>
+          <span class="metric">0.750</span>
+          <p>Additional reserve slope in dB per dB above the accepted `+4 dB` Sub Harmonics default.</p>
+          <div class="tagrow">
+            <span class="tag good">default loudness preserved</span>
+            <span class="tag">elevated bass protected</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Host boundary</h3>
+          <span class="metric">host</span>
+          <p>Terminal limiting and optional crossfeed are owned by JamesDSP, not hidden inside Axiom.</p>
+          <div class="tagrow">
+            <span class="tag good">no script limiter</span>
+            <span class="tag good">no internal crossfeed</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="versions">
+      <div class="section-head">
+        <div class="section-label">Evolution</div>
+        <div>
+          <h2>How the script matured.</h2>
+          <p>
+            The repo keeps historical EEL files intact. New sound-changing work becomes a new version,
+            while measurement-only work lands as tooling and decision records.
+          </p>
+        </div>
+      </div>
+
+      <div class="timeline" aria-label="Axiom version timeline">
+        <article class="release">
+          <div class="version">v3.0</div>
+          <div>
+            <h3>Early Axiom foundation</h3>
+            <p>Established the original psychoacoustic enhancement direction that later versions tightened.</p>
+          </div>
+          <div class="release-status">historical</div>
+        </article>
+        <article class="release">
+          <div class="version">v4.1.4.4</div>
+          <div>
+            <h3>Host limiter baseline</h3>
+            <p>Removed script-local limiting and hard clamping so JDSP owns the terminal limiter.</p>
+          </div>
+          <div class="release-status">ownership fix</div>
+        </article>
+        <article class="release">
+          <div class="version">v4.1.4.5</div>
+          <div>
+            <h3>Device-neutral core</h3>
+            <p>Removed manual EEL crossfeed and made JamesDSP crossfeed an optional playback choice.</p>
+          </div>
+          <div class="release-status">crossfeed removed</div>
+        </article>
+        <article class="release">
+          <div class="version">v4.1.4.6</div>
+          <div>
+            <h3>Phase-preserving bass injection</h3>
+            <p>Removed redundant dry-path 90 Hz reconstruction while keeping additive harmonics active.</p>
+          </div>
+          <div class="release-status">bass path cleaned</div>
+        </article>
+        <article class="release">
+          <div class="version">v4.1.4.7</div>
+          <div>
+            <h3>Transparent headroom</h3>
+            <p>Added fixed -1 dB terminal reserve without retuning bass, spatial, exciter, or STFT behavior.</p>
+          </div>
+          <div class="release-status">headroom</div>
+        </article>
+        <article class="release">
+          <div class="version">v4.1.4.8</div>
+          <div>
+            <h3>Bass-aware reserve</h3>
+            <p>Protected elevated Sub Harmonics settings above the accepted default by adding conditional reserve.</p>
+          </div>
+          <div class="release-status">accepted</div>
+        </article>
+        <article class="release">
+          <div class="version">v4.1.4.9</div>
+          <div>
+            <h3>Reduced reserve slope</h3>
+            <p>Recovered practical playback level by adopting the qualified `0.750 dB/dB` elevated-bass reserve law.</p>
+          </div>
+          <div class="release-status">accepted</div>
+        </article>
+        <article class="release">
+          <div class="version">v4.1.4.10</div>
+          <div>
+            <h3>Restrained low-mid width</h3>
+            <p>Reduced default `150 Hz-4 kHz` side product to `1.701x`; accepted after real-host qualification and device listening.</p>
+          </div>
+          <div class="release-status">current baseline</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <div class="section-head">
+        <div class="section-label">Evidence</div>
+        <div>
+          <h2>What the test suite has proven or closed.</h2>
+          <p>
+            The system now separates a listening candidate from a measurement question. Screens can close
+            an idea without producing a new EEL version.
+          </p>
+        </div>
+      </div>
+
+      <div class="matrix" role="region" aria-label="Measurement and decision matrix" tabindex="0">
+        <table>
+          <thead>
+            <tr>
+              <th>Investigation</th>
+              <th>Target</th>
+              <th>Result</th>
+              <th>Decision</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>STFT stage audit</td>
+              <td>Round-trip behavior and accepted suppression in the 2-6 kHz region</td>
+              <td>Measured delay and residual behavior; no mute or clipping failure</td>
+              <td><span class="no-go">No production retune</span></td>
+            </tr>
+            <tr>
+              <td>Width and mono audit</td>
+              <td>Accepted side gain, M/S leakage, and mono behavior</td>
+              <td>Side-only mono cancellation is expected; no automatic mono fault</td>
+              <td><span class="no-go">No low-bass taper</span></td>
+            </tr>
+            <tr>
+              <td>Low-mid width screen</td>
+              <td>`slider5` alternatives through 150 Hz-4 kHz</td>
+              <td>`126%` reduced affected-band side balance by `0.888 dB` in qualification</td>
+              <td><span class="ok">Promoted to `.10`</span></td>
+            </tr>
+            <tr>
+              <td>High-frequency width screen</td>
+              <td>`slider6` at `110%`, `105%`, and `100%`</td>
+              <td>`105%` only reduced high-band `S/M` by `0.318 dB` and caused the only terminal observation</td>
+              <td><span class="no-go">No `.11` candidate</span></td>
+            </tr>
+            <tr>
+              <td>Exciter sensitivity screen</td>
+              <td>`slider3` at `50%`, `35%`, and `0%`</td>
+              <td>Reduced and bypassed settings were effectively level-neutral on high-energy material</td>
+              <td><span class="no-go">No `.11` candidate</span></td>
+            </tr>
+            <tr>
+              <td>Sub Harmonics reserve mapping</td>
+              <td>Elevated bass control range from `+4` through `+12 dB`</td>
+              <td>`0.750 dB/dB` reserve slope survived range qualification where stronger recovery did not</td>
+              <td><span class="ok">Promoted to `.9`</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="harness">
+      <div class="section-head">
+        <div class="section-label">Engineering System</div>
+        <div>
+          <h2>The repo now contains a gated DSP lab.</h2>
+          <p>
+            The Pi engineering harness, real-JDSP capture tools, static validation, local material manifest,
+            and GitHub publication workflow are now part of how Axiom changes are made.
+          </p>
+        </div>
+      </div>
+
+      <div class="workflow">
+        <article class="card">
+          <h3>Controlled candidate flow</h3>
+          <ul class="rule-list">
+            <li><span class="check">1</span><span>Open an investigation anchored to the accepted baseline hash.</span></li>
+            <li><span class="check">2</span><span>Record a falsifiable hypothesis and a listening target before mutation.</span></li>
+            <li><span class="check">3</span><span>Create a versioned external worktree for sound-changing EEL work.</span></li>
+            <li><span class="check">4</span><span>Run static, unit, and serialized real-JDSP qualification gates.</span></li>
+            <li><span class="check">5</span><span>Require explicit human listening, publication, and merge approval.</span></li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Tooling built around Axiom</h3>
+          <ul class="rule-list">
+            <li><span class="check">A</span><span>Static EEL safety checks for reserved constants, STFT signatures, memory layout, and final output writes.</span></li>
+            <li><span class="check">B</span><span>Real-host render path through JDSP, Pulse routing, limiter policy, and repeatability qualification.</span></li>
+            <li><span class="check">C</span><span>Specialized screens for reserve law, width behavior, STFT behavior, and dynamic exciter sensitivity.</span></li>
+            <li><span class="check">D</span><span>Documentation records that explain why a candidate was accepted or why an idea was closed.</span></li>
+            <li><span class="check">E</span><span>GitHub PR workflow for draft publication, explicit approval, merge, and post-merge verification.</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="state">
+      <div class="section-head">
+        <div class="section-label">Current State</div>
+        <div>
+          <h2>What this means right now.</h2>
+          <p>
+            Axiom is not feature-starved. The current system is mature enough that new work should be
+            measurement-led and narrowly scoped, especially when touching accepted tonal character.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <article class="card">
+          <h3>Accepted baseline</h3>
+          <p>
+            Use <code>src/axiom_binaural_dsp_v4.1.4.10.eel</code> with JDSP master limiter
+            enabled at <code>-1.00 dB</code>, <code>60 ms</code> release, and <code>0 dB</code>
+            postgain. Enable JamesDSP crossfeed manually only when headphones need it.
+          </p>
+          <div class="tagrow">
+            <span class="tag good">baseline hash verified</span>
+            <span class="tag good">speaker-friendly core</span>
+            <span class="tag good">manual crossfeed</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Best next technical direction</h3>
+          <p>
+            If the exciter is revisited, build lower-level controlled material first. The high-energy
+            registered corpus showed the accepted exciter is effectively inactive there, so retuning it
+            from that evidence would be weak engineering.
+          </p>
+          <div class="tagrow">
+            <span class="tag watch">lower-level exciter probes</span>
+            <span class="tag">avoid feature creep</span>
+            <span class="tag">protect `.10` sound</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>
+        Generated as a repository-local overview of the Axiom DSP system. Primary references:
+        <a href="architecture.md">architecture.md</a>,
+        <a href="engineering-harness.md">engineering-harness.md</a>,
+        <a href="qualification-v4.1.4.10.md">qualification-v4.1.4.10.md</a>,
+        <a href="high-width-screen-v4.1.4.10.md">high-width-screen-v4.1.4.10.md</a>, and
+        <a href="exciter-sensitivity-screen-v4.1.4.10.md">exciter-sensitivity-screen-v4.1.4.10.md</a>.
+      </p>
+    </footer>
+  </main>
+</body>
+</html>

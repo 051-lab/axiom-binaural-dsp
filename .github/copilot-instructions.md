@@ -4,7 +4,7 @@
 ## Project Context
 
 Axiom Binaural DSP is a JamesDSP / JDSP4Linux EEL2 Liveprog enhancement core.
-The accepted reference artifact is `src/axiom_binaural_dsp_v4.1.4.8.eel`.
+The accepted reference artifact is `src/axiom_binaural_dsp_v4.1.4.10.eel`.
 Python and shell files in this repository provide offline analysis, real-host
 capture, and preset-loading support for the EEL artifact.
 
@@ -69,5 +69,5 @@ spl1 = out_R;
 - Run `scripts/validate_axiom_static.sh` and the Python unit suite before
   committing relevant changes.
 
-See `AGENTS.md`, `docs/architecture.md`, and
-`docs/qualification-v4.1.4.8.md` for active engineering context.
+See `AGENTS.md`, `docs/current-state.md`, `docs/architecture.md`, and
+`docs/qualification-v4.1.4.10.md` for active engineering context.

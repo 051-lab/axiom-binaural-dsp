@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.6.eel}"
+script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.10.eel}"
 liveprog_link="${HOME}/.config/jamesdsp/liveprog/axiom_current.eel"
 
 case "$(basename "$script_path")" in
@@ -22,10 +22,13 @@ case "$(basename "$script_path")" in
     default_preset_name="Axiom-v4.1.4.7-transparent-headroom"
     ;;
   axiom_binaural_dsp_v4.1.4.8.eel)
-    default_preset_name="Axiom-v4.1.4.8-accepted"
+    default_preset_name="Axiom-v4.1.4.8-previous-baseline"
     ;;
   axiom_binaural_dsp_v4.1.4.9.eel)
-    default_preset_name="Axiom-v4.1.4.9-accepted"
+    default_preset_name="Axiom-v4.1.4.9-previous-baseline"
+    ;;
+  axiom_binaural_dsp_v4.1.4.10.eel)
+    default_preset_name="Axiom-v4.1.4.10-accepted"
     ;;
   *)
     default_preset_name="Axiom-custom"
