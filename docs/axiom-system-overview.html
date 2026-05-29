@@ -1037,6 +1037,12 @@
               <td><span class="no-go">No `.11` candidate</span></td>
             </tr>
             <tr>
+              <td>Low-level exciter probe screen</td>
+              <td>Generated quiet air, dull, sibilance, and louder bright probes</td>
+              <td>Accepted `.10` lifted quiet air by `+1.590 dB` and backed off when loud; dull-control lift and reduced-vs-bypass ordering need investigation</td>
+              <td><span class="no-go">No `.11` candidate yet</span></td>
+            </tr>
+            <tr>
               <td>Sub Harmonics reserve mapping</td>
               <td>Elevated bass control range from `+4` through `+12 dB`</td>
               <td>`0.750 dB/dB` reserve slope survived range qualification where stronger recovery did not</td>
@@ -1107,6 +1113,10 @@
             </li>
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Run low-level exciter probe screen</span><span class="task-detail">Accepted `.10` shows useful quiet-air activation, with two diagnostic questions left open.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
               <span><span class="task-title">Wire new tooling into the Pi harness</span><span class="task-detail">Stage observability and low-level exciter probes are available through the controlled Axiom engineering command flow.</span></span>
             </li>
           </ul>
@@ -1121,7 +1131,7 @@
             </li>
             <li class="next">
               <span class="task-icon" aria-hidden="true">&#8594;</span>
-              <span><span class="task-title">Run low-level exciter probes</span><span class="task-detail">Use `/axiom-screen-exciter-probes` before making any `.11` exciter decision.</span></span>
+              <span><span class="task-title">Resolve exciter probe questions</span><span class="task-detail">Isolate dull-control air lift and sensitivity monotonicity before any `.11` exciter decision.</span></span>
             </li>
             <li class="next">
               <span class="task-icon" aria-hidden="true">&#8594;</span>
@@ -1205,14 +1215,15 @@
         <article class="card">
           <h3>Best next technical direction</h3>
           <p>
-            The lower-level exciter probe screen and first stage observability runner are now built.
-            Run those captures through real JDSP before proposing `.11`; the next candidate should come
-            from stage-level evidence, not from adding features to a baseline that is already accepted.
+            The low-level exciter probe screen is captured and the first stage observability runner is
+            built. Before proposing `.11`, isolate the exciter probe questions and capture the
+            bass/reserve stage taps; the next candidate should come from stage-level evidence, not
+            from adding features to a baseline that is already accepted.
           </p>
           <div class="tagrow">
-            <span class="tag good">exciter probes built</span>
+            <span class="tag good">exciter probes captured</span>
             <span class="tag good">stage taps built</span>
-            <span class="tag watch">capture evidence next</span>
+            <span class="tag watch">resolve probe questions</span>
             <span class="tag">avoid feature creep</span>
           </div>
         </article>
@@ -1231,7 +1242,8 @@
         <a href="stage-observability-plan.md">stage-observability-plan.md</a>,
         <a href="qualification-v4.1.4.10.md">qualification-v4.1.4.10.md</a>,
         <a href="high-width-screen-v4.1.4.10.md">high-width-screen-v4.1.4.10.md</a>, and
-        <a href="exciter-sensitivity-screen-v4.1.4.10.md">exciter-sensitivity-screen-v4.1.4.10.md</a>.
+        <a href="exciter-sensitivity-screen-v4.1.4.10.md">exciter-sensitivity-screen-v4.1.4.10.md</a>,
+        and <a href="exciter-probe-screen-v4.1.4.10.md">exciter-probe-screen-v4.1.4.10.md</a>.
       </p>
     </footer>
   </main>

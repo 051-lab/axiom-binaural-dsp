@@ -241,6 +241,14 @@ and reduced on louder bright content. Its report includes explicit activation
 and restraint checks so a future `.11` exciter decision can be based on probe
 behavior rather than raw band tables alone.
 
+The completed generated-probe screen confirmed that accepted `.10` adds
+measurable `12-18 kHz` air on quiet air-bearing material and backs off on
+louder bright material. It also flagged two diagnostic questions: the dull
+control still showed air-band lift, and reduced `35%` sensitivity measured
+slightly lower than bypass on the quiet air probe. That supports more
+diagnostic isolation, not an immediate exciter candidate; see
+`docs/exciter-probe-screen-v4.1.4.10.md`.
+
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 
 Example offline qualification commands:

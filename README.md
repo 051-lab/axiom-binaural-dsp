@@ -222,6 +222,12 @@ air lift, accepted/reduced/bypass depth order, dull-control restraint,
 high-level-control restraint, and sibilance-presence restraint. These checks
 flag investigation evidence; they do not create a candidate by themselves.
 
+The completed generated-probe screen found useful accepted air-band activation
+on quiet air-bearing material and correct backoff on louder bright material,
+but it also flagged dull-control air lift and non-monotonic reduced-vs-bypass
+air behavior. No `.11` exciter candidate is justified yet; see
+[`docs/exciter-probe-screen-v4.1.4.10.md`](docs/exciter-probe-screen-v4.1.4.10.md).
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
