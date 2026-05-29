@@ -4,33 +4,37 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.10.eel}"
 script_name="$(basename "$script_path")"
+script_family="$script_name"
+if [[ "$script_name" == axiom_binaural_dsp_v4.1.4.10_*.eel ]]; then
+  script_family="axiom_binaural_dsp_v4.1.4.10.eel"
+fi
 host_limiter_only=false
 host_crossfeed_only=false
 phase_preserving_bass=false
 failures=0
 
-if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.4.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
+if [ "$script_family" = "axiom_binaural_dsp_v4.1.4.4.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
   host_limiter_only=true
 fi
-if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
+if [ "$script_family" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
   host_crossfeed_only=true
 fi
-if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
-   [ "$script_name" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
+if [ "$script_family" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
   phase_preserving_bass=true
 fi
 

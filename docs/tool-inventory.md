@@ -53,6 +53,7 @@ the artifact is safe to commit.
 | Tool | Purpose | Touches JDSP | Repo writes | Output policy |
 | --- | --- | --- | --- | --- |
 | `scripts/run_jdsp_sub_slider_map.py` | Map accepted baseline behavior across Sub Harmonics Gain settings on registered material. | Yes | No | Temporary fixtures/reports stay outside repo. |
+| `scripts/run_jdsp_stage_observability.py` | Create same-render diagnostic tap fixtures for accepted `.10`, starting with bass/reserve path comparisons. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_reserve_law_screen.py` | Screen temporary elevated-bass reserve slopes before a candidate exists. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_reserve_range_qualification.py` | Range-qualify viable reserve slopes across elevated bass settings before candidate creation. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_stft_audit.py` | Create diagnostic STFT fixtures and measure pre-STFT versus processed paths in same-render captures. | Yes | No | Temporary fixtures/reports stay outside repo. |

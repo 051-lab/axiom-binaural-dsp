@@ -80,6 +80,7 @@ Follow `docs/axiom-roadmap.md`, continuing Phase 1 measurement foundation work.
 Use `docs/tool-inventory.md` before choosing measurement or harness commands.
 Use `docs/bass-host-limiter-investigation-plan.md` before any bass/reserve or
 host-limiter candidate work. Use `docs/stage-observability-plan.md` before
-implementing diagnostic stage taps. The next sound-changing candidate should
-wait until measurement
+expanding diagnostic stage taps. The first implemented tap runner is
+`scripts/run_jdsp_stage_observability.py` for bass/reserve measurements. The
+next sound-changing candidate should wait until measurement
 observability, corpus coverage, and Android validation foundations are stronger.

@@ -43,24 +43,25 @@ fixture, then split/analyze the capture after real-JDSP rendering.
 
 ## First Implementation Target
 
-Build one diagnostic runner before generalizing:
+The first diagnostic runner is implemented as:
 
 ```text
 scripts/run_jdsp_stage_observability.py
 ```
 
-Initial scope:
+Initial implemented scope:
 
 - Accepted `.10` input only.
 - Real-JDSP rendering through the accepted host limiter policy.
 - Generated deterministic probes first; registered material can be added after
   the probe path is stable.
-- Two fixture modes:
-  - `bass_reserve`: left channel = pre-bass spatial output or reserve-pre path,
-    right channel = post-bass or reserve-post path.
-  - `stft`: retain the existing pre-STFT versus STFT same-render pattern, then
-    migrate shared logic out of `run_jdsp_stft_audit.py` only if duplication
-    becomes harmful.
+- `bass_reserve` mode with two same-render pairings:
+  - `spatial_to_bass`: left channel = `spatial_out`, right channel =
+    `bass_post`.
+  - `reserve_pre_to_post`: left channel = `reserve_pre`, right channel =
+    `reserve_post`.
+- STFT diagnostics remain in `scripts/run_jdsp_stft_audit.py`. Migrate shared
+  logic only if duplication becomes harmful.
 
 Do not begin with every tap. The first useful bottleneck is the
 bass/reserve/host-limiter boundary, with STFT kept as the proven diagnostic

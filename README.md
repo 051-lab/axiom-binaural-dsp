@@ -277,6 +277,21 @@ fails. The map also flags repeatable whole-output RMS retreat beyond `1 dB`
 relative to default, since added peak reserve can trade playback loudness for
 bass-control headroom.
 
+To locate where bass weight and reserve pressure appear inside the accepted
+script, run the stage observability tap runner:
+
+```bash
+scripts/run_jdsp_stage_observability.py \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  /tmp/axiom-v410-stage-observability
+```
+
+The initial `bass_reserve` mode creates temporary same-render fixtures only. It
+compares `spatial_out` to `bass_post`, then `reserve_pre` to `reserve_post`,
+using generated deterministic probes through the accepted host limiter policy.
+The report is diagnostic evidence for the bass/host-limiter investigation; it
+does not create or justify a new listening candidate by itself.
+
 The following reserve-law commands reproduce the pre-`.9` investigation that
 identified `.8` output retreat. To screen whether `.8` is over-reserving output above its default without
 creating a DSP candidate, test reduced reserve slopes at practical `+8 dB`
@@ -373,6 +388,7 @@ axiom-binaural-dsp/
     run_jdsp_limiter_sweep.py         # Same-script host-limiter participation probe
     run_jdsp_accepted_stress.py        # Repeated accepted-setting dense-material baseline
     run_jdsp_sub_slider_map.py         # Real-music Sub Harmonics Gain range map
+    run_jdsp_stage_observability.py    # Same-render bass/reserve tap diagnostics
     run_jdsp_reserve_law_screen.py     # Experimental elevated-bass reserve-law screen
     run_jdsp_reserve_range_qualification.py # Reduced-reserve elevated-range qualifier
     run_jdsp_stft_audit.py         # Same-render STFT round-trip / suppression audit
@@ -394,6 +410,7 @@ axiom-binaural-dsp/
     test_run_jdsp_limiter_sweep.py
     test_run_jdsp_accepted_stress.py
     test_run_jdsp_sub_slider_map.py
+    test_run_jdsp_stage_observability.py
     test_run_jdsp_reserve_law_screen.py
     test_run_jdsp_reserve_range_qualification.py
     test_run_jdsp_stft_audit.py
