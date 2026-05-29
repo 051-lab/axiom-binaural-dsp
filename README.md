@@ -204,6 +204,21 @@ only `0.013 dB` or `0.008 dB` on average, respectively, and all captures stayed
 below the terminal observation boundary. Accepted `.10` remains unchanged; see
 [`docs/exciter-sensitivity-screen-v4.1.4.10.md`](docs/exciter-sensitivity-screen-v4.1.4.10.md).
 
+To exercise the same exciter on generated low-level material without relying on
+private music excerpts:
+
+```bash
+scripts/run_jdsp_exciter_probe_screen.py \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  /tmp/axiom-v410-exciter-probes
+```
+
+This creates quiet air-bearing, dull-control, sibilance-texture, and louder
+air-control probes, then renders accepted `50%`, reduced `35%`, and bypassed
+`0%` exciter sensitivity through real JDSP. The intent is to verify whether the
+accepted exciter adds measurable air only when low-level material gives it
+something useful to lift.
+
 For a low-level deterministic probe and its processed capture, measure the stimulus-conditioned host-path response:
 
 ```bash
@@ -398,6 +413,7 @@ axiom-binaural-dsp/
     run_jdsp_lowmid_width_candidate_qualification.py # Scoped low-mid candidate qualifier
     run_jdsp_high_width_screen.py # Restrained high-frequency width pre-candidate screen
     run_jdsp_exciter_sensitivity_screen.py # Dynamic exciter pre-candidate screen
+    run_jdsp_exciter_probe_screen.py # Generated low-level exciter probe screen
   tests/
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
@@ -420,6 +436,7 @@ axiom-binaural-dsp/
     test_run_jdsp_lowmid_width_candidate_qualification.py
     test_run_jdsp_high_width_screen.py
     test_run_jdsp_exciter_sensitivity_screen.py
+    test_run_jdsp_exciter_probe_screen.py
   docs/
     current-state.md         # Accepted baseline, host policy, and state boundary
     architecture.md           # Technical architecture documentation

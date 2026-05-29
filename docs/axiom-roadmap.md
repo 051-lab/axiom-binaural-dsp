@@ -45,7 +45,7 @@ Goal: make Axiom's existing stages more observable before proposing more DSP cha
 - Expand the implemented stage-tap fixture runner for pre/post bass, spatial width, exciter, STFT, and output reserve paths from `docs/stage-observability-plan.md`.
 - Follow `docs/bass-host-limiter-investigation-plan.md` for `Sub Harmonics Gain` and host-limiter evidence around `+4`, `+6`, `+8`, `+10`, and `+12 dB`.
 - Specify perceptual metrics to add first: loudness, true-peak proxy, crest/envelope behavior, Bark or ERB band energy, transient measures, and side/mid balance.
-- Create lower-level exciter probes because high-energy material does not meaningfully exercise the current exciter behavior.
+- Use `scripts/run_jdsp_exciter_probe_screen.py` for lower-level generated exciter probes because high-energy material does not meaningfully exercise the current exciter behavior.
 
 Done when:
 

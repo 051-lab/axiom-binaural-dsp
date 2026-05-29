@@ -231,6 +231,14 @@ candidate is justified from that evidence. A future exciter investigation
 should use lower-level material designed to exercise the loudness-contingent
 boost law.
 
+`scripts/run_jdsp_exciter_probe_screen.py` supplies that first controlled
+follow-up path. It generates deterministic quiet air-bearing, dull-control,
+sibilance-texture, and louder air-control probes, then renders accepted `50%`,
+reduced `35%`, and bypassed `0%` sensitivity through the same real-JDSP route.
+This screen asks whether the accepted exciter is material-aware in the intended
+direction: measurable on quiet air-bearing content, minimal on dull content,
+and reduced on louder bright content.
+
 `scripts/analyze_axiom_subharmonics.py` models the exact `.7` sub-harmonic branch independently of host capture: two cascaded 90 Hz low-pass filters, the fixed `drive = 3.5` saturator, two cascaded 90 Hz harmonic-path high-pass filters, `slider1` gain, and the terminal `-1.0 dB` reserve. It sweeps controlled tone levels and slider positions so high-gain headroom risks can be identified before proposing a sound-changing candidate. Because the exciter, STFT suppressor, host limiter, and program-material interactions are excluded, branch-local peaks are investigation triggers rather than final output claims.
 
 Example offline qualification commands:
