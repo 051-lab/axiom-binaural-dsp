@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -13,6 +14,58 @@ from typing import Any
 
 
 ROUTE_CLASSES = ("speaker_path", "wired_or_usb", "bluetooth")
+DEFAULT_RENDER_ENDPOINT_SOURCE = r'''
+using System;
+using System.Runtime.InteropServices;
+
+public enum EDataFlow { eRender = 0, eCapture = 1, eAll = 2 }
+public enum ERole { eConsole = 0, eMultimedia = 1, eCommunications = 2 }
+
+[ComImport]
+[Guid("A95664D2-9614-4F35-A746-DE8DB63617E6")]
+[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+public interface IMMDeviceEnumerator
+{
+    int EnumAudioEndpoints(EDataFlow dataFlow, uint dwStateMask, IntPtr ppDevices);
+    int GetDefaultAudioEndpoint(EDataFlow dataFlow, ERole role, out IMMDevice ppDevice);
+    int GetDevice(string pwstrId, out IMMDevice ppDevice);
+    int RegisterEndpointNotificationCallback(IntPtr pClient);
+    int UnregisterEndpointNotificationCallback(IntPtr pClient);
+}
+
+[ComImport]
+[Guid("D666063F-1587-4E43-81F1-B948E807363F")]
+[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+public interface IMMDevice
+{
+    int Activate(ref Guid iid, uint dwClsCtx, IntPtr pActivationParams, out IntPtr ppInterface);
+    int OpenPropertyStore(uint stgmAccess, out IntPtr ppProperties);
+    int GetId([MarshalAs(UnmanagedType.LPWStr)] out string ppstrId);
+    int GetState(out uint pdwState);
+}
+
+public static class AxiomCoreAudio
+{
+    public static string DefaultRenderEndpointJson()
+    {
+        var type = Type.GetTypeFromCLSID(new Guid("BCDE0395-E52F-467C-8E3D-C4579291692E"));
+        var enumerator = (IMMDeviceEnumerator)Activator.CreateInstance(type);
+        IMMDevice device;
+        int hr = enumerator.GetDefaultAudioEndpoint(EDataFlow.eRender, ERole.eMultimedia, out device);
+        if (hr != 0) Marshal.ThrowExceptionForHR(hr);
+        string id;
+        uint state;
+        device.GetId(out id);
+        device.GetState(out state);
+        return "{\"flow\":\"render\",\"role\":\"multimedia\",\"id\":\"" + JsonEscape(id) + "\",\"state\":" + state.ToString() + "}";
+    }
+
+    static string JsonEscape(string value)
+    {
+        return value.Replace("\\", "\\\\").Replace("\"", "\\\"");
+    }
+}
+'''
 
 
 class EndpointAuditError(RuntimeError):
@@ -56,6 +109,32 @@ def collect_endpoints(powershell: str = "powershell.exe") -> list[dict[str, Any]
     return load_json_array(result.stdout)
 
 
+def collect_default_render_endpoint(powershell: str = "powershell.exe") -> dict[str, Any]:
+    if shutil.which(powershell) is None:
+        raise EndpointAuditError(f"PowerShell executable not found: {powershell}")
+    command_text = (
+        "$ErrorActionPreference='Stop'; Add-Type -TypeDefinition @'\n"
+        + DEFAULT_RENDER_ENDPOINT_SOURCE
+        + "\n'@; [AxiomCoreAudio]::DefaultRenderEndpointJson()"
+    )
+    result = subprocess.run(
+        [powershell, "-NoProfile", "-Command", command_text],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip() or f"exit {result.returncode}"
+        raise EndpointAuditError(f"PowerShell default render endpoint audit failed: {detail}")
+    try:
+        data = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        raise EndpointAuditError(f"PowerShell default render endpoint JSON is invalid: {exc}") from exc
+    if not isinstance(data, dict):
+        raise EndpointAuditError("PowerShell default render endpoint JSON must be an object")
+    return data
+
+
 def endpoint_flow(instance_id: str) -> str:
     normalized = instance_id.upper()
     if r"{0.0.0." in normalized:
@@ -79,6 +158,11 @@ def route_hints(name: str, flow: str) -> list[str]:
     return hints
 
 
+def endpoint_coreaudio_id(instance_id: str) -> str:
+    match = re.search(r"(\{0\.0\.[01]\.[^}]+\}\.\{[^}]+\})", instance_id, re.IGNORECASE)
+    return match.group(1).lower() if match else ""
+
+
 def normalize_endpoint(item: dict[str, Any]) -> dict[str, Any]:
     name = str(item.get("FriendlyName", "")).strip()
     status = str(item.get("Status", "")).strip()
@@ -90,12 +174,37 @@ def normalize_endpoint(item: dict[str, Any]) -> dict[str, Any]:
         "status_ok": status.lower() == "ok",
         "flow": flow,
         "route_hints": route_hints(name, flow),
+        "coreaudio_id": endpoint_coreaudio_id(instance_id),
         "instance_id": instance_id,
     }
 
 
-def summarize(endpoints: list[dict[str, Any]]) -> dict[str, Any]:
+def normalize_default_render(
+    default_render: dict[str, Any] | None,
+    endpoints: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    if default_render is None:
+        return None
+    endpoint_id = str(default_render.get("id", "")).lower()
+    matched = next((endpoint for endpoint in endpoints if endpoint["coreaudio_id"] == endpoint_id), None)
+    return {
+        "id": str(default_render.get("id", "")),
+        "state": default_render.get("state"),
+        "matched_endpoint": matched["friendly_name"] if matched else "",
+        "matched_status": matched["status"] if matched else "",
+        "matched_route_hints": matched["route_hints"] if matched else [],
+    }
+
+
+def summarize(endpoints: list[dict[str, Any]], default_render: dict[str, Any] | None = None) -> dict[str, Any]:
     normalized = [normalize_endpoint(item) for item in endpoints]
+    default_render_endpoint = normalize_default_render(default_render, normalized)
+    for endpoint in normalized:
+        endpoint["is_default_render"] = bool(
+            default_render_endpoint
+            and endpoint["coreaudio_id"]
+            and endpoint["coreaudio_id"] == str(default_render_endpoint["id"]).lower()
+        )
     route_summary = {
         name: {
             "ok": [
@@ -118,6 +227,7 @@ def summarize(endpoints: list[dict[str, Any]]) -> dict[str, Any]:
         "endpoint_count": len(normalized),
         "render_endpoint_count": len(render_endpoints),
         "render_ok_count": sum(1 for endpoint in render_endpoints if endpoint["status_ok"]),
+        "default_render_endpoint": default_render_endpoint,
         "route_summary": route_summary,
         "endpoints": normalized,
     }
@@ -133,11 +243,29 @@ def markdown(report: dict[str, Any]) -> str:
         f"- Render endpoints: `{report['render_endpoint_count']}`",
         f"- Render endpoints with `OK` status: `{report['render_ok_count']}`",
         "",
-        "## Route Hints",
-        "",
-        "| Route class | OK endpoints | Not-OK endpoints |",
-        "| --- | --- | --- |",
     ]
+    default_render = report.get("default_render_endpoint")
+    if default_render:
+        hints = ", ".join(default_render["matched_route_hints"]) or "-"
+        lines.extend(
+            [
+                "## Default Render Endpoint",
+                "",
+                f"- Endpoint: `{default_render['matched_endpoint'] or 'unmatched'}`",
+                f"- Status: `{default_render['matched_status'] or 'unknown'}`",
+                f"- Route hints: `{hints}`",
+                f"- CoreAudio ID: `{default_render['id']}`",
+                "",
+            ]
+        )
+    lines.extend(
+        [
+            "## Route Hints",
+            "",
+            "| Route class | OK endpoints | Not-OK endpoints |",
+            "| --- | --- | --- |",
+        ]
+    )
     for route_class in ROUTE_CLASSES:
         item = report["route_summary"][route_class]
         ok = ", ".join(f"`{name}`" for name in item["ok"]) or "-"
@@ -148,14 +276,14 @@ def markdown(report: dict[str, Any]) -> str:
             "",
             "## Endpoints",
             "",
-            "| Flow | Status | Name | Route hints |",
-            "| --- | --- | --- | --- |",
+            "| Flow | Default | Status | Name | Route hints |",
+            "| --- | ---: | --- | --- | --- |",
         ]
     )
     for endpoint in report["endpoints"]:
         hints = ", ".join(endpoint["route_hints"]) or "-"
         lines.append(
-            f"| {endpoint['flow']} | {endpoint['status']} | `{endpoint['friendly_name']}` | {hints} |"
+            f"| {endpoint['flow']} | `{endpoint['is_default_render']}` | {endpoint['status']} | `{endpoint['friendly_name']}` | {hints} |"
         )
     lines.append("")
     return "\n".join(lines)
@@ -167,13 +295,21 @@ def main() -> int:
     parser.add_argument("--json", type=Path, help="write normalized endpoint report JSON")
     parser.add_argument("--markdown", type=Path, help="write normalized endpoint report Markdown")
     parser.add_argument("--powershell", default="powershell.exe")
+    parser.add_argument(
+        "--skip-default-render",
+        action="store_true",
+        help="skip CoreAudio default render endpoint lookup",
+    )
     args = parser.parse_args()
     try:
+        default_render = None
         if args.input_json:
             endpoints = load_json_array(args.input_json.read_text(encoding="utf-8"))
         else:
             endpoints = collect_endpoints(args.powershell)
-        report = summarize(endpoints)
+            if not args.skip_default_render:
+                default_render = collect_default_render_endpoint(args.powershell)
+        report = summarize(endpoints, default_render=default_render)
     except (OSError, EndpointAuditError) as exc:
         print(f"error: {exc}")
         return 1

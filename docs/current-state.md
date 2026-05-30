@@ -94,9 +94,9 @@ manifest validation are defined in `docs/corpus-material.md`. Android
 validation package generation and RootlessJamesDSP phone-side checks are defined
 in `docs/android-validation.md`. Local level-matched A/B listening packages are
 defined in `docs/ab-listening-packages.md`. Device and route coverage is
-defined in `docs/device-matrix.md`, Windows endpoint status snapshots are
-available through `scripts/audit_windows_audio_endpoints.py`, and local route
-checklists are defined in `docs/device-readiness-packages.md`. Candidate
+defined in `docs/device-matrix.md`, Windows endpoint/default-render snapshots
+are available through `scripts/audit_windows_audio_endpoints.py`, and local
+route checklists are defined in `docs/device-readiness-packages.md`. Candidate
 readiness is defined in `docs/candidate-readiness.md` and checks the accepted
 baseline hash, strict corpus metadata, and strict device matrix before any new
 sound-changing EEL file is justified. The local corpus currently strict-passes coverage. Android

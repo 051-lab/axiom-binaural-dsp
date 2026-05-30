@@ -159,7 +159,8 @@ scripts/validate_axiom_device_matrix.py \
 
 See [`docs/device-matrix.md`](docs/device-matrix.md).
 
-To snapshot Windows audio endpoint status from WSL before route checks:
+To snapshot Windows audio endpoint status and the active default render device
+from WSL before route checks:
 
 ```bash
 scripts/audit_windows_audio_endpoints.py \
@@ -167,8 +168,8 @@ scripts/audit_windows_audio_endpoints.py \
   --markdown /tmp/axiom-windows-audio-endpoints.md
 ```
 
-Endpoint status is only a setup hint; playback qualification still requires the
-device matrix checks.
+Endpoint/default-render status is only a setup hint; playback qualification
+still requires the device matrix checks.
 
 To build a local checklist package for the remaining physical route checks:
 

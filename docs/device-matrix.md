@@ -86,8 +86,9 @@ and `--strict-setup` before relying on device coverage for a candidate
 decision. `--strict-setup` fails any available route with incomplete script
 hash, host setting, route stability, or reboot persistence checks.
 
-To snapshot Windows endpoint status from WSL before deciding whether speaker,
-wired/USB, or Bluetooth routes are currently available:
+To snapshot Windows endpoint status and the active default render endpoint from
+WSL before deciding whether speaker, wired/USB, or Bluetooth routes are
+currently available:
 
 ```bash
 scripts/audit_windows_audio_endpoints.py \
@@ -95,8 +96,9 @@ scripts/audit_windows_audio_endpoints.py \
   --markdown /tmp/axiom-windows-audio-endpoints.md
 ```
 
-Endpoint status is only a setup hint. It does not replace playback, script
-hash, host setting, stability, or reboot/reconnect checks in the matrix.
+Endpoint/default-render status is only a setup hint. It does not replace
+playback, script hash, host setting, stability, or reboot/reconnect checks in
+the matrix.
 
 To create a local route-by-route checklist package from the current matrix:
 

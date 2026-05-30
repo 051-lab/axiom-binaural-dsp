@@ -43,9 +43,29 @@ class WindowsAudioEndpointAuditTests(unittest.TestCase):
         self.assertEqual(report["endpoint_count"], 4)
         self.assertEqual(report["render_endpoint_count"], 3)
         self.assertEqual(report["render_ok_count"], 1)
+        self.assertIsNone(report["default_render_endpoint"])
         self.assertEqual(report["route_summary"]["speaker_path"]["ok"], ["Speaker (Realtek(R) Audio)"])
         self.assertEqual(report["route_summary"]["wired_or_usb"]["not_ok"], ["Headphones (KT USB Audio)"])
         self.assertEqual(report["route_summary"]["bluetooth"]["not_ok"], ["Headset (EarPods)"])
+
+    def test_summary_matches_default_render_endpoint_to_route_hint(self) -> None:
+        report = endpoint_audit.summarize(
+            FIXTURE,
+            default_render={
+                "flow": "render",
+                "role": "multimedia",
+                "id": "{0.0.0.00000000}.{speaker}",
+                "state": 1,
+            },
+        )
+        self.assertEqual(
+            report["default_render_endpoint"]["matched_endpoint"],
+            "Speaker (Realtek(R) Audio)",
+        )
+        self.assertEqual(report["default_render_endpoint"]["matched_status"], "OK")
+        self.assertEqual(report["default_render_endpoint"]["matched_route_hints"], ["speaker_path"])
+        speaker = next(endpoint for endpoint in report["endpoints"] if endpoint["friendly_name"].startswith("Speaker"))
+        self.assertTrue(speaker["is_default_render"])
 
     def test_single_powershell_object_json_is_normalized_to_array(self) -> None:
         payload = json.dumps(FIXTURE[0])
