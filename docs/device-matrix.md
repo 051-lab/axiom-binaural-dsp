@@ -110,6 +110,21 @@ Endpoint/default-render status is only a setup hint. It does not replace
 playback, script hash, host setting, stability, or reboot/reconnect checks in
 the matrix.
 
+To run the local qualification helper after switching Windows to the target
+output:
+
+```bash
+scripts/qualify_windows_default_route.py \
+  wired_or_usb \
+  /tmp/axiom-wired-route-qualification
+```
+
+This command blocks if the default render endpoint is not the requested route
+class. If preflight passes, it restarts the managed JDSP route, hot-reloads the
+accepted `.10` script, verifies host policy, plays a probe, and writes a local
+qualification report. Human confirmation is still required before setting
+`route_stability_checked` or `reboot_persistence_checked` in the matrix.
+
 To create a local route-by-route checklist package from the current matrix:
 
 ```bash

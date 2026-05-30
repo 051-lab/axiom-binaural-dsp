@@ -175,6 +175,20 @@ to fail fast unless that route is active and healthy.
 Endpoint/default-render status is only a setup hint; playback qualification
 still requires the device matrix checks.
 
+To create a local route qualification package after switching the Windows
+default output to a wired/USB or Bluetooth endpoint:
+
+```bash
+scripts/qualify_windows_default_route.py \
+  wired_or_usb \
+  /tmp/axiom-wired-route-qualification
+```
+
+The command blocks before playback if Windows is still using another output.
+When it passes preflight, it restarts the managed JDSP route, hot-reloads the
+accepted `.10` script, verifies host settings, plays a short probe, and writes
+local evidence for user confirmation.
+
 To build a local checklist package for the remaining physical route checks:
 
 ```bash
@@ -536,6 +550,7 @@ axiom-binaural-dsp/
     build_android_validation_package.py # RootlessJamesDSP package/checklist builder
     build_axiom_ab_listening_package.py # Local level-matched A/B listening package builder
     build_device_readiness_package.py # Local physical-route checklist package builder
+    qualify_windows_default_route.py # Windows default-output route qualification helper
     analyze_axiom_crossfeed.py        # Crossfeed transfer audit
     analyze_axiom_bass_path.py        # Removed dry-phase reconstruction audit
     generate_jdsp_stimuli.py          # Deterministic stereo capture probes

@@ -54,7 +54,10 @@ def route_actions(device: dict[str, Any]) -> list[str]:
     if device_class == "primary_android" and (not available or missing_checks):
         actions.append("Use the Android validation package before accepting phone-side evidence.")
     if device_class == "wired_or_usb" and (not available or missing_checks):
+        actions.append("Run `scripts/qualify_windows_default_route.py wired_or_usb /tmp/axiom-wired-route-qualification` after switching Windows output to the wired/USB endpoint.")
         actions.append("Verify the OS reports the wired/USB endpoint as connected and healthy.")
+    if device_class == "bluetooth" and (not available or missing_checks):
+        actions.append("Run `scripts/qualify_windows_default_route.py bluetooth /tmp/axiom-bluetooth-route-qualification` after switching Windows output to the Bluetooth endpoint.")
     if not actions:
         actions.append(f"No setup actions remain for `{label}`.")
     return actions

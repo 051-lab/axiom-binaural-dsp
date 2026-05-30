@@ -25,6 +25,7 @@ the artifact is safe to commit.
 | `scripts/build_device_readiness_package.py` | Build a local route-by-route checklist package from the device matrix and accepted script hash. | No | No | Package output belongs outside repo because it may contain private device names. |
 | `scripts/evaluate_axiom_candidate_readiness.py` | Combine accepted-baseline hash, strict corpus metadata, and strict device-matrix checks before another sound-changing candidate. | No | No | JSON/Markdown reports belong outside repo unless summarized. |
 | `scripts/audit_windows_audio_endpoints.py` | Snapshot Windows audio endpoint status and the active default render endpoint from WSL, emit route-class hints, and optionally fail unless the default route matches speaker, wired/USB, or Bluetooth. | No | No | JSON/Markdown reports belong outside repo unless sanitized. |
+| `scripts/qualify_windows_default_route.py` | Build a local evidence report for a Windows default-output route by requiring the route class, restarting the managed JDSP route, hot-reloading accepted `.10`, verifying host settings, and playing a probe for user confirmation. | Yes | No | Output directory belongs outside repo because it may contain private device names. |
 | `scripts/axiom_team.sh` | Launch the isolated Pi engineering harness with Axiom-specific tools and policy. | Indirect | No | Harness state remains under local state roots. |
 
 ## Offline Analysis And Fixture Inputs
