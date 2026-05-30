@@ -681,6 +681,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/listening-records.md`](docs/listening-records.md) | Structured listening evidence format and local privacy rules |
 | [`docs/device-matrix.md`](docs/device-matrix.md) | Device/route coverage matrix and crossfeed qualification rule |
 | [`docs/candidate-readiness.md`](docs/candidate-readiness.md) | Baseline hash, strict corpus, and strict device readiness before new candidates |
+| [`docs/architecture-decision-v4.1.4.10.md`](docs/architecture-decision-v4.1.4.10.md) | Phase 4 decision record for `.10`, `.11`, and v5 direction |
 | [`docs/bass-host-limiter-investigation-plan.md`](docs/bass-host-limiter-investigation-plan.md) | Bass reserve and JDSP host-limiter investigation plan before any `.11` candidate |
 | [`docs/stage-observability-plan.md`](docs/stage-observability-plan.md) | Diagnostic stage-tap fixture and reporting plan |
 | [`docs/stage-observability-v4.1.4.10.md`](docs/stage-observability-v4.1.4.10.md) | `.10` bass/reserve stage-tap evidence and no-candidate decision |

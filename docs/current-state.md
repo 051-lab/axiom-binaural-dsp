@@ -77,7 +77,8 @@ source of truth.
 ## Next Roadmap Step
 
 Follow `docs/axiom-roadmap.md`, moving from Phase 3 device-readiness work into
-the Phase 4 architecture decision gate.
+the Phase 4 architecture decision gate. The current decision record is
+`docs/architecture-decision-v4.1.4.10.md`.
 Use `docs/tool-inventory.md` before choosing measurement or harness commands.
 Use `docs/bass-host-limiter-investigation-plan.md` before any elevated
 bass/reserve or host-limiter candidate work. The accepted `.10` bass/reserve
