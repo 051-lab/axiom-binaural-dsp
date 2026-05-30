@@ -159,6 +159,17 @@ scripts/validate_axiom_device_matrix.py \
 
 See [`docs/device-matrix.md`](docs/device-matrix.md).
 
+To snapshot Windows audio endpoint status from WSL before route checks:
+
+```bash
+scripts/audit_windows_audio_endpoints.py \
+  --json /tmp/axiom-windows-audio-endpoints.json \
+  --markdown /tmp/axiom-windows-audio-endpoints.md
+```
+
+Endpoint status is only a setup hint; playback qualification still requires the
+device matrix checks.
+
 To build a local checklist package for the remaining physical route checks:
 
 ```bash
@@ -530,6 +541,7 @@ axiom-binaural-dsp/
     validate_axiom_material_manifest.py # Corpus manifest metadata and coverage validator
     validate_axiom_listening_record.py # Structured listening-record validator
     validate_axiom_device_matrix.py # Local device/route matrix validator
+    audit_windows_audio_endpoints.py # Windows endpoint status snapshot from WSL
     evaluate_axiom_candidate_readiness.py # Evidence-readiness gate before new candidates
     run_jdsp_ab_testbench.py          # End-to-end host A/B suite
     run_jdsp_program_corpus.py        # Default-control corpus margin report

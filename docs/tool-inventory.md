@@ -1,6 +1,6 @@
 # Axiom Tool Inventory
 
-Last updated: 2026-05-29
+Last updated: 2026-05-30
 
 This inventory maps the repository's operational tools so humans and agents can
 choose the right command without guessing. It is descriptive, not an execution
@@ -24,6 +24,7 @@ the artifact is safe to commit.
 | `scripts/build_axiom_ab_listening_package.py` | Build a local blinded A/B listening package with loudness-proxy gain recommendations from matched WAV folders. | No | No | Package output belongs outside repo because it may contain private captures. |
 | `scripts/build_device_readiness_package.py` | Build a local route-by-route checklist package from the device matrix and accepted script hash. | No | No | Package output belongs outside repo because it may contain private device names. |
 | `scripts/evaluate_axiom_candidate_readiness.py` | Combine accepted-baseline hash, strict corpus metadata, and strict device-matrix checks before another sound-changing candidate. | No | No | JSON/Markdown reports belong outside repo unless summarized. |
+| `scripts/audit_windows_audio_endpoints.py` | Snapshot Windows audio endpoint status from WSL and emit route-class hints for speaker, wired/USB, and Bluetooth readiness. | No | No | JSON/Markdown reports belong outside repo unless sanitized. |
 | `scripts/axiom_team.sh` | Launch the isolated Pi engineering harness with Axiom-specific tools and policy. | Indirect | No | Harness state remains under local state roots. |
 
 ## Offline Analysis And Fixture Inputs
