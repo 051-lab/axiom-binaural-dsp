@@ -1189,15 +1189,15 @@
         </article>
 
         <article class="card task-card">
-          <h3>Open evidence work</h3>
+          <h3>Evidence status</h3>
           <ul class="task-list">
-            <li class="next">
-              <span class="task-icon" aria-hidden="true">&#8594;</span>
-              <span><span class="task-title">Complete device readiness checks</span><span class="task-detail">Android, WSL lab, and speaker routes are locally complete; wired/USB and Bluetooth still need available endpoints plus script hash, host settings, stability, and reboot or reconnect evidence.</span></span>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Complete device readiness checks</span><span class="task-detail">Android, WSL lab, speaker, wired/USB, and Bluetooth routes are locally complete; wired/USB and Bluetooth are recorded as user-attested physical route evidence.</span></span>
             </li>
-            <li class="next">
-              <span class="task-icon" aria-hidden="true">&#8594;</span>
-              <span><span class="task-title">Pass the candidate-readiness gate</span><span class="task-detail">Baseline hash and corpus strict checks pass; device strict coverage/setup is the remaining blocker.</span></span>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Pass the candidate-readiness gate</span><span class="task-detail">Baseline hash, corpus strict checks, and device strict coverage/setup now pass locally.</span></span>
             </li>
             <li class="next">
               <span class="task-icon" aria-hidden="true">&#8594;</span>
@@ -1280,7 +1280,8 @@
             The low-level exciter probe questions are resolved and bass/reserve stage taps are captured.
             The perceptual metrics layer is built and wired into the primary reports, listening records
             are structured, Android validation packaging is defined, and the local corpus strict-passes
-            coverage. Before proposing `.11`, complete device readiness and pass the candidate-readiness gate.
+            coverage. Device readiness and candidate readiness now pass locally, so the next DSP step
+            must start from a scoped hypothesis rather than another exploratory tweak.
           </p>
           <div class="tagrow">
             <span class="tag good">exciter probes resolved</span>
@@ -1296,7 +1297,8 @@
             <span class="tag good">strict setup enforced</span>
             <span class="tag good">readiness package added</span>
             <span class="tag good">corpus strict-ready</span>
-            <span class="tag watch">device readiness next</span>
+            <span class="tag good">device readiness passed</span>
+            <span class="tag good">candidate readiness passed</span>
             <span class="tag">avoid feature creep</span>
           </div>
         </article>

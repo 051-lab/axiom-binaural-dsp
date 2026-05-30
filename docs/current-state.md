@@ -76,7 +76,8 @@ source of truth.
 
 ## Next Roadmap Step
 
-Follow `docs/axiom-roadmap.md`, continuing Phase 3 device-readiness work.
+Follow `docs/axiom-roadmap.md`, moving from Phase 3 device-readiness work into
+the Phase 4 architecture decision gate.
 Use `docs/tool-inventory.md` before choosing measurement or harness commands.
 Use `docs/bass-host-limiter-investigation-plan.md` before any elevated
 bass/reserve or host-limiter candidate work. The accepted `.10` bass/reserve
@@ -102,7 +103,9 @@ JDSP preset saves because the host currently rewrites that setting to `0`.
 Candidate readiness is defined in `docs/candidate-readiness.md` and checks the
 accepted baseline hash, strict corpus metadata, and strict device matrix before
 any new sound-changing EEL file is justified. The local corpus currently
-strict-passes coverage. Android, WSL lab, and speaker route setup evidence are
-complete locally; Bluetooth and wired/USB availability remain the
-candidate-readiness blockers. The next sound-changing candidate should wait
-until device strict coverage and setup evidence pass.
+strict-passes coverage. Android, WSL lab, speaker, wired/USB, and Bluetooth
+route setup evidence are complete locally; wired/USB and Bluetooth are recorded
+as user-attested physical route evidence rather than automated endpoint-capture
+evidence. The candidate-readiness gate currently passes, so the next
+sound-changing candidate requires a scoped hypothesis, measured target, edit
+boundary, and listening target.
