@@ -76,7 +76,7 @@ source of truth.
 
 ## Next Roadmap Step
 
-Follow `docs/axiom-roadmap.md`, continuing Phase 1 measurement foundation work.
+Follow `docs/axiom-roadmap.md`, continuing Phase 3 device-readiness work.
 Use `docs/tool-inventory.md` before choosing measurement or harness commands.
 Use `docs/bass-host-limiter-investigation-plan.md` before any elevated
 bass/reserve or host-limiter candidate work. The accepted `.10` bass/reserve
@@ -97,5 +97,6 @@ defined in `docs/ab-listening-packages.md`. Device and route coverage is
 defined in `docs/device-matrix.md`. Candidate readiness is defined in
 `docs/candidate-readiness.md` and checks the accepted baseline hash, strict
 corpus metadata, and strict device matrix before any new sound-changing EEL
-file is justified. The next sound-changing candidate should wait until the
-corpus is populated with broader material coverage.
+file is justified. The local corpus currently strict-passes coverage; the next
+sound-changing candidate should wait until device strict coverage and setup
+evidence pass.
