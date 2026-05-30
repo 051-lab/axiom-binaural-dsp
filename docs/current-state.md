@@ -96,11 +96,13 @@ in `docs/android-validation.md`. Local level-matched A/B listening packages are
 defined in `docs/ab-listening-packages.md`. Device and route coverage is
 defined in `docs/device-matrix.md`, Windows endpoint/default-render snapshots
 are available through `scripts/audit_windows_audio_endpoints.py`, and local
-route checklists are defined in `docs/device-readiness-packages.md`. Candidate
-readiness is defined in `docs/candidate-readiness.md` and checks the accepted
-baseline hash, strict corpus metadata, and strict device matrix before any new
-sound-changing EEL file is justified. The local corpus currently strict-passes coverage. Android
-and WSL lab route setup evidence are complete locally; speaker, Bluetooth, and
-wired/USB evidence remain the candidate-readiness blockers. The next
-sound-changing candidate should wait until device strict coverage and setup
-evidence pass.
+route checklists are defined in `docs/device-readiness-packages.md`.
+`scripts/hot_reload_liveprog.sh` restores `master_limthreshold=-1.0` after
+JDSP preset saves because the host currently rewrites that setting to `0`.
+Candidate readiness is defined in `docs/candidate-readiness.md` and checks the
+accepted baseline hash, strict corpus metadata, and strict device matrix before
+any new sound-changing EEL file is justified. The local corpus currently
+strict-passes coverage. Android and WSL lab route setup evidence are complete
+locally; speaker playback/reconnect, Bluetooth, and wired/USB evidence remain
+the candidate-readiness blockers. The next sound-changing candidate should wait
+until device strict coverage and setup evidence pass.

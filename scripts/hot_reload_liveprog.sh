@@ -35,6 +35,7 @@ case "$(basename "$script_path")" in
     ;;
 esac
 preset_name="${2:-$default_preset_name}"
+qualified_master_limthreshold="-1.0"
 
 if ! command -v jamesdsp >/dev/null 2>&1; then
   echo "error: jamesdsp CLI not found in PATH" >&2
@@ -101,7 +102,7 @@ for setting in \
   'ddc_enable false' \
   'stereowide_enable false' \
   'reverb_enable false' \
-  'master_limthreshold -1.0' \
+  "master_limthreshold ${qualified_master_limthreshold}" \
   'master_limrelease 60' \
   'master_postgain 0'; do
   set_config "${setting%% *}" "${setting#* }"
@@ -118,6 +119,18 @@ if ! jamesdsp --list-presets | grep -Fxq "$preset_name"; then
   echo "error: JDSP did not save preset: $preset_name" >&2
   exit 1
 fi
+
+# JDSP4Linux currently rewrites master_limthreshold to 0 during --save-preset.
+# Restore the live value and correct the saved preset so reloads keep policy.
+preset_path="${HOME}/.config/jamesdsp/presets/${preset_name}.conf"
+if [ -f "$preset_path" ]; then
+  if grep -q '^master_limthreshold=' "$preset_path"; then
+    sed -i "s/^master_limthreshold=.*/master_limthreshold=${qualified_master_limthreshold}/" "$preset_path"
+  else
+    printf 'master_limthreshold=%s\n' "$qualified_master_limthreshold" >> "$preset_path"
+  fi
+fi
+force_config master_limthreshold "$qualified_master_limthreshold"
 
 echo "Liveprog hot-reloaded with isolated JDSP baseline:"
 for key in \
