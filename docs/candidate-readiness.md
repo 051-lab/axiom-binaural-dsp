@@ -29,7 +29,8 @@ The report is `READY` only when:
 
 - the accepted baseline hash matches policy;
 - the material manifest passes strict metadata and full taxonomy coverage;
-- the device matrix passes strict route coverage with complete setup checks.
+- the device matrix passes strict route coverage with complete setup checks for
+  every available route.
 
 Any failure or warning blocks candidate creation. This is intentional. A new
 DSP candidate should come from a clean evidence foundation, not from momentum.

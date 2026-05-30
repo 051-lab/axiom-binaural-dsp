@@ -76,12 +76,15 @@ The strict matrix expects at least one available entry for:
 scripts/validate_axiom_device_matrix.py \
   ~/.local/state/axiom-engineering/device-matrix.json \
   --strict-coverage \
+  --strict-setup \
   --json /tmp/axiom-device-matrix-validation.json \
   --markdown /tmp/axiom-device-matrix-validation.md
 ```
 
 Use non-strict validation while building the matrix. Use `--strict-coverage`
-before relying on device coverage for a candidate decision.
+and `--strict-setup` before relying on device coverage for a candidate
+decision. `--strict-setup` fails any available route with incomplete script
+hash, host setting, route stability, or reboot persistence checks.
 
 ## Crossfeed Rule
 

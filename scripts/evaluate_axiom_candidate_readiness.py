@@ -119,7 +119,11 @@ def device_check(path: Path) -> dict[str, Any]:
         }
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
-        report = device_matrix.validate_matrix(data, strict_coverage=True)
+        report = device_matrix.validate_matrix(
+            data,
+            strict_coverage=True,
+            strict_setup=True,
+        )
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         return {
             "name": "device_matrix_strict",

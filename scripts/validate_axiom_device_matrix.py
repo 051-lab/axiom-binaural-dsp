@@ -30,7 +30,11 @@ def is_non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and bool(value.strip())
 
 
-def validate_matrix(data: Any, strict_coverage: bool = False) -> dict[str, Any]:
+def validate_matrix(
+    data: Any,
+    strict_coverage: bool = False,
+    strict_setup: bool = False,
+) -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
     coverage = {name: 0 for name in DEVICE_CLASSES}
@@ -86,6 +90,12 @@ def validate_matrix(data: Any, strict_coverage: bool = False) -> dict[str, Any]:
             for key in REQUIRED_CHECKS:
                 if not isinstance(checks.get(key), bool):
                     errors.append(f"{prefix}.checks.{key} must be boolean")
+            if strict_setup and device.get("available") is True:
+                incomplete = [key for key in REQUIRED_CHECKS if checks.get(key) is not True]
+                if incomplete:
+                    errors.append(
+                        f"{prefix} is available but has incomplete checks: {', '.join(incomplete)}"
+                    )
             if device_class == "primary_android" and device.get("available") is True:
                 if checks.get("reboot_persistence_checked") is not True:
                     warnings.append(f"{prefix} is primary Android but reboot persistence has not been checked")
@@ -141,6 +151,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("matrix", type=Path)
     parser.add_argument("--strict-coverage", action="store_true")
+    parser.add_argument(
+        "--strict-setup",
+        action="store_true",
+        help="fail if available routes have incomplete setup checks",
+    )
     parser.add_argument("--json", type=Path)
     parser.add_argument("--markdown", type=Path)
     args = parser.parse_args()
@@ -150,7 +165,11 @@ def main() -> int:
     except (OSError, json.JSONDecodeError) as exc:
         print(f"error: cannot read device matrix: {exc}")
         return 1
-    report = validate_matrix(data, strict_coverage=args.strict_coverage)
+    report = validate_matrix(
+        data,
+        strict_coverage=args.strict_coverage,
+        strict_setup=args.strict_setup,
+    )
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

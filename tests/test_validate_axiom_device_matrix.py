@@ -55,6 +55,30 @@ class DeviceMatrixValidationTests(unittest.TestCase):
         self.assertEqual(loose["status"], "pass_with_warnings")
         self.assertEqual(strict["status"], "fail")
 
+    def test_strict_setup_requires_available_device_checks(self) -> None:
+        item = device("speakers", "speaker_path")
+        item["qualification_allowed"] = False
+        item["checks"]["route_stability_checked"] = False
+        data = {
+            "schema_version": 1,
+            "devices": [
+                device("phone", "primary_android"),
+                item,
+                device("dac", "wired_or_usb"),
+                device("bt", "bluetooth"),
+                device("wsl", "wsl_jdsp_lab"),
+            ],
+        }
+        loose = device_matrix.validate_matrix(data, strict_coverage=True)
+        strict = device_matrix.validate_matrix(
+            data,
+            strict_coverage=True,
+            strict_setup=True,
+        )
+        self.assertEqual(loose["status"], "pass")
+        self.assertEqual(strict["status"], "fail")
+        self.assertTrue(any("incomplete checks" in error for error in strict["errors"]))
+
     def test_qualification_crossfeed_must_be_off(self) -> None:
         item = device("phone")
         item["crossfeed_policy"] = "manual_compatibility_only"

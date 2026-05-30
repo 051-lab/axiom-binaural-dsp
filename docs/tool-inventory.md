@@ -39,7 +39,7 @@ the artifact is safe to commit.
 | `scripts/analyze_audio_perceptual_metrics.py` | Report offline loudness proxy, true-peak proxy, transient, ERB-like band, and M/S metrics for a stereo WAV. | No | No | JSON/Markdown reports outside repo unless summarized. |
 | `scripts/validate_axiom_material_manifest.py` | Validate local-material manifest compatibility plus material-class and failure-mode coverage metadata. | No | No | Full manifests stay local unless sanitized. |
 | `scripts/validate_axiom_listening_record.py` | Validate structured human listening records for required version, device, host, slider, material, and observation fields. | No | No | Full records stay local unless sanitized. |
-| `scripts/validate_axiom_device_matrix.py` | Validate local device/route coverage, qualification eligibility, setup checks, and crossfeed policy. | No | No | Full matrices stay local unless sanitized. |
+| `scripts/validate_axiom_device_matrix.py` | Validate local device/route coverage, qualification eligibility, setup checks, and crossfeed policy. Use `--strict-setup` before candidate readiness. | No | No | Full matrices stay local unless sanitized. |
 | `scripts/compare_jdsp_captures.py` | Compare reference and candidate processed WAV captures for level, alignment, clipping, and difference metrics. | No | No | JSON/Markdown reports outside repo unless summarized. |
 | `scripts/qualify_jdsp_repeatability.py` | Check repeated WAV captures for silence, clipping, alignment, metric spread, and correlation confidence. | No | No | JSON/Markdown reports outside repo unless summarized. |
 

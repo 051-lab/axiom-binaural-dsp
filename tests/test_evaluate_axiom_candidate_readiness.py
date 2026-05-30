@@ -157,6 +157,23 @@ class CandidateReadinessTests(unittest.TestCase):
         self.assertEqual(report["status"], "blocked")
         self.assertTrue(any("corpus_manifest_strict" in blocker for blocker in report["blockers"]))
 
+    def test_blocked_when_available_device_has_incomplete_setup(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            accepted = root / "accepted.eel"
+            accepted.write_text("desc: accepted\n", encoding="ascii")
+            policy = write_policy(root, readiness.sha256(accepted))
+            material = root / "material.json"
+            material.write_text(json.dumps(material_manifest_data(root)), encoding="utf-8")
+            matrix_data = full_device_matrix()
+            matrix_data["devices"][1]["qualification_allowed"] = False
+            matrix_data["devices"][1]["checks"]["route_stability_checked"] = False
+            matrix = root / "device-matrix.json"
+            matrix.write_text(json.dumps(matrix_data), encoding="utf-8")
+            report = readiness.evaluate_readiness(root, policy, material, matrix)
+        self.assertEqual(report["status"], "blocked")
+        self.assertTrue(any("device_matrix_strict" in blocker for blocker in report["blockers"]))
+
     def test_cli_writes_blocked_reports(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -153,7 +153,8 @@ To validate local device and route coverage:
 ```bash
 scripts/validate_axiom_device_matrix.py \
   ~/.local/state/axiom-engineering/device-matrix.json \
-  --strict-coverage
+  --strict-coverage \
+  --strict-setup
 ```
 
 See [`docs/device-matrix.md`](docs/device-matrix.md).
@@ -167,9 +168,9 @@ scripts/evaluate_axiom_candidate_readiness.py \
   --markdown /tmp/axiom-candidate-readiness.md
 ```
 
-This gate verifies the accepted baseline hash, strict corpus metadata, and
-strict device-matrix coverage. A blocked report means fix evidence inputs
-before creating a new EEL candidate. See
+This gate verifies the accepted baseline hash, strict corpus metadata, strict
+device-matrix coverage, and complete setup checks for available routes. A
+blocked report means fix evidence inputs before creating a new EEL candidate. See
 [`docs/candidate-readiness.md`](docs/candidate-readiness.md).
 
 The accepted `.9` baseline was qualified against `.8` with four CC0 high-energy music excerpts outside the repository. With a persistent JDSP limiter threshold of `-1.00 dB`, all four `.9` captures remained unclipped; dense electronic material remained close enough to the ceiling to be recorded as existing limiter involvement rather than hidden by further EEL attenuation.
