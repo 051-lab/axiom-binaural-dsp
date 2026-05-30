@@ -233,6 +233,29 @@ def summarize(endpoints: list[dict[str, Any]], default_render: dict[str, Any] | 
     }
 
 
+def evaluate_required_default_route(report: dict[str, Any], route_class: str) -> dict[str, Any]:
+    errors: list[str] = []
+    default_render = report.get("default_render_endpoint")
+    if default_render is None:
+        errors.append("default render endpoint was not collected")
+    else:
+        endpoint = str(default_render.get("matched_endpoint", ""))
+        status = str(default_render.get("matched_status", ""))
+        hints = default_render.get("matched_route_hints", [])
+        if not endpoint:
+            errors.append("default render endpoint did not match any audited endpoint")
+        if status.lower() != "ok":
+            errors.append(f"default render endpoint is not OK: {status or 'unknown'}")
+        if route_class not in hints:
+            joined = ", ".join(str(hint) for hint in hints) or "<none>"
+            errors.append(f"default render endpoint is not `{route_class}`; route hints: {joined}")
+    return {
+        "route_class": route_class,
+        "status": "fail" if errors else "pass",
+        "errors": errors,
+    }
+
+
 def markdown(report: dict[str, Any]) -> str:
     lines = [
         "# Axiom Windows Audio Endpoint Audit",
@@ -258,6 +281,20 @@ def markdown(report: dict[str, Any]) -> str:
                 "",
             ]
         )
+    required = report.get("required_default_route")
+    if required:
+        lines.extend(
+            [
+                "## Required Default Route",
+                "",
+                f"- Route class: `{required['route_class']}`",
+                f"- Status: `{required['status']}`",
+                "",
+            ]
+        )
+        if required["errors"]:
+            lines.extend(f"- {error}" for error in required["errors"])
+            lines.append("")
     lines.extend(
         [
             "## Route Hints",
@@ -300,6 +337,11 @@ def main() -> int:
         action="store_true",
         help="skip CoreAudio default render endpoint lookup",
     )
+    parser.add_argument(
+        "--require-default-route",
+        choices=ROUTE_CLASSES,
+        help="fail unless the active default render endpoint is OK and matches this route class",
+    )
     args = parser.parse_args()
     try:
         default_render = None
@@ -310,6 +352,11 @@ def main() -> int:
             if not args.skip_default_render:
                 default_render = collect_default_render_endpoint(args.powershell)
         report = summarize(endpoints, default_render=default_render)
+        if args.require_default_route:
+            report["required_default_route"] = evaluate_required_default_route(
+                report,
+                args.require_default_route,
+            )
     except (OSError, EndpointAuditError) as exc:
         print(f"error: {exc}")
         return 1
@@ -326,7 +373,8 @@ def main() -> int:
             print(args.json)
         if args.markdown:
             print(args.markdown)
-    return 0
+    required = report.get("required_default_route")
+    return 1 if required and required["status"] == "fail" else 0
 
 
 if __name__ == "__main__":

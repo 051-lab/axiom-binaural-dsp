@@ -168,6 +168,10 @@ scripts/audit_windows_audio_endpoints.py \
   --markdown /tmp/axiom-windows-audio-endpoints.md
 ```
 
+Add `--require-default-route wired_or_usb` or
+`--require-default-route bluetooth` after switching the Windows default output
+to fail fast unless that route is active and healthy.
+
 Endpoint/default-render status is only a setup hint; playback qualification
 still requires the device matrix checks.
 

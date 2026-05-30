@@ -67,6 +67,38 @@ class WindowsAudioEndpointAuditTests(unittest.TestCase):
         speaker = next(endpoint for endpoint in report["endpoints"] if endpoint["friendly_name"].startswith("Speaker"))
         self.assertTrue(speaker["is_default_render"])
 
+    def test_required_default_route_passes_for_matching_ok_endpoint(self) -> None:
+        report = endpoint_audit.summarize(
+            FIXTURE,
+            default_render={
+                "flow": "render",
+                "role": "multimedia",
+                "id": "{0.0.0.00000000}.{speaker}",
+                "state": 1,
+            },
+        )
+        requirement = endpoint_audit.evaluate_required_default_route(report, "speaker_path")
+        self.assertEqual(requirement["status"], "pass")
+        self.assertEqual(requirement["errors"], [])
+
+    def test_required_default_route_fails_for_wrong_route_or_unknown_endpoint(self) -> None:
+        report = endpoint_audit.summarize(
+            FIXTURE,
+            default_render={
+                "flow": "render",
+                "role": "multimedia",
+                "id": "{0.0.0.00000000}.{usb}",
+                "state": 1,
+            },
+        )
+        requirement = endpoint_audit.evaluate_required_default_route(report, "wired_or_usb")
+        self.assertEqual(requirement["status"], "fail")
+        self.assertIn("default render endpoint is not OK: Unknown", requirement["errors"])
+
+        wrong_route = endpoint_audit.evaluate_required_default_route(report, "bluetooth")
+        self.assertEqual(wrong_route["status"], "fail")
+        self.assertTrue(any("is not `bluetooth`" in error for error in wrong_route["errors"]))
+
     def test_single_powershell_object_json_is_normalized_to_array(self) -> None:
         payload = json.dumps(FIXTURE[0])
         endpoints = endpoint_audit.load_json_array(payload)
@@ -101,6 +133,32 @@ class WindowsAudioEndpointAuditTests(unittest.TestCase):
             report = json.loads(report_json.read_text(encoding="utf-8"))
             self.assertEqual(report["route_summary"]["speaker_path"]["ok"], ["Speaker (Realtek(R) Audio)"])
             self.assertIn("Axiom Windows Audio Endpoint Audit", report_md.read_text(encoding="utf-8"))
+
+    def test_cli_requirement_fails_when_default_render_was_not_collected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            input_json = root / "endpoints.json"
+            report_json = root / "report.json"
+            input_json.write_text(json.dumps(FIXTURE), encoding="utf-8")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(Path(__file__).resolve().parents[1] / "scripts" / "audit_windows_audio_endpoints.py"),
+                    "--input-json",
+                    str(input_json),
+                    "--json",
+                    str(report_json),
+                    "--require-default-route",
+                    "wired_or_usb",
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 1)
+            report = json.loads(report_json.read_text(encoding="utf-8"))
+            self.assertEqual(report["required_default_route"]["status"], "fail")
+            self.assertIn("default render endpoint was not collected", report["required_default_route"]["errors"])
 
 
 if __name__ == "__main__":

@@ -96,6 +96,16 @@ scripts/audit_windows_audio_endpoints.py \
   --markdown /tmp/axiom-windows-audio-endpoints.md
 ```
 
+To fail fast unless Windows is actively using a route class as the default
+render endpoint:
+
+```bash
+scripts/audit_windows_audio_endpoints.py \
+  --require-default-route wired_or_usb \
+  --json /tmp/axiom-windows-wired-default.json \
+  --markdown /tmp/axiom-windows-wired-default.md
+```
+
 Endpoint/default-render status is only a setup hint. It does not replace
 playback, script hash, host setting, stability, or reboot/reconnect checks in
 the matrix.
