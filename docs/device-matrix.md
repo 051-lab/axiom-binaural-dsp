@@ -86,6 +86,17 @@ and `--strict-setup` before relying on device coverage for a candidate
 decision. `--strict-setup` fails any available route with incomplete script
 hash, host setting, route stability, or reboot persistence checks.
 
+To create a local route-by-route checklist package from the current matrix:
+
+```bash
+scripts/build_device_readiness_package.py \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  /tmp/axiom-device-readiness \
+  --device-matrix ~/.local/state/axiom-engineering/device-matrix.json
+```
+
+See `docs/device-readiness-packages.md`.
+
 ## Crossfeed Rule
 
 Qualification routes must use `off_for_qualification` or `not_applicable`.

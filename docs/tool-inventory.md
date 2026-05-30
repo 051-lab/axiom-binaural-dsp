@@ -22,6 +22,7 @@ the artifact is safe to commit.
 | `scripts/hot_reload_liveprog.sh` | Load a selected EEL script into JDSP Liveprog, normalize host settings, update `axiom_current.eel`, and save a preset. Defaults to accepted `.10`. | Yes | No | Updates JDSP config and user Liveprog symlink outside repo. |
 | `scripts/build_android_validation_package.py` | Build a local RootlessJamesDSP validation package with scripts, SHA-256 hashes, checklist, and listening template. | No | No | Package output belongs outside repo unless sanitized for release. |
 | `scripts/build_axiom_ab_listening_package.py` | Build a local blinded A/B listening package with loudness-proxy gain recommendations from matched WAV folders. | No | No | Package output belongs outside repo because it may contain private captures. |
+| `scripts/build_device_readiness_package.py` | Build a local route-by-route checklist package from the device matrix and accepted script hash. | No | No | Package output belongs outside repo because it may contain private device names. |
 | `scripts/evaluate_axiom_candidate_readiness.py` | Combine accepted-baseline hash, strict corpus metadata, and strict device-matrix checks before another sound-changing candidate. | No | No | JSON/Markdown reports belong outside repo unless summarized. |
 | `scripts/axiom_team.sh` | Launch the isolated Pi engineering harness with Axiom-specific tools and policy. | Indirect | No | Harness state remains under local state roots. |
 

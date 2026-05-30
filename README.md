@@ -159,6 +159,17 @@ scripts/validate_axiom_device_matrix.py \
 
 See [`docs/device-matrix.md`](docs/device-matrix.md).
 
+To build a local checklist package for the remaining physical route checks:
+
+```bash
+scripts/build_device_readiness_package.py \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  /tmp/axiom-device-readiness \
+  --device-matrix ~/.local/state/axiom-engineering/device-matrix.json
+```
+
+See [`docs/device-readiness-packages.md`](docs/device-readiness-packages.md).
+
 To check whether the evidence foundation is ready before proposing another
 sound-changing candidate:
 
@@ -508,6 +519,7 @@ axiom-binaural-dsp/
     hot_reload_liveprog.sh            # JDSP A/B preset loader
     build_android_validation_package.py # RootlessJamesDSP package/checklist builder
     build_axiom_ab_listening_package.py # Local level-matched A/B listening package builder
+    build_device_readiness_package.py # Local physical-route checklist package builder
     analyze_axiom_crossfeed.py        # Crossfeed transfer audit
     analyze_axiom_bass_path.py        # Removed dry-phase reconstruction audit
     generate_jdsp_stimuli.py          # Deterministic stereo capture probes
@@ -543,6 +555,7 @@ axiom-binaural-dsp/
   tests/
     test_build_axiom_ab_listening_package.py
     test_build_android_validation_package.py
+    test_build_device_readiness_package.py
     test_qualify_jdsp_repeatability.py
     test_analyze_jdsp_transfer.py
     test_analyze_audio_perceptual_metrics.py
@@ -576,6 +589,7 @@ axiom-binaural-dsp/
     axiom-roadmap.md          # 90-day foundations-first roadmap
     ab-listening-packages.md  # Local level-matched A/B listening package workflow
     android-validation.md     # RootlessJamesDSP package and validation workflow
+    device-readiness-packages.md # Local physical-route checklist package workflow
     tool-inventory.md         # Script and harness command safety map
     perceptual-metrics.md     # Offline perceptual-proxy metric definitions and use
     corpus-material.md        # Material-class and failure-mode corpus taxonomy
@@ -628,6 +642,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/axiom-roadmap.md`](docs/axiom-roadmap.md) | 90-day roadmap from the current notes and concerns |
 | [`docs/ab-listening-packages.md`](docs/ab-listening-packages.md) | Level-matched local A/B listening package workflow |
 | [`docs/android-validation.md`](docs/android-validation.md) | RootlessJamesDSP validation package and phone-side checklist |
+| [`docs/device-readiness-packages.md`](docs/device-readiness-packages.md) | Local physical-route checklist package workflow |
 | [`docs/tool-inventory.md`](docs/tool-inventory.md) | Tool purpose, JDSP side effects, and artifact safety map |
 | [`docs/perceptual-metrics.md`](docs/perceptual-metrics.md) | Offline loudness, true-peak proxy, transient, ERB-like, and M/S metric scope |
 | [`docs/corpus-material.md`](docs/corpus-material.md) | Material-class taxonomy and manifest coverage validation |
