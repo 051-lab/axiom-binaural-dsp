@@ -102,6 +102,16 @@ class DeviceReadinessPackageTests(unittest.TestCase):
             self.assertTrue((output / "manifest.json").is_file())
             self.assertIn("strict_status=fail", result.stdout)
 
+    def test_rejects_non_eel_accepted_script_path(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            accepted = root / "matrix.json"
+            accepted.write_text(json.dumps(matrix()), encoding="utf-8")
+            matrix_path = root / "device-matrix.json"
+            matrix_path.write_text(json.dumps(matrix()), encoding="utf-8")
+            with self.assertRaisesRegex(readiness_package.ReadinessPackageError, r"must be an \.eel file"):
+                readiness_package.build_package(accepted, matrix_path, root / "package")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -98,6 +98,8 @@ defined in `docs/device-matrix.md`, and local route checklists are defined in
 `docs/device-readiness-packages.md`. Candidate readiness is defined in
 `docs/candidate-readiness.md` and checks the accepted baseline hash, strict
 corpus metadata, and strict device matrix before any new sound-changing EEL
-file is justified. The local corpus currently strict-passes coverage; the next
+file is justified. The local corpus currently strict-passes coverage. Android
+and WSL lab route setup evidence are complete locally; speaker, Bluetooth, and
+wired/USB evidence remain the candidate-readiness blockers. The next
 sound-changing candidate should wait until device strict coverage and setup
 evidence pass.

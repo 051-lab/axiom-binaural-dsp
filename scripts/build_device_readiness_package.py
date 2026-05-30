@@ -165,6 +165,8 @@ def build_package(
 ) -> dict[str, Any]:
     if not accepted_eel.is_file():
         raise ReadinessPackageError(f"accepted EEL script not found: {accepted_eel}")
+    if accepted_eel.suffix.lower() != ".eel":
+        raise ReadinessPackageError(f"accepted script must be an .eel file: {accepted_eel}")
     matrix = load_matrix(matrix_path)
     strict = device_matrix.validate_matrix(
         matrix,
