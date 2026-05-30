@@ -59,6 +59,10 @@ class DeviceReadinessPackageTests(unittest.TestCase):
             self.assertEqual(manifest["strict_validation"]["status"], "pass")
             self.assertTrue((output / "manifest.json").is_file())
             self.assertTrue((output / "device-readiness-checklist.md").is_file())
+            self.assertEqual(
+                manifest["routes"][0]["actions"],
+                ["No setup actions remain for `phone`."],
+            )
 
     def test_incomplete_available_route_generates_actions_and_fails_strict(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

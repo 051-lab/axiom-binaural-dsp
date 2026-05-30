@@ -36,6 +36,7 @@ def route_actions(device: dict[str, Any]) -> list[str]:
     device_class = str(device.get("device_class", "unknown"))
     available = device.get("available") is True
     checks = device.get("checks") if isinstance(device.get("checks"), dict) else {}
+    missing_checks = False
 
     if not available:
         actions.append(
@@ -48,10 +49,11 @@ def route_actions(device: dict[str, Any]) -> list[str]:
         ("reboot_persistence_checked", "Reboot or reconnect and repeat route/script/settings confirmation."),
     ):
         if checks.get(key) is not True:
+            missing_checks = True
             actions.append(text)
-    if device_class == "primary_android":
+    if device_class == "primary_android" and (not available or missing_checks):
         actions.append("Use the Android validation package before accepting phone-side evidence.")
-    if device_class == "wired_or_usb":
+    if device_class == "wired_or_usb" and (not available or missing_checks):
         actions.append("Verify the OS reports the wired/USB endpoint as connected and healthy.")
     if not actions:
         actions.append(f"No setup actions remain for `{label}`.")
