@@ -65,7 +65,7 @@ node tools/axiom-team/bin/axiom-team.mjs corpus-status --strict-metadata
 ```
 
 Review `~/.config/axiom-engineering/axiom-binaural-dsp.json` if local route or
-test-material locations differ. `doctor` requires the accepted `.10` SHA-256
+test-material locations differ. `doctor` requires the accepted `.11` SHA-256
 recorded in `tools/axiom-team/policy.json`, the JDSP route helper, CLI tools,
 and the configured external-material manifest. `corpus-status` reports whether
 that manifest is runner-compatible; with `--strict-metadata`, it also enforces
@@ -94,8 +94,8 @@ Inside Pi, the primary commands are:
 | `/axiom-audit-width-mono run-id` | Measure accepted width gain and M/S leakage against temporary unity width |
 | `/axiom-screen-width-material run-id` | Characterize band-specific accepted width behavior on registered material |
 | `/axiom-screen-lowmid-width run-id` | Screen restrained `150 Hz-4 kHz` width settings before a candidate |
-| `/axiom-screen-high-width run-id` | Screen restrained `4 kHz-18 kHz` width settings from accepted `.10` before a candidate |
-| `/axiom-screen-exciter run-id` | Screen dynamic exciter sensitivity from accepted `.10` before a candidate |
+| `/axiom-screen-high-width run-id` | Screen restrained `4 kHz-18 kHz` width settings from the accepted baseline before a candidate |
+| `/axiom-screen-exciter run-id` | Screen dynamic exciter sensitivity from the accepted baseline before a candidate |
 | `/axiom-screen-exciter-probes run-id` | Screen generated low-level exciter activation and restraint probes |
 | `/axiom-create-candidate run-id \| vX.Y.Z` | Create an external worktree and new versioned candidate |
 | `/axiom-qualify run-id` | Run unit/static checks and serialized real-host JDSP qualification |
@@ -156,19 +156,20 @@ peak, RMS, crest, 20 ms envelope, and band-energy changes. This is diagnostic
 stage evidence only; it cannot create or accept a listening candidate.
 
 When that map exposes substantial level retreat, `/axiom-screen-reserve-law`
-generates temporary `+8 dB` fixtures with reserve slopes of `1.000`, `0.875`,
-`0.750`, and `0.500`. It screens the critical electronic and hip-hop excerpts
-at the accepted host setting. One excluded conditioning render is performed
-before each measured fixture/excerpt set so a cold host or newly loaded
-fixture cannot contaminate the repeated metrics. A reduced slope advances only when every
+generates temporary `+8 dB` fixtures against the accepted baseline reserve law,
+including lighter slopes when an investigation justifies them.
+It screens the critical electronic and hip-hop excerpts at the accepted host
+setting. Two excluded conditioning renders are performed before each measured
+fixture/excerpt set so a cold host or newly loaded fixture cannot contaminate
+the repeated metrics. A reduced slope advances only when every
 screened excerpt recovers repeatable RMS level while remaining unclipped and
 below the `-0.50 dBFS` observation boundary. The screen is pre-candidate
 evidence; broader boundary qualification and user listening remain mandatory.
 
 After a viable focused result, `/axiom-qualify-reserve-range` renders slopes
-`0.750` and `0.500` against all registered excerpts at `+12`, `+10`, `+8`,
-and `+6 dB`, starting with the highest-risk setting. It uses the same excluded
-conditioning render and accepted host settings. Unstable scalar measurement
+such as `0.500` against all registered excerpts at `+12`, `+10`, `+8`, and
+`+6 dB`, starting with the highest-risk setting. It uses the same excluded
+conditioning renders and accepted host settings. Unstable scalar measurement
 receives one fresh conditioned retry; a verified headroom rejection halts
 further renders for that slope, because a law that fails one elevated setting
 cannot qualify for a full-range candidate.
@@ -238,7 +239,7 @@ investigation before proposing a versioned candidate.
 needing a private material manifest. It generates deterministic quiet
 air-bearing, dull-control, sibilance-texture, and louder air-control probes,
 then renders accepted `50%`, reduced `35%`, and bypassed `0%` sensitivity
-through real JDSP. Its activation checks ask whether accepted `.10` produces
+through real JDSP. Its activation checks ask whether the accepted baseline produces
 measurable quiet air lift, preserves expected sensitivity depth order, avoids
 manufacturing air on dull material, backs off on louder bright material, and
 does not over-lift presence-edge sibilance. The result is investigation

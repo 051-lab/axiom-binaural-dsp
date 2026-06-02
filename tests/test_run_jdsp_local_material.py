@@ -30,12 +30,27 @@ class LocalMaterialTests(unittest.TestCase):
             audio.write_bytes(b"local")
             manifest = root / "manifest.json"
             manifest.write_text(
-                json.dumps({"tracks": [{"label": "Track A chorus", "path": str(audio), "start_seconds": 12.5, "duration_seconds": 15.0}]}),
+                json.dumps(
+                    {
+                        "tracks": [
+                            {
+                                "label": "Track A chorus",
+                                "path": str(audio),
+                                "start_seconds": 12.5,
+                                "duration_seconds": 15.0,
+                                "material_class": "dense_pop_edm",
+                                "failure_modes": ["dense_mix_limiter_pressure"],
+                            }
+                        ]
+                    }
+                ),
                 encoding="utf-8",
             )
             items = material.read_manifest(manifest)
             self.assertEqual(items[0]["name"], "Track_A_chorus")
             self.assertEqual(items[0]["duration_seconds"], 15.0)
+            self.assertEqual(items[0]["material_class"], "dense_pop_edm")
+            self.assertEqual(items[0]["failure_modes"], ["dense_mix_limiter_pressure"])
 
     def test_local_pressure_is_investigation_not_failure(self) -> None:
         reports = [{"name": "selection", "report": capture_report(-0.08, -0.08)}]

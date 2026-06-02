@@ -6,7 +6,7 @@ description: Operates Axiom Binaural DSP candidate investigation, EEL safety val
 # Axiom Engineering
 
 Read `AGENTS.md`, `docs/current-state.md`, `docs/architecture.md`, and
-`docs/qualification-v4.1.4.10.md` before proposing or assessing DSP behavior.
+`docs/qualification-v4.1.4.11.md` before proposing or assessing DSP behavior.
 
 Use `/axiom-doctor` before a new workflow and `/axiom-corpus-status
 --strict-metadata` before relying on registered material for candidate

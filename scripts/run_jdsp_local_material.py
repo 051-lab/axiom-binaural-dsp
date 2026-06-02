@@ -63,7 +63,17 @@ def read_manifest(path: pathlib.Path) -> list[dict[str, Any]]:
             raise MaterialError(f"{label}: start_seconds and duration_seconds must be numeric") from exc
         if start < 0.0 or duration <= 0.0 or duration > 60.0:
             raise MaterialError(f"{label}: start must be non-negative and duration must be in (0, 60] seconds")
-        parsed.append({"label": label, "name": name, "path": source, "start_seconds": start, "duration_seconds": duration})
+        parsed_item = dict(item)
+        parsed_item.update(
+            {
+                "label": label,
+                "name": name,
+                "path": source,
+                "start_seconds": start,
+                "duration_seconds": duration,
+            }
+        )
+        parsed.append(parsed_item)
         names.add(name)
     return parsed
 

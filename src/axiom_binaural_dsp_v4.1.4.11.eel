@@ -1,0 +1,302 @@
+desc: Axiom Binaural DSP v4.1.4.11 (Reduced Elevated-Bass Reserve Listening Candidate)
+//tags: immersive bass spatializer loudness mastering stft
+author: AI DSP Architect
+
+// --- UI PARAMETERS ---
+slider1:4<-12,12,0.5>Sub Harmonics Gain (dB)
+slider2:135<0,200,5>Global Side Width (%)
+slider3:50<0,100,5>Fletcher-Munson Sensitivity (%)
+slider5:126<0,200,5>Low-Mid Width Multiplier (%) [150Hz-4kHz]
+slider6:110<0,150,5>High-Freq Width Multiplier (%) [4kHz-20kHz]
+slider7:50<0,100,5>STFT Resonance Suppression (%) [2kHz-6kHz]
+
+@init
+// --- CONSTANTS & SAFE MEMORY ALLOCATION ---
+DB_2_LOG = 0.11512925464970228;
+headroomGain = exp(-1.0 * DB_2_LOG);
+outputGain = headroomGain;
+
+// UI Defaults
+slider1 = 4; slider2 = 135; slider3 = 50;
+slider5 = 126; slider6 = 110; slider7 = 50;
+
+// 1. STFT Double-Buffer & State
+ptr = 2000;
+fftSize = 1024;
+halfLen = fftSize / 2 + 1;
+kOverlap = 4;
+warpFactor = 1.5;
+
+// STFT indices are IDs, not memory pointers.
+stftIdxL = 0;
+stftIdxR = 40;
+
+memreq = stftCheckMemoryRequirement(stftIdxL, fftSize, kOverlap, warpFactor);
+stftStructL = ptr; ptr += memreq;
+memreq = stftCheckMemoryRequirement(stftIdxR, fftSize, kOverlap, warpFactor);
+stftStructR = ptr; ptr += memreq;
+
+requiredSamples = stftInit(stftIdxL, stftStructL);
+requiredSamples = stftInit(stftIdxR, stftStructR);
+requiredSamples = max(1, requiredSamples);
+
+stftInL = ptr; ptr += fftSize + 4;
+stftInR = ptr; ptr += fftSize + 4;
+stftOutL = ptr; ptr += fftSize + 4;
+stftOutR = ptr; ptr += fftSize + 4;
+resBinFloor = ptr; ptr += halfLen;
+resBinGain = ptr; ptr += halfLen;
+
+// Zero-initialize STFT buffers.
+idx = 0;
+loop(fftSize + 4,
+  stftInL[idx] = 0.0; stftInR[idx] = 0.0;
+  stftOutL[idx] = 0.0; stftOutR[idx] = 0.0;
+  idx += 1;
+);
+idx = 0;
+loop(halfLen,
+  resBinFloor[idx] = 0.0001;
+  resBinGain[idx] = 1.0;
+  idx += 1;
+);
+stftBufPos = 0;
+
+// 2. Initialize ALL State Variables
+loudAtkCoef = exp(-1.0 / (0.010 * srate));
+loudRelCoef = exp(-1.0 / (0.400 * srate));
+addSmoothCoef = exp(-1.0 / (0.020 * srate));
+env = 0;
+add_amt = 0.0;
+input_L = 0.0;
+input_R = 0.0;
+out_L = 0.0;
+out_R = 0.0;
+low_l = 0.0; low_r = 0.0; low_mono = 0.0;
+hp_150_l = 0.0; hp_150_r = 0.0;
+mid_l = 0.0; mid_r = 0.0;
+high_l = 0.0; high_r = 0.0;
+m_mid = 0.0; m_side = 0.0; m_side_w = 0.0; m_l = 0.0; m_r = 0.0;
+h_mid = 0.0; h_side = 0.0; h_side_w = 0.0; h_l = 0.0; h_r = 0.0;
+sub_l = 0.0; sub_r = 0.0; drive = 3.5; sat_l = 0.0; sat_r = 0.0;
+harm_l = 0.0; harm_r = 0.0; subGainLin = 1.0;
+rms_sq = 0.0; rms_db = -120.0; target_db = -24.0; boost_db = 0.0;
+highs_l = 0.0; highs_r = 0.0; boostLin = 1.0;
+binStart = 0; binEnd = 0; i = 0;
+rawGain = 1.0; mag = 0.0; binGain = 1.0;
+binFloor = 0.0001; binThresh = 0.0001; targetGain = 1.0;
+
+// --- BIQUAD FILTER FUNCTIONS ---
+function LowPassFilter_Set(frequency qFactor) local(safeFreq, x, sinX, cosX, alpha, _a0, _a1, _a2, _b0, _b1, _b2) (
+    safeFreq = min(max(frequency, 5.0), srate * 0.45);
+    x = (safeFreq * 2.0 * $pi) / srate;
+    sinX = sin(x); cosX = cos(x); alpha = sinX / (qFactor * 2.0);
+    _a0 = 1.0 + alpha; _a1 = -2.0 * cosX; _a2 = 1.0 - alpha;
+    _b0 = (1.0 - cosX) / 2.0; _b1 = 1.0 - cosX; _b2 = (1.0 - cosX) / 2.0;
+    this.b0 = _b0 / _a0; this.b1 = _b1 / _a0; this.b2 = _b2 / _a0;
+    this.a1 = -_a1 / _a0; this.a2 = -_a2 / _a0;
+    this.y_2 = 0; this.y_1 = 0; this.x_2 = 0; this.x_1 = 0;
+);
+function LowPassFilter_ProcessSample(sample) local(out) (
+    out = sample * this.b0 + this.x_1 * this.b1 + this.x_2 * this.b2 + this.y_1 * this.a1 + this.y_2 * this.a2;
+    this.y_2 = this.y_1; this.y_1 = out; this.x_2 = this.x_1; this.x_1 = sample; out;
+);
+function HighPassFilter_Set(frequency qFactor) local(safeFreq, x, sinX, cosX, alpha, _a0, _a1, _a2, _b0, _b1, _b2) (
+    safeFreq = min(max(frequency, 5.0), srate * 0.45);
+    x = (safeFreq * 2.0 * $pi) / srate;
+    sinX = sin(x); cosX = cos(x); alpha = sinX / (qFactor * 2.0);
+    _a0 = 1.0 + alpha; _a1 = -2.0 * cosX; _a2 = 1.0 - alpha;
+    _b0 = (1.0 + cosX) / 2.0; _b1 = -(1.0 + cosX); _b2 = (1.0 + cosX) / 2.0;
+    this.b0 = _b0 / _a0; this.b1 = _b1 / _a0; this.b2 = _b2 / _a0;
+    this.a1 = -_a1 / _a0; this.a2 = -_a2 / _a0;
+    this.y_2 = 0; this.y_1 = 0; this.x_2 = 0; this.x_1 = 0;
+);
+function HighPassFilter_ProcessSample(sample) local(out) (
+    out = sample * this.b0 + this.x_1 * this.b1 + this.x_2 * this.b2 + this.y_1 * this.a1 + this.y_2 * this.a2;
+    this.y_2 = this.y_1; this.y_1 = out; this.x_2 = this.x_1; this.x_1 = sample; out;
+);
+
+// --- INITIALIZE FILTER INSTANCES ---
+q = 0.7071;
+
+// Input safety: remove DC before all nonlinear and dynamic stages.
+dc_block_l.HighPassFilter_Set(15, q);
+dc_block_r.HighPassFilter_Set(15, q);
+
+// Layer 1: 3-way cascaded biquad crossover
+lpf_low_l_1.LowPassFilter_Set(150, q); lpf_low_l_2.LowPassFilter_Set(150, q);
+lpf_low_r_1.LowPassFilter_Set(150, q); lpf_low_r_2.LowPassFilter_Set(150, q);
+hpf_150_l_1.HighPassFilter_Set(150, q); hpf_150_l_2.HighPassFilter_Set(150, q);
+hpf_150_r_1.HighPassFilter_Set(150, q); hpf_150_r_2.HighPassFilter_Set(150, q);
+lpf_mid_l_1.LowPassFilter_Set(4000, q); lpf_mid_l_2.LowPassFilter_Set(4000, q);
+lpf_mid_r_1.LowPassFilter_Set(4000, q); lpf_mid_r_2.LowPassFilter_Set(4000, q);
+hpf_high_l_1.HighPassFilter_Set(4000, q); hpf_high_l_2.HighPassFilter_Set(4000, q);
+hpf_high_r_1.HighPassFilter_Set(4000, q); hpf_high_r_2.HighPassFilter_Set(4000, q);
+
+// Layer 2: additive bass harmonic generator
+lpf_sub_l_1.LowPassFilter_Set(90, q); lpf_sub_l_2.LowPassFilter_Set(90, q);
+lpf_sub_r_1.LowPassFilter_Set(90, q); lpf_sub_r_2.LowPassFilter_Set(90, q);
+hpf_harm_l_1.HighPassFilter_Set(90, q); hpf_harm_l_2.HighPassFilter_Set(90, q);
+hpf_harm_r_1.HighPassFilter_Set(90, q); hpf_harm_r_2.HighPassFilter_Set(90, q);
+
+// Layer 3: Exciter (11kHz HPF)
+hpf_exc_l_1.HighPassFilter_Set(11000, q); hpf_exc_l_2.HighPassFilter_Set(11000, q);
+hpf_exc_r_1.HighPassFilter_Set(11000, q); hpf_exc_r_2.HighPassFilter_Set(11000, q);
+
+@sample
+// ==========================================
+// INPUT: DC OFFSET PROTECTION
+// ==========================================
+input_L = dc_block_l.HighPassFilter_ProcessSample(spl0);
+input_R = dc_block_r.HighPassFilter_ProcessSample(spl1);
+
+
+// ==========================================
+// LAYER 1: 3-WAY BIQUAD M/S SPATIALIZER
+// ==========================================
+// 1. Split at 150Hz
+low_l = lpf_low_l_1.LowPassFilter_ProcessSample(input_L);
+low_l = lpf_low_l_2.LowPassFilter_ProcessSample(low_l);
+low_r = lpf_low_r_1.LowPassFilter_ProcessSample(input_R);
+low_r = lpf_low_r_2.LowPassFilter_ProcessSample(low_r);
+low_mono = (low_l + low_r) * 0.5;
+
+hp_150_l = hpf_150_l_1.HighPassFilter_ProcessSample(input_L);
+hp_150_l = hpf_150_l_2.HighPassFilter_ProcessSample(hp_150_l);
+hp_150_r = hpf_150_r_1.HighPassFilter_ProcessSample(input_R);
+hp_150_r = hpf_150_r_2.HighPassFilter_ProcessSample(hp_150_r);
+
+// 2. Split the 150Hz HPF output at 4kHz
+mid_l = lpf_mid_l_1.LowPassFilter_ProcessSample(hp_150_l);
+mid_l = lpf_mid_l_2.LowPassFilter_ProcessSample(mid_l);
+mid_r = lpf_mid_r_1.LowPassFilter_ProcessSample(hp_150_r);
+mid_r = lpf_mid_r_2.LowPassFilter_ProcessSample(mid_r);
+
+high_l = hpf_high_l_1.HighPassFilter_ProcessSample(hp_150_l);
+high_l = hpf_high_l_2.HighPassFilter_ProcessSample(high_l);
+high_r = hpf_high_r_1.HighPassFilter_ProcessSample(hp_150_r);
+high_r = hpf_high_r_2.HighPassFilter_ProcessSample(high_r);
+
+// 3. M/S Processing on Mids (150Hz - 4kHz)
+m_mid = (mid_l + mid_r) * 0.5;
+m_side = (mid_l - mid_r) * 0.5;
+m_side_w = m_side * (slider5 / 100.0) * (slider2 / 100.0);
+m_l = m_mid + m_side_w;
+m_r = m_mid - m_side_w;
+
+// 4. M/S Processing on Highs (4kHz+)
+h_mid = (high_l + high_r) * 0.5;
+h_side = (high_l - high_r) * 0.5;
+h_side_w = h_side * (slider6 / 100.0) * (slider2 / 100.0);
+h_l = h_mid + h_side_w;
+h_r = h_mid - h_side_w;
+
+// 5. Recombine
+out_L = low_mono + m_l + h_l;
+out_R = low_mono + m_r + h_r;
+
+
+// ==========================================
+// LAYER 2: ADDITIVE BASS HARMONIC GENERATOR
+// ==========================================
+sub_l = lpf_sub_l_1.LowPassFilter_ProcessSample(out_L);
+sub_l = lpf_sub_l_2.LowPassFilter_ProcessSample(sub_l);
+sub_r = lpf_sub_r_1.LowPassFilter_ProcessSample(out_R);
+sub_r = lpf_sub_r_2.LowPassFilter_ProcessSample(sub_r);
+
+sat_l = (sub_l * drive) / (1.0 + abs(sub_l * drive));
+sat_r = (sub_r * drive) / (1.0 + abs(sub_r * drive));
+
+harm_l = hpf_harm_l_1.HighPassFilter_ProcessSample(sat_l);
+harm_l = hpf_harm_l_2.HighPassFilter_ProcessSample(harm_l);
+harm_r = hpf_harm_r_1.HighPassFilter_ProcessSample(sat_r);
+harm_r = hpf_harm_r_2.HighPassFilter_ProcessSample(harm_r);
+
+// Keep the spatializer dry path intact; inject generated harmonics only.
+subGainLin = exp(slider1 * DB_2_LOG);
+out_L += harm_l * subGainLin;
+out_R += harm_r * subGainLin;
+
+
+// ==========================================
+// LAYER 3: DYNAMIC EXCITER (FLETCHER-MUNSON)
+// ==========================================
+rms_sq = ((out_L * out_L) + (out_R * out_R)) * 0.5;
+env = (rms_sq > env) ? (env * loudAtkCoef + rms_sq * (1.0 - loudAtkCoef)) : (env * loudRelCoef + rms_sq * (1.0 - loudRelCoef));
+rms_db = 10.0 * log10(env + 0.0000000001);
+boost_db = max(0, target_db - rms_db) * (slider3 / 100.0);
+boost_db = min(boost_db, 10.0);
+
+highs_l = hpf_exc_l_1.HighPassFilter_ProcessSample(out_L);
+highs_l = hpf_exc_l_2.HighPassFilter_ProcessSample(highs_l);
+highs_r = hpf_exc_r_1.HighPassFilter_ProcessSample(out_R);
+highs_r = hpf_exc_r_2.HighPassFilter_ProcessSample(highs_r);
+
+boostLin = exp(boost_db * DB_2_LOG);
+add_amt = add_amt * addSmoothCoef + (boostLin - 1.0) * (1.0 - addSmoothCoef);
+out_L += highs_l * add_amt;
+out_R += highs_r * add_amt;
+
+
+// ==========================================
+// LAYER 4: STFT DYNAMIC RESONANCE SUPPRESSOR
+// ==========================================
+stftInL[stftBufPos] = out_L;
+out_L = stftOutL[stftBufPos];
+stftOutL[stftBufPos] = 0.0;
+stftInR[stftBufPos] = out_R;
+out_R = stftOutR[stftBufPos];
+stftOutR[stftBufPos] = 0.0;
+stftBufPos += 1;
+
+stftBufPos >= requiredSamples ? (
+  stftForward(stftInL, stftIdxL, stftStructL, 1);
+  stftForward(stftInR, stftIdxR, stftStructR, 1);
+
+  binStart = max(1, floor(2000.0 * fftSize / srate));
+  binEnd = min(halfLen - 1, floor(6000.0 * fftSize / srate));
+
+  i = binStart * 2;
+  idx = binStart;
+  loop(binEnd - binStart + 1,
+    mag = sqrt((
+      stftInL[i] * stftInL[i] + stftInL[i+1] * stftInL[i+1] +
+      stftInR[i] * stftInR[i] + stftInR[i+1] * stftInR[i+1]
+    ) * 0.5 + 0.0001);
+    binFloor = resBinFloor[idx];
+    binFloor = (mag > binFloor) ? (binFloor * 0.98 + mag * 0.02) : (binFloor * 0.995 + mag * 0.005);
+    resBinFloor[idx] = binFloor;
+    binThresh = binFloor * 2.5 + 0.00001;
+    rawGain = (mag > binThresh) ? (binThresh / mag) : 1.0;
+    targetGain = 1.0 - ((1.0 - rawGain) * (slider7 / 100.0));
+    binGain = resBinGain[idx];
+    binGain = (targetGain < binGain) ? (binGain * 0.65 + targetGain * 0.35) : (binGain * 0.92 + targetGain * 0.08);
+    resBinGain[idx] = binGain;
+    stftInL[i] *= binGain; stftInL[i+1] *= binGain;
+    stftInR[i] *= binGain; stftInR[i+1] *= binGain;
+    i += 2;
+    idx += 1;
+  );
+
+  stftBackward(stftInL, stftIdxL, stftStructL, 1);
+  stftBackward(stftInR, stftIdxR, stftStructR, 1);
+
+  idx = 0;
+  loop(requiredSamples,
+    stftOutL[idx] = stftInL[idx];
+    stftOutR[idx] = stftInR[idx];
+    idx += 1;
+  );
+  stftBufPos = 0;
+);
+
+
+// ==========================================
+// FINAL OUTPUT ASSIGNMENT
+// ==========================================
+// Preserve the v4.1.4.7 default sound; elevated bass gain uses the full-manifest qualified reserve slope.
+outputGain = (slider1 > 4.0) ? (headroomGain * exp(-((slider1 - 4.0) * 0.50) * DB_2_LOG)) : headroomGain;
+out_L *= outputGain;
+out_R *= outputGain;
+spl0 = out_L;
+spl1 = out_R;

@@ -6,7 +6,7 @@ The first reusable offline perceptual-proxy analyzer is implemented as
 `scripts/analyze_audio_perceptual_metrics.py`.
 
 This is a measurement-foundation tool. It does not change the accepted
-`v4.1.4.10` EEL script, does not touch JDSP, and does not replace listening.
+`v4.1.4.11` EEL script, does not touch JDSP, and does not replace listening.
 
 ## Scope
 
@@ -30,7 +30,7 @@ preference.
 ```bash
 scripts/analyze_audio_perceptual_metrics.py \
   /tmp/axiom-capture.wav \
-  --label accepted-v4.1.4.10 \
+  --label accepted-v4.1.4.11 \
   --json /tmp/axiom-capture-metrics.json \
   --markdown /tmp/axiom-capture-metrics.md
 ```

@@ -2,11 +2,14 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.10.eel}"
+script_path="${1:-$repo_root/src/axiom_binaural_dsp_v4.1.4.11.eel}"
 script_name="$(basename "$script_path")"
 script_family="$script_name"
 if [[ "$script_name" == axiom_binaural_dsp_v4.1.4.10_*.eel ]]; then
   script_family="axiom_binaural_dsp_v4.1.4.10.eel"
+fi
+if [[ "$script_name" == axiom_binaural_dsp_v4.1.4.11_*.eel ]]; then
+  script_family="axiom_binaural_dsp_v4.1.4.11.eel"
 fi
 host_limiter_only=false
 host_crossfeed_only=false
@@ -19,7 +22,8 @@ if [ "$script_family" = "axiom_binaural_dsp_v4.1.4.4.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
-   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.11.eel" ]; then
   host_limiter_only=true
 fi
 if [ "$script_family" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
@@ -27,14 +31,16 @@ if [ "$script_family" = "axiom_binaural_dsp_v4.1.4.5.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
-   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.11.eel" ]; then
   host_crossfeed_only=true
 fi
 if [ "$script_family" = "axiom_binaural_dsp_v4.1.4.6.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.7.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.8.eel" ] ||
    [ "$script_family" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
-   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ]; then
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.10.eel" ] ||
+   [ "$script_family" = "axiom_binaural_dsp_v4.1.4.11.eel" ]; then
   phase_preserving_bass=true
 fi
 
@@ -274,6 +280,19 @@ if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
     fail "reduced-reserve architecture retains unused full-reserve baseline state"
   else
     pass "reduced bass-reserve slope is present without unused state"
+  fi
+fi
+
+if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.11.eel" ]; then
+  if ! grep -Fq 'headroomGain = exp(-1.0 * DB_2_LOG);' "$script_path" ||
+     ! grep -Fq 'outputGain = (slider1 > 4.0) ? (headroomGain * exp(-((slider1 - 4.0) * 0.50) * DB_2_LOG)) : headroomGain;' "$script_path" ||
+     ! grep -Fq 'out_L *= outputGain;' "$script_path" ||
+     ! grep -Fq 'out_R *= outputGain;' "$script_path"; then
+    fail "v4.1.4.11 reduced elevated-bass reserve slope is missing"
+  elif grep -Fq 'defaultSubGainLin' "$script_path"; then
+    fail "v4.1.4.11 reduced-reserve architecture retains unused full-reserve baseline state"
+  else
+    pass "v4.1.4.11 reduced elevated-bass reserve slope is present without unused state"
   fi
 fi
 

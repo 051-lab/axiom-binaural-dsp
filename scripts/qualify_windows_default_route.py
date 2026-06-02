@@ -17,8 +17,8 @@ import build_android_validation_package as package_hash
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
-DEFAULT_ACCEPTED_EEL = REPO_ROOT / "src" / "axiom_binaural_dsp_v4.1.4.10.eel"
-DEFAULT_PROBE = pathlib.Path("/tmp/axiom-wsl-route-stability-v4.1.4.10/stimuli/correlated_mono.wav")
+DEFAULT_ACCEPTED_EEL = REPO_ROOT / "src" / "axiom_binaural_dsp_v4.1.4.11.eel"
+DEFAULT_PROBE = pathlib.Path("/tmp/axiom-wsl-route-stability-v4.1.4.11/stimuli/correlated_mono.wav")
 DEFAULT_PULSE_SERVER = "unix:/tmp/jdsp-win/native"
 DEFAULT_ROUTE_HELPER = pathlib.Path.home() / ".local/bin/jdsp-audio-reset"
 EXPECTED_SETTINGS = {
@@ -176,7 +176,7 @@ def qualify_route(
             raise RouteQualificationError(f"route helper not found: {route_helper}")
         run([str(route_helper)], "start managed JDSP route", timeout=20)
     run(["jamesdsp", "--is-connected"], "verify JamesDSP service", env=pulse_environment(pulse_server), timeout=8)
-    preset_name = f"Axiom-v4.1.4.10-{route_class}-route-check"
+    preset_name = f"Axiom-v4.1.4.11-{route_class}-route-check"
     hot_reload = run(
         [str(REPO_ROOT / "scripts" / "hot_reload_liveprog.sh"), str(accepted_eel), preset_name],
         "hot reload accepted Liveprog",

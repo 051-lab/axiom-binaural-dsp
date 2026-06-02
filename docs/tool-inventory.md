@@ -1,6 +1,6 @@
 # Axiom Tool Inventory
 
-Last updated: 2026-05-30
+Last updated: 2026-06-01
 
 This inventory maps the repository's operational tools so humans and agents can
 choose the right command without guessing. It is descriptive, not an execution
@@ -18,14 +18,14 @@ the artifact is safe to commit.
 
 | Tool | Purpose | Touches JDSP | Repo writes | Output policy |
 | --- | --- | --- | --- | --- |
-| `scripts/validate_axiom_static.sh` | Static EEL2/JDSP safety gate for reserved constants, forbidden APIs, STFT signatures, final output assignment, and version-specific invariants. Defaults to accepted `.10`. | No | No | Console only. |
-| `scripts/hot_reload_liveprog.sh` | Load a selected EEL script into JDSP Liveprog, normalize host settings, update `axiom_current.eel`, save a preset, and restore the accepted limiter threshold if JDSP resets it during preset save. Defaults to accepted `.10`. | Yes | No | Updates JDSP config, preset files, and user Liveprog symlink outside repo. |
+| `scripts/validate_axiom_static.sh` | Static EEL2/JDSP safety gate for reserved constants, forbidden APIs, STFT signatures, final output assignment, and version-specific invariants. Defaults to accepted `.11`. | No | No | Console only. |
+| `scripts/hot_reload_liveprog.sh` | Load a selected EEL script into JDSP Liveprog, normalize host settings, update `axiom_current.eel`, save a preset, and restore the accepted limiter threshold if JDSP resets it during preset save. Defaults to accepted `.11`. | Yes | No | Updates JDSP config, preset files, and user Liveprog symlink outside repo. |
 | `scripts/build_android_validation_package.py` | Build a local RootlessJamesDSP validation package with scripts, SHA-256 hashes, checklist, and listening template. | No | No | Package output belongs outside repo unless sanitized for release. |
 | `scripts/build_axiom_ab_listening_package.py` | Build a local blinded A/B listening package with loudness-proxy gain recommendations from matched WAV folders. | No | No | Package output belongs outside repo because it may contain private captures. |
 | `scripts/build_device_readiness_package.py` | Build a local route-by-route checklist package from the device matrix and accepted script hash. | No | No | Package output belongs outside repo because it may contain private device names. |
 | `scripts/evaluate_axiom_candidate_readiness.py` | Combine accepted-baseline hash, strict corpus metadata, and strict device-matrix checks before another sound-changing candidate. | No | No | JSON/Markdown reports belong outside repo unless summarized. |
 | `scripts/audit_windows_audio_endpoints.py` | Snapshot Windows audio endpoint status and the active default render endpoint from WSL, emit route-class hints, and optionally fail unless the default route matches speaker, wired/USB, or Bluetooth. | No | No | JSON/Markdown reports belong outside repo unless sanitized. |
-| `scripts/qualify_windows_default_route.py` | Build a local evidence report for a Windows default-output route by requiring the route class, restarting the managed JDSP route, hot-reloading accepted `.10`, verifying host settings, and playing a probe for user confirmation. | Yes | No | Output directory belongs outside repo because it may contain private device names. |
+| `scripts/qualify_windows_default_route.py` | Build a local evidence report for a Windows default-output route by requiring the route class, restarting the managed JDSP route, hot-reloading accepted `.11`, verifying host settings, and playing a probe for user confirmation. | Yes | No | Output directory belongs outside repo because it may contain private device names. |
 | `scripts/axiom_team.sh` | Launch the isolated Pi engineering harness with Axiom-specific tools and policy. | Indirect | No | Harness state remains under local state roots. |
 
 ## Offline Analysis And Fixture Inputs
@@ -55,23 +55,23 @@ the artifact is safe to commit.
 | `scripts/run_jdsp_wsl_qualification.py` | Managed WSL qualification route for baseline/candidate, elevated bass fixtures, and corpus checks. | Yes | No | Output directory and temporary fixtures stay outside repo. |
 | `scripts/run_jdsp_program_corpus.py` | Render deterministic program-like corpus through baseline/candidate at default controls. | Yes | No | Output directory belongs outside repo. |
 | `scripts/run_jdsp_local_material.py` | Render private manifest excerpts through baseline/candidate for local material checks. | Yes | No | Manifest, decoded excerpts, and reports stay outside repo. |
-| `scripts/run_jdsp_limiter_sweep.py` | Measure accepted-baseline sensitivity to different JDSP limiter thresholds on registered material. | Yes | No | Output directory belongs outside repo. |
-| `scripts/run_jdsp_accepted_stress.py` | Repeat accepted-baseline captures on dense registered material at accepted host settings. | Yes | No | Output directory belongs outside repo. |
+| `scripts/run_jdsp_limiter_sweep.py` | Measure accepted-baseline sensitivity to different JDSP limiter thresholds on registered material; supports an explicit reference threshold for safe comparisons when a looser threshold clips. | Yes | No | Output directory belongs outside repo. |
+| `scripts/run_jdsp_accepted_stress.py` | Repeat accepted-baseline captures on dense registered material at accepted host settings; declared `flawed_source` clipping is retained as investigation evidence while normal-material clipping still fails. | Yes | No | Output directory belongs outside repo. |
 
 ## Pre-Candidate Screens And Stage Audits
 
 | Tool | Purpose | Touches JDSP | Repo writes | Output policy |
 | --- | --- | --- | --- | --- |
 | `scripts/run_jdsp_sub_slider_map.py` | Map accepted baseline behavior across Sub Harmonics Gain settings on registered material. | Yes | No | Temporary fixtures/reports stay outside repo. |
-| `scripts/run_jdsp_stage_observability.py` | Create same-render diagnostic tap fixtures for accepted `.10`, starting with bass/reserve path comparisons. | Yes | No | Temporary fixtures/reports stay outside repo. |
-| `scripts/run_jdsp_reserve_law_screen.py` | Screen temporary elevated-bass reserve slopes before a candidate exists. | Yes | No | Temporary fixtures/reports stay outside repo. |
-| `scripts/run_jdsp_reserve_range_qualification.py` | Range-qualify viable reserve slopes across elevated bass settings before candidate creation. | Yes | No | Temporary fixtures/reports stay outside repo. |
+| `scripts/run_jdsp_stage_observability.py` | Create same-render diagnostic tap fixtures for the accepted baseline, starting with bass/reserve path comparisons. | Yes | No | Temporary fixtures/reports stay outside repo. |
+| `scripts/run_jdsp_reserve_law_screen.py` | Screen temporary elevated-bass reserve slopes before a candidate exists; defaults to the accepted baseline reserve law and two conditioning renders. | Yes | No | Temporary fixtures/reports stay outside repo. |
+| `scripts/run_jdsp_reserve_range_qualification.py` | Range-qualify viable reserve slopes across elevated bass settings before candidate creation; defaults to two conditioning renders per measured set. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_stft_audit.py` | Create diagnostic STFT fixtures and measure pre-STFT versus processed paths in same-render captures. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_width_mono_audit.py` | Compare accepted width behavior against temporary unity-width fixtures using pure M/S probes. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_width_material_screen.py` | Compare accepted and unity-width behavior on registered material by band-specific S/M balance. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_lowmid_width_screen.py` | Screen restrained low-mid width fixtures before proposing a candidate. | Yes | No | Temporary fixtures/reports stay outside repo. |
-| `scripts/run_jdsp_high_width_screen.py` | Screen restrained high-frequency width fixtures from accepted `.10`. | Yes | No | Temporary fixtures/reports stay outside repo. |
-| `scripts/run_jdsp_exciter_sensitivity_screen.py` | Screen temporary exciter sensitivity fixtures from accepted `.10`. | Yes | No | Temporary fixtures/reports stay outside repo. |
+| `scripts/run_jdsp_high_width_screen.py` | Screen restrained high-frequency width fixtures from the accepted baseline. | Yes | No | Temporary fixtures/reports stay outside repo. |
+| `scripts/run_jdsp_exciter_sensitivity_screen.py` | Screen temporary exciter sensitivity fixtures from the accepted baseline. | Yes | No | Temporary fixtures/reports stay outside repo. |
 | `scripts/run_jdsp_exciter_probe_screen.py` | Generate low-level exciter probes and screen accepted/reduced/bypassed sensitivity with activation and restraint checks through JDSP. | Yes | No | Generated probes, fixtures, and reports stay outside repo. |
 
 ## Candidate Qualification
@@ -100,7 +100,7 @@ Run the harness with `scripts/axiom_team.sh` or use
 | `measure-limiter` | Run accepted-baseline limiter threshold sweep. | Yes |
 | `stress-accepted` | Repeat dense-material accepted-baseline captures. | Yes |
 | `map-sub-gain` | Map accepted baseline across Sub Harmonics Gain settings. | Yes |
-| `stage-observability` | Measure accepted `.10` bass/reserve diagnostic taps. | Yes |
+| `stage-observability` | Measure accepted-baseline bass/reserve diagnostic taps. | Yes |
 | `screen-reserve-law` | Screen temporary reserve-law fixtures. | Yes |
 | `qualify-reserve-range` | Range-qualify reserve-law survivors. | Yes |
 | `audit-stft` | Run same-render STFT stage audit. | Yes |

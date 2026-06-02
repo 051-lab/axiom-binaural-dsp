@@ -128,7 +128,7 @@ def markdown(report: dict[str, Any]) -> str:
         "",
         "This pre-candidate screen compares temporary high-frequency width settings through real JDSP "
         "on registered local material. Only `slider6` changes in temporary fixtures; the accepted "
-        "`.10` script is unchanged.",
+        "script is unchanged.",
         "",
         "| Setting | `slider6` | Effective `slider2 * slider6` side product |",
         "| --- | ---: | ---: |",
@@ -142,7 +142,7 @@ def markdown(report: dict[str, Any]) -> str:
         [
             "",
             "Band values are output `S/M` RMS ratios. Negative variant-minus-accepted values represent "
-            "less side emphasis than accepted `.10`; they do not establish an improvement without listening.",
+            "less side emphasis than the accepted baseline; they do not establish an improvement without listening.",
             "",
             "| Material | Band | Source S/M (dB) | Accepted S/M (dB) | Restrained S/M (dB) | Neutral S/M (dB) | Restrained - accepted (dB) | Neutral - accepted (dB) |",
             "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |",

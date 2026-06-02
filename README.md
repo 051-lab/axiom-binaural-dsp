@@ -1,12 +1,12 @@
 # Axiom Binaural DSP
 
-[![Version](https://img.shields.io/badge/version-v4.1.4.10-blue.svg)](https://github.com/051-lab/axiom-binaural-dsp/releases)
+[![Version](https://img.shields.io/badge/version-v4.1.4.11-blue.svg)](https://github.com/051-lab/axiom-binaural-dsp/releases)
 [![Platform](https://img.shields.io/badge/platform-JamesDSP-green.svg)](https://github.com/james34602/JamesDSPManager)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 
 **Measured psychoacoustic stereo enhancement processing for JamesDSP**
 
-Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.10` is the accepted listening baseline: it retains the `.9` reduced bass-reserve behavior and applies a measured restraint to low-mid stereo width.
+Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.11` is the accepted listening baseline: it retains the `.10` restrained low-mid width setting and reduces the elevated-bass output reserve slope for more practical density above the default Sub Harmonics setting.
 
 ## Features
 
@@ -35,21 +35,24 @@ Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1
 - Crossfeed is not part of the Axiom script; enable JamesDSP crossfeed manually when wanted
 - `v4.1.4.7` adds a fixed `-1.0 dB` transparent output reserve before the host stage
 - `v4.1.4.9` retains the `.7` fixed reserve and applies the accepted `0.750 dB/dB` additional reserve only for Sub Harmonics gain above `+4 dB`
-- `v4.1.4.10` retains the `.9` reserve behavior and reduces default `150 Hz-4 kHz` side width from `1.890x` to `1.701x`
+- `v4.1.4.10` retained the `.9` reserve behavior and reduced default `150 Hz-4 kHz` side width from `1.890x` to `1.701x`
+- `v4.1.4.11` keeps `.10` unchanged at the default `+4 dB` Sub Harmonics
+  setting and reduces elevated-bass reserve slope from `0.750 dB/dB` to
+  `0.500 dB/dB`
 - JDSP supplies the terminal limiter; the qualified Axiom baseline now uses `-1.00 dB`, `60 ms` release, `0 dB` postgain
 
 ## Installation
 
 ### JamesDSP Android
-1. Copy `src/axiom_binaural_dsp_v4.1.4.10.eel` to your JamesDSP liveprog directory
-2. Open JamesDSP -> Liveprog -> Load script -> select `axiom_binaural_dsp_v4.1.4.10.eel`
+1. Copy `src/axiom_binaural_dsp_v4.1.4.11.eel` to your JamesDSP liveprog directory
+2. Open JamesDSP -> Liveprog -> Load script -> select `axiom_binaural_dsp_v4.1.4.11.eel`
 3. Enable the Liveprog engine
 4. Set output limiter threshold to `-1.00 dB`, release `60 ms`, and postgain `0.00 dB`
 5. For headphones only, enable JamesDSP crossfeed manually if desired
 
 ### JamesDSP Linux
-1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.10.eel Axiom-v4.1.4.10-accepted`.
-2. The script loads Liveprog with crossfeed disabled, the qualified host limiter settings, and saves the accepted `.10` preset.
+1. Run `scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.11.eel Axiom-v4.1.4.11-accepted`.
+2. The script loads Liveprog with crossfeed disabled, the qualified host limiter settings, and saves the accepted `.11` preset.
 
 `presets/axiom-preset.conf` records the neutral accepted-baseline host configuration as a JDSP `audio.conf`-style template. Update its `liveprog_file` path before loading it directly; the hot-reload script writes the active absolute path automatically.
 
@@ -116,7 +119,7 @@ evidence:
 
 ```bash
 scripts/validate_axiom_listening_record.py \
-  ~/.local/state/axiom-engineering/listening-records/v4.1.4.10-phone.json \
+  ~/.local/state/axiom-engineering/listening-records/v4.1.4.11-phone.json \
   --json /tmp/axiom-listening-validation.json \
   --markdown /tmp/axiom-listening-record.md
 ```
@@ -130,8 +133,8 @@ settings checklist, and a listening-record template:
 
 ```bash
 scripts/build_android_validation_package.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
-  /tmp/axiom-android-v4.1.4.10
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
+  /tmp/axiom-android-v4.1.4.11
 ```
 
 See [`docs/android-validation.md`](docs/android-validation.md).
@@ -186,14 +189,14 @@ scripts/qualify_windows_default_route.py \
 
 The command blocks before playback if Windows is still using another output.
 When it passes preflight, it restarts the managed JDSP route, hot-reloads the
-accepted `.10` script, verifies host settings, plays a short probe, and writes
+accepted `.11` script, verifies host settings, plays a short probe, and writes
 local evidence for user confirmation.
 
 To build a local checklist package for the remaining physical route checks:
 
 ```bash
 scripts/build_device_readiness_package.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   /tmp/axiom-device-readiness \
   --device-matrix ~/.local/state/axiom-engineering/device-matrix.json
 ```
@@ -285,13 +288,14 @@ scripts/run_jdsp_lowmid_width_candidate_qualification.py \
 
 This qualification rejects any DSP edit beyond the candidate description and the two `slider5` default sites, then verifies real-host integrity and a measurable restrained `S/M` reduction in each affected band. A passing report permits listening; it is not listening acceptance.
 
-To screen the remaining high-frequency width control from accepted `.10` without creating a new DSP candidate:
+To screen the remaining high-frequency width control from the accepted baseline
+without creating a new DSP candidate:
 
 ```bash
 scripts/run_jdsp_high_width_screen.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v410-high-width-screen
+  /tmp/axiom-v411-high-width-screen
 ```
 
 The high-width screen retains accepted `slider6 = 110%` and creates temporary `105%` and `100%` fixtures, producing effective high-band side products of `1.485x`, `1.4175x`, and `1.350x`. It measures `4-7`, `7-12`, and `12-18 kHz` side balance and terminal integrity; no future candidate is justified without a measurable tradeoff and listening target.
@@ -302,13 +306,14 @@ high-band `S/M` by only `0.318 dB` on average and produced the only terminal
 observation on dense electronic material. Accepted `.10` remains unchanged;
 see [`docs/high-width-screen-v4.1.4.10.md`](docs/high-width-screen-v4.1.4.10.md).
 
-To screen the dynamic exciter sensitivity from accepted `.10` without creating a new DSP candidate:
+To screen the dynamic exciter sensitivity from the accepted baseline without
+creating a new DSP candidate:
 
 ```bash
 scripts/run_jdsp_exciter_sensitivity_screen.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   ~/.local/share/axiom-test-material/cc0-opengameart/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v410-exciter-screen
+  /tmp/axiom-v411-exciter-screen
 ```
 
 The exciter screen retains accepted `slider3 = 50%` and creates temporary
@@ -323,13 +328,13 @@ only `0.013 dB` or `0.008 dB` on average, respectively, and all captures stayed
 below the terminal observation boundary. Accepted `.10` remains unchanged; see
 [`docs/exciter-sensitivity-screen-v4.1.4.10.md`](docs/exciter-sensitivity-screen-v4.1.4.10.md).
 
-To exercise the same exciter on generated low-level material without relying on
-private music excerpts:
+To exercise the accepted exciter on generated low-level material without
+relying on private music excerpts:
 
 ```bash
 scripts/run_jdsp_exciter_probe_screen.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
-  /tmp/axiom-v410-exciter-probes
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
+  /tmp/axiom-v411-exciter-probes
 ```
 
 This creates quiet air-bearing, dull-control, sibilance-texture, and louder
@@ -365,7 +370,7 @@ To add perceptual-proxy context to any local WAV capture without running JDSP:
 ```bash
 scripts/analyze_audio_perceptual_metrics.py \
   /tmp/axiom-capture.wav \
-  --label accepted-v4.1.4.10 \
+  --label accepted-v4.1.4.11 \
   --json /tmp/axiom-capture-metrics.json \
   --markdown /tmp/axiom-capture-metrics.md
 ```
@@ -387,15 +392,15 @@ scripts/analyze_axiom_subharmonics.py \
 
 This is a branch-local model of the `.7` bass generator and terminal reserve. The historical `.8` full-reserve behavior can be modeled with `--reserve-above-slider-db 4`; the accepted `.9` reserve slope is established by its real-host qualification record. This tool identifies settings that should be verified through real-host captures, but it does not model exciter, STFT, limiter, or music-program behavior.
 
-To investigate whether the accepted host limiter participates at `.10` default
+To investigate whether the accepted host limiter participates at `.11` default
 controls without creating a new DSP candidate, run a repeated same-script
 limiter-threshold sweep against the registered local-material manifest:
 
 ```bash
 scripts/run_jdsp_limiter_sweep.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   /absolute/path/to/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v410-limiter-sweep
+  /tmp/axiom-v411-limiter-sweep
 ```
 
 By default this targets the high-energy electronic excerpt and compares `-0.50`,
@@ -410,9 +415,9 @@ dense-material stress profile at the qualified `-1.00 dB` threshold:
 
 ```bash
 scripts/run_jdsp_accepted_stress.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   /absolute/path/to/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v410-accepted-stress
+  /tmp/axiom-v411-accepted-stress
 ```
 
 This renders every registered excerpt three times at the accepted host
@@ -421,13 +426,13 @@ stable output above the `-0.50 dBFS` observation level is retained as accepted
 limiter-pressure evidence for evaluating later candidates.
 
 To identify the usable real-music range of the user-adjustable bass control,
-run the accepted `.10` Sub Harmonics Gain map:
+run the accepted `.11` Sub Harmonics Gain map:
 
 ```bash
 scripts/run_jdsp_sub_slider_map.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   /absolute/path/to/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v410-sub-slider-map
+  /tmp/axiom-v411-sub-slider-map
 ```
 
 The map renders temporary external fixtures at `+4`, `+6`, `+8`, `+10`, and
@@ -443,8 +448,8 @@ script, run the stage observability tap runner:
 
 ```bash
 scripts/run_jdsp_stage_observability.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
-  /tmp/axiom-v410-stage-observability
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
+  /tmp/axiom-v411-stage-observability
 ```
 
 The initial `bass_reserve` mode creates temporary same-render fixtures only. It
@@ -459,21 +464,26 @@ where expected and exact `-1.000 dB` fixed reserve behavior at the accepted
 that evidence; see
 [`docs/stage-observability-v4.1.4.10.md`](docs/stage-observability-v4.1.4.10.md).
 
-The following reserve-law commands reproduce the pre-`.9` investigation that
-identified `.8` output retreat. To screen whether `.8` is over-reserving output above its default without
-creating a DSP candidate, test reduced reserve slopes at practical `+8 dB`
-bass gain:
+The reserve-law commands below reproduce the historical `.10` investigation
+that produced `.11`. The `.10` reference law was `0.750 dB/dB`; temporary
+fixtures tested lighter reserve slopes at practical elevated bass gain:
 
 ```bash
 scripts/run_jdsp_reserve_law_screen.py \
-  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
   /absolute/path/to/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v48-reserve-screen
+  /tmp/axiom-v410-reserve-screen \
+  --label-regex '^(CC0 electronic outlaw high energy|CC0 instrumental hip hop high energy)$' \
+  --reserve-slope 0.75 \
+  --reserve-slope 0.7 \
+  --reserve-slope 0.625 \
+  --reserve-slope 0.5 \
+  --reference-slope 0.75
 ```
 
-The focused default screen targets the electronic and hip-hop excerpts and
-tests full reserve (`1.000`) against reduced slopes (`0.875`, `0.750`, and
-`0.500`). It excludes one conditioning render before measuring each
+The focused screen targets the electronic and hip-hop excerpts and tests the
+accepted reserve (`0.750`) against reduced slopes. It excludes conditioning
+renders before measuring each
 fixture/excerpt set so newly loaded host state is not counted as repeatability
 evidence. A reduced slope is viable only when every screened excerpt recovers
 repeatable RMS level without clipping or exceeding the `-0.50 dBFS` peak
@@ -485,23 +495,34 @@ registered material excerpt over elevated bass settings:
 
 ```bash
 scripts/run_jdsp_reserve_range_qualification.py \
-  src/axiom_binaural_dsp_v4.1.4.8.eel \
+  src/axiom_binaural_dsp_v4.1.4.10.eel \
   /absolute/path/to/axiom-external-cc0-manifest.json \
-  /tmp/axiom-v48-reserve-range
+  /tmp/axiom-v410-reserve-range \
+  --reserve-slope 0.5
 ```
 
-The default qualification tests slopes `0.750` and `0.500`, beginning at
+The default qualification begins at
 `+12 dB` and descending through `+10`, `+8`, and `+6 dB` only while the slope
 remains safe. A verified clipping or peak-margin rejection ends that slope
 immediately because it cannot qualify for the full control range. A scalar
 repeatability failure receives one fresh conditioned retry before it fails the
 measurement, because unstable capture evidence is not a reserve-law rejection.
 
+The completed `.10` reserve-law investigation found `0.500 dB/dB` viable across
+the full registered 14-item manifest at `+12`, `+10`, `+8`, and `+6 dB`, with
+no normal-material clipped samples. Declared flawed-source clipping remains an
+investigation marker, not a normal-material operating-range rejection. See
+[`docs/reserve-law-screen-v4.1.4.10.md`](docs/reserve-law-screen-v4.1.4.10.md).
+
+`src/axiom_binaural_dsp_v4.1.4.11.eel` packages that exact measured target and
+is the accepted baseline after human listening acceptance against `.10`. See
+[`docs/qualification-v4.1.4.11.md`](docs/qualification-v4.1.4.11.md).
+
 ### Controlled Pi Engineering Harness
 
 The project includes a local-first Pi harness for disciplined future Axiom
 experiments. It isolates the session from globally installed agent extensions,
-protects the accepted `.10` file by hash and path, creates candidates in
+protects the accepted `.11` file by hash and path, creates candidates in
 external worktrees, serializes real-JDSP capture runs, and requires separate
 human confirmations for listening acceptance, publication, and merge.
 
@@ -543,7 +564,8 @@ axiom-binaural-dsp/
     axiom_binaural_dsp_v4.1.4.7.eel  # Transparent-headroom comparison reference
     axiom_binaural_dsp_v4.1.4.8.eel  # Previous bass-aware headroom baseline
     axiom_binaural_dsp_v4.1.4.9.eel  # Previous reduced bass-reserve baseline
-    axiom_binaural_dsp_v4.1.4.10.eel # Accepted restrained low-mid width baseline
+    axiom_binaural_dsp_v4.1.4.10.eel # Previous restrained low-mid width baseline
+    axiom_binaural_dsp_v4.1.4.11.eel # Accepted reduced elevated-bass reserve baseline
   scripts/
     axiom_team.sh                     # Isolated Pi engineering-harness launcher
     hot_reload_liveprog.sh            # JDSP A/B preset loader
@@ -616,6 +638,7 @@ axiom-binaural-dsp/
     test_run_jdsp_exciter_sensitivity_screen.py
     test_run_jdsp_exciter_probe_screen.py
   docs/
+    README.md                # Documentation index and navigation map
     current-state.md         # Accepted baseline, host policy, and state boundary
     architecture.md           # Technical architecture documentation
     axiom-roadmap.md          # 90-day foundations-first roadmap
@@ -629,11 +652,12 @@ axiom-binaural-dsp/
     device-matrix.md          # Local device and route validation matrix
     candidate-readiness.md    # Baseline/corpus/device readiness gate
     bass-host-limiter-investigation-plan.md # Bass reserve and host-limiter measurement plan
-    stage-observability-v4.1.4.10.md # Current bass/reserve stage-tap evidence
-    exciter-probe-screen-v4.1.4.10.md # Current generated low-level exciter probe evidence
+    stage-observability-v4.1.4.10.md # Historical `.10` bass/reserve stage-tap evidence
+    exciter-probe-screen-v4.1.4.10.md # Historical `.10` generated low-level exciter probe evidence
     qualification-v4.1.4.8.md # Previous-baseline evidence and reproduction record
     qualification-v4.1.4.9.md # Previous-baseline evidence and reproduction record
-    qualification-v4.1.4.10.md # Current accepted-baseline evidence record
+    qualification-v4.1.4.10.md # Previous accepted-baseline evidence record
+    qualification-v4.1.4.11.md # Current accepted-baseline evidence record
     engineering-harness.md    # Controlled Pi candidate and release workflow
   tools/axiom-team/
     extensions/index.ts       # Restricted Pi tools and approval commands
@@ -670,6 +694,7 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`AGENTS.md`](AGENTS.md) | **Start here** — complete operating instructions, EEL2 constraints, file editing rules |
 | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | GitHub Copilot workspace context (auto-loaded) |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Commit conventions, code standards, testing checklist |
+| [`docs/README.md`](docs/README.md) | Documentation index and category map |
 | [`docs/current-state.md`](docs/current-state.md) | Current accepted baseline, host policy, product boundary, and local-state rules |
 | [`docs/axiom-roadmap.md`](docs/axiom-roadmap.md) | 90-day roadmap from the current notes and concerns |
 | [`docs/ab-listening-packages.md`](docs/ab-listening-packages.md) | Level-matched local A/B listening package workflow |
@@ -683,13 +708,17 @@ This repository is configured for AI agent collaboration. The following files pr
 | [`docs/candidate-readiness.md`](docs/candidate-readiness.md) | Baseline hash, strict corpus, and strict device readiness before new candidates |
 | [`docs/architecture-decision-v4.1.4.10.md`](docs/architecture-decision-v4.1.4.10.md) | Phase 4 decision record for `.10`, `.11`, and v5 direction |
 | [`docs/bass-host-limiter-investigation-plan.md`](docs/bass-host-limiter-investigation-plan.md) | Bass reserve and JDSP host-limiter investigation plan before any `.11` candidate |
+| [`docs/accepted-stress-v4.1.4.10.md`](docs/accepted-stress-v4.1.4.10.md) | `.10` accepted-setting dense-material stress record |
+| [`docs/sub-harmonics-map-v4.1.4.10.md`](docs/sub-harmonics-map-v4.1.4.10.md) | `.10` elevated Sub Harmonics control-range evidence |
+| [`docs/reserve-law-screen-v4.1.4.10.md`](docs/reserve-law-screen-v4.1.4.10.md) | `.10` reserve-law screen and full-manifest `0.500 dB/dB` qualification |
 | [`docs/stage-observability-plan.md`](docs/stage-observability-plan.md) | Diagnostic stage-tap fixture and reporting plan |
 | [`docs/stage-observability-v4.1.4.10.md`](docs/stage-observability-v4.1.4.10.md) | `.10` bass/reserve stage-tap evidence and no-candidate decision |
 | [`docs/JDSP4Linux_Knowledge_Base.md`](docs/JDSP4Linux_Knowledge_Base.md) | Full EEL2/JDSP runtime API reference |
 | [`docs/architecture.md`](docs/architecture.md) | Current signal chain and ownership documentation |
 | [`docs/qualification-v4.1.4.8.md`](docs/qualification-v4.1.4.8.md) | Previous `.8` verification record |
 | [`docs/qualification-v4.1.4.9.md`](docs/qualification-v4.1.4.9.md) | Previous `.9` verification record |
-| [`docs/qualification-v4.1.4.10.md`](docs/qualification-v4.1.4.10.md) | Accepted `.10` verification and listening record |
+| [`docs/qualification-v4.1.4.10.md`](docs/qualification-v4.1.4.10.md) | Previous accepted `.10` verification and listening record |
+| [`docs/qualification-v4.1.4.11.md`](docs/qualification-v4.1.4.11.md) | Accepted `.11` reduced elevated-bass reserve record |
 | [`docs/stft-audit-v4.1.4.9.md`](docs/stft-audit-v4.1.4.9.md) | Historical `.9` STFT stage investigation record |
 | [`docs/width-mono-audit-v4.1.4.9.md`](docs/width-mono-audit-v4.1.4.9.md) | Historical `.9` width and mono-compatibility investigation record |
 | [`docs/lowmid-width-screen-v4.1.4.9.md`](docs/lowmid-width-screen-v4.1.4.9.md) | `.9` evidence supporting the accepted `.10` width change |

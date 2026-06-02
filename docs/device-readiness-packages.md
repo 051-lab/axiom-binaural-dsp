@@ -13,7 +13,7 @@ Use them when `scripts/evaluate_axiom_candidate_readiness.py` is blocked by
 
 ```bash
 scripts/build_device_readiness_package.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   /tmp/axiom-device-readiness \
   --device-matrix ~/.local/state/axiom-engineering/device-matrix.json
 ```

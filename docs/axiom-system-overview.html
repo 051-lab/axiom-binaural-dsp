@@ -763,15 +763,15 @@
           A device-neutral headphone and speaker enhancement core with controlled stereo width,
           additive psychoacoustic bass, a conservative dynamic exciter, STFT resonance suppression,
           and host-owned terminal limiting. The accepted baseline is
-          <code>v4.1.4.10</code>.
+          <code>v4.1.4.11</code>.
         </p>
         <div class="status-strip" aria-label="Current project status">
           <div class="stat">
-            <strong>v4.1.4.10</strong>
+            <strong>v4.1.4.11</strong>
             <span>Accepted listening baseline</span>
           </div>
           <div class="stat">
-            <strong>155 / 22</strong>
+            <strong>159 / 22</strong>
             <span>Current Python and Pi harness tests</span>
           </div>
           <div class="stat">
@@ -885,10 +885,11 @@
         <article class="card">
           <h3>Bass ownership</h3>
           <span class="metric">0.750</span>
-          <p>Additional reserve slope in dB per dB above the accepted `+4 dB` Sub Harmonics default.</p>
+          <p>Accepted additional reserve slope in dB per dB above the `+4 dB` Sub Harmonics default.</p>
           <div class="tagrow">
             <span class="tag good">default loudness preserved</span>
             <span class="tag">elevated bass protected</span>
+            <span class="tag good">0.500 lab-qualified</span>
           </div>
         </article>
         <article class="card">
@@ -978,6 +979,14 @@
             <h3>Restrained low-mid width</h3>
             <p>Reduced default `150 Hz-4 kHz` side product to `1.701x`; accepted after real-host qualification and device listening.</p>
           </div>
+          <div class="release-status">previous baseline</div>
+        </article>
+        <article class="release">
+          <div class="version">v4.1.4.11</div>
+          <div>
+            <h3>Reduced elevated-bass reserve</h3>
+            <p>Accepted baseline that changes only the elevated-bass reserve slope from `0.750` to `0.500 dB/dB` above the accepted `+4 dB` default.</p>
+          </div>
           <div class="release-status">current baseline</div>
         </article>
       </div>
@@ -989,8 +998,8 @@
         <div>
           <h2>What the test suite has proven or closed.</h2>
           <p>
-            The system now separates a listening candidate from a measurement question. Screens can close
-            an idea without producing a new EEL version.
+            The system separates candidate acceptance from measurement questions. Screens can close
+            an idea without producing a new EEL version, and accepted candidates become the next policy anchor.
           </p>
         </div>
       </div>
@@ -1051,8 +1060,14 @@
             <tr>
               <td>Sub Harmonics reserve mapping</td>
               <td>Elevated bass control range from `+4` through `+12 dB`</td>
-              <td>`0.750 dB/dB` reserve slope survived range qualification where stronger recovery did not</td>
+              <td>`0.750 dB/dB` became the accepted `.9` reserve law from the original elevated-bass qualification</td>
               <td><span class="ok">Promoted to `.9`</span></td>
+            </tr>
+            <tr>
+              <td>Full-manifest reserve-law qualification</td>
+              <td>Temporary `0.500 dB/dB` elevated-bass reserve law across 14 registered items</td>
+              <td>Survived `+12`, `+10`, `+8`, and `+6 dB` with no normal-material clipped samples</td>
+              <td><span class="ok">Candidate-worthy</span></td>
             </tr>
           </tbody>
         </table>
@@ -1077,7 +1092,7 @@
           <ul class="task-list">
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
-              <span><span class="task-title">Accept <code>v4.1.4.10</code> as baseline</span><span class="task-detail">Listening acceptance, qualification record, and SHA-256 policy anchor are in place.</span></span>
+              <span><span class="task-title">Accept <code>v4.1.4.11</code> as baseline</span><span class="task-detail">Listening acceptance, qualification record, and SHA-256 policy anchor are in place.</span></span>
             </li>
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
@@ -1085,7 +1100,7 @@
             </li>
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
-              <span><span class="task-title">Align public source-of-truth docs</span><span class="task-detail">README, current state, architecture, roadmap, harness, and policy docs point at `.10`.</span></span>
+              <span><span class="task-title">Align public source-of-truth docs</span><span class="task-detail">README, current state, architecture, roadmap, harness, and policy docs point at `.11`.</span></span>
             </li>
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
@@ -1123,7 +1138,7 @@
             </li>
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
-              <span><span class="task-title">Resolve exciter probe questions</span><span class="task-detail">Floor-aware rerun supports accepted `.10`: useful quiet-air activation, loud-material backoff, and no decision-grade dull-control overreach.</span></span>
+              <span><span class="task-title">Resolve exciter probe questions</span><span class="task-detail">Floor-aware rerun supports the inherited exciter behavior: useful quiet-air activation, loud-material backoff, and no decision-grade dull-control overreach.</span></span>
             </li>
             <li class="done">
               <span class="task-icon" aria-hidden="true">&#10003;</span>
@@ -1199,13 +1214,21 @@
               <span class="task-icon" aria-hidden="true">&#10003;</span>
               <span><span class="task-title">Pass the candidate-readiness gate</span><span class="task-detail">Baseline hash, corpus strict checks, and device strict coverage/setup now pass locally.</span></span>
             </li>
-            <li class="next">
-              <span class="task-icon" aria-hidden="true">&#8594;</span>
-              <span><span class="task-title">Record route-specific listening evidence</span><span class="task-detail">Use structured listening records once the Android and playback routes are verified.</span></span>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Full-manifest qualify the reserve-law opportunity</span><span class="task-detail">Temporary <code>0.500 dB/dB</code> elevated-bass reserve survived all registered material at <code>+12</code>, <code>+10</code>, <code>+8</code>, and <code>+6 dB</code> without normal-material clipping.</span></span>
+            </li>
+            <li class="done">
+              <span class="task-icon" aria-hidden="true">&#10003;</span>
+              <span><span class="task-title">Accept the scoped `.11` baseline</span><span class="task-detail"><code>v4.1.4.11</code> changes only the elevated-bass reserve slope and keeps <code>v4.1.4.10</code> as the previous accepted reference.</span></span>
             </li>
             <li class="next">
               <span class="task-icon" aria-hidden="true">&#8594;</span>
-              <span><span class="task-title">Choose the next DSP direction</span><span class="task-detail">After readiness passes, decide whether to defer DSP edits, create a narrow `.11`, or draft a v5 architecture proposal.</span></span>
+              <span><span class="task-title">Rerun readiness before `.12`</span><span class="task-detail">Use the `.11` policy anchor before any next accepted-vs-candidate phone, speaker, wired/USB, or Bluetooth pass.</span></span>
+            </li>
+            <li class="next">
+              <span class="task-icon" aria-hidden="true">&#8594;</span>
+              <span><span class="task-title">Accept or reject `.11`</span><span class="task-detail">Listen for bass punch, density, smear, pumping, harshness, stereo stability, fatigue, and route translation before promotion.</span></span>
             </li>
           </ul>
         </article>
@@ -1264,7 +1287,7 @@
         <article class="card">
           <h3>Accepted baseline</h3>
           <p>
-            Use <code>src/axiom_binaural_dsp_v4.1.4.10.eel</code> with JDSP master limiter
+            Use <code>src/axiom_binaural_dsp_v4.1.4.11.eel</code> with JDSP master limiter
             enabled at <code>-1.00 dB</code>, <code>60 ms</code> release, and <code>0 dB</code>
             postgain. Enable JamesDSP crossfeed manually only when headphones need it.
           </p>
@@ -1280,8 +1303,9 @@
             The low-level exciter probe questions are resolved and bass/reserve stage taps are captured.
             The perceptual metrics layer is built and wired into the primary reports, listening records
             are structured, Android validation packaging is defined, and the local corpus strict-passes
-            coverage. Device readiness and candidate readiness now pass locally, so the next DSP step
-            must start from a scoped hypothesis rather than another exploratory tweak.
+            coverage. Device readiness and candidate readiness now pass locally. The accepted
+            <code>v4.1.4.11</code> baseline is a narrow elevated-bass reserve update from
+            <code>0.750</code> to <code>0.500 dB/dB</code>; it does not include unrelated DSP changes.
           </p>
           <div class="tagrow">
             <span class="tag good">exciter probes resolved</span>
@@ -1299,6 +1323,7 @@
             <span class="tag good">corpus strict-ready</span>
             <span class="tag good">device readiness passed</span>
             <span class="tag good">candidate readiness passed</span>
+            <span class="tag good">0.500 reserve qualified</span>
             <span class="tag">avoid feature creep</span>
           </div>
         </article>
@@ -1321,10 +1346,14 @@
         <a href="corpus-material.md">corpus-material.md</a>,
         <a href="listening-records.md">listening-records.md</a>,
         <a href="bass-host-limiter-investigation-plan.md">bass-host-limiter-investigation-plan.md</a>,
+        <a href="accepted-stress-v4.1.4.10.md">accepted-stress-v4.1.4.10.md</a>,
+        <a href="sub-harmonics-map-v4.1.4.10.md">sub-harmonics-map-v4.1.4.10.md</a>,
+        <a href="reserve-law-screen-v4.1.4.10.md">reserve-law-screen-v4.1.4.10.md</a>,
         <a href="stage-observability-plan.md">stage-observability-plan.md</a>,
         <a href="stage-observability-v4.1.4.10.md">stage-observability-v4.1.4.10.md</a>,
         <a href="perceptual-metrics.md">perceptual-metrics.md</a>,
         <a href="qualification-v4.1.4.10.md">qualification-v4.1.4.10.md</a>,
+        <a href="qualification-v4.1.4.11.md">qualification-v4.1.4.11.md</a>,
         <a href="high-width-screen-v4.1.4.10.md">high-width-screen-v4.1.4.10.md</a>,
         <a href="exciter-sensitivity-screen-v4.1.4.10.md">exciter-sensitivity-screen-v4.1.4.10.md</a>,
         and <a href="exciter-probe-screen-v4.1.4.10.md">exciter-probe-screen-v4.1.4.10.md</a>.

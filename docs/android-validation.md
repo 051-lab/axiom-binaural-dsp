@@ -19,18 +19,18 @@ Accepted-baseline package:
 
 ```bash
 scripts/build_android_validation_package.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
-  /tmp/axiom-android-v4.1.4.10
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
+  /tmp/axiom-android-v4.1.4.11
 ```
 
 Accepted-versus-candidate package:
 
 ```bash
 scripts/build_android_validation_package.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   /tmp/axiom-android-candidate \
-  --candidate-eel src/axiom_binaural_dsp_v4.1.4.11.eel \
-  --package-name axiom-v4.1.4.11-android-validation
+  --candidate-eel src/axiom_binaural_dsp_vNEXT.eel \
+  --package-name axiom-vNEXT-android-validation
 ```
 
 The output folder contains:

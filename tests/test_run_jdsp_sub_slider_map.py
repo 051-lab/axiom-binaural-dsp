@@ -17,12 +17,14 @@ def slider(
     qualified: bool = True,
     silent: bool = False,
     rms: float = -12.0,
+    material_class: str | None = None,
 ) -> dict:
     return {
         "slider_db": slider_db,
         "tracks": [{
             "label": "dense",
             "name": "dense",
+            "material_class": material_class,
             "thresholds": {
                 "-1.0": {
                     "captures": [{"peak_dbfs": peak, "silent": silent}, {"peak_dbfs": peak, "silent": silent}],
@@ -55,6 +57,17 @@ class SubSliderMapTests(unittest.TestCase):
     def test_default_clipping_fails_map(self) -> None:
         evaluation = slider_map.evaluate_map([slider(4.0, 0.0, clipped=1)], -1.0, 4.0, -0.50)
         self.assertEqual(evaluation["status"], "fail")
+
+    def test_flawed_source_clipping_is_investigation_not_range_boundary(self) -> None:
+        evaluation = slider_map.evaluate_map(
+            [slider(4.0, 0.0, clipped=1, qualified=False, material_class="flawed_source")],
+            -1.0,
+            4.0,
+            -0.50,
+        )
+        self.assertEqual(evaluation["status"], "pass_with_investigation")
+        self.assertEqual(evaluation["clipped_slider_values_db"], [])
+        self.assertEqual(evaluation["checks"][0]["status"], "investigate")
 
     def test_pressure_without_clipping_is_investigation(self) -> None:
         evaluation = slider_map.evaluate_map([slider(4.0, -0.7), slider(8.0, -0.2)], -1.0, 4.0, -0.50)

@@ -121,7 +121,7 @@ scripts/qualify_windows_default_route.py \
 
 This command blocks if the default render endpoint is not the requested route
 class. If preflight passes, it restarts the managed JDSP route, hot-reloads the
-accepted `.10` script, verifies host policy, plays a probe, and writes a local
+accepted `.11` script, verifies host policy, plays a probe, and writes a local
 qualification report. Human confirmation is still required before setting
 `route_stability_checked` or `reboot_persistence_checked` in the matrix.
 
@@ -129,7 +129,7 @@ To create a local route-by-route checklist package from the current matrix:
 
 ```bash
 scripts/build_device_readiness_package.py \
-  src/axiom_binaural_dsp_v4.1.4.10.eel \
+  src/axiom_binaural_dsp_v4.1.4.11.eel \
   /tmp/axiom-device-readiness \
   --device-matrix ~/.local/state/axiom-engineering/device-matrix.json
 ```

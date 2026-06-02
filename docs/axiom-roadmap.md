@@ -2,7 +2,7 @@
 
 ## Summary
 
-This roadmap turns the questions and answers in `docs/axiom-notes.html` into a staged work plan. The priority is foundations first: protect the accepted `v4.1.4.10` baseline, improve observability, expand evidence, and only then decide whether another v4 refinement or a v5 architecture proposal is justified.
+This roadmap turns the questions and answers in `docs/axiom-notes.html` into a staged work plan. The priority is foundations first: protect the accepted `v4.1.4.11` baseline, improve observability, expand evidence, and only then decide whether another v4 refinement or a v5 architecture proposal is justified.
 
 The current product stance is:
 
@@ -35,7 +35,7 @@ Done when:
 
 - No current-facing assistant or user doc identifies `.8` or `.9` as the accepted baseline.
 - The repo has an explicit decision about local HTML docs and license state.
-- A fresh agent can identify `src/axiom_binaural_dsp_v4.1.4.10.eel` as the accepted baseline from one starting document.
+- A fresh agent can identify `src/axiom_binaural_dsp_v4.1.4.11.eel` as the accepted baseline from one starting document.
 
 ## Phase 1: Measurement Foundation
 
@@ -109,10 +109,24 @@ Done when:
 - v5 is either explicitly deferred or justified by a written architecture proposal.
 - Axiom Clean remains stable and trusted regardless of lab experiments.
 
+Current status:
+
+- Phase 0-3 foundations are structurally complete locally: source-of-truth docs,
+  observability, corpus taxonomy, structured listening records, device
+  readiness, and candidate readiness are in place.
+- The first Phase 4 bass/reserve decision has evidence: `0.500 dB/dB`
+  elevated-bass reserve recovered meaningful RMS and survived full-manifest
+  range qualification across `+12`, `+10`, `+8`, and `+6 dB`.
+- The narrowly scoped `.11` reserve-law change has been accepted after
+  listening against `.10`.
+- Remaining Phase 4 work is to use `.11` as the policy anchor, rerun readiness
+  before any `.12` proposal, and avoid new sound changes without a measured
+  hypothesis.
+
 ## Acceptance Criteria For The Roadmap
 
 - The roadmap improves the development system before adding audio features.
 - Every lane maps back to one or more questions in `docs/axiom-notes.html`.
-- The accepted `.10` baseline remains immutable until a future qualified candidate passes listening.
+- The accepted `.11` baseline remains immutable until a future qualified candidate passes listening.
 - Roadmap work does not require committing audio captures, private tracks, or local manifests.
 - Documentation distinguishes public repo state from local/private engineering state.

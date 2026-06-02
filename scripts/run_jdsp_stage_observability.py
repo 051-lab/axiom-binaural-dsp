@@ -25,13 +25,13 @@ from run_jdsp_wsl_qualification import (
 )
 
 
-ACCEPTED_V410_SHA256 = "2b72288048f3e6a180eb5a0e3d951f34fc463d113bb8d716c03cfda8aeafffc5"
+ACCEPTED_BASELINE_SHA256 = "ad7dd7b33f2e62ff03ae08d7101c7ac333d707baef26b952806990ad979b0b0e"
 INIT_OUTPUT_GAIN_LINE = "outputGain = headroomGain;\n"
 SPATIAL_RECOMBINE_BLOCK = "out_L = low_mono + m_l + h_l;\nout_R = low_mono + m_r + h_r;"
 BASS_INJECTION_BLOCK = "out_L += harm_l * subGainLin;\nout_R += harm_r * subGainLin;"
 OUTPUT_GAIN_LINE = (
     "outputGain = (slider1 > 4.0) ? "
-    "(headroomGain * exp(-((slider1 - 4.0) * 0.75) * DB_2_LOG)) : headroomGain;"
+    "(headroomGain * exp(-((slider1 - 4.0) * 0.50) * DB_2_LOG)) : headroomGain;"
 )
 FINAL_STAGE_HEADER = """// ==========================================
 // FINAL OUTPUT ASSIGNMENT
@@ -39,7 +39,7 @@ FINAL_STAGE_HEADER = """// ==========================================
 """
 FINAL_OUTPUT_BLOCK = (
     FINAL_STAGE_HEADER
-    + "// Preserve the v4.1.4.7 default sound; elevated bass gain uses the qualified reduced reserve slope.\n"
+    + "// Preserve the default sound; elevated bass gain uses the accepted reduced reserve slope.\n"
     + OUTPUT_GAIN_LINE + "\n"
     + "out_L *= outputGain;\n"
     + "out_R *= outputGain;\n"
@@ -399,9 +399,9 @@ def main() -> int:
     if not accepted.is_file():
         parser.error(f"EEL script not found: {accepted}")
     accepted_sha256 = sha256_file(accepted)
-    if accepted_sha256 != ACCEPTED_V410_SHA256 and not args.allow_non_accepted_hash:
+    if accepted_sha256 != ACCEPTED_BASELINE_SHA256 and not args.allow_non_accepted_hash:
         parser.error(
-            f"{accepted} is not the accepted v4.1.4.10 baseline; "
+            f"{accepted} is not the accepted v4.1.4.11 baseline; "
             "pass --allow-non-accepted-hash only for tool development"
         )
     if not -30.0 <= args.master_limiter_threshold_db <= 0.0:

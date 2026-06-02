@@ -2,7 +2,7 @@
 
 ## Overview
 
-Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.10` is the accepted listening baseline: it retains `.9` bass reserve behavior and applies a measured reduction to default low-mid side width.
+Axiom Binaural DSP is a JDSP4Linux / JamesDSP EEL2 enhancement core intended to work consistently on speakers and headphones. `v4.1.4.11` is the accepted listening baseline: it retains `.10` restrained low-mid width and reduces only the elevated-bass output reserve slope above the default Sub Harmonics setting.
 
 Target priorities:
 
@@ -82,7 +82,7 @@ This stage is intentionally conservative. It should reduce short harsh resonance
 
 `v4.1.4.4` contains a manual crossfeed path: a delayed opposite-channel signal is band-passed from 150 Hz to 1500 Hz and additively mixed at a default coefficient of `0.33`. For correlated mono material, transfer analysis shows a range of approximately `-3.34 dB` to `+2.31 dB` at 48 kHz, with the peak near 285 Hz. That both spends headroom and alters centered midrange tonality.
 
-`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`. `v4.1.4.6` retains that device-neutral core. `v4.1.4.10` remains device-neutral and does not alter crossfeed ownership. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
+`v4.1.4.5` removes the script delay buffers, crossfeed filters, mix arithmetic, and `slider4`. `v4.1.4.6` retains that device-neutral core. `v4.1.4.11` remains device-neutral and does not alter crossfeed ownership. If crossfeed is useful for a headphone listening session, it is enabled manually in JamesDSP rather than being coupled to the Axiom script.
 
 For reference, host BS2B custom mode at `700 Hz / 6.0 dB` uses complementary filtered paths with gain normalization. Under the same correlated-mono analysis it produces no positive gain peak, avoiding the removed manual path's limiter-driving boost.
 
@@ -114,11 +114,24 @@ bassReserveDb = max(0, slider1 - 4) * 0.750
 outputGain = -1 dB fixed reserve - bassReserveDb
 ```
 
-Real-host range screening rejected a more aggressive `0.500 dB/dB` reserve slope. Managed `.8` versus `.9` qualification passed with an investigation marker for existing near-ceiling host-limiter participation, and device A/B listening accepted `.9` as the new baseline.
+The original `.8` to `.9` qualification selected `0.750 dB/dB` as the accepted
+compromise because it recovered practical playback level while retaining the
+measured elevated-bass safety margin available at that time. Later `.10`
+lab-only reserve-law screening reopened the question with broader corpus
+metadata and stricter flawed-source classification; that newer evidence makes
+`0.500 dB/dB` candidate-worthy. That law is now accepted as `v4.1.4.11`.
 
-`v4.1.4.10` retains this output reserve law without modification. Its only
-sound-changing default is the qualified low-mid width reduction described
+`v4.1.4.10` retained this output reserve law without modification. Its only
+sound-changing default was the qualified low-mid width reduction described
 below.
+
+`v4.1.4.11` keeps the `.10` chain and default `+4 dB` Sub Harmonics behavior,
+then changes only the elevated-bass reserve slope above default:
+
+```text
+bassReserveDb = max(0, slider1 - 4) * 0.500
+outputGain = -1 dB fixed reserve - bassReserveDb
+```
 
 JDSP always applies its output limiter after Liveprog and postgain. The fixed comparison baseline is:
 
@@ -135,6 +148,11 @@ The `.10` baseline was accepted after scoped real-host qualification and
 device listening against `.9`. It reduced affected-band side-to-mid balance
 by an average `0.888 dB` over four registered CC0 excerpts, with no clipped
 candidate samples and a highest measured peak of `-0.586 dBFS`.
+
+The `.11` baseline was accepted after device listening against `.10`. It
+inherits the full-manifest temporary-fixture reserve-law qualification across
+14 registered material items at `+12`, `+10`, `+8`, and `+6 dB`, with no
+normal-material clipped samples.
 
 ## Sliders
 
@@ -160,6 +178,7 @@ scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.7.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.8.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.9.eel
 scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.10.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.11.eel
 ```
 
 Run coefficient and crossover response analysis:
@@ -186,13 +205,21 @@ For the WSL workstation route, `scripts/run_jdsp_wsl_qualification.py` invokes t
 
 When a private manifest is supplied through `--local-material-manifest`, `run_jdsp_local_material.py` converts only the selected excerpt windows to temporary 48 kHz, 16-bit stereo PCM without normalizing their original decoded level, renders the selected baseline and candidate through the same host route at default controls, and merges integrity and terminal-margin observations into the managed report. The manifest and excerpt outputs must remain outside the repository; this permits relevant listening-library checks without distributing source recordings or treating deterministic test arrangements as substitutes for actual program material.
 
-`scripts/run_jdsp_accepted_stress.py` characterizes the selected accepted baseline at the tracked `-1.00 dB` host threshold before another DSP candidate is justified. It repeats each registered external excerpt, rejects clipped or unusable level profiles, and records stable peaks above `-0.50 dBFS` as existing limiter-pressure behavior rather than retroactively failing the accepted listening baseline. New investigations use accepted `.10`; the `.8` and `.9` artifacts remain the evidence that justified the current reserve and spatial defaults.
+`scripts/run_jdsp_accepted_stress.py` characterizes the selected accepted baseline at the tracked `-1.00 dB` host threshold before another DSP candidate is justified. It repeats each registered external excerpt, rejects clipped or unusable level profiles, and records stable peaks above `-0.50 dBFS` as existing limiter-pressure behavior rather than retroactively failing the accepted listening baseline. New investigations use accepted `.11`; earlier artifacts remain the evidence that justified the current reserve and spatial defaults.
 
-`scripts/run_jdsp_sub_slider_map.py` expands that measurement across temporary fixtures based on the selected accepted script whose only difference is the `Sub Harmonics Gain` default. Its default grid of `+4`, `+6`, `+8`, `+10`, and `+12 dB` establishes whether real program material remains unclipped as user bass gain rises. A failure at the accepted `+4 dB` default rejects the baseline measurement; clipping found only at elevated settings records an operating-range boundary and supplies evidence for deciding whether a later bass-reserve revision is worthwhile. The original `.8` map exposed repeatable RMS retreat and led to `.9`; future maps start from `.10`, which inherits the accepted `.9` reserve law.
+`scripts/run_jdsp_sub_slider_map.py` expands that measurement across temporary fixtures based on the selected accepted script whose only difference is the `Sub Harmonics Gain` default. Its default grid of `+4`, `+6`, `+8`, `+10`, and `+12 dB` establishes whether real program material remains unclipped as user bass gain rises. A failure at the accepted `+4 dB` default rejects the baseline measurement; clipping found only at elevated settings records an operating-range boundary and supplies evidence for deciding whether a later bass-reserve revision is worthwhile. The original `.8` map exposed repeatable RMS retreat and led to `.9`; future maps start from `.11`.
 
-`scripts/run_jdsp_reserve_law_screen.py` evaluates that tradeoff before any versioned DSP edit. At a practical elevated `+8 dB` slider setting, it creates external fixtures whose conditional reserve slope is reduced from the accepted `1.000 dB` attenuation per added slider dB to candidate slopes `0.875`, `0.750`, and `0.500`. It runs one excluded conditioning render before measuring each fixture/excerpt set, then screens critical dense excerpts using repeated real-host captures and rejects a slope that clips or crosses `-0.50 dBFS`. A slope must recover measurable RMS level on every screened excerpt before broader boundary qualification is justified; a passing focused screen is not listening acceptance or a production architecture change.
+`scripts/run_jdsp_reserve_law_screen.py` evaluates that tradeoff before any versioned DSP edit. The historical `.10` investigation used a practical elevated `+8 dB` slider setting and created external fixtures whose conditional reserve slope was reduced from the `.10` `0.750 dB` attenuation per added slider dB to lighter candidate slopes such as `0.700`, `0.625`, and `0.500`. It runs excluded conditioning renders before measuring each fixture/excerpt set, then screens critical dense excerpts using repeated real-host captures and rejects a slope that clips or crosses `-0.50 dBFS`. A slope must recover measurable RMS level on every screened excerpt before broader boundary qualification is justified; a passing focused screen is not listening acceptance or a production architecture change.
 
 `scripts/run_jdsp_reserve_range_qualification.py` takes focused-screen survivors through full registered-material coverage before any listening candidate is created. It starts at `+12 dB` Sub Harmonics Gain and descends through `+10`, `+8`, and `+6 dB`, rejecting and stopping a slope at the first clipped or above-boundary result. An unstable scalar measurement receives one fresh conditioned retry before it fails the qualification as unusable evidence. This ordering minimizes unnecessary live-host renders while preserving the actual full-range eligibility decision.
+
+The completed `.10` reserve-law investigation found `0.500 dB/dB` viable across
+the full 14-item registered manifest at `+12`, `+10`, `+8`, and `+6 dB`. Normal
+material produced no clipped samples; declared flawed-source clipping remains
+an investigation marker instead of a normal-material rejection. That evidence
+created the narrow `.11` listening candidate, which was accepted after device
+listening against `.10`. See `docs/reserve-law-screen-v4.1.4.10.md` and
+`docs/qualification-v4.1.4.11.md`.
 
 Qualify measurement repeatability before relying on fine differences. `scripts/qualify_jdsp_repeatability.py` accepts three or more captures of one script/stimulus/configuration and recommends five for decision-grade reports. It rejects invalid stereo PCM, frame mismatch, silence, clipping, caller-excessive level spread, and low-confidence alignment. Its optional jitter value is relative content-alignment spread only; it is not an absolute latency measurement. Variance and confidence limits must be supplied by the caller until repeated host measurements provide a defensible tolerance policy.
 
@@ -207,7 +234,7 @@ The transfer report retains timing against the known stimulus playback timeline 
 The completed `.9` STFT audit measured approximately `11.6 ms` of same-render STFT path delay. The unity round trip produced a measurable sweep residual, and accepted suppression increased that sweep difference while leaving bass-burst behavior effectively unchanged. Across three impulse renders, the largest temporal-energy-span change was one sample at `48 kHz`, with no meaningful local-energy loss that justifies bypass or retuning. See `docs/stft-audit-v4.1.4.9.md`.
 
 `scripts/run_jdsp_stage_observability.py` creates temporary same-render tap
-fixtures from accepted `.10` to compare `spatial_out -> bass_post` and
+fixtures from the accepted baseline to compare `spatial_out -> bass_post` and
 `reserve_pre -> reserve_post`. The completed `.10` run confirmed additive bass
 behavior before reserve and exact `-1.000 dB` fixed reserve behavior at the
 accepted `+4 dB` Sub Harmonics default. No bass or reserve candidate is
@@ -225,7 +252,7 @@ The completed screen found accepted `.9` to be approximately `+5.3 dB` more side
 
 For that narrowly scoped candidate, `scripts/run_jdsp_lowmid_width_candidate_qualification.py` replaces generic default-transparency qualification. A low-mid width change is deliberately not level-transparent on side-bearing content. The scoped runner allows only the version description and the two `slider5` default sites to change, then renders accepted-versus-candidate registered material through JDSP. It rejects silence, clipping, unscoped EEL differences, or absence of the expected reduced `S/M` balance in any affected band; terminal pressure remains an explicit investigation result. Human listening is still required for acceptance.
 
-`scripts/run_jdsp_high_width_screen.py` begins the next spatial investigation from accepted `.10` without modifying it. It retains the accepted `slider6 = 110%` high-frequency width default and creates temporary `105%` and `100%` fixtures while preserving `.10` low-mid width. With global width at `135%`, these correspond to high-band side products of `1.485x`, `1.4175x`, and `1.350x`. Reports divide the affected region into `4-7`, `7-12`, and `12-18 kHz` bands so any later listening proposal is based on measured brilliance and air-band behavior rather than broad subjective retuning.
+`scripts/run_jdsp_high_width_screen.py` begins spatial investigations from the accepted baseline without modifying it. It retains the accepted `slider6 = 110%` high-frequency width default and creates temporary `105%` and `100%` fixtures while preserving the current low-mid width. With global width at `135%`, these correspond to high-band side products of `1.485x`, `1.4175x`, and `1.350x`. Reports divide the affected region into `4-7`, `7-12`, and `12-18 kHz` bands so any later listening proposal is based on measured brilliance and air-band behavior rather than broad subjective retuning.
 
 `scripts/run_jdsp_exciter_sensitivity_screen.py` starts the post-width
 measurement pass on the dynamic exciter. It retains accepted `slider3 = 50%`
@@ -247,10 +274,10 @@ reduced `35%`, and bypassed `0%` sensitivity through the same real-JDSP route.
 This screen asks whether the accepted exciter is material-aware in the intended
 direction: measurable on quiet air-bearing content, minimal on dull content,
 and reduced on louder bright content. Its report includes explicit activation
-and restraint checks so a future `.11` exciter decision can be based on probe
+and restraint checks so a future exciter decision can be based on probe
 behavior rather than raw band tables alone.
 
-The completed generated-probe screen confirmed that accepted `.10` adds
+The completed generated-probe screen confirmed that the inherited exciter adds
 measurable `12-18 kHz` air on quiet air-bearing material and backs off on
 louder bright material. After absolute band-RMS context was added, the
 dull-control air delta was below the `-90 dBFS` decision floor and the small
@@ -312,7 +339,7 @@ scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.6.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.7.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.8.eel
 scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.9.eel
-scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.10.eel Axiom-v4.1.4.10-accepted
+scripts/hot_reload_liveprog.sh src/axiom_binaural_dsp_v4.1.4.11.eel Axiom-v4.1.4.11-accepted
 ```
 
 ## Engineering Constraints

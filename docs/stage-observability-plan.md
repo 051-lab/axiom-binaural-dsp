@@ -100,7 +100,7 @@ are true:
   comparison.
 - The report can identify whether bass/reserve or STFT explains a measured
   final-output difference.
-- The tool refuses to run if source signatures drift from accepted `.10`.
+- The tool refuses to run if source signatures drift from the accepted baseline.
 - No generated fixture, WAV, private manifest, or full run output is committed.
 
 ## Follow-On Work

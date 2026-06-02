@@ -166,7 +166,7 @@ def markdown(report: dict[str, Any]) -> str:
         "",
         "This pre-candidate screen compares temporary Fletcher-Munson exciter sensitivity settings "
         "through real JDSP on registered local material. Only `slider3` changes in temporary fixtures; "
-        "the accepted `.10` script is unchanged.",
+        "the accepted script is unchanged.",
         "",
         "| Setting | `slider3` | Relative accepted-depth multiplier |",
         "| --- | ---: | ---: |",
@@ -180,7 +180,7 @@ def markdown(report: dict[str, Any]) -> str:
         [
             "",
             "Band RMS values are output energy in the inspected high-frequency range. Negative "
-            "variant-minus-accepted values represent less measured brilliance or air than accepted `.10`; "
+            "variant-minus-accepted values represent less measured brilliance or air than the accepted baseline; "
             "they do not establish an improvement without listening.",
             "",
             "| Material | Band | Source RMS (dBFS) | Accepted RMS (dBFS) | Reduced - accepted RMS (dB) | Bypass - accepted RMS (dB) | Reduced - accepted S/M (dB) | Bypass - accepted S/M (dB) |",

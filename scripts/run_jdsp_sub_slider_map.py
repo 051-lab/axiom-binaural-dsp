@@ -47,28 +47,47 @@ def evaluate_map(
             captures = result["captures"]
             clipped = metrics["clipped_samples"]
             silent = any(capture["silent"] for capture in captures)
+            flawed_source = track.get("material_class") == "flawed_source"
             qualified = [name for name, metric in metrics["metrics"].items() if metric["qualified"]]
             level_qualified = [name for name in qualified if name in LEVEL_METRICS]
             highest = max(capture["peak_dbfs"] for capture in captures if capture["peak_dbfs"] is not None)
-            unreliable = silent or not level_qualified
-            if unreliable:
+            if silent:
                 measurement_failure = True
-                detail = "silent render observed" if silent else "no repeated level metric qualified within spread policy"
                 checks.append({
                     "name": f"slider_{slider_db:g}_{track['name']}_measurement",
                     "status": "fail",
-                    "detail": detail,
+                    "detail": "silent render observed",
                 })
                 continue
+            if not level_qualified:
+                if flawed_source and clipped:
+                    checks.append({
+                        "name": f"slider_{slider_db:g}_{track['name']}_measurement",
+                        "status": "investigate",
+                        "detail": "no repeated level metric qualified because clipping is part of the source stress case",
+                    })
+                else:
+                    measurement_failure = True
+                    checks.append({
+                        "name": f"slider_{slider_db:g}_{track['name']}_measurement",
+                        "status": "fail",
+                        "detail": "no repeated level metric qualified within spread policy",
+                    })
+                    continue
             if clipped:
-                clipped_slider_values.add(slider_db)
-                if slider_db == default_slider_db:
-                    default_failure = True
                 checks.append({
                     "name": f"slider_{slider_db:g}_{track['name']}_clipping",
-                    "status": "fail" if slider_db == default_slider_db else "boundary",
-                    "detail": f"{clipped} clipped channel samples at slider={slider_db:+.1f} dB",
+                    "status": "investigate" if flawed_source else ("fail" if slider_db == default_slider_db else "boundary"),
+                    "detail": (
+                        f"{clipped} clipped channel samples in flawed-source material at slider={slider_db:+.1f} dB"
+                        if flawed_source else
+                        f"{clipped} clipped channel samples at slider={slider_db:+.1f} dB"
+                    ),
                 })
+                if not flawed_source:
+                    clipped_slider_values.add(slider_db)
+                    if slider_db == default_slider_db:
+                        default_failure = True
             if highest > ceiling_dbfs:
                 pressure_slider_values.add(slider_db)
                 checks.append({

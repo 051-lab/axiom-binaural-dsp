@@ -4,6 +4,30 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [4.1.4.11] - 2026-06-01 - Accepted Reduced Elevated-Bass Reserve Baseline
+
+### Changed
+- Preserved the accepted `.10` processing chain, restrained low-mid width,
+  host-output policy, crossfeed ownership, exciter behavior, and STFT behavior.
+- Reduced only the elevated-bass terminal reserve slope above the default
+  `+4 dB` Sub Harmonics setting from `0.750 dB/dB` to `0.500 dB/dB`.
+
+### Rationale
+- Full-manifest reserve-law qualification showed the `0.500 dB/dB` target
+  recovered meaningful level on dense electronic and hip-hop/trap-sub material
+  while preserving headroom across normal registered material.
+- User listening tests against `v4.1.4.10` accepted `.11` as the better
+  baseline.
+
+### Validation
+- Passed strict EEL static validation, Python unit tests, and Pi harness tests.
+- Inherited the full-manifest temporary-fixture qualification: 14 registered
+  material items across `+12`, `+10`, `+8`, and `+6 dB`, with no
+  normal-material clipped samples.
+- Promoted `tools/axiom-team/policy.json` to the `.11` SHA-256 anchor.
+
+---
+
 ## [4.1.4.10] - 2026-05-26 - Accepted Restrained Low-Mid Width Baseline
 
 ### Changed

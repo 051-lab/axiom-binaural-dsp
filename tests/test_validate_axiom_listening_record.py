@@ -16,10 +16,10 @@ import validate_axiom_listening_record as listening
 def valid_record() -> dict:
     return {
         "schema_version": 1,
-        "recorded_at": "2026-05-29T18:00:00-05:00",
+        "recorded_at": "2026-06-01T18:00:00-05:00",
         "listener": "local tester",
-        "axiom_version": "v4.1.4.10",
-        "comparison_version": "v4.1.4.9",
+        "axiom_version": "v4.1.4.11",
+        "comparison_version": "v4.1.4.10",
         "decision": "accept",
         "acceptance_rationale": "Cleaner center image without losing bass impact.",
         "device": "Android phone",
@@ -43,7 +43,7 @@ def valid_record() -> dict:
                 "label": "private track chorus",
                 "source_type": "private_owned",
                 "license_scope": "local listening only",
-                "comparison_target": "v4.1.4.9",
+                "comparison_target": "v4.1.4.10",
                 "timestamp_or_excerpt": "1:12-1:42",
                 "notes": "Dense low end and bright synth stack.",
             }

@@ -25,7 +25,7 @@ from run_jdsp_wsl_qualification import (
 )
 
 
-ACCEPTED_V410_SHA256 = "2b72288048f3e6a180eb5a0e3d951f34fc463d113bb8d716c03cfda8aeafffc5"
+ACCEPTED_BASELINE_SHA256 = "ad7dd7b33f2e62ff03ae08d7101c7ac333d707baef26b952806990ad979b0b0e"
 PEAK_SAMPLE = 32767
 DEFAULT_SAMPLE_RATE = 48000
 DEFAULT_DURATION_SECONDS = 4.0
@@ -428,7 +428,7 @@ def markdown(report: dict[str, Any]) -> str:
         "",
         f"Status: **{report['evaluation']['status'].upper()}**",
         "",
-        "This generated-probe screen measures the accepted level-dependent air/exciter stage on material designed to exercise it. Only temporary `slider3` fixtures are created; the accepted `.10` script is unchanged.",
+        "This generated-probe screen measures the accepted level-dependent air/exciter stage on material designed to exercise it. Only temporary `slider3` fixtures are created; the accepted script is unchanged.",
         "",
         f"Host limiter threshold: `{report['master_limiter_threshold_db']:.2f} dB`; terminal observation ceiling: `{report['ceiling_dbfs']:.2f} dBFS`.",
         "",
@@ -480,7 +480,7 @@ def markdown(report: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "Interpretation boundary: this is not a listening candidate. Useful evidence would show accepted `.10` adding measurable air to low-level air-bearing material, little change on dull material, and reduced action on the louder control probe.",
+            "Interpretation boundary: this is not a listening candidate. Useful evidence would show the accepted baseline adding measurable air to low-level air-bearing material, little change on dull material, and reduced action on the louder control probe.",
             "",
         ]
     )
@@ -517,9 +517,9 @@ def main() -> int:
     if not accepted.is_file():
         parser.error(f"EEL script not found: {accepted}")
     accepted_sha256 = sha256_file(accepted)
-    if accepted_sha256 != ACCEPTED_V410_SHA256 and not args.allow_non_accepted_hash:
+    if accepted_sha256 != ACCEPTED_BASELINE_SHA256 and not args.allow_non_accepted_hash:
         parser.error(
-            f"{accepted} is not the accepted v4.1.4.10 baseline; "
+            f"{accepted} is not the accepted v4.1.4.11 baseline; "
             "pass --allow-non-accepted-hash only for tool development"
         )
     if not -30.0 <= args.master_limiter_threshold_db <= 0.0:

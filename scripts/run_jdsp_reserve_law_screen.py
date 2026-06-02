@@ -25,20 +25,25 @@ from run_jdsp_wsl_qualification import (
 
 CURRENT_RESERVE_LINE = (
     "outputGain = (slider1 > 4.0) ? "
-    "(headroomGain * defaultSubGainLin / subGainLin) : headroomGain;"
+    "(headroomGain * exp(-((slider1 - 4.0) * 0.75) * DB_2_LOG)) : headroomGain;"
+)
+RESERVE_OUTPUT_GAIN_PATTERN = re.compile(
+    r"outputGain = \(slider1 > 4\.0\) \? "
+    r"\(headroomGain \* exp\(-\(\(slider1 - 4\.0\) \* [0-9.]+\) \* DB_2_LOG\)\) : headroomGain;"
 )
 
 
 def reserve_fixture(source: pathlib.Path, destination: pathlib.Path, slider_db: float, slope: float) -> None:
     slider_fixture(source, destination, slider_db)
     text = destination.read_text(encoding="ascii")
-    if text.count(CURRENT_RESERVE_LINE) != 1:
+    matches = RESERVE_OUTPUT_GAIN_PATTERN.findall(text)
+    if len(matches) != 1:
         raise QualificationError(f"cannot create reserve-law fixture from {source}: reserve expression missing")
     replacement = (
         "outputGain = (slider1 > 4.0) ? "
         f"(headroomGain * exp(-((slider1 - 4.0) * {slope:g}) * DB_2_LOG)) : headroomGain;"
     )
-    destination.write_text(text.replace(CURRENT_RESERVE_LINE, replacement, 1), encoding="ascii")
+    destination.write_text(RESERVE_OUTPUT_GAIN_PATTERN.sub(replacement, text, count=1), encoding="ascii")
 
 
 def evaluate_screen(
@@ -147,7 +152,7 @@ def markdown(report: dict[str, Any]) -> str:
         f"measured repetitions per fixture and excerpt: `{report['repetitions']}`; excluded conditioning renders per set: "
         f"`{report['conditioning_renders']}`; peak observation limit: `{report['ceiling_dbfs']:.2f} dBFS`.",
         "",
-        "| Reserve slope | Material | Mean peak (dBFS) | Highest peak (dBFS) | Mean RMS (dBFS) | RMS recovery vs full reserve (dB) | Clipped samples |",
+        "| Reserve slope | Material | Mean peak (dBFS) | Highest peak (dBFS) | Mean RMS (dBFS) | RMS recovery vs reference reserve (dB) | Clipped samples |",
         "| ---: | --- | ---: | ---: | ---: | ---: | ---: |",
     ]
     reference = next(run for run in report["slope_runs"] if run["reserve_slope"] == report["reference_slope"])
@@ -211,14 +216,14 @@ def main() -> int:
     parser.add_argument("--threshold-db", type=float, default=-1.0)
     parser.add_argument("--slider-db", type=float, default=8.0)
     parser.add_argument("--reserve-slope", type=float, action="append", dest="reserve_slopes")
-    parser.add_argument("--reference-slope", type=float, default=1.0)
+    parser.add_argument("--reference-slope", type=float, default=0.75)
     parser.add_argument("--repetitions", type=int, default=3)
-    parser.add_argument("--conditioning-renders", type=int, default=1)
+    parser.add_argument("--conditioning-renders", type=int, default=2)
     parser.add_argument("--ceiling-dbfs", type=float, default=-0.50)
     parser.add_argument("--max-metric-spread-db", type=float, default=0.10)
     parser.add_argument("--minimum-recovery-db", type=float, default=0.50)
     args = parser.parse_args()
-    slopes = args.reserve_slopes or [1.0, 0.875, 0.75, 0.5]
+    slopes = args.reserve_slopes or [0.75, 0.7, 0.625, 0.5]
     if len(set(slopes)) != len(slopes) or args.reference_slope not in slopes:
         parser.error("reserve slopes must be unique and include --reference-slope")
     if not all(0.0 <= value <= 1.0 for value in slopes):

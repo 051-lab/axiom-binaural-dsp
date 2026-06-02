@@ -1,13 +1,17 @@
-# Axiom Architecture Decision: v4.1.4.10 Baseline
+# Axiom Architecture Decision: v4.1.4.10 to v4.1.4.11
 
-Date: 2026-05-30
+Date: 2026-06-01
 
-Status: **candidate-ready, no immediate DSP edit**
+Status: **v4.1.4.11 accepted**
 
 ## Decision
 
-Keep `src/axiom_binaural_dsp_v4.1.4.10.eel` as the accepted Axiom Clean
-baseline. Do not create a broad `.11` tuning candidate and do not start a v5
+Promote `src/axiom_binaural_dsp_v4.1.4.11.eel` to the accepted Axiom Clean
+baseline after measured reserve-law qualification and human listening
+acceptance against `v4.1.4.10`.
+
+Keep `src/axiom_binaural_dsp_v4.1.4.10.eel` as the previous accepted
+reference. Do not create a broad `.12` tuning candidate and do not start a v5
 architecture branch yet.
 
 The next sound-changing candidate is allowed only if it has all of the
@@ -20,15 +24,16 @@ following:
 - level-controlled listening target;
 - explicit human listening acceptance.
 
-The most plausible future candidate area is still bass/reserve/host-limiter
-interaction at elevated `Sub Harmonics Gain`, but this remains an investigation
-target, not an approved edit.
+The accepted `.11` change is intentionally narrow: it changes only the
+elevated-bass reserve slope from `0.750` to `0.500 dB/dB` above the default
+`+4 dB` Sub Harmonics setting. It does not alter width, bass generation,
+exciter behavior, STFT behavior, crossfeed ownership, or limiter ownership.
 
 ## Evidence State
 
-Candidate readiness now passes locally:
+Candidate readiness passed locally before `.11` creation:
 
-- accepted `.10` baseline hash matches policy;
+- accepted `.10` baseline hash matched policy;
 - registered corpus metadata and taxonomy coverage pass strict validation;
 - device coverage passes strict validation across Android, speaker,
   wired/USB, Bluetooth, and WSL/JDSP lab routes.
@@ -37,9 +42,19 @@ Wired/USB and Bluetooth route completion is recorded as user-attested physical
 route evidence. It is useful for readiness and field confidence, but it is not
 the same as an automated endpoint-capture report.
 
+The bass/host-limiter investigation now has a completed reserve-law result:
+
+- `0.500 dB/dB` recovered meaningful RMS on focused dense electronic and
+  hip-hop/trap-sub excerpts at `+8 dB`;
+- the same temporary law survived full-manifest qualification across 14
+  registered items at `+12`, `+10`, `+8`, and `+6 dB`;
+- normal registered material produced no clipped samples;
+- declared flawed-source clipping remains an investigation marker, not a
+  normal-material rejection.
+
 ## v4 Direction
 
-Continue v4 only through narrow, evidence-backed candidates. Valid `.11`
+Continue v4 only through narrow, evidence-backed candidates. Valid `.12`
 directions are:
 
 - bass/reserve law refinement if the investigation shows avoidable level
@@ -51,7 +66,7 @@ directions are:
 - exciter behavior only if low-level material exposes dullness or harshness
   that current probes did not capture.
 
-Invalid `.11` reasons:
+Invalid `.12` reasons:
 
 - making Axiom louder without a measured target;
 - changing defaults because another version number is desired;
@@ -74,9 +89,9 @@ work.
 
 ## Best Next Work
 
-Before creating any `.11` file, run or refresh the bass and host-limiter
-investigation described in `docs/bass-host-limiter-investigation-plan.md`.
+Before creating any `.12` file, rerun candidate readiness against the accepted
+`.11` policy anchor and require a new scoped hypothesis with measured evidence.
 
-If that investigation finds no measurable problem, the correct decision is to
-leave `.10` unchanged and improve evidence quality, route-specific listening
-records, and release hygiene.
+That investigation now supports the narrow `.11` reserve-law candidate. The
+edit boundary is the elevated-bass reserve slope only. Require Android/package
+validation and structured listening acceptance before any baseline promotion.

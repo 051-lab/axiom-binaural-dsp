@@ -33,6 +33,7 @@ def evaluate_tracks(tracks: list[dict[str, Any]], threshold_db: float, ceiling_d
         metrics = result["metric_qualification"]
         clipped = metrics["clipped_samples"]
         silent = any(capture["silent"] for capture in captures)
+        flawed_source = track.get("material_class") == "flawed_source"
         qualified = [
             name for name, metric in metrics["metrics"].items()
             if metric["qualified"]
@@ -40,18 +41,25 @@ def evaluate_tracks(tracks: list[dict[str, Any]], threshold_db: float, ceiling_d
         level_qualified = [name for name in qualified if name in LEVEL_METRICS]
         maximum_peak = max(capture["peak_dbfs"] for capture in captures if capture["peak_dbfs"] is not None)
         failures: list[str] = []
+        investigations: list[str] = []
         if silent:
             failures.append("one or more renders were silent")
         if clipped:
-            failures.append(f"{clipped} clipped channel samples were observed")
+            if flawed_source:
+                investigations.append(f"{clipped} clipped channel samples were observed in flawed-source material")
+            else:
+                failures.append(f"{clipped} clipped channel samples were observed")
         if not level_qualified:
-            failures.append("no repeated level metric qualified within spread policy")
+            if flawed_source and clipped:
+                investigations.append("no repeated level metric qualified because clipping is part of the source stress case")
+            else:
+                failures.append("no repeated level metric qualified within spread policy")
         terminal_pressure = maximum_peak > ceiling_dbfs
         checks.append(
             {
                 "name": f"stress_{track['name']}_integrity",
-                "status": "fail" if failures else "pass",
-                "detail": "; ".join(failures) if failures else
+                "status": "fail" if failures else ("investigate" if investigations else "pass"),
+                "detail": "; ".join(failures or investigations) if failures or investigations else
                     f"non-clipping repeated metrics: {', '.join(qualified)}",
             }
         )
@@ -82,7 +90,8 @@ def markdown(report: dict[str, Any]) -> str:
         f"Status: **{report['evaluation']['status'].upper()}**",
         "",
         "This report characterizes the accepted EEL script through JDSP at the accepted terminal-limiter setting. "
-        "Near-ceiling output is recorded as baseline host-limiter pressure; clipping or unrepeatable level metrics fail the gate.",
+        "Near-ceiling output is recorded as baseline host-limiter pressure; normal-material clipping or unrepeatable "
+        "level metrics fail the gate. Declared flawed-source clipping is retained as investigation evidence.",
         "",
         f"Host limiter threshold: `{report['threshold_db']:.2f} dB`; repetitions per excerpt: `{report['repetitions']}`; "
         f"terminal-pressure observation level: `{report['ceiling_dbfs']:.2f} dBFS`.",

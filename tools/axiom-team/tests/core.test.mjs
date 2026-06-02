@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import {
   auditBaseline,
   baselineIdentity,
@@ -31,6 +32,9 @@ import {
   writeScopedFile,
 } from "../lib/core.mjs";
 
+const suiteDir = path.dirname(fileURLToPath(import.meta.url));
+const repositoryRoot = path.resolve(suiteDir, "..", "..", "..");
+
 function sha256(filename) {
   return createHash("sha256").update(fs.readFileSync(filename)).digest("hex");
 }
@@ -51,7 +55,7 @@ function fixture() {
   fs.writeFileSync(validator, "#!/usr/bin/env bash\nexit 0\n", "ascii");
   fs.chmodSync(validator, 0o755);
   fs.copyFileSync(
-    path.resolve("scripts", "validate_axiom_material_manifest.py"),
+    path.join(repositoryRoot, "scripts", "validate_axiom_material_manifest.py"),
     path.join(repo, "scripts", "validate_axiom_material_manifest.py")
   );
   fs.chmodSync(path.join(repo, "scripts", "validate_axiom_material_manifest.py"), 0o755);

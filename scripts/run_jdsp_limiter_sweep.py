@@ -246,6 +246,9 @@ def render_track(
         "name": item["name"],
         "start_seconds": item["start_seconds"],
         "duration_seconds": item["duration_seconds"],
+        "material_class": item.get("material_class"),
+        "failure_modes": item.get("failure_modes", []),
+        "role": item.get("role"),
         "thresholds": thresholds,
     }
 
@@ -318,6 +321,7 @@ def main() -> int:
     parser.add_argument("--label-regex", default="electronic", help="case-insensitive manifest label filter; empty selects all")
     parser.add_argument("--threshold-db", type=float, action="append", dest="thresholds_db")
     parser.add_argument("--accepted-threshold-db", type=float, default=-1.0)
+    parser.add_argument("--reference-threshold-db", type=float)
     parser.add_argument("--repetitions", type=int, default=5)
     parser.add_argument("--min-effect-db", type=float, default=0.15)
     parser.add_argument("--max-metric-spread-db", type=float, default=0.10)
@@ -327,6 +331,9 @@ def main() -> int:
         parser.error("thresholds must be unique values in [-30, 0] dB")
     if args.accepted_threshold_db not in thresholds:
         parser.error("--accepted-threshold-db must be included in --threshold-db values")
+    reference_threshold_db = args.reference_threshold_db if args.reference_threshold_db is not None else max(thresholds)
+    if reference_threshold_db not in thresholds:
+        parser.error("--reference-threshold-db must be included in --threshold-db values")
     if args.repetitions < 2:
         parser.error("--repetitions must be at least 2")
     if args.min_effect_db <= 0.0 or args.max_metric_spread_db <= 0.0:
@@ -363,7 +370,7 @@ def main() -> int:
             "eel_script": str(eel),
             "manifest": str(args.manifest.resolve()),
             "thresholds_db": thresholds,
-            "reference_threshold_db": max(thresholds),
+            "reference_threshold_db": reference_threshold_db,
             "accepted_threshold_db": args.accepted_threshold_db,
             "repetitions": args.repetitions,
             "min_effect_db": args.min_effect_db,

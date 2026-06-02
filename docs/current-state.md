@@ -1,20 +1,26 @@
 # Axiom Current State
 
-Last updated: 2026-05-29
+Last updated: 2026-06-02
 
 ## Accepted Baseline
 
 | Item | Value |
 | --- | --- |
-| Accepted version | `v4.1.4.10` |
-| Accepted script | `src/axiom_binaural_dsp_v4.1.4.10.eel` |
-| SHA-256 | `2b72288048f3e6a180eb5a0e3d951f34fc463d113bb8d716c03cfda8aeafffc5` |
-| Qualification record | `docs/qualification-v4.1.4.10.md` |
+| Accepted version | `v4.1.4.11` |
+| Accepted script | `src/axiom_binaural_dsp_v4.1.4.11.eel` |
+| SHA-256 | `ad7dd7b33f2e62ff03ae08d7101c7ac333d707baef26b952806990ad979b0b0e` |
+| Qualification record | `docs/qualification-v4.1.4.11.md` |
 | Policy anchor | `tools/axiom-team/policy.json` |
 
-`v4.1.4.10` is the current accepted listening baseline. It keeps the `.9`
-reduced bass-reserve behavior and reduces default `150 Hz-4 kHz` low-mid side
-width from `1.890x` to `1.701x`.
+`v4.1.4.11` is the current accepted listening baseline. It keeps the `.10`
+low-mid width setting and reduces only the elevated-bass reserve slope above
+the default `+4 dB` Sub Harmonics setting from `0.750 dB/dB` to
+`0.500 dB/dB`. `v4.1.4.10` remains the previous accepted reference.
+
+## Active Listening Candidate
+
+None. The next sound-changing version should not be created until a new scoped
+hypothesis has measurement support and a defined listening target.
 
 ## Host Baseline
 
@@ -47,7 +53,7 @@ Tracked public project state belongs in:
 - `src/` for versioned EEL scripts;
 - `scripts/` and `tests/` for analysis and verification tooling;
 - `docs/` for architecture, qualification records, roadmap, and public
-  engineering notes;
+  engineering notes, with `docs/README.md` as the documentation index;
 - `tools/axiom-team/` for the controlled Pi engineering harness;
 - `presets/` for JDSP preset templates.
 
@@ -76,17 +82,31 @@ source of truth.
 
 ## Next Roadmap Step
 
-Follow `docs/axiom-roadmap.md`, moving from Phase 3 device-readiness work into
-the Phase 4 architecture decision gate. The current decision record is
-`docs/architecture-decision-v4.1.4.10.md`.
+Follow `docs/axiom-roadmap.md`, using the `.11` accepted baseline as the new
+anchor for any future measurement or candidate decision. The current decision
+record is `docs/architecture-decision-v4.1.4.10.md`.
 Use `docs/tool-inventory.md` before choosing measurement or harness commands.
 Use `docs/bass-host-limiter-investigation-plan.md` before any elevated
-bass/reserve or host-limiter candidate work. The accepted `.10` bass/reserve
-stage capture is recorded in `docs/stage-observability-v4.1.4.10.md`; it
-supports the accepted default path rather than an immediate low-end candidate.
+bass/reserve or host-limiter candidate work. The `.10` bass/reserve stage
+capture is recorded in `docs/stage-observability-v4.1.4.10.md`; it supported
+the default path rather than an immediate low-end candidate.
 The generated low-level exciter probe screen is recorded in
-`docs/exciter-probe-screen-v4.1.4.10.md`; floor-aware evaluation supports the
-accepted `.10` exciter behavior rather than an immediate `.11` candidate. The
+`docs/exciter-probe-screen-v4.1.4.10.md`; floor-aware evaluation supported the
+inherited exciter behavior rather than an immediate exciter candidate. The
+accepted-setting dense-material stress baseline is recorded in
+`docs/accepted-stress-v4.1.4.10.md`; normal material passed integrity and the
+remaining observations are host-contract pressure on one dense electronic
+excerpt plus expected flawed-source clipping evidence. Scoped Sub Harmonics
+slider maps are recorded in `docs/sub-harmonics-map-v4.1.4.10.md`; dense
+electronic and hip-hop/trap-sub material stayed unclipped through `+12 dB` but
+showed repeatable RMS retreat at elevated bass settings. The focused `.10`
+reserve-law screen is recorded in
+`docs/reserve-law-screen-v4.1.4.10.md`; a temporary `0.500 dB/dB` elevated-bass
+reserve slope recovered meaningful RMS on dense electronic and hip-hop/trap-sub
+material, remained safe across `+6` through `+12 dB` for those scoped stress
+classes, survived full-manifest range qualification across 14 registered items
+with no normal-material clipped samples, and was accepted as `v4.1.4.11` after
+listening against `.10`. The
 first standalone perceptual-proxy analyzer is recorded in
 `docs/perceptual-metrics.md` and is wired into A/B, corpus, private
 local-material, and scoped candidate reports as evidence context. Structured
@@ -107,6 +127,6 @@ any new sound-changing EEL file is justified. The local corpus currently
 strict-passes coverage. Android, WSL lab, speaker, wired/USB, and Bluetooth
 route setup evidence are complete locally; wired/USB and Bluetooth are recorded
 as user-attested physical route evidence rather than automated endpoint-capture
-evidence. The candidate-readiness gate currently passes, so the next
-sound-changing candidate requires a scoped hypothesis, measured target, edit
-boundary, and listening target.
+evidence. The candidate-readiness gate should be rerun against `.11` before any
+new sound-changing candidate. The next candidate requires a scoped hypothesis,
+measured target, edit boundary, and listening target.

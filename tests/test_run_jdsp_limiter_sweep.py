@@ -57,6 +57,18 @@ class LimiterSweepTests(unittest.TestCase):
         result = sweep.classify(tracks, 0.0, -1.0, 0.15)
         self.assertEqual(result["status"], "no_reliable_limiter_participation_detected")
 
+    def test_accepts_stricter_threshold_as_reference(self) -> None:
+        tracks = [{
+            "label": "dense electronic",
+            "thresholds": {
+                "-3.0": threshold(-2.20, -13.60, 11.40, -10.8),
+                "-1.0": threshold(-0.60, -12.50, 11.90, -9.3),
+            },
+        }]
+        result = sweep.classify(tracks, -3.0, -1.0, 0.15)
+        self.assertEqual(result["status"], "limiter_participation_detected")
+        self.assertAlmostEqual(result["affected_tracks"][0]["accepted_minus_reference"]["rms_dbfs"], 1.10)
+
     def test_repeatability_failure_prevents_a_conclusion(self) -> None:
         tracks = [{
             "label": "unstable",

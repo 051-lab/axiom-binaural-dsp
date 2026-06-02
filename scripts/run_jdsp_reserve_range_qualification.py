@@ -29,9 +29,15 @@ def track_problem(track: dict[str, Any], threshold_db: float, ceiling_dbfs: floa
     captures = result["captures"]
     if any(capture["silent"] for capture in captures):
         return "fail", "silent render observed"
+    highest = max(capture["peak_dbfs"] for capture in captures if capture["peak_dbfs"] is not None)
+    clipped = metrics["clipped_samples"]
+    if track.get("material_class") == "flawed_source" and (clipped or highest > ceiling_dbfs):
+        return (
+            "investigate",
+            f"flawed-source stress case: clipping={clipped}, highest peak={highest:.3f} dBFS",
+        )
     if not metrics["metrics"]["rms_dbfs"]["qualified"]:
         return "fail", "repeated RMS level did not qualify within spread policy"
-    highest = max(capture["peak_dbfs"] for capture in captures if capture["peak_dbfs"] is not None)
     if metrics["clipped_samples"] or highest > ceiling_dbfs:
         return (
             "reject",
@@ -69,7 +75,7 @@ def evaluate_range(
                 })
                 if status == "fail":
                     failed = True
-                else:
+                elif status == "reject":
                     rejected_slope = True
         if rejected_slope:
             rejected.append(slope)
@@ -162,7 +168,7 @@ def main() -> int:
     parser.add_argument("--reserve-slope", type=float, action="append", dest="reserve_slopes")
     parser.add_argument("--slider-db", type=float, action="append", dest="slider_values_db")
     parser.add_argument("--repetitions", type=int, default=3)
-    parser.add_argument("--conditioning-renders", type=int, default=1)
+    parser.add_argument("--conditioning-renders", type=int, default=2)
     parser.add_argument("--max-measurement-attempts", type=int, default=2)
     parser.add_argument("--ceiling-dbfs", type=float, default=-0.50)
     parser.add_argument("--max-metric-spread-db", type=float, default=0.10)
@@ -219,7 +225,7 @@ def main() -> int:
                         if not problem or problem[0] != "fail":
                             break
                     tracks.append(track)
-                    if problem:
+                    if problem and problem[0] in ("fail", "reject"):
                         stop_slope = True
                         break
                 slider_runs.append({"slider_db": slider_db, "fixture": str(fixture), "tracks": tracks})

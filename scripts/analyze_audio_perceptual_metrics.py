@@ -11,7 +11,6 @@ from typing import Any
 
 import analyze_jdsp_transfer as transfer
 from compare_jdsp_captures import correlation
-from run_jdsp_width_material_screen import cascaded, coefficients, ratio_db, rms
 
 
 ERB_LIKE_BANDS_HZ = (
@@ -33,6 +32,52 @@ def dbfs(value: float) -> float | None:
 
 def db_power(value: float) -> float | None:
     return 10.0 * math.log10(value) if value > 0.0 else None
+
+
+def coefficients(filter_type: str, frequency: float, sample_rate: int, q_factor: float = 0.7071) -> tuple[float, ...]:
+    safe_frequency = min(max(frequency, 5.0), sample_rate * 0.45)
+    x = safe_frequency * 2.0 * math.pi / sample_rate
+    sin_x = math.sin(x)
+    cos_x = math.cos(x)
+    alpha = sin_x / (q_factor * 2.0)
+    a0 = 1.0 + alpha
+    a1 = -2.0 * cos_x
+    a2 = 1.0 - alpha
+    if filter_type == "lowpass":
+        b0 = (1.0 - cos_x) / 2.0
+        b1 = 1.0 - cos_x
+        b2 = (1.0 - cos_x) / 2.0
+    elif filter_type == "highpass":
+        b0 = (1.0 + cos_x) / 2.0
+        b1 = -(1.0 + cos_x)
+        b2 = (1.0 + cos_x) / 2.0
+    else:
+        raise ValueError(f"unknown filter type: {filter_type}")
+    return b0 / a0, b1 / a0, b2 / a0, -a1 / a0, -a2 / a0
+
+
+def filter_samples(samples: list[float], values: tuple[float, ...]) -> list[float]:
+    b0, b1, b2, a1, a2 = values
+    x1 = x2 = y1 = y2 = 0.0
+    output = []
+    for sample in samples:
+        value = sample * b0 + x1 * b1 + x2 * b2 + y1 * a1 + y2 * a2
+        x2, x1 = x1, sample
+        y2, y1 = y1, value
+        output.append(value)
+    return output
+
+
+def cascaded(samples: list[float], values: tuple[float, ...]) -> list[float]:
+    return filter_samples(filter_samples(samples, values), values)
+
+
+def rms(samples: list[float]) -> float:
+    return math.sqrt(sum(value * value for value in samples) / len(samples)) if samples else 0.0
+
+
+def ratio_db(numerator: float, denominator: float) -> float | None:
+    return 20.0 * math.log10(numerator / denominator) if numerator > 0.0 and denominator > 0.0 else None
 
 
 def text(value: float | None, digits: int = 3) -> str:

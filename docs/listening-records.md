@@ -44,10 +44,10 @@ Valid decisions are `accept`, `reject`, `needs_retest`, and `no_decision`.
 ```json
 {
   "schema_version": 1,
-  "recorded_at": "2026-05-29T18:00:00-05:00",
+  "recorded_at": "2026-06-01T18:00:00-05:00",
   "listener": "local tester",
-  "axiom_version": "v4.1.4.10",
-  "comparison_version": "v4.1.4.9",
+  "axiom_version": "v4.1.4.11",
+  "comparison_version": "v4.1.4.10",
   "decision": "no_decision",
   "acceptance_rationale": "",
   "rejection_rationale": "",
@@ -72,7 +72,7 @@ Valid decisions are `accept`, `reject`, `needs_retest`, and `no_decision`.
       "label": "private track or public test item",
       "source_type": "private_owned",
       "license_scope": "local listening only",
-      "comparison_target": "v4.1.4.10 versus previous candidate",
+      "comparison_target": "v4.1.4.11 versus previous accepted baseline",
       "timestamp_or_excerpt": "0:45-1:30",
       "notes": "Why this material was chosen and what failure mode it exposes."
     }
@@ -96,7 +96,7 @@ Valid decisions are `accept`, `reject`, `needs_retest`, and `no_decision`.
 
 ```bash
 scripts/validate_axiom_listening_record.py \
-  ~/.local/state/axiom-engineering/listening-records/v4.1.4.10-phone.json \
+  ~/.local/state/axiom-engineering/listening-records/v4.1.4.11-phone.json \
   --json /tmp/axiom-listening-validation.json \
   --markdown /tmp/axiom-listening-record.md
 ```

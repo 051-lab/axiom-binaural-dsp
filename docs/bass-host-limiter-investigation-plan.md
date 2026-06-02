@@ -55,7 +55,7 @@ the behavior matched `.8`.
 
 ## Primary Question
 
-Does the accepted `.10` bass/reserve law preserve perceived punch, density, and
+Does the then-accepted `.10` bass/reserve law preserve perceived punch, density, and
 loudness across elevated Sub Harmonics Gain settings, or does the interaction
 between internal reserve and the JDSP host limiter create avoidable level
 retreat?
@@ -80,6 +80,9 @@ changing the accepted DSP.
 
 ### 1. Accepted Baseline Stress
 
+Status: complete for `v4.1.4.10`. See
+`docs/accepted-stress-v4.1.4.10.md`.
+
 Run the accepted stress harness against `.10` at default controls:
 
 ```bash
@@ -100,7 +103,20 @@ Required result:
 - Any near-ceiling result is labeled as host-contract behavior until proven
   otherwise.
 
+Observed result:
+
+- Normal registered material passed integrity with no silent renders and no
+  clipped channel samples.
+- `CC0 electronic outlaw high energy` reached `-0.394 dBFS`, so it remains a
+  flagged dense-material host-pressure case.
+- `CC0 derived flawed clipped electronic` produced expected flawed-source
+  clipping and is retained as investigation evidence, not a normal-material
+  baseline failure.
+
 ### 2. Sub Harmonics Slider Map
+
+Status: scoped low-end stress pass complete for `v4.1.4.10`. See
+`docs/sub-harmonics-map-v4.1.4.10.md`.
 
 Run the Sub Harmonics Gain map on `.10`:
 
@@ -116,7 +132,7 @@ Minimum slider points:
 
 Purpose:
 
-- Rebuild the `.8` and `.9` bass evidence on the current accepted `.10` script.
+- Rebuild the `.8` and `.9` bass evidence on the then-current accepted `.10` script.
 - Measure whether elevated bass settings still trade too much loudness or punch
   for headroom.
 - Identify the material and slider positions that deserve focused limiter and
@@ -132,6 +148,17 @@ Required metrics:
 - Low-band and low-mid-band energy.
 - Mid/Side balance.
 - Per-excerpt pass, warning, or investigation status.
+
+Observed scoped result:
+
+- Dense electronic and hip-hop/trap-sub material remained unclipped through
+  `+12 dB`.
+- Neither scoped material class crossed the `-0.50 dBFS` terminal-pressure
+  observation boundary at elevated Sub Harmonics settings.
+- Repeatable RMS retreat began at `+8 dB` on dense electronic material and
+  `+6 dB` on hip-hop/trap-sub material.
+- The result justifies a temporary reserve-law screen before any permanent
+  `.11` candidate is created.
 
 ### 3. Host Limiter Threshold Sweep
 
@@ -155,6 +182,15 @@ Purpose:
   host limiter.
 - Identify whether the accepted `-1.00 dB` host threshold is a stable policy or
   a hidden tuning dependency.
+
+Observed scoped result:
+
+- On dense electronic material, `-0.50 dB` clipped once and is not a safe
+  replacement for the accepted policy.
+- The accepted `-1.00 dB` threshold remained meaningfully louder than a stricter
+  `-3.00 dB` threshold on qualified scalar metrics.
+- Keep `-1.00 dB` as the host policy while reserve-law screening remains
+  internal to Axiom.
 
 Decision bias:
 
@@ -197,6 +233,13 @@ Required output:
 
 ### 5. Temporary Reserve-Law Screen
 
+Status: focused low-end screen and full-manifest range qualification complete
+for `v4.1.4.10`. See
+`docs/reserve-law-screen-v4.1.4.10.md`.
+
+Exit result: the qualified `0.500 dB/dB` elevated-bass reserve slope was
+packaged as `v4.1.4.11` and accepted after listening against `.10`.
+
 Only run this stage if the previous stages show a repeatable opportunity.
 
 Existing tools:
@@ -216,11 +259,28 @@ Candidate slopes may include:
 1.000 dB/dB
 ```
 
+For the then-accepted `.10` baseline, the reference slope is `0.750 dB/dB`, not the
+older `.8` full `1.000 dB/dB` law.
+
 Purpose:
 
 - Test whether the accepted `0.750 dB/dB` slope is still the best compromise.
 - Avoid creating a permanent `.11` file until a temporary fixture proves a
   better law across the full slider range.
+
+Observed focused result:
+
+- `0.500 dB/dB` recovered `+0.806 dB` RMS on dense electronic material and
+  `+0.949 dB` RMS on hip-hop/trap-sub material at `+8 dB`.
+- `0.500 dB/dB` remained below `-0.50 dBFS` and did not clip at `+12`, `+10`,
+  `+8`, or `+6 dB` on the two scoped low-end stress classes.
+- Full-manifest range qualification then retained `0.500 dB/dB` across all 14
+  registered material items at `+12`, `+10`, `+8`, and `+6 dB`.
+- Normal registered material produced no clipped samples. The declared
+  flawed-source stress item remained an investigation marker, including
+  expected clipping at `+10`, `+8`, and `+6 dB`.
+- This is now candidate-worthy measurement evidence for a scoped `.11`
+  listening candidate, not an accepted baseline change by itself.
 
 Required result before any candidate:
 
@@ -262,7 +322,7 @@ Hard failure:
 
 Investigation warning:
 
-- Default accepted `.10` output exceeds the `-0.50 dBFS` candidate boundary but
+- Default then-accepted `.10` output exceeds the `-0.50 dBFS` candidate boundary but
   does not clip.
 - Host limiter threshold changes produce large RMS or envelope differences on
   the same excerpt.
@@ -314,3 +374,6 @@ evidence:
 3. Stop candidate work and improve tooling or corpus coverage first because the
    current evidence is not strong enough.
 
+Current status: option 2 is now evidence-supported. A `.11` candidate should
+change only the elevated-bass reserve slope from `0.750` to `0.500 dB/dB` unless
+new listening or validation evidence rejects that scope.

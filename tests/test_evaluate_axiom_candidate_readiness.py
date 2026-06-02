@@ -21,7 +21,7 @@ def write_policy(root: Path, digest: str) -> Path:
         json.dumps(
             {
                 "acceptedBaseline": {
-                    "version": "v4.1.4.10",
+                    "version": "v4.1.4.11",
                     "path": "accepted.eel",
                     "sha256": digest,
                 }
