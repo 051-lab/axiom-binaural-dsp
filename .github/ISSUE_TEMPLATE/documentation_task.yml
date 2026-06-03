@@ -1,0 +1,34 @@
+name: Documentation task
+description: Update public Axiom documentation, source-of-truth references, or workflow docs.
+title: "[Docs]: "
+labels:
+  - docs
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Documentation problem
+      description: What is stale, missing, unclear, or duplicated?
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Affected files
+      description: List expected docs or sections.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Claims to avoid, private artifacts to exclude, or source-of-truth docs to preserve.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation
+      description: Link checks, `git diff --check`, link review, or stale-reference scans.
+    validations:
+      required: true

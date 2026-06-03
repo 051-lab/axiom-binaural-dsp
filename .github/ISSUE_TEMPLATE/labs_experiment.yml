@@ -1,0 +1,58 @@
+name: Labs experiment
+description: Start a research or fixture experiment that is not an accepted candidate.
+title: "[Labs]: "
+labels:
+  - labs
+  - research
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Labs experiments are allowed to explore, but they do not change Axiom Core until promoted through qualification and listening acceptance.
+  - type: textarea
+    id: idea
+    attributes:
+      label: Idea or observation
+      description: What triggered this experiment?
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hypothesis
+      description: What should the experiment prove, disprove, or clarify?
+    validations:
+      required: true
+  - type: textarea
+    id: variables
+    attributes:
+      label: Changed variables
+      description: List the exact stage, controls, fixtures, or scripts that may change.
+    validations:
+      required: true
+  - type: textarea
+    id: forbidden
+    attributes:
+      label: Forbidden scope
+      description: List accepted files, stages, or claims that must remain untouched.
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Planned tests
+      description: Offline analysis, temporary fixtures, real-JDSP screens, or listening probes.
+    validations:
+      required: true
+  - type: dropdown
+    id: promotion
+    attributes:
+      label: Intended outcome
+      options:
+        - Research note only
+        - Diagnostic fixture
+        - Tooling improvement
+        - Possible DSP candidate
+        - Unknown
+    validations:
+      required: true

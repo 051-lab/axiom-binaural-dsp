@@ -7,11 +7,40 @@ DSP. Use this file as the map before opening individual investigation records.
 
 | File | Purpose |
 | --- | --- |
+| [system-status.md](system-status.md) | Quick dashboard: accepted baseline, active candidate, open investigations, and next work. |
+| [session-work-log.md](session-work-log.md) | Source log for session work summaries; generates `session-work-log.pdf`. |
 | [current-state.md](current-state.md) | Accepted baseline, policy anchor, host settings, and local/private state boundary. |
 | [architecture.md](architecture.md) | Current DSP signal chain, processing math, and host ownership model. |
 | [axiom-roadmap.md](axiom-roadmap.md) | Current development roadmap and candidate discipline. |
+| [axiom-system-roadmap.md](axiom-system-roadmap.md) | Product/profile system roadmap for Core, Labs, Knowledge, and Qualification. |
+| [profile-matrix.md](profile-matrix.md) | Operational matrix for profile status, ownership, allowed changes, and tests. |
+| [axiom-operating-system-implementation-plan.md](axiom-operating-system-implementation-plan.md) | Ordered implementation plan for making the AI development ecosystem operational. |
+| [ai-development-ecosystem.md](ai-development-ecosystem.md) | Codex, Pi, user, and advisory LLM operating model extracted from the ecosystem vision. |
+| [codex-operating-guide.md](codex-operating-guide.md) | Practical Codex responsibilities, prohibitions, branch discipline, and review workflow. |
+| [pi-runbooks.md](pi-runbooks.md) | Repeatable terminal missions for Pi/Codex sessions. |
+| [labs-policy.md](labs-policy.md) | Branch, experiment, artifact, and promotion rules for Axiom Labs. |
+| [task-backlog.md](task-backlog.md) | Lightweight issue/task breakdown for the Axiom operating framework. |
 | [tool-inventory.md](tool-inventory.md) | What each script does, whether it touches JDSP, and where outputs belong. |
 | [engineering-harness.md](engineering-harness.md) | Controlled Pi workflow, gates, local-state policy, and release commands. |
+
+## Operating Templates
+
+| File | Purpose |
+| --- | --- |
+| [knowledge/README.md](knowledge/README.md) | Knowledge bibliography and research-note rules. |
+| [templates/labs-experiment.md](templates/labs-experiment.md) | Markdown template for Labs experiment notes. |
+| [templates/external-review-triage.md](templates/external-review-triage.md) | Markdown template for advisory LLM or human review triage. |
+
+## Session Work Log
+
+`docs/session-work-log.md` is the editable source. Refresh both PDF copies with:
+
+```bash
+python3 tools/generate_session_work_log_pdf.py
+```
+
+The generator writes `docs/session-work-log.pdf` and
+`C:\Users\soloa\Documents\Axiom-DSP-Session-Work-Log.pdf`.
 
 ## Accepted Baseline
 
@@ -44,6 +73,8 @@ DSP. Use this file as the map before opening individual investigation records.
 | File | Purpose |
 | --- | --- |
 | [candidate-readiness.md](candidate-readiness.md) | Baseline hash, strict corpus, and strict device readiness gate. |
+| [release-gates.md](release-gates.md) | Publication, candidate, listening, and accepted-baseline promotion gates. |
+| [listening-protocol.md](listening-protocol.md) | Practical listening setup, material selection, comparison method, and decision rules. |
 | [corpus-material.md](corpus-material.md) | Material-class taxonomy, manifest rules, and local/private corpus boundary. |
 | [listening-records.md](listening-records.md) | Structured human listening evidence format. |
 | [ab-listening-packages.md](ab-listening-packages.md) | Local level-matched A/B listening package workflow. |

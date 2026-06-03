@@ -1,0 +1,272 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R] /Count 6 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Length 3194 >>
+stream
+BT /F2 15 Tf 1 0 0 1 54 742 Tm (Run 001 - AI Development Ecosystem Operating Framework) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 710.8 Tm (Date: 2026-06-03) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 698.8 Tm (Status: Completed) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 686.8 Tm (Scope: Documentation and workflow architecture only.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 663.6 Tm (What Was Implemented) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 644.4 Tm (  - Converted the local axiom-idea.html concept into repository-ready operating docs.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 632.4 Tm (  - Added the Codex, Pi, user, and external LLM role model.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 620.4 Tm (  - Added the system roadmap for Core, Reference, Immersive, Night, Studio Path, Labs,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 608.4 Tm (    Knowledge, and Qualification.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 596.4 Tm (  - Added the ordered implementation plan for building the Axiom operating system.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 584.4 Tm (  - Added Labs policy, GitHub issue templates, Knowledge structure, Labs/review templates,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 572.4 Tm (    and the system status dashboard.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 560.4 Tm (  - Updated the documentation index, agent instructions, contributing guide, harness) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 548.4 Tm (    documentation, and task backlog.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 525.2 Tm (Why It Matters) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 506 Tm (  - Axiom now has a controlled development structure around the DSP instead of loose) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 494 Tm (    one-off work.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 482 Tm (  - New ideas have clear intake paths before they can become DSP edits.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 470 Tm (  - Labs can explore without weakening the accepted Core baseline.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 458 Tm (  - External LLM feedback can be captured as advisory input and converted into testable) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 446 Tm (    work.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 434 Tm (  - A fresh Codex or Pi session can quickly find the accepted baseline, open) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 422 Tm (    investigations, and next work.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 398.8 Tm (Validation) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 379.6 Tm (  - git diff --check passed.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 367.6 Tm (  - GitHub issue-template YAML parsed successfully.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 355.6 Tm (  - Relative Markdown links resolved.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 343.6 Tm (  - Stale current-baseline scan found no current-facing .10 accepted-baseline references.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 331.6 Tm (  - No src/ or scripts/ files changed.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 308.4 Tm (Next Recommended Work) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 289.2 Tm (  - Review, commit, and publish the documentation and workflow foundation.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 277.2 Tm (  - Rerun the targeted .11 Sub Harmonics map when the JDSP route is available.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 265.2 Tm (  - Add concrete Knowledge or Labs examples only after the first real use case exists.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Session Work Log - page 1 of 6) Tj ET
+
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 2307 >>
+stream
+BT /F2 15 Tf 1 0 0 1 54 742 Tm (Run 002 - Session Work Log PDF Workflow) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 710.8 Tm (Date: 2026-06-03) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 698.8 Tm (Status: Completed) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 686.8 Tm (Scope: Documentation support tooling and generated PDF copies.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 663.6 Tm (What Was Implemented) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 644.4 Tm (  - Added docs/session-work-log.md as the editable source of truth for session work) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 632.4 Tm (    summaries.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 620.4 Tm (  - Added tools/generate_session_work_log_pdf.py to generate one PDF page per run section.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 608.4 Tm (  - Generated the repository PDF copy at docs/session-work-log.pdf.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 596.4 Tm (  - Generated the Windows Documents PDF copy at) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 584.4 Tm (    C:\\Users\\soloa\\Documents\\Axiom-DSP-Session-Work-Log.pdf.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 561.2 Tm (Why It Matters) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 542 Tm (  - The user now has one readable document for reviewing completed work outside the chat.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 530 Tm (  - The repo keeps the source log and a PDF copy, while Windows Documents keeps an) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 518 Tm (    easy-access mirror.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 506 Tm (  - Future sessions can append a new ## Run section and regenerate both PDF copies with) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 494 Tm (    one command.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 470.8 Tm (Validation) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 451.6 Tm (  - PDF generation uses only the Python standard library.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 439.6 Tm (  - Both destination PDFs are written by the same generator from the same source.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 427.6 Tm (  - Each run section starts on its own PDF page.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 404.4 Tm (Next Recommended Work) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 385.2 Tm (  - After each completed work section, append a new run entry to this source file.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 373.2 Tm (  - Regenerate the PDFs before final summaries or before publishing workflow changes.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Session Work Log - page 2 of 6) Tj ET
+
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 2966 >>
+stream
+BT /F2 15 Tf 1 0 0 1 54 742 Tm (Run 003 - Profile Matrix, Listening Protocol, And Release Gates) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 710.8 Tm (Date: 2026-06-03) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 698.8 Tm (Status: Completed) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 686.8 Tm (Scope: System architecture and workflow documentation only.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 663.6 Tm (What Was Implemented) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 644.4 Tm (  - Added docs/profile-matrix.md to define each Axiom lane, its current status, operating) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 632.4 Tm (    authority, allowed changes, and required promotion tests.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 620.4 Tm (  - Added docs/listening-protocol.md to define when to listen, how to set up comparisons,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 608.4 Tm (    what material classes to use, and how to record accept/reject decisions.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 596.4 Tm (  - Added docs/release-gates.md to define documentation, tooling, Labs, candidate,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 584.4 Tm (    listening, and accepted-baseline promotion gates.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 572.4 Tm (  - Updated docs/README.md, AGENTS.md, CONTRIBUTING.md, the operating-system) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 560.4 Tm (    implementation plan, and the task backlog so these gates are discoverable.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 537.2 Tm (Why It Matters) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 518 Tm (  - Future ideas now have a clear destination before code changes start.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 506 Tm (  - Listening work is separated into setup, material selection, comparison method,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 494 Tm (    observation fields, and decision rules.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 482 Tm (  - The accepted baseline has explicit promotion gates, which protects Axiom Core from) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 470 Tm (    broad or under-tested changes.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 458 Tm (  - Profile concepts like Reference, Immersive, Night, and Studio Path can be discussed) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 446 Tm (    without accidentally becoming official products.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 422.8 Tm (Validation) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 403.6 Tm (  - git diff --check passed.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 391.6 Tm (  - Relative Markdown links resolved.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 379.6 Tm (  - GitHub issue-template YAML still parsed successfully.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 367.6 Tm (  - Stale current-baseline scan remained clean.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 355.6 Tm (  - No src/ or scripts/ files changed.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 332.4 Tm (Next Recommended Work) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 313.2 Tm (  - Add Pi runbooks for repeatable terminal execution.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 301.2 Tm (  - Then review and publish the full workflow foundation as a docs-focused PR.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Session Work Log - page 3 of 6) Tj ET
+
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 2461 >>
+stream
+BT /F2 15 Tf 1 0 0 1 54 742 Tm (Run 004 - Pi Runbooks) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 710.8 Tm (Date: 2026-06-03) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 698.8 Tm (Status: Completed) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 686.8 Tm (Scope: Terminal workflow architecture only.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 663.6 Tm (What Was Implemented) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 644.4 Tm (  - Added docs/pi-runbooks.md with repeatable missions for Codex/Pi sessions.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 632.4 Tm (  - Covered baseline audit, candidate readiness, investigation without candidate, Labs) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 620.4 Tm (    experiments, candidate qualification, listening acceptance, advisory review triage,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 608.4 Tm (    repository housekeeping, and publication/merge.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 596.4 Tm (  - Updated docs/README.md, AGENTS.md, docs/system-status.md, the operating-system) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 584.4 Tm (    implementation plan, and the task backlog so the runbooks are discoverable.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 561.2 Tm (Why It Matters) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 542 Tm (  - A Pi session can now be opened with a narrow mission instead of vague context.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 530 Tm (  - Each runbook defines inputs, commands, outputs, stop conditions, and decisions.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 518 Tm (  - Real-host JDSP work is protected from overlapping measurements.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 506 Tm (  - Candidate creation, Labs work, advisory feedback, and publication now have repeatable) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 494 Tm (    terminal paths.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 470.8 Tm (Validation) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 451.6 Tm (  - git diff --check passed.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 439.6 Tm (  - Relative Markdown links resolved.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 427.6 Tm (  - GitHub issue-template YAML still parsed successfully.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 415.6 Tm (  - Stale current-baseline scan remained clean.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 403.6 Tm (  - No src/ or scripts/ files changed.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 380.4 Tm (Next Recommended Work) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 361.2 Tm (  - Review the full documentation/workflow batch.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 349.2 Tm (  - Commit and publish it as a docs-focused PR after approval.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Session Work Log - page 4 of 6) Tj ET
+
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 3123 >>
+stream
+BT /F2 15 Tf 1 0 0 1 54 742 Tm (Run 005 - Review, Commit, And Publish Workflow Foundation) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 710.8 Tm (Date: 2026-06-03) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 698.8 Tm (Status: Completed) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 686.8 Tm (Scope: Repository publication workflow for the documentation and architecture batch.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 663.6 Tm (What Was Implemented) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 644.4 Tm (  - Reviewed the full documentation/workflow scope before publishing.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 632.4 Tm (  - Re-ran validation for Markdown whitespace, issue-template YAML, relative links, PDF) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 620.4 Tm (    generation, stale baseline references, and accidental DSP/script changes.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 608.4 Tm (  - Created branch codex/docs-axiom-operating-system.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 596.4 Tm (  - Committed the workflow foundation with message docs\(workflow\): add Axiom operating) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 584.4 Tm (    system framework.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 572.4 Tm (  - Pushed the branch to GitHub.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 560.4 Tm (  - Opened PR #10: [codex] Add Axiom operating system workflow docs.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 537.2 Tm (Why It Matters) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 518 Tm (  - The Axiom operating-system foundation is now reviewable in GitHub instead of existing) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 506 Tm (    only as local edits.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 494 Tm (  - The PR keeps this broad documentation/workflow batch separate from main until reviewed) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 482 Tm (    and merge-approved.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 470 Tm (  - The validation record gives future agents confidence that no accepted DSP files were) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 458 Tm (    touched.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 434.8 Tm (Validation) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 415.6 Tm (  - git diff --check passed.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 403.6 Tm (  - Issue-template YAML parsed successfully.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 391.6 Tm (  - Relative Markdown links resolved.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 379.6 Tm (  - The session PDF regenerated and both PDF copies matched by SHA-256.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 367.6 Tm (  - pdfinfo confirmed the session PDF was valid.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 355.6 Tm (  - The stale .10 current-baseline scan was clean.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 343.6 Tm (  - git diff -- src scripts | wc -c returned 0.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 331.6 Tm (  - GitHub reported PR #10 as clean and mergeable.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 308.4 Tm (Next Recommended Work) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 289.2 Tm (  - Review PR #10.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 277.2 Tm (  - Merge only after explicit approval.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 265.2 Tm (  - After merge, return to the roadmap and choose the next workflow refinement or targeted) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 253.2 Tm (    .11 measurement.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Session Work Log - page 5 of 6) Tj ET
+
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 2475 >>
+stream
+BT /F2 15 Tf 1 0 0 1 54 742 Tm (Run 006 - PR Review Validation Cleanup) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 710.8 Tm (Date: 2026-06-03) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 698.8 Tm (Status: Completed) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 686.8 Tm (Scope: Pull request validation cleanup for the documentation/workflow batch.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 663.6 Tm (What Was Implemented) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 644.4 Tm (  - Reviewed PR #10 from the committed diff rather than only the local worktree.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 632.4 Tm (  - Fixed committed whitespace issues in issue templates, documentation files, and) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 620.4 Tm (    repository templates.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 608.4 Tm (  - Updated the session-log PDF generator so generated PDF xref entries no longer create) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 596.4 Tm (    Git whitespace warnings.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 584.4 Tm (  - Regenerated the repository session PDF and the Windows Documents mirror.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 561.2 Tm (Why It Matters) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 542 Tm (  - The PR now meets the same whitespace standard that will be enforced on merge.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 530 Tm (  - The PDF generator fix prevents this exact review failure from returning in future) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 518 Tm (    session-log updates.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 506 Tm (  - The cleanup keeps the workflow foundation publication-ready without changing any EEL) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 494 Tm (    DSP scripts.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 470.8 Tm (Validation) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 451.6 Tm (  - git diff --check main..HEAD passed after cleanup.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 439.6 Tm (  - Issue-template YAML parsed successfully.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 427.6 Tm (  - Relative Markdown links resolved.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 415.6 Tm (  - The session PDF regenerated and both PDF copies matched by SHA-256.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 403.6 Tm (  - pdfinfo confirmed the session PDF was valid.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 391.6 Tm (  - No src/ or scripts/ files changed.) Tj ET
+BT /F2 11 Tf 1 0 0 1 54 368.4 Tm (Next Recommended Work) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 349.2 Tm (  - Push the amended PR branch.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 337.2 Tm (  - Merge PR #10 only after explicit approval.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Session Work Log - page 6 of 6) Tj ET
+
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 15 0 R >>
+endobj
+xref
+0 17
+0000000000 65535 f
+0000000015 00000 n
+0000000064 00000 n
+0000000155 00000 n
+0000000225 00000 n
+0000000300 00000 n
+0000003546 00000 n
+0000003682 00000 n
+0000006041 00000 n
+0000006177 00000 n
+0000009195 00000 n
+0000009332 00000 n
+0000011846 00000 n
+0000011984 00000 n
+0000015160 00000 n
+0000015298 00000 n
+0000017826 00000 n
+trailer
+<< /Size 17 /Root 1 0 R >>
+startxref
+17964
+%%EOF

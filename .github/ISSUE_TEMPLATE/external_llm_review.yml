@@ -1,0 +1,46 @@
+name: External LLM review triage
+description: Capture ChatGPT, Claude, Qwen, Gemini, or other advisory feedback.
+title: "[External Review]: "
+labels:
+  - review
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        External LLM output is advisory input, not proof. Convert claims into testable work or reject them.
+  - type: input
+    id: reviewer
+    attributes:
+      label: Reviewer/source
+      placeholder: ChatGPT, Claude, Qwen, Gemini, other
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Review summary
+      description: Summarize the useful claims without copying long private or copyrighted text.
+    validations:
+      required: true
+  - type: textarea
+    id: claims
+    attributes:
+      label: Claims worth testing
+      description: List concrete claims that can become diagnostics, issues, or research notes.
+    validations:
+      required: true
+  - type: textarea
+    id: rejected
+    attributes:
+      label: Claims rejected or unsupported
+      description: List advice that should not be acted on, and why.
+    validations:
+      required: false
+  - type: textarea
+    id: action
+    attributes:
+      label: Proposed repository action
+      description: Issue, doc update, Labs experiment, diagnostic fixture, or no action.
+    validations:
+      required: true
