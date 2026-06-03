@@ -439,8 +439,31 @@ export default function (pi: ExtensionAPI) {
     handler: async (args, ctx) => ctx.ui.notify(renderSummary(runAcceptedStressBaseline(args.trim())), "info"),
   });
   pi.registerCommand("axiom-map-sub-gain", {
-    description: "Usage: /axiom-map-sub-gain run-id; map dense-material behavior across Sub Harmonics Gain settings.",
-    handler: async (args, ctx) => ctx.ui.notify(renderSummary(runSubSliderMap(args.trim())), "info"),
+    description: "Usage: /axiom-map-sub-gain run-id [--slider-db db ...] [--label-regex regex] [--repetitions n]; map dense-material behavior across Sub Harmonics Gain settings.",
+    handler: async (args, ctx) => {
+      const tokens = args.trim().split(/\s+/).filter(Boolean);
+      const id = tokens.shift() || "";
+      const options: { sliderValuesDb?: number[]; labelRegex?: string; repetitions?: number } = {};
+      const numeric = (value: string | undefined, label: string) => {
+        const parsed = Number(value);
+        if (!Number.isFinite(parsed)) throw new Error(`${label} must be numeric.`);
+        return parsed;
+      };
+      for (let i = 0; i < tokens.length; i += 1) {
+        const token = tokens[i];
+        if (token === "--slider-db") {
+          options.sliderValuesDb ||= [];
+          options.sliderValuesDb.push(numeric(tokens[++i], "--slider-db value"));
+        } else if (token === "--label-regex") {
+          options.labelRegex = tokens[++i];
+        } else if (token === "--repetitions") {
+          options.repetitions = numeric(tokens[++i], "--repetitions value");
+        } else {
+          throw new Error(`Unknown axiom-map-sub-gain option: ${token}`);
+        }
+      }
+      ctx.ui.notify(renderSummary(runSubSliderMap(id, options)), "info");
+    },
   });
   pi.registerCommand("axiom-stage-observability", {
     description: "Usage: /axiom-stage-observability run-id; measure same-render bass/reserve diagnostic taps.",
