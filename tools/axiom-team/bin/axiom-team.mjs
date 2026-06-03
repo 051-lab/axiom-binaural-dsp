@@ -17,6 +17,31 @@ function required(value, label) {
   return value;
 }
 
+function numeric(value, label) {
+  const parsed = Number(required(value, label));
+  if (!Number.isFinite(parsed)) throw new Error(`${label} must be numeric.`);
+  return parsed;
+}
+
+function parseSubSliderMapArgs(args) {
+  const id = required(args[0], "run id");
+  const options = { sliderValuesDb: [] };
+  for (let i = 1; i < args.length; i += 1) {
+    const arg = args[i];
+    if (arg === "--slider-db") {
+      options.sliderValuesDb.push(numeric(args[++i], "--slider-db value"));
+    } else if (arg === "--label-regex") {
+      options.labelRegex = required(args[++i], "--label-regex value");
+    } else if (arg === "--repetitions") {
+      options.repetitions = numeric(args[++i], "--repetitions value");
+    } else {
+      throw new Error(`Unknown map-sub-gain option: ${arg}`);
+    }
+  }
+  if (!options.sliderValuesDb.length) delete options.sliderValuesDb;
+  return { id, options };
+}
+
 async function main() {
   const [command, ...args] = process.argv.slice(2);
   switch (command) {
@@ -58,7 +83,10 @@ async function main() {
       out(renderSummary(runAcceptedStressBaseline(required(args[0], "run id"))));
       return;
     case "map-sub-gain":
-      out(renderSummary(runSubSliderMap(required(args[0], "run id"))));
+      {
+        const { id, options } = parseSubSliderMapArgs(args);
+        out(renderSummary(runSubSliderMap(id, options)));
+      }
       return;
     case "stage-observability":
       out(renderSummary(runStageObservability(required(args[0], "run id"))));
@@ -124,7 +152,7 @@ async function main() {
       out(renderSummary(mergePullRequest(required(args[0], "run id"))));
       return;
     default:
-      out("Usage: axiom-team.mjs <init|doctor|corpus-status|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|stage-observability|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|screen-high-width|screen-exciter|screen-exciter-probes|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...");
+      out("Usage: axiom-team.mjs <init|doctor|corpus-status|status|show|audit-baseline|measure-limiter|stress-accepted|map-sub-gain|stage-observability|screen-reserve-law|qualify-reserve-range|audit-stft|audit-width-mono|screen-width-material|screen-lowmid-width|screen-high-width|screen-exciter|screen-exciter-probes|investigate|hypothesis|create-candidate|qualify|qualify-lowmid-candidate|record-listening|commit|approve-publication|publish|approve-merge|merge> ...\nmap-sub-gain options: --slider-db <db> repeated, --label-regex <regex>, --repetitions <n>");
       process.exitCode = 2;
   }
 }

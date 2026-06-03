@@ -10,6 +10,8 @@ export const harnessRoot = path.resolve(moduleDir, "..");
 export const repositoryRoot = path.resolve(harnessRoot, "../..");
 export const policyPath = path.join(harnessRoot, "policy.json");
 export const localConfigPath = path.join(os.homedir(), ".config", "axiom-engineering", "axiom-binaural-dsp.json");
+const HOST_MEASUREMENT_TIMEOUT_MS = 60 * 60 * 1000;
+const SUB_SLIDER_MAP_TIMEOUT_MS = 3 * 60 * 60 * 1000;
 
 export const RUN_STATES = new Set([
   "investigating", "baseline_verified", "candidate_created", "implementing", "automated_validation",
@@ -64,7 +66,8 @@ function shell(command, args, options = {}) {
     exitCode: result.status ?? 1,
     stdout: result.stdout || "",
     stderr: result.stderr || "",
-    error: result.error?.message || null
+    error: result.error?.message || null,
+    signal: result.signal || null
   };
 }
 
@@ -281,7 +284,7 @@ export function runBaselineLimiterSweep(id, config = loadLocalConfig(), policy =
         "--pulse-server", config.pulseServer,
         "--route-helper", config.routeHelper,
       ],
-      { cwd: config.repositoryRoot, timeout: 60 * 60 * 1000 }
+      { cwd: config.repositoryRoot, timeout: HOST_MEASUREMENT_TIMEOUT_MS }
     );
     const reportPath = path.join(outputDir, "limiter_sweep.json");
     let conclusion = result.exitCode === 0 ? "measurement_completed" : "unqualified";
@@ -334,7 +337,7 @@ export function runAcceptedStressBaseline(id, config = loadLocalConfig(), policy
         "--route-helper", config.routeHelper,
         "--threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
       ],
-      { cwd: config.repositoryRoot, timeout: 60 * 60 * 1000 }
+      { cwd: config.repositoryRoot, timeout: HOST_MEASUREMENT_TIMEOUT_MS }
     );
     const reportPath = path.join(outputDir, "accepted_stress.json");
     let conclusion = result.exitCode === 0 ? "pass" : "fail";
@@ -355,7 +358,16 @@ export function runAcceptedStressBaseline(id, config = loadLocalConfig(), policy
   }
 }
 
-export function runSubSliderMap(id, config = loadLocalConfig(), policy = loadPolicy()) {
+export function runSubSliderMap(id, optionsOrConfig = {}, configOrPolicy = loadLocalConfig(), maybePolicy = loadPolicy()) {
+  let options = {};
+  let config = configOrPolicy;
+  let policy = maybePolicy;
+  if (optionsOrConfig.repositoryRoot) {
+    config = optionsOrConfig;
+    policy = configOrPolicy;
+  } else {
+    options = optionsOrConfig;
+  }
   const run = readRun(id, config);
   if (run.status !== "investigating" || run.candidate) {
     throw new Error("Sub Harmonics stress mapping requires an investigation with no DSP candidate.");
@@ -377,17 +389,23 @@ export function runSubSliderMap(id, config = loadLocalConfig(), policy = loadPol
     throw new Error("Another real-host JDSP qualification is already active.");
   }
   try {
+    const scriptArgs = [
+      policy.acceptedBaseline.path,
+      config.localMaterialManifest,
+      outputDir,
+      "--pulse-server", config.pulseServer,
+      "--route-helper", config.routeHelper,
+      "--threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
+    ];
+    for (const sliderDb of options.sliderValuesDb || []) {
+      scriptArgs.push("--slider-db", String(sliderDb));
+    }
+    if (options.labelRegex) scriptArgs.push("--label-regex", options.labelRegex);
+    if (options.repetitions) scriptArgs.push("--repetitions", String(options.repetitions));
     const result = shell(
       "scripts/run_jdsp_sub_slider_map.py",
-      [
-        policy.acceptedBaseline.path,
-        config.localMaterialManifest,
-        outputDir,
-        "--pulse-server", config.pulseServer,
-        "--route-helper", config.routeHelper,
-        "--threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
-      ],
-      { cwd: config.repositoryRoot, timeout: 60 * 60 * 1000 }
+      scriptArgs,
+      { cwd: config.repositoryRoot, timeout: SUB_SLIDER_MAP_TIMEOUT_MS }
     );
     const reportPath = path.join(outputDir, "sub_slider_map.json");
     let conclusion = result.exitCode === 0 ? "measurement_completed" : "fail";
@@ -400,7 +418,9 @@ export function runSubSliderMap(id, config = loadLocalConfig(), policy = loadPol
       reportPath,
       command: result.command,
       stdout: result.stdout.slice(-4000),
-      stderr: result.stderr.slice(-4000)
+      stderr: result.stderr.slice(-4000),
+      error: result.error,
+      signal: result.signal
     });
     return writeRun(run, config);
   } finally {
