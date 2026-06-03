@@ -13,7 +13,7 @@ measurement tools used to qualify changes.
 
 ## Current Baseline
 
-The accepted source is `src/axiom_binaural_dsp_v4.1.4.10.eel`. It is
+The accepted source is `src/axiom_binaural_dsp_v4.1.4.11.eel`. It is
 device-neutral: crossfeed is not part of Axiom. The only terminal limiter in the
 qualified chain is JDSP's limiter, enabled at `-1.00 dB` threshold, `60 ms`
 release, and `0 dB` postgain.
@@ -47,7 +47,7 @@ capture WAVs, or generated reports.
 Run static and tooling checks before a commit:
 
 ```bash
-scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.10.eel
+scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.11.eel
 python3 -m unittest discover -s tests -p 'test_*.py'
 git diff --check
 ```
@@ -74,6 +74,26 @@ replaces device listening acceptance, and push and merge each require a
 separate user confirmation. Its full operating policy is documented in
 `docs/engineering-harness.md`.
 
+## Labs And Issue Intake
+
+Use `docs/labs-policy.md` for research branches, temporary fixtures, and
+experiments that are not ready for Axiom Core. Labs work may explore, but it
+does not become accepted behavior without the normal graduation ladder,
+qualification, listening acceptance, and PR review.
+
+Use the GitHub issue templates for DSP candidates, Labs experiments, external
+LLM review triage, documentation tasks, and qualification/test-suite work.
+Each issue should define scope, forbidden scope, evidence, and required tests.
+
+## Release Gates
+
+Use `docs/release-gates.md` before publishing or promoting a change. A
+sound-changing candidate requires candidate readiness, scoped qualification,
+structured listening acceptance, updated qualification docs, changelog,
+policy hash, PR review, and separate merge approval. Use
+`docs/listening-protocol.md` and `docs/listening-records.md` for listening
+evidence.
+
 ## Commit Format
 
 Use Conventional Commits:
@@ -85,4 +105,4 @@ type(scope): short imperative summary
 Typical types are `feat`, `fix`, `perf`, `refactor`, `test`, `docs`, and
 `chore`. Typical scopes are `dsp`, `testbench`, `preset`, `docs`, and `host`.
 
-*Maintained by 051-lab - Axiom Binaural DSP v4.1.4.10*
+*Maintained by 051-lab - Axiom Binaural DSP v4.1.4.11*

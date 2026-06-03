@@ -86,7 +86,7 @@ Inside Pi, the primary commands are:
 | `/axiom-hypothesis run-id \| hypothesis \| listening target` | Establish the reason and audible target before coding |
 | `/axiom-measure-limiter run-id` | Capture the accepted baseline across controlled JDSP limiter thresholds for an investigation |
 | `/axiom-stress-accepted run-id` | Establish repeated dense-material behavior for the accepted baseline at `-1.00 dB` |
-| `/axiom-map-sub-gain run-id` | Map dense-material behavior from `+4` through `+12 dB` Sub Harmonics Gain |
+| `/axiom-map-sub-gain run-id [--slider-db db ...] [--label-regex regex] [--repetitions n]` | Map dense-material behavior across Sub Harmonics Gain settings; omit options for the full `+4` through `+12 dB` sweep |
 | `/axiom-stage-observability run-id` | Measure same-render `spatial_out -> bass_post` and `reserve_pre -> reserve_post` diagnostic taps |
 | `/axiom-screen-reserve-law run-id` | Screen reduced elevated-bass reserve slopes in temporary fixtures |
 | `/axiom-qualify-reserve-range run-id` | Range-qualify viable reduced reserve slopes before a candidate |
@@ -138,14 +138,16 @@ of repeatable level metrics. Stable near-ceiling output is recorded as
 qualification must not silently worsen.
 
 `/axiom-map-sub-gain` then measures the user-controlled bass path on registered
-material using temporary accepted-baseline fixtures at `+4`, `+6`, `+8`, `+10`, and
-`+12 dB` while holding the accepted host configuration fixed. It distinguishes
-a broken default baseline from an elevated-control boundary: default clipping
-or unreliable measurements fail, while elevated clipping is recorded as a
-tested usable-range limit that can justify a narrowly scoped future candidate.
-It separately records repeatable broadband RMS retreat relative to `+4 dB`,
-because safe peak margin is not sufficient evidence that an elevated control
-setting preserves practical listening level.
+material using temporary accepted-baseline fixtures while holding the accepted
+host configuration fixed. With no options, it renders `+4`, `+6`, `+8`, `+10`,
+and `+12 dB`. Use repeated `--slider-db` values for targeted follow-up, and
+`--label-regex` when a shorter dense-material or stress-class map is enough.
+It distinguishes a broken default baseline from an elevated-control boundary:
+default clipping or unreliable measurements fail, while elevated clipping is
+recorded as a tested usable-range limit that can justify a narrowly scoped
+future candidate. It separately records repeatable broadband RMS retreat
+relative to `+4 dB`, because safe peak margin is not sufficient evidence that
+an elevated control setting preserves practical listening level.
 
 `/axiom-stage-observability` measures where that behavior appears inside the
 accepted script before any reserve-law candidate is proposed. It creates

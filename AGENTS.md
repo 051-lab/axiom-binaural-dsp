@@ -103,9 +103,21 @@ assume the intended host configuration is already active.
 |------|---------|
 | `README.md` | User setup and testbench entry points |
 | `docs/README.md` | Documentation index and category map |
+| `docs/system-status.md` | Quick dashboard for accepted baseline, open investigations, and next work |
+| `docs/session-work-log.md` | Source log for session work summaries and generated PDF copies |
 | `docs/current-state.md` | Current accepted baseline, host policy, and repo/local state boundary |
 | `docs/architecture.md` | Active DSP architecture and host ownership |
 | `docs/axiom-roadmap.md` | 90-day foundations-first roadmap |
+| `docs/axiom-system-roadmap.md` | Product/profile roadmap for Core, Labs, Knowledge, and Qualification |
+| `docs/profile-matrix.md` | Profile status, ownership, allowed changes, and required tests |
+| `docs/axiom-operating-system-implementation-plan.md` | Ordered implementation plan for the AI development ecosystem |
+| `docs/ai-development-ecosystem.md` | Codex, Pi, user, and advisory LLM ecosystem model |
+| `docs/codex-operating-guide.md` | Codex responsibilities, prohibitions, branch discipline, and review flow |
+| `docs/pi-runbooks.md` | Repeatable terminal missions for Pi/Codex sessions |
+| `docs/labs-policy.md` | Branch, experiment, artifact, and promotion rules for Labs work |
+| `docs/task-backlog.md` | Lightweight issue/task breakdown for workflow architecture |
+| `docs/release-gates.md` | Publication, candidate, listening, and accepted-baseline promotion gates |
+| `docs/listening-protocol.md` | Listening setup, material selection, comparison, and decision rules |
 | `docs/tool-inventory.md` | Tool purpose, JDSP side effects, and artifact safety map |
 | `docs/bass-host-limiter-investigation-plan.md` | Bass reserve and JDSP host-limiter investigation plan behind `.11` |
 | `docs/accepted-stress-v4.1.4.10.md` | `.10` accepted-setting dense-material stress record |

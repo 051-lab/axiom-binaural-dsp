@@ -1,0 +1,42 @@
+name: Qualification or test-suite task
+description: Add or improve validation, measurement, corpus, device, or listening evidence.
+title: "[Qualification]: "
+labels:
+  - qualification
+  - testing
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Qualification goal
+      description: What risk, behavior, or stage needs evidence?
+    validations:
+      required: true
+  - type: textarea
+    id: current_gap
+    attributes:
+      label: Current evidence gap
+      description: What can the existing test suite not answer yet?
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Proposed method
+      description: Offline analysis, real-JDSP run, corpus/device update, listening package, or validator.
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Artifact boundary
+      description: What stays local, and what can be summarized in public docs?
+    validations:
+      required: true
+  - type: textarea
+    id: pass_fail
+    attributes:
+      label: Pass, fail, or investigation criteria
+      description: Define what result means pass, fail, or needs investigation.
+    validations:
+      required: true

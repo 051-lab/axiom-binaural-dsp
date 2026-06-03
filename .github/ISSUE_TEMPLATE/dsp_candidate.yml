@@ -1,0 +1,62 @@
+name: DSP candidate proposal
+description: Propose a scoped sound-changing EEL candidate after evidence exists.
+title: "[DSP Candidate]: "
+labels:
+  - dsp
+  - candidate
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this only after the idea has evidence from research, fixtures, offline analysis, or real-JDSP investigation.
+        Do not propose broad multi-variable rewrites for the accepted line.
+  - type: input
+    id: baseline
+    attributes:
+      label: Accepted baseline
+      description: Current accepted script and version.
+      placeholder: src/axiom_binaural_dsp_v4.1.4.11.eel
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Falsifiable hypothesis
+      description: What should change audibly or measurably, and why?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scoped edit boundary
+      description: Name the stage, sliders, variables, or files allowed to change.
+    validations:
+      required: true
+  - type: textarea
+    id: forbidden
+    attributes:
+      label: Forbidden scope
+      description: What must not change in this candidate?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Existing evidence
+      description: Link docs, reports, fixtures, or listening notes that justify candidate creation.
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Required tests before listening
+      description: Static, offline, real-JDSP, corpus, and device checks required for this candidate.
+    validations:
+      required: true
+  - type: textarea
+    id: listening
+    attributes:
+      label: Listening target
+      description: What should the user listen for, and what comparison version should be used?
+    validations:
+      required: true
