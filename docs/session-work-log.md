@@ -471,3 +471,44 @@ Scope: Pre-commit review cleanup for the local documentation and agentic-tooling
 - Review the local docs/tooling batch as the candidate commit scope.
 - Commit and publish only after explicit user approval.
 - Keep DSP work paused until the documentation/tooling batch is safely recorded or the user explicitly redirects.
+
+## Run 014 - Agentic Foundation Commit And Draft PR
+
+Date: 2026-06-04
+Status: Completed
+Scope: Local commit and GitHub publication for the docs/tooling agentic-foundation batch.
+
+### What Was Implemented
+
+- Created branch `codex/agentic-engineering-foundation`.
+- Staged only the intended documentation, generated PDF, generated cover-art, Knowledge template/schema, Axiom Codex helper, Codex skill source, and PDF-generator tooling files.
+- Committed the batch as `cef0fee` with message `Add agentic engineering foundation`.
+- Pushed the branch to `origin/codex/agentic-engineering-foundation`.
+- Opened draft PR #11: `https://github.com/051-lab/axiom-binaural-dsp/pull/11`.
+
+### Why It Matters
+
+- The agentic engineering foundation is now available on GitHub for review from other devices and sessions.
+- Publication happened through a branch and draft PR instead of direct `main` mutation.
+- Merge remains a separate explicit approval gate.
+- The accepted Axiom Core DSP baseline remains unchanged.
+
+### Validation
+
+- `gh auth status` confirmed GitHub authentication for `051-lab`.
+- `git diff --cached --check` passed.
+- `git diff --check` passed.
+- Python helper scripts compiled.
+- Axiom Codex skill validation passed.
+- Markdown relative-link validation passed.
+- `npm test` in `tools/axiom-team` passed with 22 tests.
+- `python3 -m unittest discover -s tests -p 'test_*.py'` passed with 159 tests.
+- `git diff -- src scripts | wc -c` returned `0`.
+- PR #11 is open as a draft and GitHub reports it as mergeable.
+
+### Next Recommended Work
+
+- Review PR #11.
+- Merge only after explicit user approval.
+- After merge, install the local Axiom Codex skill only if the user approves that runtime change.
+- Then resume targeted `.11` measurement or Axiom Knowledge population.
