@@ -27,6 +27,8 @@ the artifact is safe to commit.
 | `scripts/audit_windows_audio_endpoints.py` | Snapshot Windows audio endpoint status and the active default render endpoint from WSL, emit route-class hints, and optionally fail unless the default route matches speaker, wired/USB, or Bluetooth. | No | No | JSON/Markdown reports belong outside repo unless sanitized. |
 | `scripts/qualify_windows_default_route.py` | Build a local evidence report for a Windows default-output route by requiring the route class, restarting the managed JDSP route, hot-reloading accepted `.11`, verifying host settings, and playing a probe for user confirmation. | Yes | No | Output directory belongs outside repo because it may contain private device names. |
 | `scripts/axiom_team.sh` | Launch the isolated Pi engineering harness with Axiom-specific tools and policy. | Indirect | No | Harness state remains under local state roots. |
+| `tools/install_axiom_codex_skill.py` | Preview or install the repo-tracked Axiom Codex skill into `~/.codex/skills/axiom-engineering`. | No | No | Local install destination is outside repo and requires explicit `--install`. |
+| `tools/axiom-codex/axiom_codex.py` | Safe Codex-side orchestration helpers for status, ready checks, multi-role review scaffolds, and Knowledge search. | No | No | Console output only; private Knowledge paths are hidden by default. |
 
 ## Offline Analysis And Fixture Inputs
 

@@ -1,0 +1,356 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R] /Count 6 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+6 0 obj
+<< /Length 1895 >>
+stream
+0.055 0.075 0.085 rg 0 0 612 792 re f
+0.39 0.78 0.84 RG 1.2 w 54 74 504 644 re S
+0.85 0.93 0.9 RG 0.6 w 72 92 468 608 re S
+0.2 0.36 0.39 RG 0.4 w 90 94 m 90 700 l S
+0.2 0.36 0.39 RG 0.4 w 135 94 m 135 700 l S
+0.2 0.36 0.39 RG 0.4 w 180 94 m 180 700 l S
+0.2 0.36 0.39 RG 0.4 w 225 94 m 225 700 l S
+0.2 0.36 0.39 RG 0.4 w 270 94 m 270 700 l S
+0.2 0.36 0.39 RG 0.4 w 315 94 m 315 700 l S
+0.2 0.36 0.39 RG 0.4 w 360 94 m 360 700 l S
+0.2 0.36 0.39 RG 0.4 w 405 94 m 405 700 l S
+0.2 0.36 0.39 RG 0.4 w 450 94 m 450 700 l S
+0.2 0.36 0.39 RG 0.4 w 495 94 m 495 700 l S
+0.2 0.36 0.39 RG 0.4 w 72 120 m 540 120 l S
+0.2 0.36 0.39 RG 0.4 w 72 165 m 540 165 l S
+0.2 0.36 0.39 RG 0.4 w 72 210 m 540 210 l S
+0.2 0.36 0.39 RG 0.4 w 72 255 m 540 255 l S
+0.2 0.36 0.39 RG 0.4 w 72 300 m 540 300 l S
+0.2 0.36 0.39 RG 0.4 w 72 345 m 540 345 l S
+0.2 0.36 0.39 RG 0.4 w 72 390 m 540 390 l S
+0.2 0.36 0.39 RG 0.4 w 72 435 m 540 435 l S
+0.2 0.36 0.39 RG 0.4 w 72 480 m 540 480 l S
+0.2 0.36 0.39 RG 0.4 w 72 525 m 540 525 l S
+0.2 0.36 0.39 RG 0.4 w 72 570 m 540 570 l S
+0.2 0.36 0.39 RG 0.4 w 72 615 m 540 615 l S
+0.2 0.36 0.39 RG 0.4 w 72 660 m 540 660 l S
+BT /F2 42 Tf 1 0 0 1 78 620 Tm (AXIOM-DSP) Tj ET
+BT /F2 22 Tf 1 0 0 1 78 575 Tm (Agentic Engineering Blueprint) Tj ET
+BT /F1 12 Tf 1 0 0 1 78 538 Tm (Codex | Pi | Knowledge | Qualification | User Authority) Tj ET
+BT /F2 14 Tf 1 0 0 1 78 470 Tm (Blueprint v0.1) Tj ET
+BT /F1 10.5 Tf 1 0 0 1 78 442 Tm (Purpose: design the specialized agentic system around Axiom-DSP.) Tj ET
+BT /F1 10.5 Tf 1 0 0 1 78 424 Tm (Boundary: no autonomous accepted-baseline changes; user approval remains mandatory.) Tj ET
+BT /F1 11 Tf 1 0 0 1 78 388 Tm (Current Axiom Core baseline: v4.1.4.11) Tj ET
+BT /F1 10 Tf 1 0 0 1 78 148 Tm (Stability First | Measurement Second | Experimentation Third) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Agentic Engineering Blueprint - page 1) Tj ET
+
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 4690 >>
+stream
+BT /F1 9.5 Tf 1 0 0 1 54 735.4 Tm (This living blueprint defines how Axiom-DSP should grow from a repository with) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 723.4 Tm (strong tooling into an agentic audio-DSP engineering system. It starts from the) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 711.4 Tm (current repo reality: Codex owns repository orchestration, Pi owns controlled) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 699.4 Tm (execution, the user owns product direction and final listening acceptance, and) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 687.4 Tm (external LLMs act only as advisory reviewers.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54 663.8 Tm (Core Idea) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 645.2 Tm (Axiom should eventually operate like a specialized audio-DSP engineering team,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 633.2 Tm (not like one default assistant session. The system should know who does what,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 621.2 Tm (how work is delegated, what evidence is required, and where human approval is) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 609.2 Tm (mandatory.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 590.6 Tm (The goal is not autonomous DSP rewriting. The goal is controlled collaboration:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 572 Tm (  - Codex manages the repository, plans work, protects source-of-truth docs, and) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 560 Tm (prepares reviewable changes.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 548 Tm (  - Pi sessions execute constrained investigations, diagnostics, qualification,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 536 Tm (and candidate workflows through the Axiom harness.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 524 Tm (  - Specialist agents review DSP architecture, EEL2 safety, measurement quality,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 512 Tm (tooling, release readiness, and research claims from bounded roles.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 500 Tm (  - The user remains the final product authority, listening authority, and) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 488 Tm (approval gate for publication, merge, and accepted-baseline promotion.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 476 Tm (  - Axiom Knowledge supplies research context, vocabulary, citations, and test) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 464 Tm (design inspiration without becoming proof by itself.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54 440.4 Tm (Current State) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 421.8 Tm (Already implemented:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 403.2 Tm (  - Axiom Core accepted baseline: v4.1.4.11.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 391.2 Tm (  - Axiom Pi harness under tools/axiom-team/.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 379.2 Tm (  - Axiom Pi roles under tools/axiom-team/roles/.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 367.2 Tm (  - Axiom Pi slash commands through scripts/axiom_team.sh.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 355.2 Tm (  - Node harness commands through tools/axiom-team/bin/axiom-team.mjs.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 343.2 Tm (  - Codex operating guide, Pi runbooks, Labs policy, release gates, profile) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 331.2 Tm (matrix, system status dashboard, issue templates, and session work-log PDF.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 319.2 Tm (  - Repo-tracked Axiom Codex skill source under) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 307.2 Tm (tools/codex-skills/axiom-engineering/.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 295.2 Tm (  - Safe Codex helper CLI under tools/axiom-codex/.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 283.2 Tm (  - Dry-run-capable skill install helper at tools/install_axiom_codex_skill.py.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 271.2 Tm (  - Local-only Knowledge source-index schema and repo-safe source-note template.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 252.6 Tm (Not implemented yet:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 234 Tm (  - Installed native Codex skill under ~/.codex/skills/axiom-engineering.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 222 Tm (  - Native Codex CLI slash commands outside the Pi harness.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 210 Tm (  - Autonomous Knowledge ingestion from private books or PDFs.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 198 Tm (  - Any agent permission to bypass user approval for candidate, publication,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 186 Tm (merge, or accepted-baseline promotion decisions.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54 162.4 Tm (Target Operating Model) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 143.8 Tm (The future Axiom agentic system should have four layers:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 125.2 Tm (  1. Human Authority Layer) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 113.2 Tm (  2. Codex Orchestration Layer) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 101.2 Tm (  3. Pi Execution Layer) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 89.2 Tm (  4. Knowledge And Advisory Layer) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Agentic Engineering Blueprint - page 2) Tj ET
+
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 3634 >>
+stream
+BT /F2 10.5 Tf 1 0 0 1 54 742 Tm (Human Authority Layer) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 723.4 Tm (The user controls:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 704.8 Tm (  - product direction;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 692.8 Tm (  - listening acceptance;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 680.8 Tm (  - candidate approval;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 668.8 Tm (  - publication approval;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 656.8 Tm (  - merge approval;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 644.8 Tm (  - accepted-baseline promotion approval;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 632.8 Tm (  - whether Labs work should become candidate work.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 614.2 Tm (No agent may bypass this layer for sound-changing work.) Tj ET
+BT /F2 10.5 Tf 1 0 0 1 54 592.6 Tm (Codex Orchestration Layer) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 574 Tm (Codex should:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 555.4 Tm (  - read docs/system-status.md first;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 543.4 Tm (  - classify work as Core, Labs, Knowledge, Qualification, tooling, docs, or) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 531.4 Tm (local-only;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 519.4 Tm (  - select the appropriate agent or Pi runbook;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 507.4 Tm (  - maintain the task ledger and session PDFs;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 495.4 Tm (  - update repository docs when state changes;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 483.4 Tm (  - prepare branches, commits, PRs, and reviews only after gates are satisfied.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 464.8 Tm (Codex should not:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 446.2 Tm (  - silently create sound-changing candidates;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 434.2 Tm (  - merge broad experiments into Core;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 422.2 Tm (  - treat metrics as listening acceptance;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 410.2 Tm (  - use external research as proof without Axiom-specific evidence.) Tj ET
+BT /F2 10.5 Tf 1 0 0 1 54 388.6 Tm (Pi Execution Layer) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 370 Tm (Pi should operate through the tracked Axiom harness, not uncontrolled shell) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 358 Tm (automation. It should use:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 339.4 Tm (  - /axiom-doctor;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 327.4 Tm (  - /axiom-status;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 315.4 Tm (  - /axiom-corpus-status;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 303.4 Tm (  - /axiom-investigate;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 291.4 Tm (  - /axiom-hypothesis;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 279.4 Tm (  - /axiom-map-sub-gain;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 267.4 Tm (  - /axiom-stage-observability;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 255.4 Tm (  - /axiom-audit-stft;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 243.4 Tm (  - /axiom-audit-width-mono;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 231.4 Tm (  - /axiom-screen-exciter;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 219.4 Tm (  - /axiom-create-candidate;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 207.4 Tm (  - /axiom-qualify;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 195.4 Tm (  - /axiom-record-listening;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 183.4 Tm (  - /axiom-commit;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 171.4 Tm (  - /axiom-publish;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 159.4 Tm (  - /axiom-merge.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 140.8 Tm (Real-JDSP measurements must remain serialized because the host audio route is) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 128.8 Tm (shared mutable state.) Tj ET
+BT /F2 10.5 Tf 1 0 0 1 54 107.2 Tm (Knowledge And Advisory Layer) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 88.6 Tm (Axiom Knowledge should contain:) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Agentic Engineering Blueprint - page 3) Tj ET
+
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 4365 >>
+stream
+BT /F1 9.5 Tf 1 0 0 1 54 742 Tm (  - lawful bibliography notes;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 730 Tm (  - short summaries;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 718 Tm (  - concept maps;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 706 Tm (  - links to public sources;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 694 Tm (  - test-design questions;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 682 Tm (  - research-to-Axiom mappings.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 663.4 Tm (Knowledge does not prove Axiom behavior. It helps agents ask better questions,) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 651.4 Tm (design better diagnostics, and avoid shallow DSP reasoning.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 632.8 Tm (External LLM feedback should enter through review triage:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 614.2 Tm (text) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 602.2 Tm (claim -> safety filter -> destination -> evidence need -> issue/note/fixture/reject) Tj ET
+BT /F2 12 Tf 1 0 0 1 54 572 Tm (Specialist Agent Map) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 553.4 Tm (Initial specialist set:) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 534.8 Tm (Role | Purpose | Primary Output) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 522.8 Tm (--- | --- | ---) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 510.8 Tm (Coordinator | Owns run flow, delegation, and decision summaries. | Work plan,) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 498.8 Tm (role assignments, unresolved decisions.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 486.8 Tm (DSP Architecture Lead | Reviews signal-chain intent and proposes falsifiable) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 474.8 Tm (DSP hypotheses. | Affected stage, benefit, risk, listening target.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 462.8 Tm (EEL Engineer | Reviews EEL2 implementation safety and minimal edit shape. |) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 450.8 Tm (Safety findings, allowed edit boundary, static checks.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 438.8 Tm (Measurement Engineer | Reviews whether tests can support the claimed) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 426.8 Tm (conclusion. | Measurement plan, uncertainty, pass/fail meaning.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 414.8 Tm (Qualification Lead | Decides whether evidence is strong enough for listening.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 402.8 Tm (| Gate status, missing evidence, listening eligibility.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 390.8 Tm (Safety Auditor | Looks for regressions, scope creep, unsafe APIs, and policy) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 378.8 Tm (violations. | Findings-first review.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 366.8 Tm (Tooling Engineer | Maintains scripts, validators, reports, and repeatability.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 354.8 Tm (| Tool changes, tests, failure modes.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 342.8 Tm (Signal Researcher | Connects research, prior evidence, and algorithm options.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 330.8 Tm (| Research summary, Axiom-specific questions.) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 318.8 Tm (Release Steward | Checks publication, PR, docs, policy hash, and merge) Tj ET
+BT /F3 7.8 Tf 1 0 0 1 54 306.8 Tm (readiness. | Release checklist and blockers.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54 283.2 Tm (Native Codex Extension Target) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 264.6 Tm (The v1 native Axiom Codex layer is repo-tracked but not auto-installed. It has:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 246 Tm (  - an Axiom skill source under tools/codex-skills/axiom-engineering/;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 234 Tm (  - role and handoff registries derived from existing Pi roles and repo policy;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 222 Tm (  - helper commands for common repo orchestration tasks;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 210 Tm (  - Knowledge lookup helpers for repo-safe notes plus optional local-only source) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 198 Tm (index metadata;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 186 Tm (  - strict rules that mirror AGENTS.md, release gates, and local-artifact) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 174 Tm (policy;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 162 Tm (  - clear handoff instructions for when Codex must start or delegate to Pi.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 143.4 Tm (The v1 helper CLI is:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 124.8 Tm (bash) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 112.8 Tm (python3 tools/axiom-codex/axiom_codex.py <command>) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 87.6 Tm (Supported commands:) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Agentic Engineering Blueprint - page 4) Tj ET
+
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 3915 >>
+stream
+BT /F1 9.5 Tf 1 0 0 1 54 742 Tm (  - status-summary: summarize current baseline, active candidate, open) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 730 Tm (investigations, and next safe actions.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 718 Tm (  - ready-check: run safe repo checks that do not execute real-JDSP workflows.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 706 Tm (  - agent-review: run a structured multi-role review scaffold from local role) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 694 Tm (docs.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 682 Tm (  - knowledge-query: search Axiom Knowledge notes and return only) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 670 Tm (cited, summarized context.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 651.4 Tm (Native Codex slash commands are not assumed available in v1. Pi remains the) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 639.4 Tm (slash-command runtime for Axiom execution.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54 615.8 Tm (Approval And Gate Rules) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 597.2 Tm (Mandatory user approval:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 578.6 Tm (  - creating a listening candidate after investigation;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 566.6 Tm (  - accepting a candidate after listening;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 554.6 Tm (  - publishing to GitHub;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 542.6 Tm (  - merging a PR;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 530.6 Tm (  - changing the accepted baseline policy;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 518.6 Tm (  - adding any new claim stronger than current evidence supports.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 500 Tm (Mandatory stop conditions:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 481.4 Tm (  - accepted baseline hash mismatch;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 469.4 Tm (  - unscoped DSP rewrite;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 457.4 Tm (  - historical EEL file edited in place;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 445.4 Tm (  - normal-material clipping in qualification;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 433.4 Tm (  - real-JDSP route instability;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 421.4 Tm (  - private audio, captures, manifests, credentials, or source books entering git;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 409.4 Tm (  - external LLM review used as proof instead of advisory input.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54 385.8 Tm (Build Phases) Tj ET
+BT /F2 10.5 Tf 1 0 0 1 54 364.2 Tm (Phase 1: Agent Registry And Blueprint) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 345.6 Tm (Create the durable docs and artifacts that define the system:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 327 Tm (  - this blueprint;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 315 Tm (  - a role registry;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 303 Tm (  - command registry;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 291 Tm (  - knowledge-use policy;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 279 Tm (  - approval matrix;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 267 Tm (  - handoff protocol between Codex and Pi.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 248.4 Tm (Status: implemented for v1 through the blueprint, Codex skill references, and) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 236.4 Tm (helper CLI.) Tj ET
+BT /F2 10.5 Tf 1 0 0 1 54 214.8 Tm (Phase 2: Native Codex Skill Pack) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 196.2 Tm (Create a local Axiom Codex skill that can be installed under ~/.codex/skills/.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 184.2 Tm (It should load Axiom-specific operating instructions, role summaries, and) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 172.2 Tm (workflow shortcuts without replacing the existing repo gates.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 153.6 Tm (Status: repo-tracked skill source implemented. Local install remains pending) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 141.6 Tm (explicit user approval.) Tj ET
+BT /F2 10.5 Tf 1 0 0 1 54 120 Tm (Phase 3: Knowledge Integration) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 101.4 Tm (Turn the curated Knowledge Base into structured, safe inputs:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 82.8 Tm (  - bibliography entries;) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Agentic Engineering Blueprint - page 5) Tj ET
+
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 2773 >>
+stream
+BT /F1 9.5 Tf 1 0 0 1 54 742 Tm (  - concept summaries;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 730 Tm (  - source tags;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 718 Tm (  - Axiom-relevance notes;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 706 Tm (  - test-design questions.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 687.4 Tm (The first version should be search-and-summarize only. Do not build autonomous) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 675.4 Tm (claim generation.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 656.8 Tm (Status: v1 schema, source-note template, and knowledge-query helper are) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 644.8 Tm (implemented. Private source ingestion is not implemented.) Tj ET
+BT /F2 10.5 Tf 1 0 0 1 54 623.2 Tm (Phase 4: Multi-Agent Review Workflow) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 604.6 Tm (Add repeatable multi-role reviews:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 586 Tm (  - architecture review;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 574 Tm (  - EEL safety review;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 562 Tm (  - measurement review;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 550 Tm (  - release review;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 538 Tm (  - external LLM triage review.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 519.4 Tm (Each review should produce findings, evidence needs, and recommended next) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 507.4 Tm (actions.) Tj ET
+BT /F2 10.5 Tf 1 0 0 1 54 485.8 Tm (Phase 5: Operational Tightening) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 467.2 Tm (Connect the agent layer to repo maintenance:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 448.6 Tm (  - status dashboard refresh;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 436.6 Tm (  - session PDF updates;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 424.6 Tm (  - issue template generation;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 412.6 Tm (  - PR preparation;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 400.6 Tm (  - runbook selection;) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 388.6 Tm (  - post-merge reconciliation.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54 365 Tm (Immediate Next Questions) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 346.4 Tm (Before implementation, decide:) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 327.8 Tm (  - Whether to install the repo-tracked skill into ~/.codex/skills/.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 315.8 Tm (  - Whether to add deeper Knowledge ingestion for private PDFs/books after the) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 303.8 Tm (local-only index is populated.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 291.8 Tm (  - Whether to convert the helper CLI outputs into richer machine-readable JSON) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 279.8 Tm (reports.) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 267.8 Tm (  - Whether to add native Codex slash-command support if the CLI harness exposes) Tj ET
+BT /F1 9.5 Tf 1 0 0 1 54 255.8 Tm (a stable command extension surface.) Tj ET
+BT /F1 8 Tf 1 0 0 1 54 32 Tm (Axiom-DSP Agentic Engineering Blueprint - page 6) Tj ET
+
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 16 0 R >>
+endobj
+xref
+0 18
+0000000000 65535 f
+0000000015 00000 n
+0000000064 00000 n
+0000000155 00000 n
+0000000225 00000 n
+0000000300 00000 n
+0000000368 00000 n
+0000002315 00000 n
+0000002461 00000 n
+0000007203 00000 n
+0000007349 00000 n
+0000011036 00000 n
+0000011184 00000 n
+0000015602 00000 n
+0000015750 00000 n
+0000019718 00000 n
+0000019866 00000 n
+0000022692 00000 n
+trailer
+<< /Size 18 /Root 1 0 R >>
+startxref
+22840
+%%EOF

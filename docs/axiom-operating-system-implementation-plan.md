@@ -5,6 +5,30 @@ inside the repository. It is the practical companion to
 `ai-development-ecosystem.md`, `codex-operating-guide.md`, and
 `axiom-system-roadmap.md`.
 
+Status: foundation implemented and merged in PR #10 as commit `c498688`.
+
+The implementation-plan phase is complete for repository workflow
+infrastructure. Future work should treat this document as the completed
+foundation record, not as the active task queue. Use `docs/system-status.md`
+for current state and `docs/task-backlog.md` for follow-up tasks.
+
+## Completion Summary
+
+| Section | Status | Primary Output |
+| --- | --- | --- |
+| 1. Make The Operating Framework Official | Complete | `docs/ai-development-ecosystem.md`, `docs/codex-operating-guide.md`, `docs/axiom-system-roadmap.md`, `docs/task-backlog.md` |
+| 2. Create The Workflow Intake Layer | Complete | `.github/ISSUE_TEMPLATE/` |
+| 3. Formalize Axiom Labs | Complete | `docs/labs-policy.md`, `docs/templates/labs-experiment.md` |
+| 4. Build Axiom Knowledge Safely | Initial structure complete | `docs/knowledge/README.md` |
+| 5. Define Profile Matrix And Promotion Requirements | Complete | `docs/profile-matrix.md` |
+| 6. Strengthen Listening And Release Protocols | Complete | `docs/listening-protocol.md`, `docs/release-gates.md` |
+| 7. Improve Pi Runbooks | Complete | `docs/pi-runbooks.md` |
+| 8. Add A System Status Dashboard | Complete | `docs/system-status.md` |
+
+The remaining Knowledge work is content population: bibliography notes,
+research summaries, and test-design questions. That work belongs to Axiom
+Knowledge expansion, not this initial operating-system implementation pass.
+
 ## Working Order
 
 ### 1. Make The Operating Framework Official
@@ -193,8 +217,13 @@ Initial status:
 
 - Implemented as `docs/system-status.md`.
 
-## Current First Target
+## Current Follow-Up
 
-The first implementation target is the workflow intake layer plus Labs policy.
-That gives the system controlled entry points for new ideas, advisory reviews,
-and experiments before any new DSP work is attempted.
+The foundation is now merged. The next work should either:
+
+- refresh status/backlog docs after each accepted workflow or DSP change;
+- populate Axiom Knowledge with lawful bibliography notes and summaries;
+- run the targeted `.11` Sub Harmonics / limiter-pressure investigation when
+  the JDSP route is available;
+- create Labs experiments only when a scoped hypothesis and evidence need are
+  written down.

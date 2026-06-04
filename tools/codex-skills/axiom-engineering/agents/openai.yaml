@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Engineering"
+  short_description: "Axiom-DSP orchestration and safety workflow"
+  brand_color: "#66D7E5"
+  default_prompt: "Use $axiom-engineering to inspect the Axiom-DSP state and choose the safest next workflow."
+
+policy:
+  allow_implicit_invocation: true

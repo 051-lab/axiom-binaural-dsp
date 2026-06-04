@@ -2,14 +2,15 @@
 """Generate the Axiom session work-log PDF copies.
 
 The source is a small Markdown file where each `## Run ...` section becomes a
-new PDF page. The generator intentionally uses only the Python standard
-library so the session log can be refreshed without installing a document
-toolchain.
+new PDF page. When the cover artwork exists, it is embedded as page 1. The
+generator intentionally uses only the Python standard library so the session
+log can be refreshed without installing a document toolchain.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import pathlib
 import re
 import textwrap
@@ -20,6 +21,8 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE = REPO_ROOT / "docs" / "session-work-log.md"
 DEFAULT_REPO_PDF = REPO_ROOT / "docs" / "session-work-log.pdf"
 DEFAULT_WINDOWS_PDF = pathlib.Path("/mnt/c/Users/soloa/Documents/Axiom-DSP-Session-Work-Log.pdf")
+DEFAULT_COVER_IMAGE = REPO_ROOT / "docs" / "assets" / "axiom-session-work-log-cover.jpg"
+DEFAULT_POLICY = REPO_ROOT / "tools" / "axiom-team" / "policy.json"
 
 PAGE_WIDTH = 612
 PAGE_HEIGHT = 792
@@ -31,6 +34,14 @@ TITLE_SIZE = 15
 HEADING_SIZE = 11
 LINE_HEIGHT = 12
 MAX_CHARS = 92
+COVER_SEARCH_TEXT = [
+    ("Axiom-DSP", 54, 700, "F2", 36),
+    ("Session Work Log", 54, 654, "F2", 24),
+    ("Engineering Record", 54, 622, "F1", 15),
+    ("JamesDSP / EEL2 Audio DSP", 54, 594, "F1", 12),
+    ("Current Baseline: {baseline_version}", 54, 566, "F1", 12),
+    ("Stability First | Measurement Second | Experimentation Third", 54, 538, "F1", 11),
+]
 
 
 @dataclass
@@ -94,8 +105,77 @@ def pdf_escape(value: str) -> str:
     return ascii_value.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
 
 
+def accepted_baseline_version(policy_path: pathlib.Path) -> str:
+    try:
+        policy = json.loads(policy_path.read_text(encoding="utf-8"))
+        return str(policy["acceptedBaseline"]["version"])
+    except (OSError, KeyError, TypeError, json.JSONDecodeError):
+        return "unknown"
+
+
 def text_command(text: str, x: float, y: float, font: str, size: float) -> str:
     return f"BT /{font} {size:g} Tf 1 0 0 1 {x:g} {y:g} Tm ({pdf_escape(text)}) Tj ET\n"
+
+
+def invisible_text_command(text: str, x: float, y: float, font: str, size: float) -> str:
+    return f"BT /{font} {size:g} Tf 3 Tr 1 0 0 1 {x:g} {y:g} Tm ({pdf_escape(text)}) Tj ET\n"
+
+
+def jpeg_dimensions(data: bytes) -> tuple[int, int]:
+    if len(data) < 4 or data[:2] != b"\xff\xd8":
+        raise ValueError("cover image must be a JPEG file")
+    index = 2
+    start_of_frame = {
+        0xC0,
+        0xC1,
+        0xC2,
+        0xC3,
+        0xC5,
+        0xC6,
+        0xC7,
+        0xC9,
+        0xCA,
+        0xCB,
+        0xCD,
+        0xCE,
+        0xCF,
+    }
+    while index < len(data):
+        while index < len(data) and data[index] != 0xFF:
+            index += 1
+        while index < len(data) and data[index] == 0xFF:
+            index += 1
+        if index >= len(data):
+            break
+        marker = data[index]
+        index += 1
+        if marker in {0xD8, 0xD9, 0x01} or 0xD0 <= marker <= 0xD7:
+            continue
+        if index + 2 > len(data):
+            break
+        length = int.from_bytes(data[index : index + 2], "big")
+        if length < 2 or index + length > len(data):
+            break
+        if marker in start_of_frame:
+            segment = data[index + 2 : index + length]
+            if len(segment) < 5:
+                break
+            height = int.from_bytes(segment[1:3], "big")
+            width = int.from_bytes(segment[3:5], "big")
+            return width, height
+        index += length
+    raise ValueError("could not read JPEG dimensions")
+
+
+def cover_page_stream(total_pages: int, baseline_version: str) -> str:
+    stream = "q\n"
+    stream += f"{PAGE_WIDTH} 0 0 {PAGE_HEIGHT} 0 0 cm\n"
+    stream += "/ImCover Do\n"
+    stream += "Q\n"
+    for text, x, y, font, size in COVER_SEARCH_TEXT:
+        stream += invisible_text_command(text.format(baseline_version=baseline_version), x, y, font, size)
+    stream += text_command(f"Axiom-DSP Session Work Log - page 1 of {total_pages}", MARGIN_X, 32, "F1", 8)
+    return stream
 
 
 def page_stream(entry: RunEntry, index: int, total: int) -> str:
@@ -125,12 +205,15 @@ def page_stream(entry: RunEntry, index: int, total: int) -> str:
     return stream
 
 
-def make_pdf(entries: list[RunEntry]) -> bytes:
+def make_pdf(entries: list[RunEntry], cover_image: pathlib.Path | None = None, baseline_version: str = "unknown") -> bytes:
     objects: list[bytes] = []
 
-    def add(obj: str) -> int:
-        objects.append(obj.encode("latin-1"))
+    def add_bytes(obj: bytes) -> int:
+        objects.append(obj)
         return len(objects)
+
+    def add(obj: str) -> int:
+        return add_bytes(obj.encode("latin-1"))
 
     catalog_id = add("PLACEHOLDER")
     pages_id = add("PLACEHOLDER")
@@ -138,9 +221,38 @@ def make_pdf(entries: list[RunEntry]) -> bytes:
     font_bold_id = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>")
     page_ids: list[int] = []
 
-    for idx, entry in enumerate(entries, start=1):
-        stream = page_stream(entry, idx, len(entries)).encode("latin-1")
-        content_id = add(f"<< /Length {len(stream)} >>\nstream\n".encode("latin-1").decode("latin-1") + stream.decode("latin-1") + "\nendstream")
+    cover_image_id: int | None = None
+    if cover_image is not None and cover_image.exists():
+        image_data = cover_image.read_bytes()
+        width, height = jpeg_dimensions(image_data)
+        cover_image_id = add_bytes(
+            (
+                f"<< /Type /XObject /Subtype /Image /Width {width} /Height {height} "
+                f"/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode "
+                f"/Length {len(image_data)} >>\nstream\n"
+            ).encode("latin-1")
+            + image_data
+            + b"\nendstream"
+        )
+
+    total_pages = len(entries) + (1 if cover_image_id is not None else 0)
+
+    if cover_image_id is not None:
+        stream = cover_page_stream(total_pages, baseline_version).encode("latin-1")
+        content_id = add_bytes(b"<< /Length " + str(len(stream)).encode("latin-1") + b" >>\nstream\n" + stream + b"\nendstream")
+        page_id = add(
+            f"<< /Type /Page /Parent {pages_id} 0 R "
+            f"/MediaBox [0 0 {PAGE_WIDTH} {PAGE_HEIGHT}] "
+            f"/Resources << /Font << /F1 {font_regular_id} 0 R /F2 {font_bold_id} 0 R >> "
+            f"/XObject << /ImCover {cover_image_id} 0 R >> >> "
+            f"/Contents {content_id} 0 R >>"
+        )
+        page_ids.append(page_id)
+
+    start_page = 2 if cover_image_id is not None else 1
+    for idx, entry in enumerate(entries, start=start_page):
+        stream = page_stream(entry, idx, total_pages).encode("latin-1")
+        content_id = add_bytes(b"<< /Length " + str(len(stream)).encode("latin-1") + b" >>\nstream\n" + stream + b"\nendstream")
         page_id = add(
             f"<< /Type /Page /Parent {pages_id} 0 R "
             f"/MediaBox [0 0 {PAGE_WIDTH} {PAGE_HEIGHT}] "
@@ -182,10 +294,14 @@ def main() -> int:
     parser.add_argument("--source", type=pathlib.Path, default=DEFAULT_SOURCE)
     parser.add_argument("--repo-pdf", type=pathlib.Path, default=DEFAULT_REPO_PDF)
     parser.add_argument("--windows-pdf", type=pathlib.Path, default=DEFAULT_WINDOWS_PDF)
+    parser.add_argument("--cover-image", type=pathlib.Path, default=DEFAULT_COVER_IMAGE)
+    parser.add_argument("--policy", type=pathlib.Path, default=DEFAULT_POLICY)
+    parser.add_argument("--no-cover", action="store_true")
     args = parser.parse_args()
 
     entries = parse_runs(args.source)
-    pdf = make_pdf(entries)
+    cover_image = None if args.no_cover else args.cover_image
+    pdf = make_pdf(entries, cover_image, accepted_baseline_version(args.policy))
     for destination in [args.repo_pdf, args.windows_pdf]:
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(pdf)

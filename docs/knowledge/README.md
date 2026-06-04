@@ -4,6 +4,12 @@ Axiom Knowledge is the research and bibliography space for DSP, hearing,
 psychoacoustics, music playback, JDSP behavior, testing methodology, and
 device behavior.
 
+It has two layers:
+
+- repo-safe notes under `docs/knowledge/`;
+- local-only source metadata under
+  `~/.local/share/axiom-knowledge/source-index.json`.
+
 This directory should contain citations, short summaries, concept maps, and
 Axiom-specific research questions. It must not contain copyrighted books,
 long copied excerpts, private library paths, source audio, or licensed material
@@ -36,6 +42,24 @@ Forbidden:
 - private file paths;
 - paywalled text copied into the repo;
 - claims that a source proves Axiom behavior without measurement.
+
+## Local Source Index
+
+Use the local source index for private books, PDFs, library files, or personal
+research material that must not enter git. The schema is tracked at
+`source-index.schema.json`, but the actual index lives outside the repository:
+
+```text
+~/.local/share/axiom-knowledge/source-index.json
+```
+
+The Codex helper can search repo-safe notes and sanitized local metadata:
+
+```bash
+python3 tools/axiom-codex/axiom_codex.py knowledge-query "psychoacoustics"
+```
+
+By default, the helper does not print private `localPath` values.
 
 ## Suggested Categories
 
@@ -80,3 +104,5 @@ Short explanation of the Axiom-relevant idea.
 Do not copy protected source text. This note is a summary, not evidence that
 Axiom behaves a certain way.
 ```
+
+For new notes, copy `templates/source-note.md` and keep the wording original.

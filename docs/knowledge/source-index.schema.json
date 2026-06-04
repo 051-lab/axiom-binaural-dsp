@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Axiom Local Knowledge Source Index",
+  "type": "object",
+  "required": ["schemaVersion", "sources"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "type", "topics", "axiomUse", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "authors": { "type": "array", "items": { "type": "string" } },
+          "year": { "type": ["integer", "string", "null"] },
+          "type": { "enum": ["book", "paper", "article", "documentation", "video", "other"] },
+          "topics": { "type": "array", "items": { "type": "string" } },
+          "localPath": { "type": "string" },
+          "publicUrl": { "type": "string" },
+          "licenseNotes": { "type": "string" },
+          "axiomUse": { "type": "string" },
+          "status": { "enum": ["unread", "reading", "summarized", "rejected"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
