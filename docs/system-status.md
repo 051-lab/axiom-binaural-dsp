@@ -1,10 +1,10 @@
 # Axiom System Status
 
-Last updated: 2026-06-03
+Last updated: 2026-06-04
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
-active investigations, operating-system rollout, and the next recommended
+active investigations, operating-system state, and the next recommended
 tasks.
 
 ## Accepted Baseline
@@ -70,36 +70,56 @@ node tools/axiom-team/bin/axiom-team.mjs map-sub-gain \
 Run this only when the JDSP route is available and no other real-host
 measurement is active.
 
-## Operating-System Rollout
+## Operating-System Foundation
 
-The AI development ecosystem is being converted from the local
-`axiom-idea.html` brainstorm into repository workflow:
+The AI development ecosystem has been converted from the local
+`axiom-idea.html` brainstorm into repository workflow. The foundation merged in
+PR #10 as commit `c498688`.
 
 | Layer | Status | Document |
 | --- | --- | --- |
-| Role and flow spec | drafted | `ai-development-ecosystem.md` |
-| Codex operating guide | drafted | `codex-operating-guide.md` |
-| Product/profile roadmap | drafted | `axiom-system-roadmap.md` |
-| Ordered implementation plan | drafted | `axiom-operating-system-implementation-plan.md` |
-| Labs policy | drafted | `labs-policy.md` |
-| Knowledge structure | drafted | `knowledge/README.md` |
-| Labs/review templates | drafted | `templates/` |
-| GitHub issue forms | drafted | `.github/ISSUE_TEMPLATE/` |
-| Pi runbooks | drafted | `pi-runbooks.md` |
+| Role and flow spec | merged | `ai-development-ecosystem.md` |
+| Codex operating guide | merged | `codex-operating-guide.md` |
+| Product/profile roadmap | merged | `axiom-system-roadmap.md` |
+| Ordered implementation plan | complete | `axiom-operating-system-implementation-plan.md` |
+| Labs policy | merged | `labs-policy.md` |
+| Knowledge structure | initial structure merged | `knowledge/README.md` |
+| Labs/review templates | merged | `templates/` |
+| GitHub issue forms | merged | `.github/ISSUE_TEMPLATE/` |
+| Pi runbooks | merged | `pi-runbooks.md` |
+| Session work log PDF workflow | merged | `session-work-log.md`, `session-work-log.pdf` |
+| Agentic engineering blueprint | local v1 source-ready | `axiom-agentic-engineering-blueprint.md` |
+| Axiom Codex skill source | local v1 source-ready | `../tools/codex-skills/axiom-engineering/` |
+| Axiom Codex helper CLI | local v1 source-ready | `../tools/axiom-codex/axiom_codex.py` |
 
 These docs and templates are workflow infrastructure. They do not change DSP
-behavior.
+behavior. Larger product lanes such as Axiom Reference, Immersive, Night, and
+Studio Path are defined but not built as official products.
+
+## Latest Assessment
+
+The current full-system assessment is
+`axiom-full-state-assessment-2026-06-04.md`.
+
+Summary:
+
+- `v4.1.4.11` remains the accepted Core baseline.
+- The local validation snapshot passed static EEL, Python unit, Pi harness,
+  doctor, strict corpus metadata, candidate readiness, Codex helper readiness,
+  and whitespace checks.
+- Candidate readiness is available for a future scoped hypothesis, but no
+  `.12` candidate is currently justified.
+- The local Axiom Codex skill/helper layer is source-ready but not installed.
+- Axiom Knowledge has safe structure and needs lawful source-note population.
 
 ## Current Best Next Actions
 
-1. Review and publish the documentation/workflow foundation as a docs-focused
-   PR.
-2. Rerun the targeted `.11` Sub Harmonics map after publication if the JDSP
-   route is available.
-3. Build concrete examples only after the first real Labs experiment or
-   Knowledge note exists.
-4. Do not create a sound-changing candidate until candidate readiness and a
-   scoped hypothesis justify it.
+1. Review the full-system assessment and local agentic/docs batch.
+2. Commit/publish the local docs/tooling batch when the user approves.
+3. Install the local Axiom Codex skill only after explicit approval.
+4. Rerun the targeted `.11` Sub Harmonics map if the JDSP route is available.
+5. Build concrete Knowledge or Labs examples only after the first real source
+   note or experiment exists.
 
 ## Refresh Commands
 

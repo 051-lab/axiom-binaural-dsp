@@ -13,8 +13,10 @@ DSP. Use this file as the map before opening individual investigation records.
 | [architecture.md](architecture.md) | Current DSP signal chain, processing math, and host ownership model. |
 | [axiom-roadmap.md](axiom-roadmap.md) | Current development roadmap and candidate discipline. |
 | [axiom-system-roadmap.md](axiom-system-roadmap.md) | Product/profile system roadmap for Core, Labs, Knowledge, and Qualification. |
+| [axiom-full-state-assessment-2026-06-04.md](axiom-full-state-assessment-2026-06-04.md) | Current full-system assessment across Core DSP, Qualification, Agentic tooling, Knowledge, and repository housekeeping. |
 | [profile-matrix.md](profile-matrix.md) | Operational matrix for profile status, ownership, allowed changes, and tests. |
 | [axiom-operating-system-implementation-plan.md](axiom-operating-system-implementation-plan.md) | Ordered implementation plan for making the AI development ecosystem operational. |
+| [axiom-agentic-engineering-blueprint.md](axiom-agentic-engineering-blueprint.md) | Living blueprint for native Axiom agents, Codex/Pi handoffs, knowledge use, and approval gates. |
 | [ai-development-ecosystem.md](ai-development-ecosystem.md) | Codex, Pi, user, and advisory LLM operating model extracted from the ecosystem vision. |
 | [codex-operating-guide.md](codex-operating-guide.md) | Practical Codex responsibilities, prohibitions, branch discipline, and review workflow. |
 | [pi-runbooks.md](pi-runbooks.md) | Repeatable terminal missions for Pi/Codex sessions. |
@@ -41,6 +43,34 @@ python3 tools/generate_session_work_log_pdf.py
 
 The generator writes `docs/session-work-log.pdf` and
 `C:\Users\soloa\Documents\Axiom-DSP-Session-Work-Log.pdf`.
+
+## Agentic Engineering Blueprint
+
+`docs/axiom-agentic-engineering-blueprint.md` is the editable source for the
+future native Axiom agentic-system architecture. Refresh both PDF copies with:
+
+```bash
+python3 tools/generate_agentic_blueprint_pdf.py
+```
+
+The generator writes `docs/axiom-agentic-engineering-blueprint.pdf` and
+`C:\Users\soloa\Documents\Axiom-DSP-Agentic-Engineering-Blueprint.pdf`.
+
+The repo-tracked Axiom Codex skill source lives at
+`tools/codex-skills/axiom-engineering/`. Preview the local install with:
+
+```bash
+python3 tools/install_axiom_codex_skill.py --dry-run
+```
+
+Use the safe Codex helper CLI for orchestration support:
+
+```bash
+python3 tools/axiom-codex/axiom_codex.py status-summary
+python3 tools/axiom-codex/axiom_codex.py ready-check
+python3 tools/axiom-codex/axiom_codex.py agent-review --topic "review topic"
+python3 tools/axiom-codex/axiom_codex.py knowledge-query "search terms"
+```
 
 ## Accepted Baseline
 
