@@ -4,6 +4,10 @@ Codex may consult these roles conceptually during planning and review. Pi has
 tracked role prompts under `tools/axiom-team/roles/`; those prompts remain the
 execution-layer source for specialist Pi consultations.
 
+Codex-specific profile specs live under `tools/axiom-codex/agent_profiles/`.
+Use `python3 tools/axiom-codex/axiom_codex.py agent-profiles` to list them or
+`--role <name>` to print one profile.
+
 | Role | Owner Layer | Purpose | Required Output |
 | --- | --- | --- | --- |
 | Coordinator | Codex/Pi | Own run flow, delegation, and unresolved decisions. | Work plan, role assignments, blocked decisions. |

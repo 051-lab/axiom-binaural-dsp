@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-06-04
+Last updated: 2026-06-07
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
@@ -89,8 +89,8 @@ PR #10 as commit `c498688`.
 | Pi runbooks | merged | `pi-runbooks.md` |
 | Session work log PDF workflow | merged | `session-work-log.md`, `session-work-log.pdf` |
 | Agentic engineering blueprint | local v1 source-ready | `axiom-agentic-engineering-blueprint.md` |
-| Axiom Codex skill source | local v1 source-ready | `../tools/codex-skills/axiom-engineering/` |
-| Axiom Codex helper CLI | local v1 source-ready | `../tools/axiom-codex/axiom_codex.py` |
+| Axiom Codex skill | local v1 installed | `~/.codex/skills/axiom-engineering` from `../tools/codex-skills/axiom-engineering/` |
+| Axiom Codex helper CLI | local v2 source-ready | `../tools/axiom-codex/axiom_codex.py` |
 
 These docs and templates are workflow infrastructure. They do not change DSP
 behavior. Larger product lanes such as Axiom Reference, Immersive, Night, and
@@ -109,17 +109,23 @@ Summary:
   and whitespace checks.
 - Candidate readiness is available for a future scoped hypothesis, but no
   `.12` candidate is currently justified.
-- The local Axiom Codex skill/helper layer is source-ready but not installed.
-- Axiom Knowledge has safe structure and needs lawful source-note population.
+- The local Axiom Codex skill is installed in this machine's Codex runtime;
+  helper tooling remains repo-tracked under `tools/`.
+- Initial Codex-layer hardening is implemented with a command registry,
+  Codex-specific role profiles, guard preflights, and deterministic skill
+  behavior eval fixtures.
+- Axiom Knowledge has safe structure and its first local-source-backed note:
+  `knowledge/spatial-hearing-revised-edition.md`.
 
 ## Current Best Next Actions
 
-1. Review the full-system assessment and local agentic/docs batch.
-2. Commit/publish the local docs/tooling batch when the user approves.
-3. Install the local Axiom Codex skill only after explicit approval.
-4. Rerun the targeted `.11` Sub Harmonics map if the JDSP route is available.
-5. Build concrete Knowledge or Labs examples only after the first real source
-   note or experiment exists.
+1. Use `$axiom-engineering` in fresh Codex sessions for Axiom work.
+2. Use `python3 tools/axiom-codex/axiom_codex.py command-surface`,
+   `agent-profiles`, `guard-check`, and `skill-eval` as the current
+   Codex-layer hardening surface.
+3. Rerun the targeted `.11` Sub Harmonics map if the JDSP route is available.
+4. Use the Spatial Hearing note to refine listening vocabulary or test-design
+   questions before adding any new spatial DSP claims.
 
 ## Refresh Commands
 

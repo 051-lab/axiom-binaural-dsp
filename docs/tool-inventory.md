@@ -1,6 +1,6 @@
 # Axiom Tool Inventory
 
-Last updated: 2026-06-01
+Last updated: 2026-06-07
 
 This inventory maps the repository's operational tools so humans and agents can
 choose the right command without guessing. It is descriptive, not an execution
@@ -28,7 +28,7 @@ the artifact is safe to commit.
 | `scripts/qualify_windows_default_route.py` | Build a local evidence report for a Windows default-output route by requiring the route class, restarting the managed JDSP route, hot-reloading accepted `.11`, verifying host settings, and playing a probe for user confirmation. | Yes | No | Output directory belongs outside repo because it may contain private device names. |
 | `scripts/axiom_team.sh` | Launch the isolated Pi engineering harness with Axiom-specific tools and policy. | Indirect | No | Harness state remains under local state roots. |
 | `tools/install_axiom_codex_skill.py` | Preview or install the repo-tracked Axiom Codex skill into `~/.codex/skills/axiom-engineering`. | No | No | Local install destination is outside repo and requires explicit `--install`. |
-| `tools/axiom-codex/axiom_codex.py` | Safe Codex-side orchestration helpers for status, ready checks, multi-role review scaffolds, and Knowledge search. | No | No | Console output only; private Knowledge paths are hidden by default. |
+| `tools/axiom-codex/axiom_codex.py` | Safe Codex-side orchestration helpers for status, ready checks, command surface discovery, guard preflights, role profiles, multi-role review scaffolds, Knowledge search, and skill behavior eval fixtures. | No | No | Console output only; private Knowledge paths are hidden by default; guard findings block unsafe publication scope but do not approve release. |
 
 ## Offline Analysis And Fixture Inputs
 

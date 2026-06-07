@@ -10,7 +10,7 @@ task is ready for scheduling or delegation.
 | --- | --- | --- | --- | --- | --- |
 | AX-TASK-001 | Complete | Formalize Axiom Core identity | Core | Core policy note or README section | Accepted baseline, host ownership, and no-in-place-edit rules are visible from the starting docs. |
 | AX-TASK-002 | Complete | Create Labs branch policy | Labs | Branch policy doc or CONTRIBUTING section | Labs branches have naming, scope, artifact, and promotion rules. |
-| AX-TASK-003 | Initial structure complete | Create Knowledge Base bibliography notes | Knowledge | `docs/knowledge/` index or bibliography doc | Notes contain citations and summaries only, with no copyrighted book contents or private paths. |
+| AX-TASK-003 | First source note added | Create Knowledge Base bibliography notes | Knowledge | `docs/knowledge/spatial-hearing-revised-edition.md` | Notes contain citations and summaries only, with no copyrighted book contents or private paths. |
 | AX-TASK-004 | Complete | Create profile matrix | System | Profile matrix doc or table | Core, Reference, Immersive, Night, Studio Path, Labs, Knowledge, and Qualification are mapped to owner, status, allowed changes, and tests. |
 | AX-TASK-005 | Complete | Add listening protocol | Qualification | Listening protocol doc or extension to `listening-records.md` | Protocol defines material choice, level handling, device route, fatigue notes, comparison target, and acceptance decision format. |
 | AX-TASK-006 | Complete | Document advisory LLM review flow | Codex | Review-flow doc or operating-guide section | External LLM feedback has a repeatable path from critique to issue, research note, fixture, or rejection. |
@@ -25,6 +25,10 @@ task is ready for scheduling or delegation.
 | AX-TASK-015 | Complete | Build issue templates for DSP candidates and docs work | Repository | `.github/ISSUE_TEMPLATE/` updates | Issues capture scope, forbidden scope, evidence, tests, and release impact. |
 | AX-TASK-016 | Complete | Add system status dashboard | Repository | `docs/system-status.md` | A fresh agent can see accepted baseline, active candidate, open investigations, roadmap state, and next work. |
 | AX-TASK-017 | Complete | Add Pi runbooks | Harness | `docs/pi-runbooks.md` | Pi/Codex sessions have repeatable missions for audit, investigations, Labs, qualification, advisory triage, housekeeping, and publication. |
+| AX-TASK-018 | Initial implementation complete | Define Axiom Codex command surface | Codex | `tools/axiom-codex/command_surface.json` and `command-surface` helper | Repeated workflows such as status, ready-check, role review, Knowledge lookup, Pi handoff, guard check, skill eval, and session-log update have clear trigger names, inputs, outputs, and safety boundaries. |
+| AX-TASK-019 | Initial implementation complete | Create role-specific Codex agent profiles | Codex | `tools/axiom-codex/agent_profiles/` and `agent-profiles` helper | DSP architecture, EEL safety, measurement, qualification, release, tooling, research, safety, implementation, and coordination roles map to the existing role registry and have limited responsibilities. |
+| AX-TASK-020 | Initial implementation complete | Add automated guardrails for unsafe Axiom actions | Codex | `guard-check` helper and unit tests | Historical EEL edits, private artifact paths, source audio, captured WAVs, local manifests, credentials, and unsupported baseline changes are blocked or flagged before publication. |
+| AX-TASK-021 | Initial implementation complete | Add Axiom skill behavior evals | Codex | `tools/axiom-codex/skill_eval_cases.json` and `skill-eval` helper | The Axiom skill source is checked against representative prompts for status inspection, DSP-safety refusal, Pi handoff, Knowledge lookup, release-gate review, private-artifact handling, and session-log refresh. |
 
 ## Current Priority
 
@@ -33,10 +37,14 @@ Recommended next actions:
 1. Keep this backlog synchronized when workflow or DSP gates change.
 2. Use `docs/axiom-full-state-assessment-2026-06-04.md` as the current
    assessment checkpoint.
-3. Review and commit/publish the local docs/tooling batch when approved.
-4. Rerun the targeted `.11` Sub Harmonics / limiter-pressure investigation when
+3. Use the locally installed `$axiom-engineering` skill for new Axiom Codex
+   sessions.
+4. Treat `AX-TASK-018` through `AX-TASK-021` as initial infrastructure; future
+   work can add native runtime wrappers only when a supported Codex command or
+   subagent mechanism is available.
+5. Rerun the targeted `.11` Sub Harmonics / limiter-pressure investigation when
    the JDSP route is available.
-5. Add concrete Knowledge or Labs examples only after the first real Knowledge
+6. Add concrete Knowledge or Labs examples only after the first real Knowledge
    note or Labs experiment exists.
 
 ## Progress Notes
@@ -46,7 +54,9 @@ Recommended next actions:
   `docs/release-gates.md`.
 - `AX-TASK-002` is implemented as `docs/labs-policy.md`; future work may add
   examples after the first real Labs branch.
-- `AX-TASK-003` has its initial structure in `docs/knowledge/README.md`.
+- `AX-TASK-003` has its initial structure in `docs/knowledge/README.md` and a
+  first local-source-backed note in
+  `docs/knowledge/spatial-hearing-revised-edition.md`.
 - `AX-TASK-004` is implemented as `docs/profile-matrix.md`.
 - `AX-TASK-005` is implemented as `docs/listening-protocol.md`; the structured
   record format remains in `docs/listening-records.md`.
@@ -72,6 +82,9 @@ Recommended next actions:
 - `AX-TASK-014` is implemented through the required-test columns in
   `docs/profile-matrix.md`.
 - `AX-TASK-017` is implemented as `docs/pi-runbooks.md`.
+- `AX-TASK-018` through `AX-TASK-021` have initial repo-tracked
+  implementations: command registry, Codex role profiles, guard-check
+  preflight, and deterministic skill behavior eval fixtures.
 
 ## Graduation Checklist For Sound-Changing Work
 

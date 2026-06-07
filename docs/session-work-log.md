@@ -512,3 +512,148 @@ Scope: Local commit and GitHub publication for the docs/tooling agentic-foundati
 - Merge only after explicit user approval.
 - After merge, install the local Axiom Codex skill only if the user approves that runtime change.
 - Then resume targeted `.11` measurement or Axiom Knowledge population.
+
+## Run 015 - Axiom Codex Skill Local Runtime Activation
+
+Date: 2026-06-07
+Status: Completed
+Scope: Local Codex runtime activation and verification only.
+
+### What Was Implemented
+
+- Installed the repo-tracked Axiom Codex skill into the local Codex runtime at `~/.codex/skills/axiom-engineering`.
+- Confirmed the installed local skill copy contains `SKILL.md`, `agents/openai.yaml`, and the five reference files.
+- Verified a fresh Codex prompt context advertises `$axiom-engineering` as an available skill.
+- Re-ran the Axiom Codex helper status and readiness checks.
+- Re-ran the Pi harness doctor check against the accepted `v4.1.4.11` baseline.
+
+### Why It Matters
+
+- Codex can now load the Axiom-specific orchestration rules directly from the local runtime instead of relying only on repo docs.
+- Future Axiom sessions can start with `$axiom-engineering` to apply the accepted baseline, handoff, approval, Knowledge, and safety policies.
+- The install keeps Pi as the controlled real-JDSP and candidate execution layer.
+- This activation does not add native Axiom slash commands, custom subagents, or any sound-changing behavior.
+
+### Validation
+
+- `python3 tools/install_axiom_codex_skill.py --install` completed successfully.
+- `codex debug prompt-input 'Use $axiom-engineering to inspect Axiom state.'` listed `axiom-engineering`.
+- `python3 tools/axiom-codex/axiom_codex.py status-summary` reported accepted baseline `v4.1.4.11`, no active candidate, and zero DSP/script diff files.
+- `python3 tools/axiom-codex/axiom_codex.py ready-check` passed.
+- `node tools/axiom-team/bin/axiom-team.mjs doctor` passed and verified the accepted baseline hash.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use `$axiom-engineering` in fresh Codex sessions for Axiom work.
+- Decide whether the next Codex-layer iteration should add command surfaces, role-specific subagents, or deeper Knowledge lookup.
+- Resume the targeted `.11` Sub Harmonics / limiter-pressure investigation when the JDSP route is available.
+
+## Run 016 - Codex Command Surface, Guardrails, Profiles, And Skill Evals
+
+Date: 2026-06-07
+Status: Completed
+Scope: Codex-layer hardening for Axiom orchestration only.
+
+### What Was Implemented
+
+- Added a repo-tracked Axiom Codex command registry at `tools/axiom-codex/command_surface.json`.
+- Extended `tools/axiom-codex/axiom_codex.py` with `command-surface`, `agent-profiles`, `guard-check`, and `skill-eval`.
+- Added Codex-specific role profile specs under `tools/axiom-codex/agent_profiles/`.
+- Added deterministic skill behavior fixtures at `tools/axiom-codex/skill_eval_cases.json`.
+- Added focused unit coverage in `tests/test_axiom_codex_helper.py`.
+- Updated the Axiom skill references, tool inventory, system dashboard, and backlog so AX-TASK-018 through AX-TASK-021 are initial implementations instead of proposed gaps.
+- Reinstalled the local Axiom Codex skill copy from the updated repo source.
+
+### Why It Matters
+
+- Axiom now has a concrete command surface for repeated Codex workflows without relying on undocumented native slash-command behavior.
+- Role-specific Codex profiles make coordination, DSP architecture, EEL safety, measurement, qualification, release, tooling, research, safety, and implementation responsibilities explicit.
+- The guard check catches known unsafe publication scope before it can become a commit or PR problem.
+- The skill eval fixtures give future sessions a deterministic way to confirm that the skill still encodes the expected Axiom behaviors.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -p 'test_*.py'` passed with 165 tests.
+- `python3 tools/axiom-codex/axiom_codex.py command-surface` listed 10 commands.
+- `python3 tools/axiom-codex/axiom_codex.py agent-profiles` listed 10 profiles.
+- `python3 tools/axiom-codex/axiom_codex.py guard-check` passed with no known unsafe changed paths.
+- `python3 tools/axiom-codex/axiom_codex.py skill-eval` passed 7 behavior fixtures.
+- `python3 tools/axiom-codex/axiom_codex.py ready-check` passed.
+- `python3 tools/install_axiom_codex_skill.py --install --force` synced the local runtime skill copy.
+- `codex debug prompt-input 'Use $axiom-engineering to run an Axiom guard check.'` listed the updated `axiom-engineering` skill in fresh prompt context.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use `command-surface`, `agent-profiles`, `guard-check`, and `skill-eval` in future Axiom Codex sessions.
+- Add native wrappers only when Codex exposes a supported slash-command or subagent mechanism that can preserve these boundaries.
+- Resume the targeted `.11` Sub Harmonics / limiter-pressure investigation when the JDSP route is available.
+
+## Run 017 - Read-Only Pi Handoff Helper
+
+Date: 2026-06-07
+Status: Completed
+Scope: Codex-to-Pi handoff preparation only.
+
+### What Was Implemented
+
+- Added `python3 tools/axiom-codex/axiom_codex.py pi-handoff`.
+- Made the default handoff target the current `.11` Sub Harmonics investigation with `map-sub-gain` at `+10 dB` and `+12 dB`.
+- Updated the command registry and Axiom skill helper reference so `pi-handoff` appears as a Codex helper.
+- Added targeted tests for default and custom handoff command generation.
+
+### Why It Matters
+
+- Codex can now prepare the exact Pi command, preconditions, artifact policy, and approval boundary without running real JDSP.
+- The next measurement step is easier to review before execution.
+- Candidate creation, publication, merge, and accepted-baseline changes remain separate approval gates.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper` passed with 9 tests.
+- `python3 tools/axiom-codex/axiom_codex.py pi-handoff` printed the draft handoff and did not execute the Pi command.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Review the generated handoff brief.
+- Run the Pi command only when the JDSP route is available and the user explicitly approves real-host measurement.
+
+## Run 018 - Spatial Hearing Knowledge Source Note
+
+Date: 2026-06-07
+Status: Completed
+Scope: Repo-safe Knowledge note creation from a local-only PDF source.
+
+### What Was Implemented
+
+- Copied the user-provided `Spatial Hearing - Revised Edition.pdf` into the
+  local-only Axiom Knowledge source store outside the repo.
+- Added the `spatial-hearing-revised-edition` entry to the local-only source
+  index.
+- Created `docs/knowledge/spatial-hearing-revised-edition.md` with citation
+  metadata, original Axiom-relevance notes, follow-up questions, and evidence
+  boundaries.
+- Updated the system dashboard and backlog so Axiom Knowledge reflects the
+  first source-backed note.
+
+### Why It Matters
+
+- Axiom now has a lawful Knowledge starting point for spatial hearing,
+  localization vocabulary, headphone image stability, and crossfeed-boundary
+  thinking.
+- The repo note avoids copying book text and does not expose private local
+  paths.
+- The source can inform test design, but it does not prove any Axiom behavior.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-query "spatial hearing localization binaural"` found the local source index entry.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use the Spatial Hearing note to refine future listening-record vocabulary.
+- Keep adding Knowledge notes only as short original summaries with clear Axiom
+  test-design questions.
