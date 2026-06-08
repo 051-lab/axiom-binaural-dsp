@@ -55,13 +55,17 @@ Known result:
   stopped the full sweep before the aggregate report was written;
 - completed partial evidence showed normal material stayed unclipped through
   the completed `+4`, `+6`, `+8`, and partial `+10 dB` cases;
-- a 2026-06-08 targeted rerun attempt failed before measurement because the
-  local JDSP capture route was unavailable; this is route evidence, not audio
-  evidence;
-- the follow-up should use the newer targeted map options with the required
-  `+4 dB` default comparison before treating this as an audio defect.
+- a 2026-06-08 route reset restored the JDSP capture path and the corrected
+  targeted map completed at `+4`, `+10`, and `+12 dB`;
+- the corrected map still recorded `fail`, but not because of normal-material
+  clipping: normal material stayed unclipped through `+12 dB`, while the gate
+  failed on a default `+4 dB` dense-electronic repeatability qualification and
+  investigation findings for terminal-pressure observations plus elevated
+  RMS retreat;
+- the summarized evidence record is
+  `sub-harmonics-follow-up-v4.1.4.11.md`.
 
-Recommended follow-up:
+Current follow-up command, if a confirmatory rerun is needed:
 
 ```bash
 node tools/axiom-team/bin/axiom-team.mjs map-sub-gain \
@@ -70,7 +74,7 @@ node tools/axiom-team/bin/axiom-team.mjs map-sub-gain \
   --label-regex 'electronic|hip hop|bass|flawed'
 ```
 
-Run this only after the JDSP capture route is available and no other real-host
+Run this only when the JDSP capture route is available and no other real-host
 measurement is active. Targeted maps must include the accepted `+4 dB` default
 so elevated settings can be compared to the baseline control point.
 
@@ -114,8 +118,10 @@ Summary:
 - Candidate readiness is `READY`, but no `.12` candidate is justified until the
   open `.11` Sub Harmonics investigation produces a scoped hypothesis and
   listening target.
-- The 2026-06-08 targeted rerun attempt was blocked by an unavailable JDSP
-  capture route before measurement evidence was produced.
+- The 2026-06-08 corrected targeted rerun produced a full report: no
+  normal-material clipping through `+12 dB`, but a failed gate due to default
+  dense-electronic repeatability qualification plus terminal-pressure and
+  elevated RMS-retreat investigation findings.
 - Listening records now require structured spatial fields for center image,
   lateral spread, localization blur, depth impression, bass-image coupling, and
   route context.
@@ -126,8 +132,9 @@ Summary:
 ## Current Best Next Actions
 
 1. Review and merge PR #12 only after explicit approval.
-2. Restore the JDSP capture route, then rerun the targeted `.11` Sub Harmonics
-   map when no other real-host measurement is active.
+2. Interpret the completed `.11` Sub Harmonics follow-up before proposing
+   `.12`; if a candidate is considered, start with a narrow listening target
+   around elevated-setting punch/level retreat, not normal-material clipping.
 3. Use the structured spatial listening vocabulary for any future
    sound-changing candidate record.
 4. Use Knowledge seed notes to support specific test-design questions, not to

@@ -831,3 +831,50 @@ correction, and structured spatial listening vocabulary.
   map at `+4`, `+10`, and `+12 dB`.
 - Keep `AX-TASK-022` route-blocked until that real-host measurement completes.
 - Continue with PR #12 review/merge only after explicit approval.
+
+## Run 023 - Completed `.11` Sub Harmonics Follow-Up
+
+Date: 2026-06-08
+Status: Completed measurement; interpretation open
+Scope: Restore JDSP capture route, rerun the corrected targeted `.11` Sub
+Harmonics map, and record repo-safe evidence.
+
+### What Was Implemented
+
+- Restored the private JDSP Pulse route with the configured
+  `jdsp-audio-reset` helper.
+- Verified `WinSink`, `JamesDSP`, and `JamesDSP.monitor` on the private
+  `unix:/tmp/jdsp-win/native` server.
+- Reran the corrected targeted map at `+4`, `+10`, and `+12 dB` using the
+  dense/flawed/bass-oriented material filter.
+- Added `docs/sub-harmonics-follow-up-v4.1.4.11.md` as the repo-safe summary
+  of the local report.
+- Updated `docs/system-status.md`, `docs/task-backlog.md`, and `docs/README.md`
+  to point future sessions at the completed follow-up evidence.
+
+### Why It Matters
+
+- `AX-TASK-022` is no longer route-blocked; it has a completed real-JDSP
+  follow-up map.
+- The result did not show normal-material clipping through `+12 dB`.
+- The gate still failed because the default `+4 dB` dense-electronic item did
+  not qualify repeated level metrics, and elevated settings showed
+  terminal-pressure observations plus RMS retreat on selected material.
+- This is not automatic `.12` approval. It narrows the next question to
+  whether elevated-setting level retreat is audible as punch loss, bass blur,
+  limiter pumping, low-end crowding, or fatigue.
+
+### Validation
+
+- The Node harness completed the targeted map and recorded the gate in local
+  run state.
+- Raw WAV captures and generated JSON/Markdown reports remain local-only.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Interpret the completed `.11` follow-up before proposing `.12`.
+- If further action is justified, create a narrow listening target around
+  elevated Sub Harmonics punch/level retreat rather than normal-material
+  clipping.
+- Keep PR publication and merge gated on explicit approval.
