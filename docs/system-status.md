@@ -63,7 +63,11 @@ Known result:
   investigation findings for terminal-pressure observations plus elevated
   RMS retreat;
 - the summarized evidence record is
-  `sub-harmonics-follow-up-v4.1.4.11.md`.
+  `sub-harmonics-follow-up-v4.1.4.11.md`;
+- the interpretation record is
+  `sub-harmonics-interpretation-v4.1.4.11.md`: no `.12` candidate is justified
+  yet; the next step is focused listening around elevated-setting punch,
+  practical loudness, bass clarity, limiter pumping, and fatigue.
 
 Current follow-up command, if a confirmatory rerun is needed:
 
@@ -115,9 +119,9 @@ Summary:
 - Full Python tests passed with 170 tests.
 - Pi doctor, strict corpus metadata, candidate readiness, Codex helper
   readiness, guard checks, skill evals, and Knowledge source audit passed.
-- Candidate readiness is `READY`, but no `.12` candidate is justified until the
-  open `.11` Sub Harmonics investigation produces a scoped hypothesis and
-  listening target.
+- Candidate readiness is `READY`, but no `.12` candidate is justified yet; the
+  completed `.11` Sub Harmonics follow-up produced a listening target, not an
+  EEL edit boundary.
 - The 2026-06-08 corrected targeted rerun produced a full report: no
   normal-material clipping through `+12 dB`, but a failed gate due to default
   dense-electronic repeatability qualification plus terminal-pressure and
@@ -132,11 +136,9 @@ Summary:
 ## Current Best Next Actions
 
 1. Review and merge PR #12 only after explicit approval.
-2. Interpret the completed `.11` Sub Harmonics follow-up before proposing
-   `.12`; if a candidate is considered, start with a narrow listening target
-   around elevated-setting punch/level retreat, not normal-material clipping.
-3. Use the structured spatial listening vocabulary for any future
-   sound-changing candidate record.
+2. Run focused listening on accepted `.11` at `+4`, `+10`, and `+12 dB` Sub
+   Harmonics before proposing `.12`.
+3. Use the structured spatial listening vocabulary for that listening record.
 4. Use Knowledge seed notes to support specific test-design questions, not to
    justify DSP changes by themselves.
 

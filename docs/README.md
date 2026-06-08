@@ -90,6 +90,7 @@ python3 tools/axiom-codex/axiom_codex.py knowledge-query "search terms"
 | [architecture-decision-v4.1.4.10.md](architecture-decision-v4.1.4.10.md) | Decision record for the `.10` to `.11` promotion and v5 deferral. |
 | [accepted-stress-v4.1.4.10.md](accepted-stress-v4.1.4.10.md) | Dense-material stress behavior that informed the `.11` reserve work. |
 | [sub-harmonics-follow-up-v4.1.4.11.md](sub-harmonics-follow-up-v4.1.4.11.md) | Targeted post-acceptance `.11` Sub Harmonics follow-up and investigation result. |
+| [sub-harmonics-interpretation-v4.1.4.11.md](sub-harmonics-interpretation-v4.1.4.11.md) | No-candidate-yet interpretation and listening target for the `.11` Sub Harmonics follow-up. |
 | [sub-harmonics-map-v4.1.4.10.md](sub-harmonics-map-v4.1.4.10.md) | Elevated Sub Harmonics control-range evidence. |
 | [reserve-law-screen-v4.1.4.10.md](reserve-law-screen-v4.1.4.10.md) | Reserve-law screen and full-manifest `0.500 dB/dB` qualification behind `.11`. |
 | [stage-observability-v4.1.4.10.md](stage-observability-v4.1.4.10.md) | Bass/reserve stage-tap evidence. |

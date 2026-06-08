@@ -878,3 +878,43 @@ Harmonics map, and record repo-safe evidence.
   elevated Sub Harmonics punch/level retreat rather than normal-material
   clipping.
 - Keep PR publication and merge gated on explicit approval.
+
+## Run 024 - `.11` Sub Harmonics Interpretation
+
+Date: 2026-06-08
+Status: Completed
+Scope: No-candidate-yet interpretation of the completed `.11` Sub Harmonics
+follow-up and focused listening target definition.
+
+### What Was Implemented
+
+- Added `docs/sub-harmonics-interpretation-v4.1.4.11.md`.
+- Recorded the decision to keep `v4.1.4.11` accepted and not create `.12` from
+  the measurement alone.
+- Defined a focused listening target for accepted `.11` at `+4`, `+10`, and
+  `+12 dB` Sub Harmonics settings.
+- Updated `docs/system-status.md`, `docs/task-backlog.md`, and `docs/README.md`
+  so the interpretation record is discoverable.
+
+### Why It Matters
+
+- The completed real-JDSP follow-up now has an explicit engineering decision:
+  it found no normal-material clipping through `+12 dB`, but it did find
+  elevated-setting RMS retreat and terminal-pressure observations that should
+  be checked by ear before candidate work.
+- A future `.12` must be justified by a repeatable audible defect such as kick
+  softening, bass blur, limiter pumping, low-end crowding, fatigue, or practical
+  loudness loss.
+- The next step is structured listening on accepted `.11`, not EEL editing.
+
+### Validation
+
+- Documentation-only change.
+- No EEL DSP scripts changed.
+- No `.12` candidate was created.
+
+### Next Recommended Work
+
+- Run focused accepted-`.11` listening at `+4`, `+10`, and `+12 dB`.
+- Use the structured listening-record fields added in Run 022.
+- Keep publication, merge, and candidate creation gated on explicit approval.
