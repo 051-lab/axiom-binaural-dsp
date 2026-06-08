@@ -114,8 +114,9 @@ Summary:
 - Initial Codex-layer hardening is implemented with a command registry,
   Codex-specific role profiles, guard preflights, and deterministic skill
   behavior eval fixtures.
-- Axiom Knowledge has safe structure and its first local-source-backed note:
-  `knowledge/spatial-hearing-revised-edition.md`.
+- Axiom Knowledge has safe structure and six local-source-backed seed notes for
+  spatial hearing, digital audio effects, implementation patterns, reproduction
+  accuracy, and audio-programming background.
 
 ## Current Best Next Actions
 
@@ -124,8 +125,9 @@ Summary:
    `agent-profiles`, `guard-check`, and `skill-eval` as the current
    Codex-layer hardening surface.
 3. Rerun the targeted `.11` Sub Harmonics map if the JDSP route is available.
-4. Use the Spatial Hearing note to refine listening vocabulary or test-design
-   questions before adding any new spatial DSP claims.
+4. Use the Knowledge seed notes to refine listening vocabulary, DSP-stage
+   review, implementation translation, and test-design questions before adding
+   any new DSP claims.
 
 ## Refresh Commands
 

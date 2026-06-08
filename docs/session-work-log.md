@@ -657,3 +657,44 @@ Scope: Repo-safe Knowledge note creation from a local-only PDF source.
 - Use the Spatial Hearing note to refine future listening-record vocabulary.
 - Keep adding Knowledge notes only as short original summaries with clear Axiom
   test-design questions.
+
+## Run 019 - Axiom Knowledge PDF Candidate Intake
+
+Date: 2026-06-07
+Status: Completed
+Scope: Local-only PDF intake and repo-safe seed bibliography notes.
+
+### What Was Implemented
+
+- Copied five user-provided PDF candidates from the desktop Knowledge folder
+  into the local-only Axiom Knowledge source store outside the repo.
+- Registered the five sources in the local-only source index:
+  `accurate-sound-reproduction-using-dsp`,
+  `dafx-digital-audio-effects`,
+  `designing-audio-effect-plug-ins-in-cpp`,
+  `principles-and-applications-of-spatial-hearing`, and
+  `the-audio-programming-book`.
+- Added repo-safe Knowledge notes for each source under `docs/knowledge/`.
+- Updated `docs/knowledge/README.md`, `docs/system-status.md`, and
+  `docs/task-backlog.md` to reflect the six-source Knowledge seed set.
+
+### Why It Matters
+
+- Axiom Knowledge now has seed references for spatial hearing, digital audio
+  effects, real-time implementation patterns, reproduction accuracy, and
+  general audio-programming background.
+- The PDFs remain local-only; the repo contains citation metadata, original
+  summaries, Axiom relevance, and test-design questions.
+- These notes provide vocabulary and review context without claiming that any
+  source proves Axiom behavior.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-query "DAFX spatial hearing audio programming DSP"` found the new local source-index entries.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use the seed notes to create short concept notes only when a specific Axiom
+  test, review, or listening question needs them.
+- Keep raw PDFs and private local paths out of git.

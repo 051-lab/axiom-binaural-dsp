@@ -72,6 +72,20 @@ By default, the helper does not print private `localPath` values.
 | Measurement | Repeatability, proxy metrics, listening-test design. |
 | JDSP and EEL2 | Host behavior, Liveprog constraints, preset interaction. |
 
+## Seed Source Notes
+
+These notes are repo-safe summaries of local-only source PDFs. The PDFs remain
+outside git and are referenced through the local source index.
+
+| Source ID | Focus |
+| --- | --- |
+| `spatial-hearing-revised-edition` | Spatial-hearing vocabulary, localization, image stability, and binaural perception. |
+| `principles-and-applications-of-spatial-hearing` | Spatial-hearing applications, auditory displays, and listening-test vocabulary. |
+| `dafx-digital-audio-effects` | Digital-audio-effects taxonomy, DSP stage vocabulary, and fixture-design questions. |
+| `designing-audio-effect-plug-ins-in-cpp` | Real-time DSP implementation patterns that must be translated through EEL2/JDSP constraints. |
+| `accurate-sound-reproduction-using-dsp` | Reproduction accuracy, measurement discipline, and non-Core correction boundaries. |
+| `the-audio-programming-book` | General audio-programming literacy, tooling perspective, and DSP background. |
+
 ## Bibliography Entry Template
 
 ```markdown

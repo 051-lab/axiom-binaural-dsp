@@ -10,7 +10,7 @@ task is ready for scheduling or delegation.
 | --- | --- | --- | --- | --- | --- |
 | AX-TASK-001 | Complete | Formalize Axiom Core identity | Core | Core policy note or README section | Accepted baseline, host ownership, and no-in-place-edit rules are visible from the starting docs. |
 | AX-TASK-002 | Complete | Create Labs branch policy | Labs | Branch policy doc or CONTRIBUTING section | Labs branches have naming, scope, artifact, and promotion rules. |
-| AX-TASK-003 | First source note added | Create Knowledge Base bibliography notes | Knowledge | `docs/knowledge/spatial-hearing-revised-edition.md` | Notes contain citations and summaries only, with no copyrighted book contents or private paths. |
+| AX-TASK-003 | Seed notes added | Create Knowledge Base bibliography notes | Knowledge | `docs/knowledge/` seed source notes | Notes contain citations and summaries only, with no copyrighted book contents or private paths. |
 | AX-TASK-004 | Complete | Create profile matrix | System | Profile matrix doc or table | Core, Reference, Immersive, Night, Studio Path, Labs, Knowledge, and Qualification are mapped to owner, status, allowed changes, and tests. |
 | AX-TASK-005 | Complete | Add listening protocol | Qualification | Listening protocol doc or extension to `listening-records.md` | Protocol defines material choice, level handling, device route, fatigue notes, comparison target, and acceptance decision format. |
 | AX-TASK-006 | Complete | Document advisory LLM review flow | Codex | Review-flow doc or operating-guide section | External LLM feedback has a repeatable path from critique to issue, research note, fixture, or rejection. |
@@ -54,9 +54,8 @@ Recommended next actions:
   `docs/release-gates.md`.
 - `AX-TASK-002` is implemented as `docs/labs-policy.md`; future work may add
   examples after the first real Labs branch.
-- `AX-TASK-003` has its initial structure in `docs/knowledge/README.md` and a
-  first local-source-backed note in
-  `docs/knowledge/spatial-hearing-revised-edition.md`.
+- `AX-TASK-003` has its initial structure in `docs/knowledge/README.md` and six
+  local-source-backed seed notes under `docs/knowledge/`.
 - `AX-TASK-004` is implemented as `docs/profile-matrix.md`.
 - `AX-TASK-005` is implemented as `docs/listening-protocol.md`; the structured
   record format remains in `docs/listening-records.md`.
