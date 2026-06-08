@@ -55,20 +55,24 @@ Known result:
   stopped the full sweep before the aggregate report was written;
 - completed partial evidence showed normal material stayed unclipped through
   the completed `+4`, `+6`, `+8`, and partial `+10 dB` cases;
-- the follow-up should use the newer targeted map options and longer timeout
-  before treating this as an audio defect.
+- a 2026-06-08 targeted rerun attempt failed before measurement because the
+  local JDSP capture route was unavailable; this is route evidence, not audio
+  evidence;
+- the follow-up should use the newer targeted map options with the required
+  `+4 dB` default comparison before treating this as an audio defect.
 
 Recommended follow-up:
 
 ```bash
 node tools/axiom-team/bin/axiom-team.mjs map-sub-gain \
   20260603T004349-post-acceptance-v4-1-4-1-0d309b \
-  --slider-db 10 --slider-db 12 \
+  --slider-db 4 --slider-db 10 --slider-db 12 \
   --label-regex 'electronic|hip hop|bass|flawed'
 ```
 
-Run this only when the JDSP route is available and no other real-host
-measurement is active.
+Run this only after the JDSP capture route is available and no other real-host
+measurement is active. Targeted maps must include the accepted `+4 dB` default
+so elevated settings can be compared to the baseline control point.
 
 ## Operating-System Foundation
 
@@ -110,6 +114,11 @@ Summary:
 - Candidate readiness is `READY`, but no `.12` candidate is justified until the
   open `.11` Sub Harmonics investigation produces a scoped hypothesis and
   listening target.
+- The 2026-06-08 targeted rerun attempt was blocked by an unavailable JDSP
+  capture route before measurement evidence was produced.
+- Listening records now require structured spatial fields for center image,
+  lateral spread, localization blur, depth impression, bass-image coupling, and
+  route context.
 - Draft PR #12 is open and clean for the Codex/Knowledge hardening batch.
 - Axiom Knowledge has six local-source-backed seed notes and a passing source
   audit.
@@ -117,10 +126,10 @@ Summary:
 ## Current Best Next Actions
 
 1. Review and merge PR #12 only after explicit approval.
-2. Rerun the targeted `.11` Sub Harmonics map when the JDSP route is available
-   and no other real-host measurement is active.
-3. Add structured spatial listening vocabulary before any new sound-changing
-   candidate.
+2. Restore the JDSP capture route, then rerun the targeted `.11` Sub Harmonics
+   map when no other real-host measurement is active.
+3. Use the structured spatial listening vocabulary for any future
+   sound-changing candidate record.
 4. Use Knowledge seed notes to support specific test-design questions, not to
    justify DSP changes by themselves.
 

@@ -181,6 +181,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
         )
         self.assertEqual(command[:4], ["node", "tools/axiom-team/bin/axiom-team.mjs", "map-sub-gain", axiom_codex.DEFAULT_SUB_GAIN_RUN])
         self.assertIn("--slider-db", command)
+        self.assertIn("4", command)
         self.assertIn("10", command)
         self.assertIn("12", command)
         self.assertIn("--label-regex", command)
@@ -201,6 +202,8 @@ class AxiomCodexHelperTests(unittest.TestCase):
                 "tools/axiom-team/bin/axiom-team.mjs",
                 "map-sub-gain",
                 "run-1",
+                "--slider-db",
+                "4",
                 "--slider-db",
                 "8",
                 "--label-regex",

@@ -787,3 +787,47 @@ release posture.
   available and real-host measurement is approved.
 - Add structured spatial listening vocabulary before any new sound-changing
   candidate.
+
+## Run 022 - Sub Harmonics Follow-Up Gate And Listening Vocabulary
+
+Date: 2026-06-08
+Status: Partially completed
+Scope: Targeted `.11` Sub Harmonics follow-up execution path, command
+correction, and structured spatial listening vocabulary.
+
+### What Was Implemented
+
+- Attempted the targeted `.11` Sub Harmonics map through the Node harness.
+- Identified that targeted maps must include the accepted `+4 dB` default
+  comparison point, not only `+10 dB` and `+12 dB`.
+- Updated the Codex `pi-handoff` helper and Node harness wrapper so targeted
+  map commands include `+4 dB` when needed.
+- Corrected the dashboard, harness docs, Pi runbook, and previous assessment
+  command examples.
+- Added required listening-record fields for lateral spread, localization blur,
+  depth impression, bass-image coupling, and route context.
+- Updated the Android validation package template and validator tests to match
+  the expanded listening-record schema.
+
+### Why It Matters
+
+- The `.11` Sub Harmonics boundary remains open for the right reason: route
+  availability, not a proven audio defect.
+- Future targeted map commands should no longer fail argument validation because
+  the default control point is missing.
+- Future listening records can describe spatial effects with enough precision
+  to support candidate decisions instead of relying on vague width comments.
+
+### Validation
+
+- The corrected targeted map reached the harness but failed before measurement
+  because the JDSP capture route was unavailable.
+- No `.12` candidate was created.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Restore the JDSP capture route, then rerun the targeted `.11` Sub Harmonics
+  map at `+4`, `+10`, and `+12 dB`.
+- Keep `AX-TASK-022` route-blocked until that real-host measurement completes.
+- Continue with PR #12 review/merge only after explicit approval.

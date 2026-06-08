@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="dcterms.date" content="2026-06-08" />
+  <title>Axiom Full-System Readiness Review</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">:root {
+--paper: #f7f5ef;
+--panel: #ffffff;
+--ink: #181b1f;
+--muted: #5f6872;
+--line: #d8d2c6;
+--accent: #007f73;
+--accent-dark: #005d55;
+--warn: #b66a00;
+--danger: #b83b2f;
+--ok: #2f7d51;
+--code-bg: #edf5f2;
+--shadow: 0 18px 45px rgba(23, 27, 31, 0.09);
+--radius: 8px;
+--max: 1120px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+margin: 0;
+color: var(--ink);
+background:
+linear-gradient(90deg, rgba(0, 127, 115, 0.045) 1px, transparent 1px),
+linear-gradient(0deg, rgba(0, 127, 115, 0.035) 1px, transparent 1px),
+var(--paper);
+background-size: 34px 34px;
+font-family: "Aptos", "Segoe UI", system-ui, -apple-system, sans-serif;
+line-height: 1.58;
+}
+body > header,
+body > #TOC,
+body > h1,
+body > h2,
+body > h3,
+body > p,
+body > ul,
+body > table,
+body > blockquote,
+body > pre {
+max-width: var(--max);
+margin-left: auto;
+margin-right: auto;
+}
+body > header {
+margin-top: 24px;
+padding: 30px 32px 24px;
+background: var(--panel);
+border: 1px solid var(--line);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+}
+header h1.title {
+margin: 0 0 8px;
+font-size: clamp(2rem, 4vw, 3.4rem);
+line-height: 1.04;
+letter-spacing: 0;
+}
+header .subtitle,
+header .author,
+header .date {
+color: var(--muted);
+margin: 0.15rem 0;
+}
+#TOC {
+margin-top: 18px;
+margin-bottom: 24px;
+padding: 18px 24px;
+background: rgba(255,255,255,0.82);
+border: 1px solid var(--line);
+border-radius: var(--radius);
+}
+#TOC::before {
+content: "Contents";
+display: block;
+font-weight: 800;
+margin-bottom: 8px;
+}
+#TOC ul { margin: 0; padding-left: 1.25rem; }
+#TOC li { margin: 0.18rem 0; }
+a { color: var(--accent-dark); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+h1, h2, h3 {
+letter-spacing: 0;
+line-height: 1.18;
+}
+body > h1 { display: none; }
+h2 {
+margin-top: 34px;
+padding: 18px 22px;
+background: var(--panel);
+border-left: 5px solid var(--accent);
+border-radius: var(--radius);
+box-shadow: 0 10px 28px rgba(23,27,31,0.06);
+}
+h3 {
+margin-top: 26px;
+color: #1f3734;
+}
+p, li { font-size: 1rem; }
+body > p, body > ul, body > h3 { padding-left: 22px; padding-right: 22px; }
+ul { padding-left: calc(22px + 1.25rem); }
+li + li { margin-top: 0.28rem; }
+strong { font-weight: 800; }
+code {
+color: #0b4f48;
+background: var(--code-bg);
+border: 1px solid #c9ded8;
+border-radius: 5px;
+padding: 0.08rem 0.28rem;
+font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+font-size: 0.92em;
+}
+pre {
+overflow-x: auto;
+background: #11191d;
+color: #e8f5f2;
+border-radius: var(--radius);
+padding: 16px 18px;
+border: 1px solid #26343a;
+}
+pre code { background: transparent; border: 0; color: inherit; padding: 0; }
+table {
+width: min(var(--max), calc(100% - 44px));
+border-collapse: collapse;
+margin-top: 16px;
+margin-bottom: 22px;
+background: var(--panel);
+border: 1px solid var(--line);
+border-radius: var(--radius);
+overflow: hidden;
+box-shadow: 0 12px 30px rgba(23,27,31,0.055);
+}
+th, td {
+border: 1px solid var(--line);
+padding: 10px 12px;
+vertical-align: top;
+}
+th {
+text-align: left;
+background: #e8f2ef;
+color: #173a35;
+font-weight: 800;
+}
+tr:nth-child(even) td { background: #fbfaf6; }
+blockquote {
+padding: 12px 18px;
+border-left: 5px solid var(--warn);
+background: #fff6e6;
+color: #4c3c22;
+border-radius: var(--radius);
+}
+@media (max-width: 760px) {
+body > header, body > #TOC, body > h2, body > h3, body > p, body > ul, body > pre { margin-left: 12px; margin-right: 12px; }
+body > header { padding: 22px 18px; }
+table { display: block; overflow-x: auto; width: calc(100% - 24px); }
+}
+@media print {
+body { background: white; }
+body > header, #TOC, h2, table { box-shadow: none; }
+a { color: var(--ink); }
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Axiom Full-System Readiness Review</h1>
+<p class="date">2026-06-08</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#axiom-full-system-readiness-review" id="toc-axiom-full-system-readiness-review">Axiom Full-System Readiness
+Review</a>
+<ul>
+<li><a href="#executive-judgment" id="toc-executive-judgment">Executive
+Judgment</a></li>
+<li><a href="#current-state" id="toc-current-state">Current
+State</a></li>
+<li><a href="#validation-snapshot" id="toc-validation-snapshot">Validation Snapshot</a></li>
+<li><a href="#strong-areas" id="toc-strong-areas">Strong Areas</a></li>
+<li><a href="#shortcomings-and-required-improvements" id="toc-shortcomings-and-required-improvements">Shortcomings And
+Required Improvements</a></li>
+<li><a href="#recommended-next-306090-days" id="toc-recommended-next-306090-days">Recommended Next 30/60/90
+Days</a></li>
+<li><a href="#do-not-do-yet" id="toc-do-not-do-yet">Do Not Do
+Yet</a></li>
+<li><a href="#proposed-backlog-additions" id="toc-proposed-backlog-additions">Proposed Backlog Additions</a></li>
+<li><a href="#bottom-line" id="toc-bottom-line">Bottom Line</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="axiom-full-system-readiness-review">Axiom Full-System Readiness
+Review</h1>
+<p>Date: 2026-06-08</p>
+<p>Scope: evidence-local review of Axiom Core DSP, qualification state,
+Pi/JDSP workflow, Codex tooling, Knowledge, documentation, and release
+posture on branch
+<code>codex/axiom-codex-hardening-knowledge</code>.</p>
+<p>This review is intentionally blunt. It is not a release note, not a
+listening acceptance record, and not approval to create
+<code>.12</code>.</p>
+<h2 id="executive-judgment">Executive Judgment</h2>
+<p>Axiom is in a strong but unfinished state.</p>
+<p>The system is no longer a loose DSP script. It has an accepted
+baseline, hash-anchored policy, qualification records, host-setting
+ownership, local material metadata, device readiness, a Pi harness,
+Codex guardrails, and a seeded Knowledge base. That is a serious
+foundation for Audio-DSP engineering with AI tooling.</p>
+<p>The main shortcoming is not infrastructure anymore. The main
+shortcoming is open evidence. The accepted <code>v4.1.4.11</code>
+baseline is still carrying a targeted Sub Harmonics / limiter-pressure
+follow-up that must be closed before a new sound-changing candidate is
+justified. Candidate readiness is <code>READY</code>, but readiness only
+says the evidence foundation can support candidate discussion. It does
+not supply the hypothesis.</p>
+<p>The correct next posture is conservative:</p>
+<ul>
+<li>review and merge PR #12 before adding more tooling onto the same
+branch;</li>
+<li>close the targeted <code>.11</code> Sub Harmonics investigation with
+Pi/JDSP when the route is available;</li>
+<li>convert Knowledge sources into test vocabulary only when a concrete
+Axiom question needs it;</li>
+<li>do not create <code>.12</code> until the investigation produces a
+repeatable defect, scoped benefit, and listening target.</li>
+</ul>
+<h2 id="current-state">Current State</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Area</th>
+<th>State</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Accepted baseline</td>
+<td><code>v4.1.4.11</code></td>
+</tr>
+<tr class="even">
+<td>Accepted script</td>
+<td><code>src/axiom_binaural_dsp_v4.1.4.11.eel</code></td>
+</tr>
+<tr class="odd">
+<td>Accepted SHA-256</td>
+<td><code>ad7dd7b33f2e62ff03ae08d7101c7ac333d707baef26b952806990ad979b0b0e</code></td>
+</tr>
+<tr class="even">
+<td>Active candidate</td>
+<td>none</td>
+</tr>
+<tr class="odd">
+<td>Current branch</td>
+<td><code>codex/axiom-codex-hardening-knowledge</code></td>
+</tr>
+<tr class="even">
+<td>Draft PR</td>
+<td>#12, open draft, merge state clean</td>
+</tr>
+<tr class="odd">
+<td>DSP/script diffs</td>
+<td>none</td>
+</tr>
+<tr class="even">
+<td>Local Knowledge sources</td>
+<td>6 registered sources, all with local files and repo-safe notes</td>
+</tr>
+<tr class="odd">
+<td>Candidate readiness</td>
+<td><code>READY</code>, with the readiness boundary still in force</td>
+</tr>
+</tbody>
+</table>
+<h2 id="validation-snapshot">Validation Snapshot</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Check</th>
+<th>Result</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>python3 -m unittest discover -s tests -p &#39;test_*.py&#39;</code></td>
+<td>pass, 170 tests</td>
+<td>Python helpers and validation tools are healthy.</td>
+</tr>
+<tr class="even">
+<td><code>python3 tools/axiom-codex/axiom_codex.py ready-check</code></td>
+<td>pass</td>
+<td>Codex helper, command surface, profiles, and eval fixtures are
+internally consistent.</td>
+</tr>
+<tr class="odd">
+<td><code>python3 tools/axiom-codex/axiom_codex.py guard-check</code></td>
+<td>pass</td>
+<td>No current changed paths violate known Axiom guardrails.</td>
+</tr>
+<tr class="even">
+<td><code>python3 tools/axiom-codex/axiom_codex.py skill-eval</code></td>
+<td>pass, 7 fixtures</td>
+<td>Skill behavior fixtures still map to expected helper commands and
+boundaries.</td>
+</tr>
+<tr class="odd">
+<td><code>python3 tools/axiom-codex/axiom_codex.py knowledge-sources</code></td>
+<td>pass, 6 sources</td>
+<td>Local source index entries have local files and matching repo
+notes.</td>
+</tr>
+<tr class="even">
+<td><code>node tools/axiom-team/bin/axiom-team.mjs doctor</code></td>
+<td>pass</td>
+<td>Accepted baseline hash, toolchain, local material, and route helper
+are recognized.</td>
+</tr>
+<tr class="odd">
+<td><code>node tools/axiom-team/bin/axiom-team.mjs corpus-status --strict-metadata</code></td>
+<td>pass</td>
+<td>Local corpus has 14 tracks and strict metadata coverage.</td>
+</tr>
+<tr class="even">
+<td><code>python3 scripts/evaluate_axiom_candidate_readiness.py</code></td>
+<td><code>READY</code></td>
+<td>Candidate discussion is allowed only with a scoped hypothesis and
+listening target.</td>
+</tr>
+<tr class="odd">
+<td>PR #12 metadata</td>
+<td>open draft, merge state clean</td>
+<td>The Codex/Knowledge batch is reviewable but not merged.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="strong-areas">Strong Areas</h2>
+<h3 id="core-baseline-discipline">Core Baseline Discipline</h3>
+<p>The accepted line is versioned, hash-anchored, and documented.
+Historical EEL files are protected by policy and helper guardrails. This
+is the right shape for a DSP product line.</p>
+<h3 id="host-ownership">Host Ownership</h3>
+<p>Axiom Core correctly avoids owning terminal limiting and crossfeed
+inside the script. JDSP owns the terminal limiter. Optional headphone
+crossfeed stays in the host. This reduces duplicate processing and keeps
+Core comparison cleaner.</p>
+<h3 id="qualification-infrastructure">Qualification Infrastructure</h3>
+<p>The Pi harness, material manifest, device matrix, readiness gate, and
+validation scripts are substantial. The system can now say when a
+candidate discussion is allowed and when evidence is still missing.</p>
+<h3 id="codexpi-boundary">Codex/Pi Boundary</h3>
+<p>Codex has a useful orchestration layer: status, guard checks, role
+profiles, Knowledge search, source audits, skill evals, and read-only Pi
+handoff briefs. Pi remains the execution layer for real-JDSP and
+candidate workflows. That separation is healthy.</p>
+<h3 id="knowledge-foundation">Knowledge Foundation</h3>
+<p>The Knowledge base now has six local-source-backed notes and an audit
+command. The system has enough lawful research context to improve
+vocabulary and test design without copying books into git.</p>
+<h2 id="shortcomings-and-required-improvements">Shortcomings And
+Required Improvements</h2>
+<h3 id="critical-the-.11-sub-harmonics-boundary-is-still-open">Critical:
+The <code>.11</code> Sub Harmonics Boundary Is Still Open</h3>
+<p>The system still has one unresolved Core evidence boundary:
+<code>20260603T004349-post-acceptance-v4-1-4-1-0d309b</code>. The
+earlier Sub Harmonics map recorded a failure because the wrapper timed
+out before the aggregate report was written. Partial evidence is
+encouraging, but the boundary is not closed.</p>
+<p>Improvement:</p>
+<ul>
+<li>run the generated <code>pi-handoff</code> command only when the JDSP
+route is available;</li>
+<li>treat the result as evidence, not as a candidate decision;</li>
+<li>update the investigation gate after the run;</li>
+<li>do not create <code>.12</code> unless the targeted run shows a
+repeatable normal-material issue with a clear listening target.</li>
+</ul>
+<h3 id="high-candidate-readiness-can-be-misread">High: Candidate
+Readiness Can Be Misread</h3>
+<p>The readiness gate reports <code>READY</code>. That is good, but it
+is easy to misuse. It means the baseline hash, corpus metadata, and
+device matrix are ready enough to evaluate a candidate. It does not mean
+a candidate should exist.</p>
+<p>Improvement:</p>
+<ul>
+<li>keep the wording in future reports explicit: <code>READY</code>
+permits candidate discussion only after a scoped hypothesis exists;</li>
+<li>require every proposed candidate to cite the open investigation or
+diagnostic result that justifies it.</li>
+</ul>
+<h3 id="high-listening-records-need-more-structured-spatial-language">High:
+Listening Records Need More Structured Spatial Language</h3>
+<p>Axiom now has strong spatial-hearing source notes, but the
+listening-record format has not yet absorbed that vocabulary. Future
+candidate decisions would benefit from consistent terms for center
+image, lateral spread, localization blur, depth impression, bass-image
+coupling, and fatigue.</p>
+<p>Improvement:</p>
+<ul>
+<li>extend listening-record guidance before the next sound-changing
+candidate;</li>
+<li>keep human listening authority, but require clearer observation
+categories.</li>
+</ul>
+<h3 id="high-pr-12-should-be-merged-before-more-tooling-work-accumulates">High:
+PR #12 Should Be Merged Before More Tooling Work Accumulates</h3>
+<p>PR #12 contains a broad but coherent Codex/Knowledge hardening batch.
+Continuing to build on the same branch without review increases merge
+and review risk.</p>
+<p>Improvement:</p>
+<ul>
+<li>review PR #12;</li>
+<li>merge only after explicit approval;</li>
+<li>rebase or start a new branch for the next development slice after
+merge.</li>
+</ul>
+<h3 id="medium-knowledge-is-seeded-not-operationalized">Medium:
+Knowledge Is Seeded, Not Operationalized</h3>
+<p>The Knowledge base now has seed source notes, but few concept notes
+that connect research to specific Axiom test designs. This is normal for
+the current stage, but it limits immediate engineering value.</p>
+<p>Improvement:</p>
+<ul>
+<li>create concept notes only from concrete needs, such as spatial
+listening vocabulary or nonlinear enhancement risk;</li>
+<li>avoid turning Knowledge into a dumping ground for book
+summaries.</li>
+</ul>
+<h3 id="medium-native-agent-runtime-is-still-not-the-source-of-truth">Medium:
+Native Agent Runtime Is Still Not The Source Of Truth</h3>
+<p>The repo has a solid Codex helper and skill source, and the local
+skill is installed. Native slash commands or subagents are still
+registry plans rather than committed runtime integrations. That is
+acceptable, but it should not be overstated.</p>
+<p>Improvement:</p>
+<ul>
+<li>keep using repo-tracked helper commands as the source of truth;</li>
+<li>add native wrappers only when the runtime mechanism is documented
+and can preserve approval boundaries.</li>
+</ul>
+<h3 id="medium-productprofile-lanes-are-defined-but-not-built">Medium:
+Product/Profile Lanes Are Defined But Not Built</h3>
+<p>Core, Reference, Immersive, Night, Studio Path, Labs, Knowledge, and
+Qualification are documented, but only Core is real product behavior
+today. This is fine, but public language must stay precise.</p>
+<p>Improvement:</p>
+<ul>
+<li>continue saying future profiles are planned lanes, not shipped
+products;</li>
+<li>do not let profile ambition pull Core into unmeasured changes.</li>
+</ul>
+<h3 id="low-documentation-volume-requires-continued-curation">Low:
+Documentation Volume Requires Continued Curation</h3>
+<p>The repo has become documentation-rich. That is useful for agent
+continuity, but it can slow down new sessions if the starting path is
+unclear.</p>
+<p>Improvement:</p>
+<ul>
+<li>keep <code>docs/system-status.md</code> as the first-read
+dashboard;</li>
+<li>keep <code>docs/README.md</code> current;</li>
+<li>prefer updating existing docs over adding new ones unless the new
+document has a distinct evidence purpose.</li>
+</ul>
+<h2 id="recommended-next-306090-days">Recommended Next 30/60/90
+Days</h2>
+<h3 id="next-30-days">Next 30 Days</h3>
+<ul>
+<li>Review and merge PR #12 after explicit approval.</li>
+<li>Run the targeted <code>.11</code> Sub Harmonics follow-up through
+Pi/JDSP.</li>
+<li>Update the investigation record based on the targeted run.</li>
+<li>Add structured spatial vocabulary to listening-record guidance.</li>
+</ul>
+<h3 id="next-60-days">Next 60 Days</h3>
+<ul>
+<li>Convert one or two Knowledge seed notes into focused concept notes
+tied to Axiom tests.</li>
+<li>Add a small checklist that maps candidate hypotheses to required
+evidence: diagnostic, real-JDSP, listening target, and release
+impact.</li>
+<li>Consider CI or a single wrapper command for the Codex helper checks
+after PR #12 is merged.</li>
+</ul>
+<h3 id="next-90-days">Next 90 Days</h3>
+<ul>
+<li>Decide whether <code>.11</code> remains fully closed or whether a
+<code>.12</code> hypothesis is justified.</li>
+<li>If <code>.12</code> is justified, keep it narrow and candidate-gated
+through Pi.</li>
+<li>Start Labs examples only when they do not blur the accepted Core
+line.</li>
+</ul>
+<h2 id="do-not-do-yet">Do Not Do Yet</h2>
+<ul>
+<li>Do not create <code>.12</code> just because candidate readiness is
+<code>READY</code>.</li>
+<li>Do not edit accepted or historical EEL files in place.</li>
+<li>Do not merge PR #12 without explicit approval.</li>
+<li>Do not run real-JDSP measurements while another real-host run is
+active.</li>
+<li>Do not commit PDFs, captures, local material manifests, or private
+paths.</li>
+<li>Do not claim Knowledge sources prove Axiom behavior.</li>
+</ul>
+<h2 id="proposed-backlog-additions">Proposed Backlog Additions</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>ID</th>
+<th>Task</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AX-TASK-022</td>
+<td>Close <code>.11</code> Sub Harmonics follow-up</td>
+<td>Removes the main open Core evidence boundary.</td>
+</tr>
+<tr class="even">
+<td>AX-TASK-023</td>
+<td>Add structured spatial listening vocabulary</td>
+<td>Makes future listening records more consistent and reviewable.</td>
+</tr>
+<tr class="odd">
+<td>AX-TASK-024</td>
+<td>Create Knowledge concept notes from seed sources</td>
+<td>Turns bibliography into concrete Axiom test-design support.</td>
+</tr>
+<tr class="even">
+<td>AX-TASK-025</td>
+<td>Review and merge PR #12</td>
+<td>Keeps the Codex/Knowledge hardening batch from becoming a long-lived
+branch.</td>
+</tr>
+<tr class="odd">
+<td>AX-TASK-026</td>
+<td>Add a consolidated local review/check command</td>
+<td>Reduces friction for future full-system reviews after PR #12
+lands.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bottom-line">Bottom Line</h2>
+<p>Axiom is meaningfully stronger than it was before the agentic and
+Knowledge work. The danger now is moving too fast because the tooling
+feels capable. The best engineering move is still evidence-first: land
+the current infrastructure, close the <code>.11</code> investigation,
+improve listening records, then decide whether a new DSP candidate is
+actually justified.</p>
+</body>
+</html>

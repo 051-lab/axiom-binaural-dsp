@@ -61,7 +61,7 @@ Goal: build a small, brutal, legally clean corpus where every item has a job.
 - Maintain `docs/corpus-material.md` and `scripts/validate_axiom_material_manifest.py` so material classes, failure modes, provenance, and license scope are explicit.
 - Register missing material classes: low-level dynamic material, sibilant vocals, cymbals, dense modern pop/EDM, hip-hop/trap sub bass, rock/metal guitars, acoustic bass, piano, orchestral crescendos, mono/narrow recordings, flawed sources, speech, bass-light material, and already-wide mixes.
 - Record provenance and license rules for every shared test item. Keep private/local tracks outside git.
-- Maintain `docs/listening-records.md` and `scripts/validate_axiom_listening_record.py` so structured listening records capture device, output path, host settings, Axiom version, slider settings, material, comparison version, fatigue, bass, punch, width, center, air, harshness, loudness, artifacts, and decision.
+- Maintain `docs/listening-records.md` and `scripts/validate_axiom_listening_record.py` so structured listening records capture device, output path, host settings, Axiom version, slider settings, material, comparison version, bass, punch, center image, lateral spread, localization blur, depth impression, bass-image coupling, width, air, harshness, loudness, fatigue, route context, artifacts, and decision.
 - Maintain `docs/ab-listening-packages.md` and `scripts/build_axiom_ab_listening_package.py` so future candidate listening packages are local, blinded, and loudness-proxy matched.
 - Keep subjective listening as the acceptance gate, but make the notes searchable and comparable across versions.
 

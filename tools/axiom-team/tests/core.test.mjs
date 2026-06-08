@@ -24,6 +24,7 @@ import {
   runReserveRangeQualification,
   runStageObservability,
   runStftStageAudit,
+  normalizedSubSliderValues,
   runSubSliderMap,
   runWidthMaterialScreen,
   runWidthMonoAudit,
@@ -197,6 +198,12 @@ test("sub harmonics gain map is blocked until hypothesis exists and after candid
   assert.throws(() => runSubSliderMap(investigation.id, fx.config, fx.policy), /hypothesis/);
   const candidate = candidateRun(fx);
   assert.throws(() => runSubSliderMap(candidate.id, fx.config, fx.policy), /no DSP candidate/);
+});
+
+test("targeted sub harmonics map includes accepted default slider", () => {
+  assert.deepEqual(normalizedSubSliderValues([10, 12]), [4, 10, 12]);
+  assert.deepEqual(normalizedSubSliderValues([4, 10, 12]), [4, 10, 12]);
+  assert.deepEqual(normalizedSubSliderValues(), []);
 });
 
 test("stage observability is blocked until hypothesis exists and after candidate creation", () => {

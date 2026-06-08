@@ -32,8 +32,9 @@ The validator expects a JSON object with:
 - JDSP limiter, postgain, and crossfeed host settings;
 - all current Axiom slider values;
 - one or more material entries with license/provenance scope;
-- observations for bass, punch, center image, width, air, harshness, loudness,
-  fatigue, artifacts, and overall judgment;
+- observations for bass, punch, center image, lateral spread, localization blur,
+  depth impression, bass-image coupling, width, air, harshness, loudness,
+  fatigue, route context, artifacts, and overall judgment;
 - acceptance rationale when the decision is `accept`;
 - rejection rationale when the decision is `reject`.
 
@@ -81,16 +82,38 @@ Valid decisions are `accept`, `reject`, `needs_retest`, and `no_decision`.
     "bass": "",
     "punch": "",
     "center_image": "",
+    "lateral_spread": "",
+    "localization_blur": "",
+    "depth_impression": "",
+    "bass_image_coupling": "",
     "width": "",
     "air": "",
     "harshness": "",
     "loudness": "",
     "fatigue": "",
+    "route_context": "",
     "artifacts": "",
     "overall": ""
   }
 }
 ```
+
+## Spatial Vocabulary
+
+Use these terms consistently when a change affects width, bass placement,
+crossfeed compatibility, or spatial fatigue:
+
+- `center_image`: whether lead vocal, snare, kick focus, or other centered
+  material stays anchored.
+- `lateral_spread`: how far side material appears to extend left/right.
+- `localization_blur`: whether source positions smear, wander, or become hard
+  to place.
+- `depth_impression`: whether ambience and foreground/background layering feel
+  flatter, deeper, or unstable.
+- `bass_image_coupling`: whether bass weight stays attached to the kick,
+  center, and main mix image instead of becoming detached or side-heavy.
+- `route_context`: whether the observation was speaker, headphone, Bluetooth,
+  wired, WSL, or crossfeed-sensitive.
 
 ## Validation
 

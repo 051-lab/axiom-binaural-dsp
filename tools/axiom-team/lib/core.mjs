@@ -397,7 +397,7 @@ export function runSubSliderMap(id, optionsOrConfig = {}, configOrPolicy = loadL
       "--route-helper", config.routeHelper,
       "--threshold-db", String(policy.hostBaseline.masterLimiterThresholdDb),
     ];
-    for (const sliderDb of options.sliderValuesDb || []) {
+    for (const sliderDb of normalizedSubSliderValues(options.sliderValuesDb)) {
       scriptArgs.push("--slider-db", String(sliderDb));
     }
     if (options.labelRegex) scriptArgs.push("--label-regex", options.labelRegex);
@@ -426,6 +426,15 @@ export function runSubSliderMap(id, optionsOrConfig = {}, configOrPolicy = loadL
   } finally {
     fs.rmSync(lockDir, { recursive: true, force: true });
   }
+}
+
+export function normalizedSubSliderValues(sliderValuesDb) {
+  if (!sliderValuesDb || !sliderValuesDb.length) return [];
+  const normalized = [];
+  for (const value of [4, ...sliderValuesDb]) {
+    if (!normalized.includes(value)) normalized.push(value);
+  }
+  return normalized;
 }
 
 export function runStageObservability(id, config = loadLocalConfig(), policy = loadPolicy()) {

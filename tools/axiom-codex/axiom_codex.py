@@ -28,6 +28,7 @@ SKILL_SOURCE = REPO_ROOT / "tools" / "codex-skills" / "axiom-engineering"
 INSTALLED_SKILL = pathlib.Path.home() / ".codex" / "skills" / "axiom-engineering"
 DEFAULT_SUB_GAIN_RUN = "20260603T004349-post-acceptance-v4-1-4-1-0d309b"
 DEFAULT_SUB_GAIN_LABEL_REGEX = "electronic|hip hop|bass|flawed"
+DEFAULT_SUB_GAIN_SLIDERS = [4, 10, 12]
 
 DEFAULT_REVIEW_ROLES = [
     "dsp-architect",
@@ -515,13 +516,22 @@ def pi_handoff_command(args: argparse.Namespace) -> list[str]:
         "map-sub-gain",
         args.run_id,
     ]
-    for slider_db in (args.slider_db or [10, 12]):
+    for slider_db in normalized_sub_gain_sliders(args.slider_db):
         command.extend(["--slider-db", str(slider_db)])
     if args.label_regex:
         command.extend(["--label-regex", args.label_regex])
     if args.repetitions is not None:
         command.extend(["--repetitions", str(args.repetitions)])
     return command
+
+
+def normalized_sub_gain_sliders(slider_values: list[int] | None) -> list[int]:
+    values = slider_values or DEFAULT_SUB_GAIN_SLIDERS
+    normalized: list[int] = []
+    for value in [4, *values]:
+        if value not in normalized:
+            normalized.append(value)
+    return normalized
 
 
 def shell_command(command: list[str]) -> str:
@@ -566,7 +576,7 @@ def pi_handoff(args: argparse.Namespace) -> int:
     print("- Keep accepted and historical EEL files immutable.")
     print("- Keep raw captures, rendered audio, manifests, and generated reports outside git.\n")
     print("## Expected Evidence\n")
-    print("- Targeted Sub Harmonics map for +10 dB and +12 dB dense/flawed material.")
+    print("- Targeted Sub Harmonics map for default +4 dB plus +10 dB and +12 dB dense/flawed material.")
     print("- Updated investigation gate or local evidence summary from the Pi harness.")
     print("- No candidate creation unless the evidence supports a scoped hypothesis and listening target.\n")
     print("Boundary: Codex generated this handoff; Pi/harness owns execution.")
