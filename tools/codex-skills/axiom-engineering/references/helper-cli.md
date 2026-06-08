@@ -10,6 +10,7 @@ python3 tools/axiom-codex/axiom_codex.py guard-check
 python3 tools/axiom-codex/axiom_codex.py agent-profiles
 python3 tools/axiom-codex/axiom_codex.py agent-review --topic "..."
 python3 tools/axiom-codex/axiom_codex.py knowledge-query "query text"
+python3 tools/axiom-codex/axiom_codex.py knowledge-sources
 python3 tools/axiom-codex/axiom_codex.py pi-handoff
 python3 tools/axiom-codex/axiom_codex.py skill-eval
 ```
@@ -32,6 +33,9 @@ fixture checks, and safe Knowledge search.
 - `agent-review`: structured multi-role review scaffold from local role docs.
 - `knowledge-query`: search repo-safe notes and optional local-only source
   metadata without exposing private paths by default.
+- `knowledge-sources`: audit the local-only source index, local file
+  existence, and matching repo-safe notes without exposing private paths by
+  default.
 - `pi-handoff`: print a draft Pi handoff brief for the targeted `.11` Sub
   Harmonics follow-up without running JDSP.
 - `skill-eval`: deterministic fixture check for representative

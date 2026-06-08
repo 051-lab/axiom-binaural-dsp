@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-import importlib.util
 import argparse
+import importlib.util
+import json
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -38,6 +40,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
             "agent-profiles",
             "agent-review",
             "knowledge-query",
+            "knowledge-sources",
             "pi-handoff",
             "session-log-update",
             "skill-eval",
@@ -104,6 +107,68 @@ class AxiomCodexHelperTests(unittest.TestCase):
         for case in cases:
             for helper_command in case["expected"]["helperCommands"]:
                 self.assertIn(helper_command, commands)
+
+    def test_knowledge_source_audit_flags_missing_local_file(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            index = root / "source-index.json"
+            index.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "sources": [
+                            {
+                                "id": "missing-source",
+                                "title": "Missing Source",
+                                "type": "book",
+                                "topics": ["DSP"],
+                                "localPath": str(root / "missing.pdf"),
+                                "axiomUse": "test fixture",
+                                "status": "unread",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            _, checks = axiom_codex.audit_knowledge_sources(index)
+        self.assertTrue(any(check.status == "fail" and check.name == "local source file" for check in checks))
+
+    def test_cli_knowledge_sources_hides_private_paths_by_default(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.pdf"
+            source.write_bytes(b"placeholder")
+            index = root / "source-index.json"
+            index.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "sources": [
+                            {
+                                "id": "fixture-source",
+                                "title": "Fixture Source",
+                                "type": "book",
+                                "topics": ["DSP"],
+                                "localPath": str(source),
+                                "axiomUse": "test fixture",
+                                "status": "unread",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            result = subprocess.run(
+                [sys.executable, str(HELPER_PATH), "knowledge-sources", "--index", str(index)],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("fixture-source", result.stdout)
+        self.assertNotIn(str(source), result.stdout)
 
     def test_pi_handoff_command_defaults_to_targeted_sub_gain_follow_up(self) -> None:
         command = axiom_codex.pi_handoff_command(

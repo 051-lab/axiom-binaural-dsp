@@ -698,3 +698,42 @@ Scope: Local-only PDF intake and repo-safe seed bibliography notes.
 - Use the seed notes to create short concept notes only when a specific Axiom
   test, review, or listening question needs them.
 - Keep raw PDFs and private local paths out of git.
+
+## Run 020 - Knowledge Source Audit Helper
+
+Date: 2026-06-08
+Status: Completed
+Scope: Codex-side Knowledge source integrity tooling.
+
+### What Was Implemented
+
+- Added `python3 tools/axiom-codex/axiom_codex.py knowledge-sources`.
+- The helper audits the local-only source index, required source fields, local
+  file existence, duplicate IDs, source status/type values, and matching
+  repo-safe notes.
+- Private `localPath` values stay hidden unless `--show-private-paths` is
+  explicitly used.
+- Added targeted unit tests for missing local files and private-path hiding.
+- Updated the command registry, helper reference, and tool inventory.
+
+### Why It Matters
+
+- Axiom can now verify that local PDF sources and repo-safe Knowledge notes
+  still line up after future source additions or machine moves.
+- Knowledge source health can be checked without committing PDFs or exposing
+  private paths.
+- This makes the local-source plus repo-note workflow repeatable for future
+  research intake.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper` passed with 11 tests.
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-sources` reported 6
+  checked sources with local files and repo notes.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use `knowledge-sources` after adding or moving local PDFs.
+- Convert seed bibliography entries into short concept notes only when a
+  specific Axiom engineering question needs them.

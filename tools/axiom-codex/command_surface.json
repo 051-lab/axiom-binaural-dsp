@@ -158,6 +158,31 @@
       ]
     },
     {
+      "name": "knowledge-sources",
+      "trigger": "$axiom-engineering knowledge sources",
+      "nativeAlias": "/axiom-sources",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py knowledge-sources",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Audit the local-only Knowledge source index, local file existence, and matching repo-safe notes without exposing private paths by default.",
+      "inputs": [
+        "optional local index",
+        "optional --json",
+        "optional --show-private-paths"
+      ],
+      "outputs": [
+        "source table",
+        "index checks",
+        "local file and repo note status"
+      ],
+      "boundaries": [
+        "does not copy PDFs into git",
+        "does not expose private paths by default",
+        "does not turn research into Axiom evidence"
+      ]
+    },
+    {
       "name": "pi-handoff",
       "trigger": "$axiom-engineering delegate to Pi",
       "nativeAlias": "/axiom-pi",

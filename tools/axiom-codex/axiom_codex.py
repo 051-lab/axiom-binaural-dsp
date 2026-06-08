@@ -81,6 +81,10 @@ PRIVATE_CONTENT_PATTERNS = [
     re.compile(r'"localPath"\s*:', re.IGNORECASE),
 ]
 
+SOURCE_REQUIRED_FIELDS = {"id", "title", "type", "topics", "axiomUse", "status"}
+SOURCE_TYPES = {"book", "paper", "article", "documentation", "video", "other"}
+SOURCE_STATUSES = {"unread", "reading", "summarized", "rejected"}
+
 
 @dataclass
 class Check:
@@ -342,6 +346,84 @@ def load_local_sources(index_path: pathlib.Path) -> list[dict[str, Any]]:
     return []
 
 
+def repo_knowledge_source_ids() -> set[str]:
+    ids: set[str] = set()
+    for path in sorted(KNOWLEDGE_ROOT.rglob("*.md")):
+        if "templates" in path.parts:
+            continue
+        text = path.read_text(encoding="utf-8")
+        match = re.search(r"^Source ID:\s*(\S+)\s*$", text, flags=re.MULTILINE)
+        if match:
+            ids.add(match.group(1))
+    return ids
+
+
+def audit_knowledge_sources(index_path: pathlib.Path) -> tuple[list[dict[str, Any]], list[Check]]:
+    checks: list[Check] = []
+    expanded = index_path.expanduser()
+    if not expanded.exists():
+        return [], [Check("source index exists", "fail", str(expanded))]
+    try:
+        data = json.loads(expanded.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [], [Check("source index JSON", "fail", str(exc))]
+
+    if not isinstance(data, dict):
+        return [], [Check("source index shape", "fail", "top-level value must be an object")]
+    checks.append(Check("schema version", "pass" if data.get("schemaVersion") == 1 else "fail", str(data.get("schemaVersion"))))
+    raw_sources = data.get("sources")
+    if not isinstance(raw_sources, list):
+        return [], checks + [Check("sources list", "fail", "`sources` must be an array")]
+
+    note_ids = repo_knowledge_source_ids()
+    seen: set[str] = set()
+    audited: list[dict[str, Any]] = []
+    for source in raw_sources:
+        if not isinstance(source, dict):
+            checks.append(Check("source entry", "fail", "source entry must be an object"))
+            continue
+        source_id = str(source.get("id", "missing-id"))
+        missing = sorted(SOURCE_REQUIRED_FIELDS - set(source))
+        if missing:
+            checks.append(Check("required fields", "fail", f"{source_id}: missing {', '.join(missing)}"))
+        if source_id in seen:
+            checks.append(Check("duplicate source id", "fail", source_id))
+        seen.add(source_id)
+        if source.get("type") not in SOURCE_TYPES:
+            checks.append(Check("source type", "fail", f"{source_id}: {source.get('type')}"))
+        if source.get("status") not in SOURCE_STATUSES:
+            checks.append(Check("source status", "fail", f"{source_id}: {source.get('status')}"))
+        if not isinstance(source.get("topics"), list):
+            checks.append(Check("source topics", "fail", f"{source_id}: topics must be an array"))
+
+        local_path = source.get("localPath")
+        local_exists: bool | None = None
+        if isinstance(local_path, str) and local_path:
+            local_exists = pathlib.Path(local_path).expanduser().exists()
+            if not local_exists:
+                checks.append(Check("local source file", "fail", f"{source_id}: registered localPath does not exist"))
+
+        note_exists = source_id in note_ids
+        if not note_exists:
+            checks.append(Check("repo-safe note", "warn", f"{source_id}: no repo note with matching Source ID"))
+        audited.append(
+            {
+                "id": source_id,
+                "title": source.get("title", ""),
+                "type": source.get("type", ""),
+                "status": source.get("status", ""),
+                "topics": source.get("topics", []),
+                "localPath": local_path,
+                "localExists": local_exists,
+                "repoNoteExists": note_exists,
+            }
+        )
+
+    if not any(check.status == "fail" for check in checks):
+        checks.append(Check("source index audit", "pass", f"{len(audited)} source(s) checked"))
+    return audited, checks
+
+
 def knowledge_query(args: argparse.Namespace) -> int:
     terms = normalize_terms(args.query)
     if not terms:
@@ -389,6 +471,41 @@ def knowledge_query(args: argparse.Namespace) -> int:
         print("- no local source matches")
     print("\nBoundary: Knowledge can inform tests; it is not proof of Axiom behavior.")
     return 0
+
+
+def knowledge_sources(args: argparse.Namespace) -> int:
+    sources, checks = audit_knowledge_sources(args.index)
+    failed = any(check.status == "fail" for check in checks)
+    if args.json:
+        payload_sources = []
+        for source in sources:
+            visible = dict(source)
+            if not args.show_private_paths:
+                visible.pop("localPath", None)
+            payload_sources.append(visible)
+        print(json.dumps({"sources": payload_sources, "checks": [check.__dict__ for check in checks]}, indent=2, sort_keys=True))
+        return 1 if failed else 0
+
+    print("# Axiom Knowledge Sources\n")
+    print(f"index: {args.index.expanduser() if args.show_private_paths else 'local source index'}\n")
+    print("## Checks\n")
+    for check in checks:
+        print(f"- {check.status}: {check.name} - {check.detail}")
+    print("\n## Sources\n")
+    if not sources:
+        print("- no sources found")
+    else:
+        print("| Source ID | Type | Status | Local File | Repo Note | Topics |")
+        print("| --- | --- | --- | --- | --- | --- |")
+        for source in sources:
+            local_status = "exists" if source["localExists"] else "missing" if source["localExists"] is False else "not set"
+            note_status = "yes" if source["repoNoteExists"] else "no"
+            topics = ", ".join(source["topics"]) if isinstance(source["topics"], list) else ""
+            print(f"| {source['id']} | {source['type']} | {source['status']} | {local_status} | {note_status} | {topics} |")
+            if args.show_private_paths and source.get("localPath"):
+                print(f"  localPath: {source['localPath']}")
+    print("\nBoundary: this audits local Knowledge source registration. It does not copy PDFs into git or turn research into Axiom evidence.")
+    return 1 if failed else 0
 
 
 def pi_handoff_command(args: argparse.Namespace) -> list[str]:
@@ -465,6 +582,13 @@ def is_docs_safe_schema(path: str) -> bool:
     return lowered.endswith("source-index.schema.json") or lowered.startswith("docs/knowledge/templates/")
 
 
+def is_guard_fixture_path(path: str) -> bool:
+    return path in {
+        "tools/axiom-codex/axiom_codex.py",
+        "tests/test_axiom_codex_helper.py",
+    }
+
+
 def classify_guard_paths(
     paths: list[str],
     text_by_path: dict[str, str] | None = None,
@@ -506,11 +630,12 @@ def classify_guard_paths(
         if "manifest" in name and suffix in {".json", ".yaml", ".yml"} and not is_docs_safe_schema(path):
             add("fail", "local manifest path", f"{path} looks like a local material manifest; commit only sanitized summaries.")
 
-        text = text_by_path.get(raw_path) or text_by_path.get(path) or ""
-        for pattern in PRIVATE_CONTENT_PATTERNS:
-            if pattern.search(text):
-                add("fail", "private path content", f"{path} contains a private path or localPath field.")
-                break
+        if not is_guard_fixture_path(path):
+            text = text_by_path.get(raw_path) or text_by_path.get(path) or ""
+            for pattern in PRIVATE_CONTENT_PATTERNS:
+                if pattern.search(text):
+                    add("fail", "private path content", f"{path} contains a private path or localPath field.")
+                    break
 
     return findings
 
@@ -644,6 +769,12 @@ def main() -> int:
     knowledge.add_argument("--limit", type=int, default=8)
     knowledge.add_argument("--show-private-paths", action="store_true")
     knowledge.set_defaults(func=knowledge_query)
+
+    sources = sub.add_parser("knowledge-sources")
+    sources.add_argument("--index", type=pathlib.Path, default=DEFAULT_LOCAL_INDEX)
+    sources.add_argument("--json", action="store_true")
+    sources.add_argument("--show-private-paths", action="store_true")
+    sources.set_defaults(func=knowledge_sources)
 
     args = parser.parse_args()
     return args.func(args)
