@@ -737,3 +737,53 @@ Scope: Codex-side Knowledge source integrity tooling.
 - Use `knowledge-sources` after adding or moving local PDFs.
 - Convert seed bibliography entries into short concept notes only when a
   specific Axiom engineering question needs them.
+
+## Run 021 - Full-System Readiness Review
+
+Date: 2026-06-08
+Status: Completed
+Scope: Evidence-local full-system readiness review across Core DSP,
+Qualification, Pi/JDSP workflow, Codex tooling, Knowledge, documentation, and
+release posture.
+
+### What Was Implemented
+
+- Added `docs/axiom-full-system-review-2026-06-08.md`.
+- Updated `docs/README.md` and `docs/system-status.md` so the June 8 review is
+  the current assessment checkpoint.
+- Added `AX-TASK-022` through `AX-TASK-026` to `docs/task-backlog.md`.
+- Re-ran the local evidence snapshot without running real JDSP or creating a
+  candidate.
+
+### Why It Matters
+
+- Axiom now has a current, findings-first review that names strengths and
+  shortcomings honestly.
+- The review keeps `.11` as accepted, treats candidate readiness as a gate
+  rather than justification, and identifies the open `.11` Sub Harmonics
+  follow-up as the main Core evidence gap.
+- The next improvement set is visible in the backlog before any `.12`
+  discussion.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -p 'test_*.py'` passed with 170 tests.
+- `python3 tools/axiom-codex/axiom_codex.py ready-check` passed.
+- `python3 tools/axiom-codex/axiom_codex.py guard-check` passed.
+- `python3 tools/axiom-codex/axiom_codex.py skill-eval` passed.
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-sources` passed with 6
+  checked sources.
+- `node tools/axiom-team/bin/axiom-team.mjs doctor` passed.
+- `node tools/axiom-team/bin/axiom-team.mjs corpus-status --strict-metadata`
+  passed with 14 tracks.
+- `python3 scripts/evaluate_axiom_candidate_readiness.py` reported `READY`.
+- PR #12 remains an open draft with clean merge state.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Review and merge PR #12 only after explicit approval.
+- Run the targeted `.11` Sub Harmonics follow-up only when the JDSP route is
+  available and real-host measurement is approved.
+- Add structured spatial listening vocabulary before any new sound-changing
+  candidate.

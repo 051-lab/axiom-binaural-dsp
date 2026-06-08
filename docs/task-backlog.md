@@ -29,14 +29,19 @@ task is ready for scheduling or delegation.
 | AX-TASK-019 | Initial implementation complete | Create role-specific Codex agent profiles | Codex | `tools/axiom-codex/agent_profiles/` and `agent-profiles` helper | DSP architecture, EEL safety, measurement, qualification, release, tooling, research, safety, implementation, and coordination roles map to the existing role registry and have limited responsibilities. |
 | AX-TASK-020 | Initial implementation complete | Add automated guardrails for unsafe Axiom actions | Codex | `guard-check` helper and unit tests | Historical EEL edits, private artifact paths, source audio, captured WAVs, local manifests, credentials, and unsupported baseline changes are blocked or flagged before publication. |
 | AX-TASK-021 | Initial implementation complete | Add Axiom skill behavior evals | Codex | `tools/axiom-codex/skill_eval_cases.json` and `skill-eval` helper | The Axiom skill source is checked against representative prompts for status inspection, DSP-safety refusal, Pi handoff, Knowledge lookup, release-gate review, private-artifact handling, and session-log refresh. |
+| AX-TASK-022 | Proposed | Close `.11` Sub Harmonics follow-up | Qualification | Updated investigation gate and summarized evidence | The targeted `+10 dB` and `+12 dB` Sub Harmonics map is run through Pi/JDSP, interpreted, and recorded without creating a candidate unless a repeatable defect is proven. |
+| AX-TASK-023 | Proposed | Add structured spatial listening vocabulary | Qualification | Listening-record guidance update | Listening records distinguish center image, lateral spread, localization blur, depth impression, bass-image coupling, fatigue, and route context. |
+| AX-TASK-024 | Proposed | Create Knowledge concept notes from seed sources | Knowledge | Short concept notes tied to Axiom questions | Seed bibliography becomes focused test-design vocabulary without copying source text or claiming research proves Axiom behavior. |
+| AX-TASK-025 | Proposed | Review and merge PR #12 | Repository | Merged Codex/Knowledge hardening PR | PR #12 is reviewed, validation remains clean, and merge occurs only after explicit approval. |
+| AX-TASK-026 | Proposed | Add consolidated local review/check command | Codex | Helper command or script | Future full-system reviews can run the standard local evidence snapshot with one safe, non-JDSP command. |
 
 ## Current Priority
 
 Recommended next actions:
 
 1. Keep this backlog synchronized when workflow or DSP gates change.
-2. Use `docs/axiom-full-state-assessment-2026-06-04.md` as the current
-   assessment checkpoint.
+2. Use `docs/axiom-full-system-review-2026-06-08.md` as the current readiness
+   review checkpoint.
 3. Use the locally installed `$axiom-engineering` skill for new Axiom Codex
    sessions.
 4. Treat `AX-TASK-018` through `AX-TASK-021` as initial infrastructure; future
@@ -44,8 +49,7 @@ Recommended next actions:
    subagent mechanism is available.
 5. Rerun the targeted `.11` Sub Harmonics / limiter-pressure investigation when
    the JDSP route is available.
-6. Add concrete Knowledge or Labs examples only after the first real Knowledge
-   note or Labs experiment exists.
+6. Address `AX-TASK-022` through `AX-TASK-026` before proposing `.12`.
 
 ## Progress Notes
 
@@ -84,6 +88,9 @@ Recommended next actions:
 - `AX-TASK-018` through `AX-TASK-021` have initial repo-tracked
   implementations: command registry, Codex role profiles, guard-check
   preflight, and deterministic skill behavior eval fixtures.
+- `AX-TASK-022` through `AX-TASK-026` come from the 2026-06-08 full-system
+  readiness review and represent the next improvement set before any `.12`
+  candidate.
 
 ## Graduation Checklist For Sound-Changing Work
 

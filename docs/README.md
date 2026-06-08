@@ -13,7 +13,8 @@ DSP. Use this file as the map before opening individual investigation records.
 | [architecture.md](architecture.md) | Current DSP signal chain, processing math, and host ownership model. |
 | [axiom-roadmap.md](axiom-roadmap.md) | Current development roadmap and candidate discipline. |
 | [axiom-system-roadmap.md](axiom-system-roadmap.md) | Product/profile system roadmap for Core, Labs, Knowledge, and Qualification. |
-| [axiom-full-state-assessment-2026-06-04.md](axiom-full-state-assessment-2026-06-04.md) | Current full-system assessment across Core DSP, Qualification, Agentic tooling, Knowledge, and repository housekeeping. |
+| [axiom-full-system-review-2026-06-08.md](axiom-full-system-review-2026-06-08.md) | Current full-system readiness review across Core DSP, Qualification, Pi/JDSP workflow, Codex tooling, Knowledge, documentation, and release posture. |
+| [axiom-full-state-assessment-2026-06-04.md](axiom-full-state-assessment-2026-06-04.md) | Previous full-system assessment across Core DSP, Qualification, Agentic tooling, Knowledge, and repository housekeeping. |
 | [profile-matrix.md](profile-matrix.md) | Operational matrix for profile status, ownership, allowed changes, and tests. |
 | [axiom-operating-system-implementation-plan.md](axiom-operating-system-implementation-plan.md) | Ordered implementation plan for making the AI development ecosystem operational. |
 | [axiom-agentic-engineering-blueprint.md](axiom-agentic-engineering-blueprint.md) | Living blueprint for native Axiom agents, Codex/Pi handoffs, knowledge use, and approval gates. |

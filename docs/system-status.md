@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-06-07
+Last updated: 2026-06-08
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
@@ -98,36 +98,31 @@ Studio Path are defined but not built as official products.
 
 ## Latest Assessment
 
-The current full-system assessment is
-`axiom-full-state-assessment-2026-06-04.md`.
+The current full-system readiness review is
+`axiom-full-system-review-2026-06-08.md`.
 
 Summary:
 
 - `v4.1.4.11` remains the accepted Core baseline.
-- The local validation snapshot passed static EEL, Python unit, Pi harness,
-  doctor, strict corpus metadata, candidate readiness, Codex helper readiness,
-  and whitespace checks.
-- Candidate readiness is available for a future scoped hypothesis, but no
-  `.12` candidate is currently justified.
-- The local Axiom Codex skill is installed in this machine's Codex runtime;
-  helper tooling remains repo-tracked under `tools/`.
-- Initial Codex-layer hardening is implemented with a command registry,
-  Codex-specific role profiles, guard preflights, and deterministic skill
-  behavior eval fixtures.
-- Axiom Knowledge has safe structure and six local-source-backed seed notes for
-  spatial hearing, digital audio effects, implementation patterns, reproduction
-  accuracy, and audio-programming background.
+- Full Python tests passed with 170 tests.
+- Pi doctor, strict corpus metadata, candidate readiness, Codex helper
+  readiness, guard checks, skill evals, and Knowledge source audit passed.
+- Candidate readiness is `READY`, but no `.12` candidate is justified until the
+  open `.11` Sub Harmonics investigation produces a scoped hypothesis and
+  listening target.
+- Draft PR #12 is open and clean for the Codex/Knowledge hardening batch.
+- Axiom Knowledge has six local-source-backed seed notes and a passing source
+  audit.
 
 ## Current Best Next Actions
 
-1. Use `$axiom-engineering` in fresh Codex sessions for Axiom work.
-2. Use `python3 tools/axiom-codex/axiom_codex.py command-surface`,
-   `agent-profiles`, `guard-check`, and `skill-eval` as the current
-   Codex-layer hardening surface.
-3. Rerun the targeted `.11` Sub Harmonics map if the JDSP route is available.
-4. Use the Knowledge seed notes to refine listening vocabulary, DSP-stage
-   review, implementation translation, and test-design questions before adding
-   any new DSP claims.
+1. Review and merge PR #12 only after explicit approval.
+2. Rerun the targeted `.11` Sub Harmonics map when the JDSP route is available
+   and no other real-host measurement is active.
+3. Add structured spatial listening vocabulary before any new sound-changing
+   candidate.
+4. Use Knowledge seed notes to support specific test-design questions, not to
+   justify DSP changes by themselves.
 
 ## Refresh Commands
 
