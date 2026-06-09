@@ -918,3 +918,43 @@ follow-up and focused listening target definition.
 - Run focused accepted-`.11` listening at `+4`, `+10`, and `+12 dB`.
 - Use the structured listening-record fields added in Run 022.
 - Keep publication, merge, and candidate creation gated on explicit approval.
+
+## Run 025 - `.11` Sub Harmonics Listening Target Template
+
+Date: 2026-06-08
+Status: Completed
+Scope: Focused accepted-`.11` listening target and local-copy listening-record
+template for the Sub Harmonics follow-up.
+
+### What Was Implemented
+
+- Added `docs/sub-harmonics-listening-target-v4.1.4.11.md`.
+- Added `docs/templates/sub-harmonics-listening-record-v4.1.4.11.json`.
+- Linked both files from `docs/README.md`.
+- Updated `docs/system-status.md` and `docs/task-backlog.md` so the next step
+  is the focused accepted-`.11` listening check.
+
+### Why It Matters
+
+- The `.11` follow-up now has a concrete listening workflow instead of only a
+  measurement interpretation.
+- The JSON template is designed to be copied into local state, filled with
+  private listening notes, and validated with
+  `scripts/validate_axiom_listening_record.py`.
+- The repo remains safe: it contains prompts, material classes, and public
+  workflow instructions, not private song titles or local listening results.
+
+### Validation
+
+- Documentation/template-only change.
+- No EEL DSP scripts changed.
+- No `.12` candidate was created.
+
+### Next Recommended Work
+
+- Copy the listening-record template into local state and perform the accepted
+  `.11` `+4`, `+10`, and `+12 dB` listening pass.
+- If no repeatable audible defect is heard, close the `.11` investigation
+  without `.12`.
+- If a repeatable defect is heard, draft a narrow `.12` hypothesis before any
+  EEL work.

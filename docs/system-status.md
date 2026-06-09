@@ -67,7 +67,10 @@ Known result:
 - the interpretation record is
   `sub-harmonics-interpretation-v4.1.4.11.md`: no `.12` candidate is justified
   yet; the next step is focused listening around elevated-setting punch,
-  practical loudness, bass clarity, limiter pumping, and fatigue.
+  practical loudness, bass clarity, limiter pumping, and fatigue;
+- the listening target is
+  `sub-harmonics-listening-target-v4.1.4.11.md`, with a local-copy JSON
+  template at `templates/sub-harmonics-listening-record-v4.1.4.11.json`.
 
 Current follow-up command, if a confirmatory rerun is needed:
 
@@ -136,8 +139,8 @@ Summary:
 ## Current Best Next Actions
 
 1. Review and merge PR #12 only after explicit approval.
-2. Run focused listening on accepted `.11` at `+4`, `+10`, and `+12 dB` Sub
-   Harmonics before proposing `.12`.
+2. Run focused listening on accepted `.11` using
+   `sub-harmonics-listening-target-v4.1.4.11.md` before proposing `.12`.
 3. Use the structured spatial listening vocabulary for that listening record.
 4. Use Knowledge seed notes to support specific test-design questions, not to
    justify DSP changes by themselves.

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-06-08T18:00:00-05:00",
+  "listener": "local tester",
+  "axiom_version": "v4.1.4.11",
+  "comparison_version": "v4.1.4.11 control sweep: +4 dB versus +10 dB versus +12 dB Sub Harmonics",
+  "decision": "no_decision",
+  "acceptance_rationale": "",
+  "rejection_rationale": "",
+  "device": "replace with route device, such as speakers, headphones, Android, wired DAC, or Bluetooth",
+  "route": "replace with RootlessJamesDSP, JDSP4Linux, WSL/JDSP, wired, Bluetooth, speaker, or headphone route",
+  "host_settings": {
+    "jdsp_limiter_threshold_db": -1.0,
+    "jdsp_limiter_release_ms": 60.0,
+    "jdsp_postgain_db": 0.0,
+    "crossfeed_enabled": false
+  },
+  "slider_settings": {
+    "sub_harmonics_gain_db": 4.0,
+    "global_side_width_percent": 135.0,
+    "fletcher_munson_sensitivity_percent": 50.0,
+    "low_mid_width_percent": 126.0,
+    "high_width_percent": 110.0,
+    "stft_resonance_suppression_percent": 50.0
+  },
+  "material": [
+    {
+      "label": "dense electronic or modern pop item, local title redacted if public",
+      "source_type": "unknown",
+      "license_scope": "local listening only unless this is public-domain material",
+      "comparison_target": "+4 dB versus +10 dB versus +12 dB Sub Harmonics on accepted v4.1.4.11",
+      "timestamp_or_excerpt": "replace with local timestamp or excerpt window",
+      "notes": "Listen for limiter pressure, bass blur, kick softening, low-end crowding, loudness retreat, and fatigue."
+    },
+    {
+      "label": "hip-hop or trap-sub item, local title redacted if public",
+      "source_type": "unknown",
+      "license_scope": "local listening only unless this is public-domain material",
+      "comparison_target": "+4 dB versus +10 dB versus +12 dB Sub Harmonics on accepted v4.1.4.11",
+      "timestamp_or_excerpt": "replace with local timestamp or excerpt window",
+      "notes": "Listen for kick and sub separation, punch loss, bass-image attachment, and practical loudness retreat."
+    },
+    {
+      "label": "bass-light or acoustic-bass control item, local title redacted if public",
+      "source_type": "unknown",
+      "license_scope": "local listening only unless this is public-domain material",
+      "comparison_target": "+4 dB versus +10 dB versus +12 dB Sub Harmonics on accepted v4.1.4.11",
+      "timestamp_or_excerpt": "replace with local timestamp or excerpt window",
+      "notes": "Listen for whether elevated settings unnecessarily pull broadband level down or detach bass weight from the image."
+    }
+  ],
+  "observations": {
+    "bass": "replace with whether elevated settings add useful weight, blur bass, crowd the low end, or feel over-controlled",
+    "punch": "replace with whether kick/transient punch stays intact or softens at +10/+12 dB",
+    "center_image": "replace with whether vocal, kick, snare, or centered anchors stay stable",
+    "lateral_spread": "replace with whether side energy spreads naturally or becomes exaggerated",
+    "localization_blur": "replace with whether source positions smear, wander, or stay easy to locate",
+    "depth_impression": "replace with whether depth stays believable or collapses/flattens",
+    "bass_image_coupling": "replace with whether bass weight stays attached to kick/center/main image",
+    "width": "replace with whether elevated bass changes perceived width or hollows the center",
+    "air": "replace with whether elevated settings indirectly dull or preserve high-frequency air",
+    "harshness": "replace with whether limiter pressure or level changes make the presentation sharper or smoother",
+    "loudness": "replace with whether +10/+12 dB feel practically quieter after fair listening-level handling",
+    "fatigue": "replace with whether elevated settings increase short-session fatigue or pressure",
+    "route_context": "replace with speaker/headphone/Bluetooth/wired/WSL route context and crossfeed state",
+    "artifacts": "replace with any pumping, breathing, clipping impression, crackle, image instability, or none heard",
+    "overall": "replace with no_decision, watch item, close investigation, or candidate-hypothesis recommendation"
+  }
+}

@@ -29,7 +29,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-019 | Initial implementation complete | Create role-specific Codex agent profiles | Codex | `tools/axiom-codex/agent_profiles/` and `agent-profiles` helper | DSP architecture, EEL safety, measurement, qualification, release, tooling, research, safety, implementation, and coordination roles map to the existing role registry and have limited responsibilities. |
 | AX-TASK-020 | Initial implementation complete | Add automated guardrails for unsafe Axiom actions | Codex | `guard-check` helper and unit tests | Historical EEL edits, private artifact paths, source audio, captured WAVs, local manifests, credentials, and unsupported baseline changes are blocked or flagged before publication. |
 | AX-TASK-021 | Initial implementation complete | Add Axiom skill behavior evals | Codex | `tools/axiom-codex/skill_eval_cases.json` and `skill-eval` helper | The Axiom skill source is checked against representative prompts for status inspection, DSP-safety refusal, Pi handoff, Knowledge lookup, release-gate review, private-artifact handling, and session-log refresh. |
-| AX-TASK-022 | Interpreted; listening target prepared | Close `.11` Sub Harmonics follow-up | Qualification | Updated investigation gate and summarized evidence | The corrected `+4 dB`, `+10 dB`, and `+12 dB` Sub Harmonics map completed through Pi/JDSP and is summarized in `docs/sub-harmonics-follow-up-v4.1.4.11.md`. `docs/sub-harmonics-interpretation-v4.1.4.11.md` keeps `.11` accepted, blocks `.12` for now, and defines focused listening around elevated-setting punch, practical loudness, bass clarity, limiter pumping, and fatigue. |
+| AX-TASK-022 | Listening target prepared | Close `.11` Sub Harmonics follow-up | Qualification | Updated investigation gate and summarized evidence | The corrected `+4 dB`, `+10 dB`, and `+12 dB` Sub Harmonics map completed through Pi/JDSP and is summarized in `docs/sub-harmonics-follow-up-v4.1.4.11.md`. `docs/sub-harmonics-interpretation-v4.1.4.11.md` keeps `.11` accepted and blocks `.12` for now. `docs/sub-harmonics-listening-target-v4.1.4.11.md` defines the focused accepted-`.11` listening check. |
 | AX-TASK-023 | Complete | Add structured spatial listening vocabulary | Qualification | Listening-record guidance update | Listening records distinguish center image, lateral spread, localization blur, depth impression, bass-image coupling, fatigue, and route context. |
 | AX-TASK-024 | Proposed | Create Knowledge concept notes from seed sources | Knowledge | Short concept notes tied to Axiom questions | Seed bibliography becomes focused test-design vocabulary without copying source text or claiming research proves Axiom behavior. |
 | AX-TASK-025 | Proposed | Review and merge PR #12 | Repository | Merged Codex/Knowledge hardening PR | PR #12 is reviewed, validation remains clean, and merge occurs only after explicit approval. |
@@ -92,7 +92,8 @@ Recommended next actions:
 - `AX-TASK-022` through `AX-TASK-026` come from the 2026-06-08 full-system
   readiness review and represent the next improvement set before any `.12`
   candidate; `AX-TASK-023` is complete, and `AX-TASK-022` now has a completed
-  follow-up map, interpretation record, and focused listening target.
+  follow-up map, interpretation record, focused listening target, and local-copy
+  listening-record template.
 
 ## Graduation Checklist For Sound-Changing Work
 

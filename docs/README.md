@@ -34,6 +34,7 @@ DSP. Use this file as the map before opening individual investigation records.
 | [knowledge/README.md](knowledge/README.md) | Knowledge bibliography and research-note rules. |
 | [templates/labs-experiment.md](templates/labs-experiment.md) | Markdown template for Labs experiment notes. |
 | [templates/external-review-triage.md](templates/external-review-triage.md) | Markdown template for advisory LLM or human review triage. |
+| [templates/sub-harmonics-listening-record-v4.1.4.11.json](templates/sub-harmonics-listening-record-v4.1.4.11.json) | Local-copy template for the accepted-`.11` Sub Harmonics listening target. |
 
 ## Session Work Log
 
@@ -91,6 +92,7 @@ python3 tools/axiom-codex/axiom_codex.py knowledge-query "search terms"
 | [accepted-stress-v4.1.4.10.md](accepted-stress-v4.1.4.10.md) | Dense-material stress behavior that informed the `.11` reserve work. |
 | [sub-harmonics-follow-up-v4.1.4.11.md](sub-harmonics-follow-up-v4.1.4.11.md) | Targeted post-acceptance `.11` Sub Harmonics follow-up and investigation result. |
 | [sub-harmonics-interpretation-v4.1.4.11.md](sub-harmonics-interpretation-v4.1.4.11.md) | No-candidate-yet interpretation and listening target for the `.11` Sub Harmonics follow-up. |
+| [sub-harmonics-listening-target-v4.1.4.11.md](sub-harmonics-listening-target-v4.1.4.11.md) | Focused accepted-`.11` listening target for `+4`, `+10`, and `+12 dB` Sub Harmonics. |
 | [sub-harmonics-map-v4.1.4.10.md](sub-harmonics-map-v4.1.4.10.md) | Elevated Sub Harmonics control-range evidence. |
 | [reserve-law-screen-v4.1.4.10.md](reserve-law-screen-v4.1.4.10.md) | Reserve-law screen and full-manifest `0.500 dB/dB` qualification behind `.11`. |
 | [stage-observability-v4.1.4.10.md](stage-observability-v4.1.4.10.md) | Bass/reserve stage-tap evidence. |
