@@ -1,0 +1,287 @@
+{
+  "schemaVersion": 1,
+  "lastUpdated": "2026-06-09",
+  "source": "docs/task-backlog.md",
+  "tasks": [
+    {
+      "id": "AX-TASK-001",
+      "status": "complete",
+      "title": "Formalize Axiom Core identity",
+      "area": "Core",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-002",
+      "status": "complete",
+      "title": "Create Labs branch policy",
+      "area": "Labs",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-003",
+      "status": "seed-notes-added",
+      "title": "Create Knowledge Base bibliography notes",
+      "area": "Knowledge",
+      "phase": "seeded",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Promote selected seed sources into focused concept notes when they support a test-design question."
+    },
+    {
+      "id": "AX-TASK-004",
+      "status": "complete",
+      "title": "Create profile matrix",
+      "area": "System",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-005",
+      "status": "complete",
+      "title": "Add listening protocol",
+      "area": "Qualification",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-006",
+      "status": "complete",
+      "title": "Document advisory LLM review flow",
+      "area": "Codex",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-007",
+      "status": "complete",
+      "title": "Define candidate graduation ladder",
+      "area": "Qualification",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-008",
+      "status": "complete",
+      "title": "Define release gates for official scripts",
+      "area": "Core",
+      "phase": "done",
+      "requiresApproval": true,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-009",
+      "status": "complete",
+      "title": "Sync stale baseline references",
+      "area": "Docs",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-010",
+      "status": "complete",
+      "title": "Add targeted Sub Harmonics map docs",
+      "area": "Qualification",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-011",
+      "status": "complete",
+      "title": "Create Labs experiment template",
+      "area": "Labs",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-012",
+      "status": "complete",
+      "title": "Create external-review triage template",
+      "area": "Codex",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-013",
+      "status": "complete",
+      "title": "Define local-only artifact policy checklist",
+      "area": "Qualification",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-014",
+      "status": "complete",
+      "title": "Create profile-specific test requirements",
+      "area": "Qualification",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-015",
+      "status": "complete",
+      "title": "Build issue templates for DSP candidates and docs work",
+      "area": "Repository",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-016",
+      "status": "complete",
+      "title": "Add system status dashboard",
+      "area": "Repository",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-017",
+      "status": "complete",
+      "title": "Add Pi runbooks",
+      "area": "Harness",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-018",
+      "status": "initial-implementation-complete",
+      "title": "Define Axiom Codex command surface",
+      "area": "Codex",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Keep command registry synchronized with helper commands."
+    },
+    {
+      "id": "AX-TASK-019",
+      "status": "initial-implementation-complete",
+      "title": "Create role-specific Codex agent profiles",
+      "area": "Codex",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Refine profiles when a role repeatedly needs clearer responsibility boundaries."
+    },
+    {
+      "id": "AX-TASK-020",
+      "status": "initial-implementation-complete",
+      "title": "Add automated guardrails for unsafe Axiom actions",
+      "area": "Codex",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Extend guard rules when new private artifact classes or approval gates appear."
+    },
+    {
+      "id": "AX-TASK-021",
+      "status": "initial-implementation-complete",
+      "title": "Add Axiom skill behavior evals",
+      "area": "Codex",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Add eval cases when new helper commands or hard-boundary behaviors are introduced."
+    },
+    {
+      "id": "AX-TASK-022",
+      "status": "listening-package-prepared",
+      "title": "Close .11 Sub Harmonics follow-up",
+      "area": "Qualification",
+      "phase": "blocked-on-listening",
+      "requiresApproval": false,
+      "blockedBy": ["human-listening"],
+      "nextAction": "Audition the filtered +4 vs +10 and +4 vs +12 local A/B packages, then validate the local listening record."
+    },
+    {
+      "id": "AX-TASK-023",
+      "status": "complete",
+      "title": "Add structured spatial listening vocabulary",
+      "area": "Qualification",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-024",
+      "status": "proposed",
+      "title": "Create Knowledge concept notes from seed sources",
+      "area": "Knowledge",
+      "phase": "ready",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Create short concept notes tied to Axiom test-design questions without copying source text."
+    },
+    {
+      "id": "AX-TASK-025",
+      "status": "proposed",
+      "title": "Review and merge PR #12",
+      "area": "Repository",
+      "phase": "requires-approval",
+      "requiresApproval": true,
+      "blockedBy": ["explicit-user-approval"],
+      "nextAction": "Review and merge PR #12 only after explicit user approval."
+    },
+    {
+      "id": "AX-TASK-026",
+      "status": "initial-implementation-complete",
+      "title": "Add consolidated local review/check command",
+      "area": "Codex",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Use local-review as the standard orientation command and build next-action on top of task-state."
+    },
+    {
+      "id": "AX-TASK-027",
+      "status": "initial-implementation-complete",
+      "title": "Add machine-readable task state",
+      "area": "Codex",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Keep task_state.json synchronized with docs/task-backlog.md."
+    },
+    {
+      "id": "AX-TASK-028",
+      "status": "initial-implementation-complete",
+      "title": "Add next-action helper",
+      "area": "Codex",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Use next-action after local-review to choose the next safe Axiom work item."
+    }
+  ]
+}

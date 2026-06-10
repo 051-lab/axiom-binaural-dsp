@@ -35,8 +35,11 @@ class AxiomCodexHelperTests(unittest.TestCase):
         for name in [
             "status-summary",
             "ready-check",
+            "local-review",
             "guard-check",
             "command-surface",
+            "task-state",
+            "next-action",
             "agent-profiles",
             "agent-review",
             "knowledge-query",
@@ -49,6 +52,9 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertTrue(commands["pi-handoff"]["touchesJDSP"])
         self.assertTrue(commands["pi-handoff"]["requiresApproval"])
         self.assertFalse(commands["guard-check"]["touchesJDSP"])
+        self.assertFalse(commands["local-review"]["touchesJDSP"])
+        self.assertFalse(commands["task-state"]["touchesJDSP"])
+        self.assertFalse(commands["next-action"]["touchesJDSP"])
 
     def test_agent_profiles_mirror_team_roles(self) -> None:
         profiles = {profile[0] for profile in axiom_codex.load_agent_profiles()}
@@ -224,6 +230,42 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("status-inspection", result.stdout)
 
+    def test_task_state_validates_machine_readable_backlog(self) -> None:
+        data = axiom_codex.load_task_state()
+        checks = axiom_codex.validate_task_state_data(data)
+        task_ids = {task["id"] for task in data["tasks"]}
+        self.assertIn("AX-TASK-022", task_ids)
+        self.assertIn("AX-TASK-027", task_ids)
+        self.assertIn("AX-TASK-028", task_ids)
+        self.assertFalse(any(check.status == "fail" for check in checks))
+        self.assertTrue(any(task["phase"] == "blocked-on-listening" for task in data["tasks"]))
+
+    def test_cli_task_state_lists_open_tasks(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(HELPER_PATH), "task-state"],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Axiom Task State", result.stdout)
+        self.assertIn("AX-TASK-022", result.stdout)
+        self.assertIn("AX-TASK-027", result.stdout)
+
+    def test_cli_next_action_reports_planning_guidance(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(HELPER_PATH), "next-action", "--json"],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        payload = json.loads(result.stdout)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("recommendedAction", payload)
+        self.assertIn("planning guidance", "\n".join(payload["boundaries"]))
+
     def test_cli_pi_handoff_prints_draft_without_execution(self) -> None:
         result = subprocess.run(
             [sys.executable, str(HELPER_PATH), "pi-handoff"],
@@ -235,6 +277,38 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("draft handoff only", result.stdout)
         self.assertIn("map-sub-gain", result.stdout)
+
+    def test_cli_local_review_writes_reports_without_jdsp(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            json_output = root / "local-review.json"
+            markdown_output = root / "local-review.md"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(HELPER_PATH),
+                    "local-review",
+                    "--skip-tests",
+                    "--skip-knowledge",
+                    "--json",
+                    "--json-output",
+                    str(json_output),
+                    "--markdown-output",
+                    str(markdown_output),
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            payload = json.loads(json_output.read_text(encoding="utf-8"))
+            markdown = markdown_output.read_text(encoding="utf-8")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(payload["acceptedBaseline"]["version"], "v4.1.4.11")
+        self.assertTrue(any(command["name"] == "guard-check" for command in payload["commands"]))
+        self.assertFalse(any(command["name"] == "python tests" for command in payload["commands"]))
+        self.assertIn("Axiom Local Review", markdown)
+        self.assertIn("non-JDSP", "\n".join(payload["boundaries"]))
 
 
 if __name__ == "__main__":

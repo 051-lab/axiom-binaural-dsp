@@ -117,3 +117,34 @@ scripts/validate_axiom_listening_record.py \
 
 Public docs should summarize only sanitized material classes, route class,
 decision, and non-private rationale.
+
+## Optional A/B Package Workflow
+
+If a completed Sub Harmonics map already exists, build local A/B packages from
+the processed render folders instead of switching sliders manually during
+listening. Keep the generated package outside git because it contains processed
+audio.
+
+Example shape:
+
+```bash
+scripts/build_axiom_ab_listening_package.py \
+  /path/to/sub-slider-map/slider_4db \
+  /path/to/sub-slider-map/slider_10db \
+  ~/.local/state/axiom-engineering/listening-packages/sub-harmonics-v4.1.4.11/+4-vs-+10 \
+  --label sub-harmonics-v4.1.4.11-plus4-vs-plus10 \
+  --include-regex 'render_1\.wav$' \
+  --exclude-regex 'flawed'
+
+scripts/build_axiom_ab_listening_package.py \
+  /path/to/sub-slider-map/slider_4db \
+  /path/to/sub-slider-map/slider_12db \
+  ~/.local/state/axiom-engineering/listening-packages/sub-harmonics-v4.1.4.11/+4-vs-+12 \
+  --label sub-harmonics-v4.1.4.11-plus4-vs-plus12 \
+  --include-regex 'render_1\.wav$' \
+  --exclude-regex 'flawed'
+```
+
+Use the package markdown for the blinded A/B slot assignments and recommended
+gain values. Excluding `flawed` keeps intentional stress material out of the
+normal-material listening decision.

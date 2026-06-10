@@ -45,6 +45,33 @@
       ]
     },
     {
+      "name": "local-review",
+      "trigger": "$axiom-engineering local review",
+      "nativeAlias": "/axiom-local-review",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py local-review",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Run one non-JDSP local evidence snapshot covering git state, accepted baseline, changed paths, guard-check, ready-check, optional Knowledge audit, Python tests, Node harness tests, and recommended next action.",
+      "inputs": [
+        "optional --skip-tests",
+        "optional --skip-knowledge",
+        "optional --json",
+        "optional report output paths"
+      ],
+      "outputs": [
+        "local review Markdown or JSON",
+        "check status table",
+        "recommended next action",
+        "optional report files"
+      ],
+      "boundaries": [
+        "non-JDSP local review only",
+        "does not create candidates",
+        "does not approve publication, merge, or accepted-baseline promotion"
+      ]
+    },
+    {
       "name": "guard-check",
       "trigger": "$axiom-engineering guard check",
       "nativeAlias": "/axiom-guard",
@@ -86,6 +113,53 @@
       "boundaries": [
         "registry only",
         "does not install native slash commands"
+      ]
+    },
+    {
+      "name": "task-state",
+      "trigger": "$axiom-engineering task state",
+      "nativeAlias": "/axiom-tasks",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py task-state",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Validate and summarize the machine-readable Axiom task state used for planning and future next-action computation.",
+      "inputs": [
+        "optional --json"
+      ],
+      "outputs": [
+        "task-state validation checks",
+        "open task table",
+        "blocked and approval-gated task metadata"
+      ],
+      "boundaries": [
+        "planning metadata only",
+        "does not approve DSP or publication decisions",
+        "does not replace the human-readable backlog"
+      ]
+    },
+    {
+      "name": "next-action",
+      "trigger": "$axiom-engineering next action",
+      "nativeAlias": "/axiom-next",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py next-action",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, and approval gates.",
+      "inputs": [
+        "optional --json"
+      ],
+      "outputs": [
+        "recommended action",
+        "selected task",
+        "blocking reason when applicable",
+        "blocked or approval-gated task list"
+      ],
+      "boundaries": [
+        "planning guidance only",
+        "does not run JDSP",
+        "does not approve publication, merge, listening, or baseline changes"
       ]
     },
     {

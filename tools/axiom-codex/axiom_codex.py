@@ -22,6 +22,7 @@ DEFAULT_LOCAL_INDEX = pathlib.Path.home() / ".local" / "share" / "axiom-knowledg
 ROLE_ROOT = REPO_ROOT / "tools" / "axiom-team" / "roles"
 CODEX_ROOT = REPO_ROOT / "tools" / "axiom-codex"
 COMMAND_SURFACE = CODEX_ROOT / "command_surface.json"
+TASK_STATE = CODEX_ROOT / "task_state.json"
 CODEX_AGENT_PROFILE_ROOT = CODEX_ROOT / "agent_profiles"
 SKILL_EVAL_CASES = CODEX_ROOT / "skill_eval_cases.json"
 SKILL_SOURCE = REPO_ROOT / "tools" / "codex-skills" / "axiom-engineering"
@@ -85,6 +86,7 @@ PRIVATE_CONTENT_PATTERNS = [
 SOURCE_REQUIRED_FIELDS = {"id", "title", "type", "topics", "axiomUse", "status"}
 SOURCE_TYPES = {"book", "paper", "article", "documentation", "video", "other"}
 SOURCE_STATUSES = {"unread", "reading", "summarized", "rejected"}
+TASK_REQUIRED_FIELDS = {"id", "status", "title", "area", "phase", "requiresApproval", "blockedBy", "nextAction"}
 
 
 @dataclass
@@ -95,9 +97,13 @@ class Check:
 
 
 def run(command: list[str], timeout: int = 30) -> subprocess.CompletedProcess[str]:
+    return run_in(REPO_ROOT, command, timeout)
+
+
+def run_in(cwd: pathlib.Path, command: list[str], timeout: int = 30) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         command,
-        cwd=REPO_ROOT,
+        cwd=cwd,
         text=True,
         capture_output=True,
         check=False,
@@ -156,11 +162,208 @@ def command_status(result: subprocess.CompletedProcess[str]) -> str:
     return "pass" if result.returncode == 0 else "fail"
 
 
+def command_payload(name: str, command: list[str], timeout: int = 120, cwd: pathlib.Path = REPO_ROOT) -> dict[str, Any]:
+    try:
+        result = run_in(cwd, command, timeout)
+        return {
+            "name": name,
+            "command": command,
+            "status": command_status(result),
+            "returnCode": result.returncode,
+            "stdout": result.stdout.strip(),
+            "stderr": result.stderr.strip(),
+        }
+    except subprocess.TimeoutExpired as exc:
+        return {
+            "name": name,
+            "command": command,
+            "status": "fail",
+            "returnCode": None,
+            "stdout": (exc.stdout or "").strip() if isinstance(exc.stdout, str) else "",
+            "stderr": f"timed out after {timeout} seconds",
+        }
+
+
+def parse_best_next_actions(system_text: str) -> list[str]:
+    current = section(system_text, "Current Best Next Actions")
+    actions: list[str] = []
+    for line in current.splitlines():
+        match = re.match(r"\d+\.\s+(.*)", line.strip())
+        if match:
+            actions.append(match.group(1).strip())
+    return actions
+
+
 def load_command_surface() -> dict[str, Any]:
     data = load_json(COMMAND_SURFACE)
     if not isinstance(data, dict) or not isinstance(data.get("commands"), list):
         raise SystemExit(f"invalid command surface: {COMMAND_SURFACE}")
     return data
+
+
+def load_task_state() -> dict[str, Any]:
+    data = load_json(TASK_STATE)
+    if not isinstance(data, dict) or data.get("schemaVersion") != 1 or not isinstance(data.get("tasks"), list):
+        raise SystemExit(f"invalid task state: {TASK_STATE}")
+    return data
+
+
+def validate_task_state_data(data: dict[str, Any]) -> list[Check]:
+    checks: list[Check] = []
+    seen: set[str] = set()
+    tasks = data.get("tasks", [])
+    if not isinstance(tasks, list):
+        return [Check("tasks list", "fail", "`tasks` must be an array")]
+    for task in tasks:
+        if not isinstance(task, dict):
+            checks.append(Check("task entry", "fail", "task entry must be an object"))
+            continue
+        task_id = str(task.get("id", "missing-id"))
+        missing = sorted(TASK_REQUIRED_FIELDS - set(task))
+        if missing:
+            checks.append(Check("task required fields", "fail", f"{task_id}: missing {', '.join(missing)}"))
+        if task_id in seen:
+            checks.append(Check("duplicate task id", "fail", task_id))
+        seen.add(task_id)
+        if not re.match(r"^AX-TASK-\d{3}$", task_id):
+            checks.append(Check("task id format", "fail", task_id))
+        if not isinstance(task.get("blockedBy", []), list):
+            checks.append(Check("task blockedBy", "fail", f"{task_id}: blockedBy must be an array"))
+        if not isinstance(task.get("requiresApproval"), bool):
+            checks.append(Check("task requiresApproval", "fail", f"{task_id}: requiresApproval must be boolean"))
+    if not checks:
+        checks.append(Check("task state", "pass", f"{len(tasks)} task(s) checked"))
+    return checks
+
+
+def task_priority(task: dict[str, Any]) -> tuple[int, str]:
+    phase = str(task.get("phase", ""))
+    if phase == "in-progress":
+        return (0, str(task.get("id", "")))
+    if phase == "ready":
+        return (1, str(task.get("id", "")))
+    if phase == "blocked-on-listening":
+        return (2, str(task.get("id", "")))
+    if phase == "requires-approval":
+        return (3, str(task.get("id", "")))
+    if phase == "initial":
+        return (4, str(task.get("id", "")))
+    if phase == "seeded":
+        return (5, str(task.get("id", "")))
+    return (9, str(task.get("id", "")))
+
+
+def open_tasks(tasks: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [task for task in tasks if str(task.get("phase")) != "done"]
+
+
+def actionable_tasks(tasks: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    blocked_phases = {"done", "blocked-on-listening", "requires-approval", "initial", "seeded"}
+    return [
+        task for task in tasks
+        if str(task.get("phase")) not in blocked_phases
+        and not task.get("blockedBy")
+        and not task.get("requiresApproval")
+    ]
+
+
+def next_action_payload() -> dict[str, Any]:
+    data = load_task_state()
+    checks = validate_task_state_data(data)
+    changed_paths = git_changed_paths()
+    tasks = data["tasks"]
+    actionable = sorted(actionable_tasks(tasks), key=task_priority)
+    blocked = sorted(
+        [task for task in open_tasks(tasks) if task.get("blockedBy") or task.get("requiresApproval")],
+        key=task_priority,
+    )
+    if changed_paths:
+        action = "Finish validating and reviewing the current local change batch before starting new work."
+        reason = "working tree has local changes"
+        task = actionable[0] if actionable else None
+    elif actionable:
+        task = actionable[0]
+        action = f"{task['id']}: {task['nextAction']}"
+        reason = f"{task['id']} is the highest-priority unblocked task"
+    else:
+        task = None
+        action = "No unblocked task is available; inspect blocked or approval-gated tasks."
+        reason = "all open tasks are blocked, approval-gated, initial-maintenance, or seeded"
+    return {
+        "status": "fail" if any(check.status == "fail" for check in checks) else "pass",
+        "recommendedAction": action,
+        "reason": reason,
+        "selectedTask": task,
+        "changedPaths": changed_paths,
+        "blockedTasks": blocked,
+        "checks": [check.__dict__ for check in checks],
+        "boundaries": [
+            "next-action is planning guidance only",
+            "does not approve publication, merge, listening acceptance, or accepted-baseline promotion",
+            "does not run JDSP",
+        ],
+    }
+
+
+def task_state(args: argparse.Namespace) -> int:
+    data = load_task_state()
+    checks = validate_task_state_data(data)
+    failed = any(check.status == "fail" for check in checks)
+    tasks = data["tasks"]
+    open_task_list = sorted(open_tasks(tasks), key=task_priority)
+    if args.json:
+        print(json.dumps({"taskState": data, "checks": [check.__dict__ for check in checks]}, indent=2, sort_keys=True))
+        return 1 if failed else 0
+    print("# Axiom Task State\n")
+    print(f"- source: `{data.get('source', '')}`")
+    print(f"- last updated: `{data.get('lastUpdated', '')}`")
+    print(f"- task count: `{len(tasks)}`")
+    print("\n## Checks\n")
+    for check in checks:
+        print(f"- {check.status}: {check.name} - {check.detail}")
+    print("\n## Open Tasks\n")
+    if not open_task_list:
+        print("- none")
+    else:
+        print("| Task | Area | Phase | Approval | Blocked By | Next Action |")
+        print("| --- | --- | --- | --- | --- | --- |")
+        for task in open_task_list:
+            blocked = ", ".join(task.get("blockedBy", [])) or "-"
+            print(
+                f"| {task['id']} {task['title']} | {task['area']} | {task['phase']} | "
+                f"{markdown_bool(bool(task['requiresApproval']))} | {blocked} | {str(task['nextAction']).replace('|', '/')} |"
+            )
+    print("\nBoundary: task-state is planning metadata. It does not approve DSP, publication, merge, or listening decisions.")
+    return 1 if failed else 0
+
+
+def next_action(args: argparse.Namespace) -> int:
+    payload = next_action_payload()
+    if args.json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 1 if payload["status"] == "fail" else 0
+    print("# Axiom Next Action\n")
+    print(f"Status: **{payload['status'].upper()}**\n")
+    print(f"Recommended action: {payload['recommendedAction']}")
+    print(f"Reason: {payload['reason']}\n")
+    selected = payload.get("selectedTask")
+    if selected:
+        print("## Selected Task\n")
+        print(f"- id: `{selected['id']}`")
+        print(f"- title: {selected['title']}")
+        print(f"- area: {selected['area']}")
+        print(f"- phase: {selected['phase']}")
+    if payload["changedPaths"]:
+        print("\n## Current Change Batch\n")
+        for path in payload["changedPaths"]:
+            print(f"- `{path}`")
+    if payload["blockedTasks"]:
+        print("\n## Blocked Or Approval-Gated Tasks\n")
+        for task in payload["blockedTasks"]:
+            blocked = ", ".join(task.get("blockedBy", [])) or "approval required"
+            print(f"- `{task['id']}` {task['title']}: {blocked}")
+    print("\nBoundary: next-action is planning guidance. It does not approve DSP, publication, merge, listening, or baseline changes.")
+    return 1 if payload["status"] == "fail" else 0
 
 
 def command_surface_lookup() -> dict[str, dict[str, Any]]:
@@ -262,6 +465,135 @@ def ready_check(_: argparse.Namespace) -> int:
         print(f"- {check.status}: {check.name} - {check.detail}")
         failed = failed or check.status == "fail"
     return 1 if failed else 0
+
+
+def local_review_payload(args: argparse.Namespace) -> dict[str, Any]:
+    policy = load_policy()
+    accepted = policy["acceptedBaseline"]
+    system_text = SYSTEM_STATUS.read_text(encoding="utf-8") if SYSTEM_STATUS.exists() else ""
+    changed_paths = git_changed_paths(include_untracked=not args.no_untracked)
+    commands: list[dict[str, Any]] = [
+        command_payload("git diff --check", ["git", "diff", "--check"], timeout=30),
+        command_payload("guard-check", [sys.executable, str(pathlib.Path(__file__).resolve()), "guard-check", "--json"], timeout=60),
+        command_payload("ready-check", [sys.executable, str(pathlib.Path(__file__).resolve()), "ready-check"], timeout=120),
+        command_payload("task-state", [sys.executable, str(pathlib.Path(__file__).resolve()), "task-state", "--json"], timeout=60),
+        command_payload("next-action", [sys.executable, str(pathlib.Path(__file__).resolve()), "next-action", "--json"], timeout=60),
+    ]
+    if not args.skip_knowledge:
+        commands.append(
+            command_payload(
+                "knowledge-sources",
+                [sys.executable, str(pathlib.Path(__file__).resolve()), "knowledge-sources", "--json"],
+                timeout=60,
+            )
+        )
+    if not args.skip_tests:
+        commands.extend(
+            [
+                command_payload(
+                    "python tests",
+                    ["python3", "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"],
+                    timeout=args.test_timeout,
+                ),
+                command_payload(
+                    "node harness tests",
+                    ["npm", "test"],
+                    timeout=args.test_timeout,
+                    cwd=REPO_ROOT / "tools" / "axiom-team",
+                ),
+            ]
+        )
+    best_next_actions = parse_best_next_actions(system_text)
+    if changed_paths:
+        recommended = "Finish validating and reviewing the current local change batch before starting a new DSP or publication step."
+    elif best_next_actions:
+        recommended = best_next_actions[0]
+    else:
+        recommended = "Run status-summary and inspect docs/system-status.md before choosing work."
+    return {
+        "acceptedBaseline": {
+            "version": accepted["version"],
+            "path": accepted["path"],
+            "sha256": accepted["sha256"],
+            "qualificationDocument": accepted["qualificationDocument"],
+        },
+        "gitStatus": git_status(),
+        "changedPaths": changed_paths,
+        "activeCandidate": section(system_text, "Active Candidate") or "Unknown.",
+        "currentOpenInvestigation": section(system_text, "Current Open Investigation") or "Unknown.",
+        "bestNextActions": best_next_actions,
+        "recommendedNextAction": recommended,
+        "commands": commands,
+        "status": "fail" if any(command["status"] == "fail" for command in commands) else "pass",
+        "boundaries": [
+            "local-review is non-JDSP and does not create candidates",
+            "passing checks do not approve publication, merge, or accepted-baseline promotion",
+            "private Knowledge paths remain hidden by default",
+        ],
+    }
+
+
+def one_line(text: str, limit: int = 220) -> str:
+    compact = " ".join(text.split())
+    return compact if len(compact) <= limit else compact[: limit - 3] + "..."
+
+
+def local_review_markdown(payload: dict[str, Any]) -> str:
+    accepted = payload["acceptedBaseline"]
+    lines = [
+        "# Axiom Local Review",
+        "",
+        f"Status: **{payload['status'].upper()}**",
+        "",
+        "## Baseline",
+        "",
+        f"- accepted baseline: `{accepted['version']}`",
+        f"- accepted script: `{accepted['path']}`",
+        f"- accepted SHA-256: `{accepted['sha256']}`",
+        f"- qualification: `{accepted['qualificationDocument']}`",
+        "",
+        "Git status:",
+        "",
+        "```text",
+        payload["gitStatus"],
+        "```",
+        "",
+        "## Active Candidate",
+        "",
+        one_line(payload["activeCandidate"], 500),
+        "",
+        "## Current Open Investigation",
+        "",
+        one_line(payload["currentOpenInvestigation"], 700),
+        "",
+        "## Changed Paths",
+        "",
+    ]
+    if payload["changedPaths"]:
+        lines.extend(f"- `{path}`" for path in payload["changedPaths"])
+    else:
+        lines.append("- none")
+    lines.extend(["", "## Checks", "", "| Check | Status | Detail |", "| --- | --- | --- |"])
+    for command in payload["commands"]:
+        detail = command["stderr"] or command["stdout"] or f"return code {command['returnCode']}"
+        lines.append(f"| {command['name']} | {command['status'].upper()} | {one_line(detail).replace('|', '/')} |")
+    lines.extend(["", "## Recommended Next Action", "", payload["recommendedNextAction"], "", "## Boundaries", ""])
+    lines.extend(f"- {boundary}" for boundary in payload["boundaries"])
+    lines.append("")
+    return "\n".join(lines)
+
+
+def local_review(args: argparse.Namespace) -> int:
+    payload = local_review_payload(args)
+    if args.json_output:
+        args.json_output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    if args.markdown_output:
+        args.markdown_output.write_text(local_review_markdown(payload), encoding="utf-8")
+    if args.json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+    else:
+        print(local_review_markdown(payload).rstrip())
+    return 1 if payload["status"] == "fail" else 0
 
 
 def role_summary(role: str) -> str:
@@ -730,9 +1062,27 @@ def main() -> int:
     sub.add_parser("status-summary").set_defaults(func=status_summary)
     sub.add_parser("ready-check").set_defaults(func=ready_check)
 
+    local = sub.add_parser("local-review")
+    local.add_argument("--json", action="store_true")
+    local.add_argument("--json-output", type=pathlib.Path)
+    local.add_argument("--markdown-output", type=pathlib.Path)
+    local.add_argument("--skip-tests", action="store_true")
+    local.add_argument("--skip-knowledge", action="store_true")
+    local.add_argument("--no-untracked", action="store_true")
+    local.add_argument("--test-timeout", type=int, default=180)
+    local.set_defaults(func=local_review)
+
     surface = sub.add_parser("command-surface")
     surface.add_argument("--json", action="store_true")
     surface.set_defaults(func=command_surface)
+
+    tasks = sub.add_parser("task-state")
+    tasks.add_argument("--json", action="store_true")
+    tasks.set_defaults(func=task_state)
+
+    next_parser = sub.add_parser("next-action")
+    next_parser.add_argument("--json", action="store_true")
+    next_parser.set_defaults(func=next_action)
 
     profiles = sub.add_parser("agent-profiles")
     profiles.add_argument("--role")

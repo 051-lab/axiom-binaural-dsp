@@ -958,3 +958,179 @@ template for the Sub Harmonics follow-up.
   without `.12`.
 - If a repeatable defect is heard, draft a narrow `.12` hypothesis before any
   EEL work.
+
+## Run 026 - Confirmatory `.11` Sub Harmonics Map
+
+Date: 2026-06-09
+Status: Completed
+Scope: Confirmatory real-JDSP map of accepted `.11` at `+4`, `+10`, and
+`+12 dB` Sub Harmonics using the existing investigation and local material
+filter.
+
+### What Was Implemented
+
+- Ran the documented `map-sub-gain` command for
+  `20260603T004349-post-acceptance-v4-1-4-1-0d309b`.
+- Used the accepted `src/axiom_binaural_dsp_v4.1.4.11.eel` file and temporary
+  external slider fixtures only.
+- Updated `docs/sub-harmonics-follow-up-v4.1.4.11.md` with the repo-safe
+  rerun summary.
+- Updated `docs/sub-harmonics-interpretation-v4.1.4.11.md` and
+  `docs/system-status.md` so the latest result is discoverable.
+
+### Why It Matters
+
+- The rerun confirmed that normal material stayed unclipped through `+12 dB`.
+- The map still failed, but the hard failure was the default `+4 dB`
+  dense-electronic repeatability qualification, not normal-material clipping.
+- Elevated `+10 dB` and `+12 dB` again showed repeatable RMS retreat on
+  hip-hop/trap-sub and bass-light material.
+- The engineering decision remains unchanged: keep `.11` accepted, do not
+  create `.12` yet, and use focused listening to decide whether the measured
+  retreat is audible as a real defect.
+
+### Validation
+
+- Real-JDSP map completed and wrote a full local aggregate report.
+- Documentation-only repo change.
+- No EEL DSP scripts changed.
+- No `.12` candidate was created.
+
+### Next Recommended Work
+
+- Perform the accepted `.11` focused listening pass at `+4`, `+10`, and
+  `+12 dB`.
+- Fill and validate the local listening record.
+- Create a `.12` hypothesis only if listening finds a repeatable
+  normal-material defect.
+
+## Run 027 - Filtered Sub Harmonics A/B Listening Packages
+
+Date: 2026-06-09
+Status: Completed
+Scope: Tooling and local package workflow for accepted `.11` Sub Harmonics
+listening at `+4` versus `+10` and `+4` versus `+12`.
+
+### What Was Implemented
+
+- Added `--include-regex` and `--exclude-regex` filters to
+  `scripts/build_axiom_ab_listening_package.py`.
+- Added API and CLI test coverage for filtered package selection.
+- Updated `docs/ab-listening-packages.md` with the filter workflow.
+- Updated `docs/tool-inventory.md` to mention the A/B package filters.
+- Updated `docs/sub-harmonics-listening-target-v4.1.4.11.md` with optional
+  local package commands for the Sub Harmonics listening pass.
+- Updated `docs/task-backlog.md` so `AX-TASK-022` reflects the prepared local
+  A/B package workflow.
+- Built local filtered packages from the completed `.11` Sub Harmonics map:
+  `+4` versus `+10` and `+4` versus `+12`, excluding flawed stress material.
+
+### Why It Matters
+
+- The listening step can now use blinded A/B files with gain recommendations
+  instead of relying only on manual slider switching.
+- Intentional flawed-source stress material can be excluded from
+  normal-material acceptance listening without copying or pruning capture
+  trees by hand.
+- The local packages directly target the measured concern: whether elevated
+  Sub Harmonics settings sound quieter, softer, blurrier, or more fatiguing
+  after level handling.
+
+### Validation
+
+- `python3 -m unittest tests.test_build_axiom_ab_listening_package`
+- `python3 -m unittest discover -s tests -p 'test_*.py'`
+- Generated `+4` versus `+10` package: `PASS_WITH_WARNINGS`
+- Generated `+4` versus `+12` package: `PASS_WITH_WARNINGS`
+- No EEL DSP scripts changed.
+- No `.12` candidate was created.
+
+### Next Recommended Work
+
+- Open the local listening package folder and audition the blinded A/B pairs.
+- Fill and validate the local listening record.
+- Treat any result as listening evidence for the `.11` investigation, not as
+  automatic `.12` approval.
+
+## Run 028 - Consolidated Local Review Helper
+
+Date: 2026-06-09
+Status: Completed
+Scope: Initial implementation of `AX-TASK-026`, a safe non-JDSP local review
+snapshot for Axiom Codex sessions.
+
+### What Was Implemented
+
+- Added `local-review` to `tools/axiom-codex/axiom_codex.py`.
+- Registered `local-review` in `tools/axiom-codex/command_surface.json`.
+- Added helper tests for command registration, JSON output, Markdown output,
+  report-file writing, and non-JDSP boundaries.
+- Updated `docs/task-backlog.md` to mark `AX-TASK-026` as initially complete.
+- Updated `docs/tool-inventory.md` and `docs/codex-operating-guide.md` so the
+  command is discoverable.
+
+### Why It Matters
+
+- A fresh Codex session can now run one command to collect git state, accepted
+  baseline identity, changed paths, guard-check, ready-check, Knowledge audit,
+  Python tests, Node harness tests, and a recommended next action.
+- The command is intentionally non-JDSP, so it can be used for orientation and
+  review without touching the audio route.
+- JSON and Markdown report output make it suitable for future dashboards,
+  handoffs, or PR summaries.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper`
+- Command-surface JSON validation.
+- `python3 tools/axiom-codex/axiom_codex.py local-review`
+- `python3 tools/axiom-codex/axiom_codex.py local-review --skip-tests --skip-knowledge`
+
+### Next Recommended Work
+
+- Use `local-review` as the standard orientation command before larger Axiom
+  development batches.
+- Consider a machine-readable task-state file next, so `local-review` and a
+  future `next-action` command can reason beyond Markdown tables.
+
+## Run 029 - Machine-Readable Task State And Next Action
+
+Date: 2026-06-09
+Status: Completed
+Scope: Initial implementation of `AX-TASK-027` and `AX-TASK-028`, a structured
+task-state layer and command-backed next-action helper for Axiom Codex planning.
+
+### What Was Implemented
+
+- Added `tools/axiom-codex/task_state.json` as the machine-readable task index.
+- Added `task-state` to `tools/axiom-codex/axiom_codex.py`.
+- Added `next-action` to `tools/axiom-codex/axiom_codex.py`.
+- Registered `task-state` in `tools/axiom-codex/command_surface.json`.
+- Registered `next-action` in `tools/axiom-codex/command_surface.json`.
+- Added task-state validation to `local-review`.
+- Added next-action planning output to `local-review`.
+- Added helper tests for task-state validation, next-action output, and CLI
+  behavior.
+- Updated `docs/task-backlog.md`, `docs/tool-inventory.md`, and
+  `docs/codex-operating-guide.md`.
+
+### Why It Matters
+
+- Agents can now inspect task phase, blocked state, approval requirements, and
+  recommended next actions without parsing only Markdown tables.
+- `next-action` can now recommend safe work while respecting dirty working
+  trees, listening blockers, and explicit approval gates.
+- The task metadata keeps `.11` Sub Harmonics correctly marked as blocked on
+  human listening while keeping Knowledge concept-note work available as a safe
+  Agentic Layer next step.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper`
+- `python3 tools/axiom-codex/axiom_codex.py task-state`
+- `python3 tools/axiom-codex/axiom_codex.py next-action --json`
+
+### Next Recommended Work
+
+- Use `local-review`, `task-state`, and `next-action` as the standard Agentic
+  Layer orientation sequence.

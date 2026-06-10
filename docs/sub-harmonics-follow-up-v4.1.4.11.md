@@ -47,6 +47,53 @@ The failure came from evidence quality and investigation findings:
 - flawed-source clipping remains an investigation stress behavior, not a
   normal-material rejection.
 
+## 2026-06-09 Confirmatory Rerun
+
+A confirmatory rerun used the same accepted `.11` EEL, JDSP limiter setting,
+slider points, repetition count, and material filter:
+
+```bash
+node tools/axiom-team/bin/axiom-team.mjs map-sub-gain \
+  20260603T004349-post-acceptance-v4-1-4-1-0d309b \
+  --slider-db 4 --slider-db 10 --slider-db 12 \
+  --label-regex 'electronic|hip hop|bass|flawed'
+```
+
+The rerun again recorded `FAIL`, with the same engineering interpretation:
+
+- normal material stayed unclipped through `+12 dB`;
+- the hard failure was a repeatability qualification failure at the accepted
+  `+4 dB` control point on the dense electronic item;
+- flawed-source clipping remained confined to the declared flawed-source
+  stress material;
+- terminal-pressure observations were driven by the flawed-source stress
+  material;
+- elevated `+10 dB` and `+12 dB` settings again showed repeatable RMS retreat
+  on hip-hop/trap-sub and bass-light material.
+
+The rerun's range result was:
+
+```text
+Highest tested slider setting without normal-material clipping: +12 dB
+Slider settings with normal-material clipped samples: none
+Slider settings reaching terminal-pressure observation zone: +4, +10, +12 dB
+Slider settings with repeatable RMS retreat beyond -1 dB versus default: +10, +12 dB
+```
+
+RMS-retreat observations from the rerun:
+
+| Slider | Material class | RMS change versus +4 dB |
+| ---: | --- | ---: |
+| +10 dB | hip-hop/trap-sub | -2.258 dB |
+| +10 dB | bass-light control | -2.980 dB |
+| +12 dB | hip-hop/trap-sub | -2.861 dB |
+| +12 dB | bass-light control | -3.960 dB |
+
+This strengthens the conclusion that the open question is not normal-material
+clipping through `+12 dB`; it is whether elevated Sub Harmonics settings create
+an audible user-control tradeoff such as practical loudness retreat, kick
+softening, bass blur, or fatigue.
+
 ## Measurement Summary
 
 | Slider | Material | Highest peak (dBFS) | Mean RMS (dBFS) | Clipped samples | Qualified scalar metrics |

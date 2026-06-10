@@ -17,7 +17,8 @@ scripts/build_axiom_ab_listening_package.py \
   /tmp/axiom-captures/accepted \
   /tmp/axiom-captures/candidate \
   /tmp/axiom-ab-listening-vNEXT \
-  --label axiom-vNEXT-phone-listening
+  --label axiom-vNEXT-phone-listening \
+  --exclude-regex 'flawed'
 ```
 
 The reference and candidate folders must contain matching `.wav` filenames. The
@@ -27,6 +28,10 @@ output folder contains:
 - `ab-listening-package.md`;
 - `audio/<pair>/A.wav`;
 - `audio/<pair>/B.wav`.
+
+Use `--include-regex` and `--exclude-regex` to build focused packages from a
+larger capture tree, such as excluding intentionally flawed stress material
+from acceptance listening.
 
 ## Rules
 

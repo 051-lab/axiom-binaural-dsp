@@ -40,6 +40,12 @@ Codex selects validation based on risk:
 
 - Documentation-only: `git diff --check` and link/readability review.
 - Tooling: relevant unit tests plus syntax checks.
+- Whole-system local review: `python3 tools/axiom-codex/axiom_codex.py local-review`
+  for the standard non-JDSP snapshot.
+- Agentic planning state: `python3 tools/axiom-codex/axiom_codex.py task-state`
+  to validate the machine-readable task index.
+- Next-step planning: `python3 tools/axiom-codex/axiom_codex.py next-action`
+  for a safe recommendation that respects task blockers and approval gates.
 - EEL static safety: `scripts/validate_axiom_static.sh` on the relevant script.
 - Candidate work: candidate readiness, scoped qualification, real-JDSP gates,
   and a listening package.

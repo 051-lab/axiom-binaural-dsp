@@ -41,6 +41,16 @@ def collect_wavs(root: Path) -> dict[str, Path]:
     }
 
 
+def filter_names(names: list[str], include_regex: str = "", exclude_regex: str = "") -> list[str]:
+    include = re.compile(include_regex) if include_regex else None
+    exclude = re.compile(exclude_regex) if exclude_regex else None
+    return [
+        name for name in names
+        if (include is None or include.search(name))
+        and (exclude is None or not exclude.search(name))
+    ]
+
+
 def channel_clips(report: dict[str, Any]) -> int:
     return int(report["channels"]["combined"]["clipped_samples"])
 
@@ -151,16 +161,19 @@ def build_package(
     copy_audio: bool = True,
     loudness_tolerance_db: float = DEFAULT_LOUDNESS_TOLERANCE_DB,
     true_peak_ceiling_dbfs: float = DEFAULT_TRUE_PEAK_CEILING_DBFS,
+    include_regex: str = "",
+    exclude_regex: str = "",
 ) -> dict[str, Any]:
     reference_files = collect_wavs(reference_dir)
     candidate_files = collect_wavs(candidate_dir)
-    matched = sorted(set(reference_files) & set(candidate_files))
+    all_matched = sorted(set(reference_files) & set(candidate_files))
+    matched = filter_names(all_matched, include_regex, exclude_regex)
     missing_candidates = sorted(set(reference_files) - set(candidate_files))
     missing_references = sorted(set(candidate_files) - set(reference_files))
     errors = []
     warnings = []
     if not matched:
-        errors.append("no matching WAV filenames found")
+        errors.append("no matching WAV filenames found after filters")
     if missing_candidates:
         errors.append(f"missing candidate WAVs for: {', '.join(missing_candidates)}")
     if missing_references:
@@ -194,6 +207,8 @@ def build_package(
         "output_dir": str(output_dir),
         "copy_audio": copy_audio,
         "random_seed": seed,
+        "include_regex": include_regex,
+        "exclude_regex": exclude_regex,
         "pair_count": len(pairs),
         "missing_candidates": missing_candidates,
         "missing_references": missing_references,
@@ -256,6 +271,8 @@ def main() -> int:
     parser.add_argument("--no-copy-audio", action="store_true")
     parser.add_argument("--loudness-tolerance-db", type=float, default=DEFAULT_LOUDNESS_TOLERANCE_DB)
     parser.add_argument("--true-peak-ceiling-dbfs", type=float, default=DEFAULT_TRUE_PEAK_CEILING_DBFS)
+    parser.add_argument("--include-regex", default="", help="only package matching relative WAV paths")
+    parser.add_argument("--exclude-regex", default="", help="exclude matching relative WAV paths")
     args = parser.parse_args()
 
     try:
@@ -268,6 +285,8 @@ def main() -> int:
             copy_audio=not args.no_copy_audio,
             loudness_tolerance_db=args.loudness_tolerance_db,
             true_peak_ceiling_dbfs=args.true_peak_ceiling_dbfs,
+            include_regex=args.include_regex,
+            exclude_regex=args.exclude_regex,
         )
     except PackageError as exc:
         print(f"error: {exc}")

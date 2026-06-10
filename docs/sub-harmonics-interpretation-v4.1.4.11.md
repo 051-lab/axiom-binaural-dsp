@@ -57,6 +57,12 @@ The evidence narrows the concern to elevated-control feel rather than
 normal-material clipping. A candidate would be premature unless listening
 confirms that the measured RMS retreat is audible as a musical defect.
 
+A 2026-06-09 confirmatory rerun did not change this decision. It again found
+no normal-material clipping through `+12 dB`, repeated the default `+4 dB`
+dense-electronic measurement qualification failure, and repeated the elevated
+`+10 dB`/`+12 dB` RMS-retreat concern on hip-hop/trap-sub and bass-light
+material.
+
 Keep these boundaries:
 
 - no accepted or historical EEL edits;

@@ -1,6 +1,6 @@
 # Axiom Tool Inventory
 
-Last updated: 2026-06-07
+Last updated: 2026-06-09
 
 This inventory maps the repository's operational tools so humans and agents can
 choose the right command without guessing. It is descriptive, not an execution
@@ -21,14 +21,14 @@ the artifact is safe to commit.
 | `scripts/validate_axiom_static.sh` | Static EEL2/JDSP safety gate for reserved constants, forbidden APIs, STFT signatures, final output assignment, and version-specific invariants. Defaults to accepted `.11`. | No | No | Console only. |
 | `scripts/hot_reload_liveprog.sh` | Load a selected EEL script into JDSP Liveprog, normalize host settings, update `axiom_current.eel`, save a preset, and restore the accepted limiter threshold if JDSP resets it during preset save. Defaults to accepted `.11`. | Yes | No | Updates JDSP config, preset files, and user Liveprog symlink outside repo. |
 | `scripts/build_android_validation_package.py` | Build a local RootlessJamesDSP validation package with scripts, SHA-256 hashes, checklist, and listening template. | No | No | Package output belongs outside repo unless sanitized for release. |
-| `scripts/build_axiom_ab_listening_package.py` | Build a local blinded A/B listening package with loudness-proxy gain recommendations from matched WAV folders. | No | No | Package output belongs outside repo because it may contain private captures. |
+| `scripts/build_axiom_ab_listening_package.py` | Build a local blinded A/B listening package with loudness-proxy gain recommendations from matched WAV folders; supports include/exclude filters for focused package selection. | No | No | Package output belongs outside repo because it may contain private captures. |
 | `scripts/build_device_readiness_package.py` | Build a local route-by-route checklist package from the device matrix and accepted script hash. | No | No | Package output belongs outside repo because it may contain private device names. |
 | `scripts/evaluate_axiom_candidate_readiness.py` | Combine accepted-baseline hash, strict corpus metadata, and strict device-matrix checks before another sound-changing candidate. | No | No | JSON/Markdown reports belong outside repo unless summarized. |
 | `scripts/audit_windows_audio_endpoints.py` | Snapshot Windows audio endpoint status and the active default render endpoint from WSL, emit route-class hints, and optionally fail unless the default route matches speaker, wired/USB, or Bluetooth. | No | No | JSON/Markdown reports belong outside repo unless sanitized. |
 | `scripts/qualify_windows_default_route.py` | Build a local evidence report for a Windows default-output route by requiring the route class, restarting the managed JDSP route, hot-reloading accepted `.11`, verifying host settings, and playing a probe for user confirmation. | Yes | No | Output directory belongs outside repo because it may contain private device names. |
 | `scripts/axiom_team.sh` | Launch the isolated Pi engineering harness with Axiom-specific tools and policy. | Indirect | No | Harness state remains under local state roots. |
 | `tools/install_axiom_codex_skill.py` | Preview or install the repo-tracked Axiom Codex skill into `~/.codex/skills/axiom-engineering`. | No | No | Local install destination is outside repo and requires explicit `--install`. |
-| `tools/axiom-codex/axiom_codex.py` | Safe Codex-side orchestration helpers for status, ready checks, command surface discovery, guard preflights, role profiles, multi-role review scaffolds, Knowledge search/source audits, Pi handoff briefs, and skill behavior eval fixtures. | No | No | Console output only; private Knowledge paths are hidden by default; guard findings block unsafe publication scope but do not approve release. |
+| `tools/axiom-codex/axiom_codex.py` | Safe Codex-side orchestration helpers for status, local review snapshots, task-state validation, next-action planning, ready checks, command surface discovery, guard preflights, role profiles, multi-role review scaffolds, Knowledge search/source audits, Pi handoff briefs, and skill behavior eval fixtures. | No | No | Console output only unless report output flags are provided; private Knowledge paths are hidden by default; guard findings block unsafe publication scope but do not approve release. |
 
 ## Offline Analysis And Fixture Inputs
 

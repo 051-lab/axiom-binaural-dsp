@@ -55,6 +55,28 @@ class BuildAxiomAbListeningPackageTests(unittest.TestCase):
         self.assertEqual(report["status"], "fail")
         self.assertTrue(any("missing candidate WAVs" in error for error in report["errors"]))
 
+    def test_filters_package_only_selected_matching_wavs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reference = root / "reference"
+            candidate = root / "candidate"
+            write_wav(reference / "normal" / "render_1.wav", 0.1)
+            write_wav(candidate / "normal" / "render_1.wav", 0.1)
+            write_wav(reference / "flawed" / "render_1.wav", 0.1)
+            write_wav(candidate / "flawed" / "render_1.wav", 0.1)
+            report = ab_package.build_package(
+                reference,
+                candidate,
+                root / "package",
+                include_regex=r"render_1",
+                exclude_regex=r"flawed",
+            )
+        self.assertEqual(report["status"], "pass")
+        self.assertEqual(report["pair_count"], 1)
+        self.assertEqual(report["pairs"][0]["name"], "normal/render_1.wav")
+        self.assertEqual(report["include_regex"], r"render_1")
+        self.assertEqual(report["exclude_regex"], r"flawed")
+
     def test_safety_trim_is_applied_when_matched_candidate_would_exceed_ceiling(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -120,6 +142,41 @@ class BuildAxiomAbListeningPackageTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0)
             self.assertEqual(report["pair_count"], 1)
             self.assertTrue((output / "ab-listening-package.md").is_file())
+
+    def test_cli_applies_include_and_exclude_filters(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reference = root / "reference"
+            candidate = root / "candidate"
+            output = root / "package"
+            write_wav(reference / "normal" / "render_1.wav", 0.1)
+            write_wav(candidate / "normal" / "render_1.wav", 0.1)
+            write_wav(reference / "normal" / "render_2.wav", 0.1)
+            write_wav(candidate / "normal" / "render_2.wav", 0.1)
+            write_wav(reference / "flawed" / "render_1.wav", 0.1)
+            write_wav(candidate / "flawed" / "render_1.wav", 0.1)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(Path(__file__).resolve().parents[1] / "scripts" / "build_axiom_ab_listening_package.py"),
+                    str(reference),
+                    str(candidate),
+                    str(output),
+                    "--include-regex",
+                    r"render_1\.wav$",
+                    "--exclude-regex",
+                    "flawed",
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            report = json.loads((output / "ab-listening-package.json").read_text(encoding="utf-8"))
+            self.assertEqual(result.returncode, 0)
+            self.assertEqual(report["pair_count"], 1)
+            self.assertEqual(report["pairs"][0]["name"], "normal/render_1.wav")
+            self.assertEqual(report["include_regex"], r"render_1\.wav$")
+            self.assertEqual(report["exclude_regex"], "flawed")
 
 
 if __name__ == "__main__":

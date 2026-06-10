@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-06-08
+Last updated: 2026-06-09
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
@@ -62,6 +62,10 @@ Known result:
   failed on a default `+4 dB` dense-electronic repeatability qualification and
   investigation findings for terminal-pressure observations plus elevated
   RMS retreat;
+- a 2026-06-09 confirmatory rerun with the same command repeated the same
+  conclusion: no normal-material clipping through `+12 dB`, `fail` caused by
+  the default dense-electronic repeatability qualification, and elevated
+  RMS-retreat observations at `+10 dB` and `+12 dB`;
 - the summarized evidence record is
   `sub-harmonics-follow-up-v4.1.4.11.md`;
 - the interpretation record is
@@ -70,7 +74,10 @@ Known result:
   practical loudness, bass clarity, limiter pumping, and fatigue;
 - the listening target is
   `sub-harmonics-listening-target-v4.1.4.11.md`, with a local-copy JSON
-  template at `templates/sub-harmonics-listening-record-v4.1.4.11.json`.
+  template at `templates/sub-harmonics-listening-record-v4.1.4.11.json`;
+- filtered local A/B packages can now be generated from completed Sub Harmonics
+  map render folders, excluding flawed stress material from normal-material
+  listening checks.
 
 Current follow-up command, if a confirmatory rerun is needed:
 
@@ -125,10 +132,10 @@ Summary:
 - Candidate readiness is `READY`, but no `.12` candidate is justified yet; the
   completed `.11` Sub Harmonics follow-up produced a listening target, not an
   EEL edit boundary.
-- The 2026-06-08 corrected targeted rerun produced a full report: no
-  normal-material clipping through `+12 dB`, but a failed gate due to default
-  dense-electronic repeatability qualification plus terminal-pressure and
-  elevated RMS-retreat investigation findings.
+- The 2026-06-08 corrected targeted rerun and 2026-06-09 confirmatory rerun
+  both produced full reports: no normal-material clipping through `+12 dB`,
+  but failed gates due to default dense-electronic repeatability qualification
+  plus terminal-pressure and elevated RMS-retreat investigation findings.
 - Listening records now require structured spatial fields for center image,
   lateral spread, localization blur, depth impression, bass-image coupling, and
   route context.
@@ -140,7 +147,8 @@ Summary:
 
 1. Review and merge PR #12 only after explicit approval.
 2. Run focused listening on accepted `.11` using
-   `sub-harmonics-listening-target-v4.1.4.11.md` before proposing `.12`.
+   `sub-harmonics-listening-target-v4.1.4.11.md` and the filtered local A/B
+   packages before proposing `.12`.
 3. Use the structured spatial listening vocabulary for that listening record.
 4. Use Knowledge seed notes to support specific test-design questions, not to
    justify DSP changes by themselves.
