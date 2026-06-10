@@ -32,7 +32,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-022 | Listening package prepared | Close `.11` Sub Harmonics follow-up | Qualification | Updated investigation gate, summarized evidence, and local listening package workflow | The corrected and confirmatory `+4 dB`, `+10 dB`, and `+12 dB` Sub Harmonics maps completed through Pi/JDSP and are summarized in `docs/sub-harmonics-follow-up-v4.1.4.11.md`. `docs/sub-harmonics-interpretation-v4.1.4.11.md` keeps `.11` accepted and blocks `.12` for now. `docs/sub-harmonics-listening-target-v4.1.4.11.md` defines the focused accepted-`.11` listening check, including local filtered A/B package generation. |
 | AX-TASK-023 | Complete | Add structured spatial listening vocabulary | Qualification | Listening-record guidance update | Listening records distinguish center image, lateral spread, localization blur, depth impression, bass-image coupling, fatigue, and route context. |
 | AX-TASK-024 | Complete | Create Knowledge concept notes from seed sources | Knowledge | Short concept notes tied to Axiom questions | Seed bibliography now has focused concept notes for spatial listening vocabulary, elevated bass/headroom tradeoffs, stage isolation, and profile-scope boundaries without copying source text or claiming research proves Axiom behavior. |
-| AX-TASK-025 | Proposed | Review and merge PR #12 | Repository | Merged Codex/Knowledge hardening PR | PR #12 is reviewed, validation remains clean, and merge occurs only after explicit approval. |
+| AX-TASK-025 | Complete | Review and merge PR #12 | Repository | Merged Codex/Knowledge hardening PR | PR #12 was reviewed, validation passed, and the PR was merged after explicit approval. |
 | AX-TASK-026 | Initial implementation complete | Add consolidated local review/check command | Codex | `local-review` helper command | Future full-system reviews can run the standard local evidence snapshot with one safe, non-JDSP command that covers git state, accepted baseline, changed paths, guard-check, ready-check, Knowledge audit, Python tests, Node harness tests, and recommended next action. |
 | AX-TASK-027 | Initial implementation complete | Add machine-readable task state | Codex | `tools/axiom-codex/task_state.json` and `task-state` helper | Agentic planning can validate and summarize task status, blocked state, approval needs, and next actions without parsing only Markdown tables. |
 | AX-TASK-028 | Initial implementation complete | Add next-action helper | Codex | `next-action` helper command | Codex can recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, and approval gates without running JDSP or bypassing human decisions. |
@@ -52,9 +52,9 @@ Recommended next actions:
 5. Run focused accepted-`.11` listening from the filtered `+4` versus `+10`
    and `+4` versus `+12` local A/B packages before proposing a `.12`
    hypothesis.
-6. Address the remaining `AX-TASK-022` and `AX-TASK-025` work before
-   proposing `.12`; use `task-state` and `next-action` as the
-   machine-readable planning source for future helper commands.
+6. Address the remaining `AX-TASK-022` listening work before proposing `.12`;
+   use `task-state` and `next-action` as the machine-readable planning source
+   for future helper commands.
 
 ## Progress Notes
 
@@ -103,6 +103,8 @@ Recommended next actions:
 - `AX-TASK-024` is complete with concept notes under
   `docs/knowledge/concepts/` for spatial vocabulary, elevated bass/headroom
   tradeoffs, stage isolation, and profile-scope boundaries.
+- `AX-TASK-025` is complete: PR #12 merged the Codex/Knowledge hardening and
+  Sub Harmonics follow-up batch after explicit approval.
 
 ## Graduation Checklist For Sound-Changing Work
 

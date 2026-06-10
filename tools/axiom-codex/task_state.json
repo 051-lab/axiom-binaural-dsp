@@ -245,13 +245,13 @@
     },
     {
       "id": "AX-TASK-025",
-      "status": "proposed",
+      "status": "complete",
       "title": "Review and merge PR #12",
       "area": "Repository",
-      "phase": "requires-approval",
+      "phase": "done",
       "requiresApproval": true,
-      "blockedBy": ["explicit-user-approval"],
-      "nextAction": "Review and merge PR #12 only after explicit user approval."
+      "blockedBy": [],
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-026",

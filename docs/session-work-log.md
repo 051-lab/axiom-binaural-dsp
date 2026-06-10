@@ -1172,3 +1172,38 @@ repo-safe Axiom concept notes for test design.
 - Run `next-action` after validation; with `AX-TASK-024` complete, the
   remaining major open items are blocked on human listening or explicit
   approval.
+
+## Run 031 - PR 12 Merge
+
+Date: 2026-06-10
+Status: Completed
+Scope: Approved publication/merge of the Codex hardening, Knowledge, Sub
+Harmonics follow-up, local-review, task-state, and next-action batch.
+
+### What Was Implemented
+
+- Ran `local-review` before publication; it passed.
+- Pushed `codex/axiom-codex-hardening-knowledge` to GitHub.
+- Marked PR #12 ready for review.
+- Merged PR #12 into `main` after explicit user approval.
+- Updated `docs/task-backlog.md` and `tools/axiom-codex/task_state.json` so
+  `AX-TASK-025` is complete.
+
+### Why It Matters
+
+- The Agentic Layer work is now on `main`.
+- `main` now includes the Axiom Codex helper command surface, role profiles,
+  guard checks, skill evals, local review, task-state, next-action planning,
+  Knowledge seed notes, Knowledge concept notes, and the `.11` Sub Harmonics
+  follow-up documentation.
+- The remaining major Axiom task is the `.11` Sub Harmonics listening decision,
+  which still requires human listening rather than automated approval.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py local-review`
+- PR #12 was mergeable and had no GitHub check failures configured.
+
+### Next Recommended Work
+
+- Close `AX-TASK-022` only after actual listening evidence exists.
