@@ -86,11 +86,16 @@ At minimum, record observations for:
 - bass;
 - punch;
 - center image;
+- lateral spread;
+- localization blur;
+- depth impression;
+- bass-image coupling;
 - width;
 - air;
 - harshness;
 - loudness;
 - fatigue;
+- route context;
 - artifacts;
 - overall judgment.
 
@@ -99,7 +104,10 @@ Useful extra notes include:
 - "better but only because louder";
 - "cleaner but less exciting";
 - "wider but center weakened";
+- "wider but source positions blur";
+- "more enveloping but depth collapses";
 - "bass stronger but kick softened";
+- "bass weight detached from the center image";
 - "less harsh but dull";
 - "good on headphones, questionable on speakers".
 

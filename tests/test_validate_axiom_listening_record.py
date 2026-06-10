@@ -52,11 +52,16 @@ def valid_record() -> dict:
             "bass": "Controlled and extended.",
             "punch": "Strong transient hit.",
             "center_image": "Vocal stays centered.",
+            "lateral_spread": "Stage extends past the speakers without pulling the vocal apart.",
+            "localization_blur": "No smeared lead placement.",
+            "depth_impression": "Front-to-back ambience remains believable.",
+            "bass_image_coupling": "Kick and bass weight stay attached to the main image.",
             "width": "Wide without hollow center.",
             "air": "Open but not brittle.",
             "harshness": "No obvious sibilant edge.",
             "loudness": "Comparable after normal listening adjustment.",
             "fatigue": "No short-session fatigue.",
+            "route_context": "Wired Android route, crossfeed disabled.",
             "artifacts": "No muting, crackle, or pumping heard.",
             "overall": "Accepted for this route.",
         },
@@ -89,6 +94,7 @@ class ListeningRecordValidationTests(unittest.TestCase):
         text = listening.markdown(record, validation)
         self.assertIn("Validation: **PASS**", text)
         self.assertIn("center_image", text)
+        self.assertIn("lateral_spread", text)
 
     def test_cli_writes_validation_outputs(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

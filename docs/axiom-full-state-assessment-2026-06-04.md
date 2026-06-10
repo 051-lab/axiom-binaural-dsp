@@ -133,7 +133,7 @@ route is available:
 ```bash
 node tools/axiom-team/bin/axiom-team.mjs map-sub-gain \
   20260603T004349-post-acceptance-v4-1-4-1-0d309b \
-  --slider-db 10 --slider-db 12 \
+  --slider-db 4 --slider-db 10 --slider-db 12 \
   --label-regex 'electronic|hip hop|bass|flawed'
 ```
 

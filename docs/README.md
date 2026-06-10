@@ -13,7 +13,9 @@ DSP. Use this file as the map before opening individual investigation records.
 | [architecture.md](architecture.md) | Current DSP signal chain, processing math, and host ownership model. |
 | [axiom-roadmap.md](axiom-roadmap.md) | Current development roadmap and candidate discipline. |
 | [axiom-system-roadmap.md](axiom-system-roadmap.md) | Product/profile system roadmap for Core, Labs, Knowledge, and Qualification. |
-| [axiom-full-state-assessment-2026-06-04.md](axiom-full-state-assessment-2026-06-04.md) | Current full-system assessment across Core DSP, Qualification, Agentic tooling, Knowledge, and repository housekeeping. |
+| [axiom-full-system-review-2026-06-08.md](axiom-full-system-review-2026-06-08.md) | Current full-system readiness review across Core DSP, Qualification, Pi/JDSP workflow, Codex tooling, Knowledge, documentation, and release posture. |
+| [axiom-full-system-review-2026-06-08.html](axiom-full-system-review-2026-06-08.html) | Rendered HTML copy of the current full-system readiness review. |
+| [axiom-full-state-assessment-2026-06-04.md](axiom-full-state-assessment-2026-06-04.md) | Previous full-system assessment across Core DSP, Qualification, Agentic tooling, Knowledge, and repository housekeeping. |
 | [profile-matrix.md](profile-matrix.md) | Operational matrix for profile status, ownership, allowed changes, and tests. |
 | [axiom-operating-system-implementation-plan.md](axiom-operating-system-implementation-plan.md) | Ordered implementation plan for making the AI development ecosystem operational. |
 | [axiom-agentic-engineering-blueprint.md](axiom-agentic-engineering-blueprint.md) | Living blueprint for native Axiom agents, Codex/Pi handoffs, knowledge use, and approval gates. |
@@ -32,6 +34,7 @@ DSP. Use this file as the map before opening individual investigation records.
 | [knowledge/README.md](knowledge/README.md) | Knowledge bibliography and research-note rules. |
 | [templates/labs-experiment.md](templates/labs-experiment.md) | Markdown template for Labs experiment notes. |
 | [templates/external-review-triage.md](templates/external-review-triage.md) | Markdown template for advisory LLM or human review triage. |
+| [templates/sub-harmonics-listening-record-v4.1.4.11.json](templates/sub-harmonics-listening-record-v4.1.4.11.json) | Local-copy template for the accepted-`.11` Sub Harmonics listening target. |
 
 ## Session Work Log
 
@@ -87,6 +90,9 @@ python3 tools/axiom-codex/axiom_codex.py knowledge-query "search terms"
 | --- | --- |
 | [architecture-decision-v4.1.4.10.md](architecture-decision-v4.1.4.10.md) | Decision record for the `.10` to `.11` promotion and v5 deferral. |
 | [accepted-stress-v4.1.4.10.md](accepted-stress-v4.1.4.10.md) | Dense-material stress behavior that informed the `.11` reserve work. |
+| [sub-harmonics-follow-up-v4.1.4.11.md](sub-harmonics-follow-up-v4.1.4.11.md) | Targeted post-acceptance `.11` Sub Harmonics follow-up and investigation result. |
+| [sub-harmonics-interpretation-v4.1.4.11.md](sub-harmonics-interpretation-v4.1.4.11.md) | No-candidate-yet interpretation and listening target for the `.11` Sub Harmonics follow-up. |
+| [sub-harmonics-listening-target-v4.1.4.11.md](sub-harmonics-listening-target-v4.1.4.11.md) | Focused accepted-`.11` listening target for `+4`, `+10`, and `+12 dB` Sub Harmonics. |
 | [sub-harmonics-map-v4.1.4.10.md](sub-harmonics-map-v4.1.4.10.md) | Elevated Sub Harmonics control-range evidence. |
 | [reserve-law-screen-v4.1.4.10.md](reserve-law-screen-v4.1.4.10.md) | Reserve-law screen and full-manifest `0.500 dB/dB` qualification behind `.11`. |
 | [stage-observability-v4.1.4.10.md](stage-observability-v4.1.4.10.md) | Bass/reserve stage-tap evidence. |

@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-06-04
+Last updated: 2026-06-09
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
@@ -55,20 +55,42 @@ Known result:
   stopped the full sweep before the aggregate report was written;
 - completed partial evidence showed normal material stayed unclipped through
   the completed `+4`, `+6`, `+8`, and partial `+10 dB` cases;
-- the follow-up should use the newer targeted map options and longer timeout
-  before treating this as an audio defect.
+- a 2026-06-08 route reset restored the JDSP capture path and the corrected
+  targeted map completed at `+4`, `+10`, and `+12 dB`;
+- the corrected map still recorded `fail`, but not because of normal-material
+  clipping: normal material stayed unclipped through `+12 dB`, while the gate
+  failed on a default `+4 dB` dense-electronic repeatability qualification and
+  investigation findings for terminal-pressure observations plus elevated
+  RMS retreat;
+- a 2026-06-09 confirmatory rerun with the same command repeated the same
+  conclusion: no normal-material clipping through `+12 dB`, `fail` caused by
+  the default dense-electronic repeatability qualification, and elevated
+  RMS-retreat observations at `+10 dB` and `+12 dB`;
+- the summarized evidence record is
+  `sub-harmonics-follow-up-v4.1.4.11.md`;
+- the interpretation record is
+  `sub-harmonics-interpretation-v4.1.4.11.md`: no `.12` candidate is justified
+  yet; the next step is focused listening around elevated-setting punch,
+  practical loudness, bass clarity, limiter pumping, and fatigue;
+- the listening target is
+  `sub-harmonics-listening-target-v4.1.4.11.md`, with a local-copy JSON
+  template at `templates/sub-harmonics-listening-record-v4.1.4.11.json`;
+- filtered local A/B packages can now be generated from completed Sub Harmonics
+  map render folders, excluding flawed stress material from normal-material
+  listening checks.
 
-Recommended follow-up:
+Current follow-up command, if a confirmatory rerun is needed:
 
 ```bash
 node tools/axiom-team/bin/axiom-team.mjs map-sub-gain \
   20260603T004349-post-acceptance-v4-1-4-1-0d309b \
-  --slider-db 10 --slider-db 12 \
+  --slider-db 4 --slider-db 10 --slider-db 12 \
   --label-regex 'electronic|hip hop|bass|flawed'
 ```
 
-Run this only when the JDSP route is available and no other real-host
-measurement is active.
+Run this only when the JDSP capture route is available and no other real-host
+measurement is active. Targeted maps must include the accepted `+4 dB` default
+so elevated settings can be compared to the baseline control point.
 
 ## Operating-System Foundation
 
@@ -89,8 +111,8 @@ PR #10 as commit `c498688`.
 | Pi runbooks | merged | `pi-runbooks.md` |
 | Session work log PDF workflow | merged | `session-work-log.md`, `session-work-log.pdf` |
 | Agentic engineering blueprint | local v1 source-ready | `axiom-agentic-engineering-blueprint.md` |
-| Axiom Codex skill source | local v1 source-ready | `../tools/codex-skills/axiom-engineering/` |
-| Axiom Codex helper CLI | local v1 source-ready | `../tools/axiom-codex/axiom_codex.py` |
+| Axiom Codex skill | local v1 installed | `~/.codex/skills/axiom-engineering` from `../tools/codex-skills/axiom-engineering/` |
+| Axiom Codex helper CLI | local v2 source-ready | `../tools/axiom-codex/axiom_codex.py` |
 
 These docs and templates are workflow infrastructure. They do not change DSP
 behavior. Larger product lanes such as Axiom Reference, Immersive, Night, and
@@ -98,28 +120,38 @@ Studio Path are defined but not built as official products.
 
 ## Latest Assessment
 
-The current full-system assessment is
-`axiom-full-state-assessment-2026-06-04.md`.
+The current full-system readiness review is
+`axiom-full-system-review-2026-06-08.md`.
 
 Summary:
 
 - `v4.1.4.11` remains the accepted Core baseline.
-- The local validation snapshot passed static EEL, Python unit, Pi harness,
-  doctor, strict corpus metadata, candidate readiness, Codex helper readiness,
-  and whitespace checks.
-- Candidate readiness is available for a future scoped hypothesis, but no
-  `.12` candidate is currently justified.
-- The local Axiom Codex skill/helper layer is source-ready but not installed.
-- Axiom Knowledge has safe structure and needs lawful source-note population.
+- Full Python tests passed with 170 tests.
+- Pi doctor, strict corpus metadata, candidate readiness, Codex helper
+  readiness, guard checks, skill evals, and Knowledge source audit passed.
+- Candidate readiness is `READY`, but no `.12` candidate is justified yet; the
+  completed `.11` Sub Harmonics follow-up produced a listening target, not an
+  EEL edit boundary.
+- The 2026-06-08 corrected targeted rerun and 2026-06-09 confirmatory rerun
+  both produced full reports: no normal-material clipping through `+12 dB`,
+  but failed gates due to default dense-electronic repeatability qualification
+  plus terminal-pressure and elevated RMS-retreat investigation findings.
+- Listening records now require structured spatial fields for center image,
+  lateral spread, localization blur, depth impression, bass-image coupling, and
+  route context.
+- Draft PR #12 is open and clean for the Codex/Knowledge hardening batch.
+- Axiom Knowledge has six local-source-backed seed notes and a passing source
+  audit.
 
 ## Current Best Next Actions
 
-1. Review the full-system assessment and local agentic/docs batch.
-2. Commit/publish the local docs/tooling batch when the user approves.
-3. Install the local Axiom Codex skill only after explicit approval.
-4. Rerun the targeted `.11` Sub Harmonics map if the JDSP route is available.
-5. Build concrete Knowledge or Labs examples only after the first real source
-   note or experiment exists.
+1. Review and merge PR #12 only after explicit approval.
+2. Run focused listening on accepted `.11` using
+   `sub-harmonics-listening-target-v4.1.4.11.md` and the filtered local A/B
+   packages before proposing `.12`.
+3. Use the structured spatial listening vocabulary for that listening record.
+4. Use Knowledge seed notes to support specific test-design questions, not to
+   justify DSP changes by themselves.
 
 ## Refresh Commands
 

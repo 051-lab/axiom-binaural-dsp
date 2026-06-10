@@ -142,6 +142,9 @@ material using temporary accepted-baseline fixtures while holding the accepted
 host configuration fixed. With no options, it renders `+4`, `+6`, `+8`, `+10`,
 and `+12 dB`. Use repeated `--slider-db` values for targeted follow-up, and
 `--label-regex` when a shorter dense-material or stress-class map is enough.
+Targeted maps must include the accepted `+4 dB` default comparison point; the
+Node harness prepends it when omitted, while direct script calls must include it
+explicitly.
 It distinguishes a broken default baseline from an elevated-control boundary:
 default clipping or unreliable measurements fail, while elevated clipping is
 recorded as a tested usable-range limit that can justify a narrowly scoped

@@ -131,7 +131,7 @@ Then choose the narrow measurement:
 
 ```bash
 node tools/axiom-team/bin/axiom-team.mjs stress-accepted <run-id>
-node tools/axiom-team/bin/axiom-team.mjs map-sub-gain <run-id> --slider-db 10 --slider-db 12 --label-regex 'electronic|hip hop|bass|flawed'
+node tools/axiom-team/bin/axiom-team.mjs map-sub-gain <run-id> --slider-db 4 --slider-db 10 --slider-db 12 --label-regex 'electronic|hip hop|bass|flawed'
 node tools/axiom-team/bin/axiom-team.mjs stage-observability <run-id>
 node tools/axiom-team/bin/axiom-team.mjs audit-stft <run-id>
 node tools/axiom-team/bin/axiom-team.mjs audit-width-mono <run-id>

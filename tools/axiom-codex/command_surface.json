@@ -1,0 +1,334 @@
+{
+  "schemaVersion": 1,
+  "commands": [
+    {
+      "name": "status-summary",
+      "trigger": "$axiom-engineering status inspection",
+      "nativeAlias": "/axiom-status",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py status-summary",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Summarize accepted baseline, active candidate, current investigation, git state, and DSP/script diff count.",
+      "inputs": [],
+      "outputs": [
+        "accepted baseline policy anchor",
+        "active candidate section",
+        "current open investigation section",
+        "safe next step"
+      ],
+      "boundaries": [
+        "read-only",
+        "does not create candidates",
+        "does not run JDSP measurements"
+      ]
+    },
+    {
+      "name": "ready-check",
+      "trigger": "$axiom-engineering ready check",
+      "nativeAlias": "/axiom-ready",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py ready-check",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Run lightweight local checks for whitespace, helper syntax, accepted baseline presence, command surface, profiles, and eval fixtures.",
+      "inputs": [],
+      "outputs": [
+        "pass/fail check list",
+        "helper compile status",
+        "DSP/script diff guard"
+      ],
+      "boundaries": [
+        "static/docs/tooling readiness only",
+        "not a release gate",
+        "not a listening or JDSP qualification result"
+      ]
+    },
+    {
+      "name": "local-review",
+      "trigger": "$axiom-engineering local review",
+      "nativeAlias": "/axiom-local-review",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py local-review",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Run one non-JDSP local evidence snapshot covering git state, accepted baseline, changed paths, guard-check, ready-check, optional Knowledge audit, Python tests, Node harness tests, and recommended next action.",
+      "inputs": [
+        "optional --skip-tests",
+        "optional --skip-knowledge",
+        "optional --json",
+        "optional report output paths"
+      ],
+      "outputs": [
+        "local review Markdown or JSON",
+        "check status table",
+        "recommended next action",
+        "optional report files"
+      ],
+      "boundaries": [
+        "non-JDSP local review only",
+        "does not create candidates",
+        "does not approve publication, merge, or accepted-baseline promotion"
+      ]
+    },
+    {
+      "name": "guard-check",
+      "trigger": "$axiom-engineering guard check",
+      "nativeAlias": "/axiom-guard",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py guard-check",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Preflight changed paths and added lines for accepted-baseline edits, EEL script scope, policy changes, private artifacts, credentials, manifests, and private path leaks.",
+      "inputs": [
+        "optional explicit path list"
+      ],
+      "outputs": [
+        "pass/fail findings",
+        "guardrail boundary reminder"
+      ],
+      "boundaries": [
+        "blocks known unsafe publication scope",
+        "does not approve safe-looking changes",
+        "does not replace human approval gates"
+      ]
+    },
+    {
+      "name": "command-surface",
+      "trigger": "$axiom-engineering command surface",
+      "nativeAlias": "/axiom-commands",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py command-surface",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "List the repo-tracked command surface that native aliases or future plugin commands should wrap.",
+      "inputs": [
+        "optional --json"
+      ],
+      "outputs": [
+        "command table",
+        "helper command mapping",
+        "JDSP and approval flags"
+      ],
+      "boundaries": [
+        "registry only",
+        "does not install native slash commands"
+      ]
+    },
+    {
+      "name": "task-state",
+      "trigger": "$axiom-engineering task state",
+      "nativeAlias": "/axiom-tasks",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py task-state",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Validate and summarize the machine-readable Axiom task state used for planning and future next-action computation.",
+      "inputs": [
+        "optional --json"
+      ],
+      "outputs": [
+        "task-state validation checks",
+        "open task table",
+        "blocked and approval-gated task metadata"
+      ],
+      "boundaries": [
+        "planning metadata only",
+        "does not approve DSP or publication decisions",
+        "does not replace the human-readable backlog"
+      ]
+    },
+    {
+      "name": "next-action",
+      "trigger": "$axiom-engineering next action",
+      "nativeAlias": "/axiom-next",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py next-action",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, and approval gates.",
+      "inputs": [
+        "optional --json"
+      ],
+      "outputs": [
+        "recommended action",
+        "selected task",
+        "blocking reason when applicable",
+        "blocked or approval-gated task list"
+      ],
+      "boundaries": [
+        "planning guidance only",
+        "does not run JDSP",
+        "does not approve publication, merge, listening, or baseline changes"
+      ]
+    },
+    {
+      "name": "agent-profiles",
+      "trigger": "$axiom-engineering agent profiles",
+      "nativeAlias": "/axiom-agents",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py agent-profiles",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "List role-specific Codex profile specs or print one profile by role.",
+      "inputs": [
+        "optional --role <profile>"
+      ],
+      "outputs": [
+        "profile table",
+        "individual profile source"
+      ],
+      "boundaries": [
+        "Codex planning and review scope only",
+        "Pi role prompts remain the execution-layer source"
+      ]
+    },
+    {
+      "name": "agent-review",
+      "trigger": "$axiom-engineering role review",
+      "nativeAlias": "/axiom-review",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py agent-review --topic \"...\"",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Create a multi-role review scaffold grounded in the local Pi role docs.",
+      "inputs": [
+        "topic",
+        "optional role list"
+      ],
+      "outputs": [
+        "role findings scaffold",
+        "evidence-needed section",
+        "decision choices"
+      ],
+      "boundaries": [
+        "scaffold is not evidence until completed",
+        "findings must cite concrete repo state or measurement artifacts"
+      ]
+    },
+    {
+      "name": "knowledge-query",
+      "trigger": "$axiom-engineering knowledge query",
+      "nativeAlias": "/axiom-knowledge",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py knowledge-query \"query text\"",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Search repo-safe Knowledge notes and optional local-only source metadata without exposing private paths by default.",
+      "inputs": [
+        "query text",
+        "optional local index",
+        "optional result limit"
+      ],
+      "outputs": [
+        "repo-safe note matches",
+        "local source metadata matches",
+        "Knowledge boundary reminder"
+      ],
+      "boundaries": [
+        "Knowledge can inform tests",
+        "Knowledge is not proof of Axiom behavior",
+        "private paths hidden unless explicitly requested"
+      ]
+    },
+    {
+      "name": "knowledge-sources",
+      "trigger": "$axiom-engineering knowledge sources",
+      "nativeAlias": "/axiom-sources",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py knowledge-sources",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Audit the local-only Knowledge source index, local file existence, and matching repo-safe notes without exposing private paths by default.",
+      "inputs": [
+        "optional local index",
+        "optional --json",
+        "optional --show-private-paths"
+      ],
+      "outputs": [
+        "source table",
+        "index checks",
+        "local file and repo note status"
+      ],
+      "boundaries": [
+        "does not copy PDFs into git",
+        "does not expose private paths by default",
+        "does not turn research into Axiom evidence"
+      ]
+    },
+    {
+      "name": "pi-handoff",
+      "trigger": "$axiom-engineering delegate to Pi",
+      "nativeAlias": "/axiom-pi",
+      "layer": "Codex to Pi handoff",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py pi-handoff",
+      "piCommand": "node tools/axiom-team/bin/axiom-team.mjs <mission>",
+      "touchesJDSP": true,
+      "requiresApproval": true,
+      "purpose": "Route real-JDSP measurements, candidate creation, qualification, publication, and merge workflows to the controlled Pi harness.",
+      "inputs": [
+        "mission",
+        "accepted baseline",
+        "hypothesis or investigation id",
+        "forbidden scope"
+      ],
+      "outputs": [
+        "handoff brief",
+        "Pi command",
+        "expected artifacts and approval gates"
+      ],
+      "boundaries": [
+        "Codex must not run competing real-JDSP captures",
+        "candidate and publication paths require explicit user approval",
+        "raw artifacts remain local"
+      ]
+    },
+    {
+      "name": "session-log-update",
+      "trigger": "$axiom-engineering update session log",
+      "nativeAlias": "/axiom-log",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/generate_session_work_log_pdf.py",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Record completed workflow changes in the Markdown session log and regenerate the repo and Windows PDF copies.",
+      "inputs": [
+        "completed work summary",
+        "validation commands",
+        "next recommended work"
+      ],
+      "outputs": [
+        "docs/session-work-log.md update",
+        "docs/session-work-log.pdf update",
+        "Windows PDF mirror when available"
+      ],
+      "boundaries": [
+        "document completed work only",
+        "do not claim validation that did not run",
+        "do not include private paths or raw artifact details"
+      ]
+    },
+    {
+      "name": "skill-eval",
+      "trigger": "$axiom-engineering skill eval",
+      "nativeAlias": "/axiom-skill-eval",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py skill-eval",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Run deterministic fixture checks that the installed skill source has command mappings and behavior terms for representative Axiom prompts.",
+      "inputs": [
+        "optional --json"
+      ],
+      "outputs": [
+        "case pass/fail list",
+        "missing command or behavior terms"
+      ],
+      "boundaries": [
+        "static skill-behavior fixture only",
+        "not a model-quality benchmark",
+        "not DSP evidence"
+      ]
+    }
+  ]
+}

@@ -18,7 +18,10 @@ candidate state is involved.
    local-only.
 4. Use `python3 tools/axiom-codex/axiom_codex.py status-summary` for a compact
    repo state check when available.
-5. Use Pi for real-JDSP measurements, candidate creation, candidate
+5. Use `python3 tools/axiom-codex/axiom_codex.py guard-check` before preparing
+   publication scope or when changed paths may include EEL, policy, private
+   artifacts, manifests, credentials, or private paths.
+6. Use Pi for real-JDSP measurements, candidate creation, candidate
    qualification, publication, and merge workflows.
 
 ## Hard Boundaries

@@ -512,3 +512,663 @@ Scope: Local commit and GitHub publication for the docs/tooling agentic-foundati
 - Merge only after explicit user approval.
 - After merge, install the local Axiom Codex skill only if the user approves that runtime change.
 - Then resume targeted `.11` measurement or Axiom Knowledge population.
+
+## Run 015 - Axiom Codex Skill Local Runtime Activation
+
+Date: 2026-06-07
+Status: Completed
+Scope: Local Codex runtime activation and verification only.
+
+### What Was Implemented
+
+- Installed the repo-tracked Axiom Codex skill into the local Codex runtime at `~/.codex/skills/axiom-engineering`.
+- Confirmed the installed local skill copy contains `SKILL.md`, `agents/openai.yaml`, and the five reference files.
+- Verified a fresh Codex prompt context advertises `$axiom-engineering` as an available skill.
+- Re-ran the Axiom Codex helper status and readiness checks.
+- Re-ran the Pi harness doctor check against the accepted `v4.1.4.11` baseline.
+
+### Why It Matters
+
+- Codex can now load the Axiom-specific orchestration rules directly from the local runtime instead of relying only on repo docs.
+- Future Axiom sessions can start with `$axiom-engineering` to apply the accepted baseline, handoff, approval, Knowledge, and safety policies.
+- The install keeps Pi as the controlled real-JDSP and candidate execution layer.
+- This activation does not add native Axiom slash commands, custom subagents, or any sound-changing behavior.
+
+### Validation
+
+- `python3 tools/install_axiom_codex_skill.py --install` completed successfully.
+- `codex debug prompt-input 'Use $axiom-engineering to inspect Axiom state.'` listed `axiom-engineering`.
+- `python3 tools/axiom-codex/axiom_codex.py status-summary` reported accepted baseline `v4.1.4.11`, no active candidate, and zero DSP/script diff files.
+- `python3 tools/axiom-codex/axiom_codex.py ready-check` passed.
+- `node tools/axiom-team/bin/axiom-team.mjs doctor` passed and verified the accepted baseline hash.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use `$axiom-engineering` in fresh Codex sessions for Axiom work.
+- Decide whether the next Codex-layer iteration should add command surfaces, role-specific subagents, or deeper Knowledge lookup.
+- Resume the targeted `.11` Sub Harmonics / limiter-pressure investigation when the JDSP route is available.
+
+## Run 016 - Codex Command Surface, Guardrails, Profiles, And Skill Evals
+
+Date: 2026-06-07
+Status: Completed
+Scope: Codex-layer hardening for Axiom orchestration only.
+
+### What Was Implemented
+
+- Added a repo-tracked Axiom Codex command registry at `tools/axiom-codex/command_surface.json`.
+- Extended `tools/axiom-codex/axiom_codex.py` with `command-surface`, `agent-profiles`, `guard-check`, and `skill-eval`.
+- Added Codex-specific role profile specs under `tools/axiom-codex/agent_profiles/`.
+- Added deterministic skill behavior fixtures at `tools/axiom-codex/skill_eval_cases.json`.
+- Added focused unit coverage in `tests/test_axiom_codex_helper.py`.
+- Updated the Axiom skill references, tool inventory, system dashboard, and backlog so AX-TASK-018 through AX-TASK-021 are initial implementations instead of proposed gaps.
+- Reinstalled the local Axiom Codex skill copy from the updated repo source.
+
+### Why It Matters
+
+- Axiom now has a concrete command surface for repeated Codex workflows without relying on undocumented native slash-command behavior.
+- Role-specific Codex profiles make coordination, DSP architecture, EEL safety, measurement, qualification, release, tooling, research, safety, and implementation responsibilities explicit.
+- The guard check catches known unsafe publication scope before it can become a commit or PR problem.
+- The skill eval fixtures give future sessions a deterministic way to confirm that the skill still encodes the expected Axiom behaviors.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -p 'test_*.py'` passed with 165 tests.
+- `python3 tools/axiom-codex/axiom_codex.py command-surface` listed 10 commands.
+- `python3 tools/axiom-codex/axiom_codex.py agent-profiles` listed 10 profiles.
+- `python3 tools/axiom-codex/axiom_codex.py guard-check` passed with no known unsafe changed paths.
+- `python3 tools/axiom-codex/axiom_codex.py skill-eval` passed 7 behavior fixtures.
+- `python3 tools/axiom-codex/axiom_codex.py ready-check` passed.
+- `python3 tools/install_axiom_codex_skill.py --install --force` synced the local runtime skill copy.
+- `codex debug prompt-input 'Use $axiom-engineering to run an Axiom guard check.'` listed the updated `axiom-engineering` skill in fresh prompt context.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use `command-surface`, `agent-profiles`, `guard-check`, and `skill-eval` in future Axiom Codex sessions.
+- Add native wrappers only when Codex exposes a supported slash-command or subagent mechanism that can preserve these boundaries.
+- Resume the targeted `.11` Sub Harmonics / limiter-pressure investigation when the JDSP route is available.
+
+## Run 017 - Read-Only Pi Handoff Helper
+
+Date: 2026-06-07
+Status: Completed
+Scope: Codex-to-Pi handoff preparation only.
+
+### What Was Implemented
+
+- Added `python3 tools/axiom-codex/axiom_codex.py pi-handoff`.
+- Made the default handoff target the current `.11` Sub Harmonics investigation with `map-sub-gain` at `+10 dB` and `+12 dB`.
+- Updated the command registry and Axiom skill helper reference so `pi-handoff` appears as a Codex helper.
+- Added targeted tests for default and custom handoff command generation.
+
+### Why It Matters
+
+- Codex can now prepare the exact Pi command, preconditions, artifact policy, and approval boundary without running real JDSP.
+- The next measurement step is easier to review before execution.
+- Candidate creation, publication, merge, and accepted-baseline changes remain separate approval gates.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper` passed with 9 tests.
+- `python3 tools/axiom-codex/axiom_codex.py pi-handoff` printed the draft handoff and did not execute the Pi command.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Review the generated handoff brief.
+- Run the Pi command only when the JDSP route is available and the user explicitly approves real-host measurement.
+
+## Run 018 - Spatial Hearing Knowledge Source Note
+
+Date: 2026-06-07
+Status: Completed
+Scope: Repo-safe Knowledge note creation from a local-only PDF source.
+
+### What Was Implemented
+
+- Copied the user-provided `Spatial Hearing - Revised Edition.pdf` into the
+  local-only Axiom Knowledge source store outside the repo.
+- Added the `spatial-hearing-revised-edition` entry to the local-only source
+  index.
+- Created `docs/knowledge/spatial-hearing-revised-edition.md` with citation
+  metadata, original Axiom-relevance notes, follow-up questions, and evidence
+  boundaries.
+- Updated the system dashboard and backlog so Axiom Knowledge reflects the
+  first source-backed note.
+
+### Why It Matters
+
+- Axiom now has a lawful Knowledge starting point for spatial hearing,
+  localization vocabulary, headphone image stability, and crossfeed-boundary
+  thinking.
+- The repo note avoids copying book text and does not expose private local
+  paths.
+- The source can inform test design, but it does not prove any Axiom behavior.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-query "spatial hearing localization binaural"` found the local source index entry.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use the Spatial Hearing note to refine future listening-record vocabulary.
+- Keep adding Knowledge notes only as short original summaries with clear Axiom
+  test-design questions.
+
+## Run 019 - Axiom Knowledge PDF Candidate Intake
+
+Date: 2026-06-07
+Status: Completed
+Scope: Local-only PDF intake and repo-safe seed bibliography notes.
+
+### What Was Implemented
+
+- Copied five user-provided PDF candidates from the desktop Knowledge folder
+  into the local-only Axiom Knowledge source store outside the repo.
+- Registered the five sources in the local-only source index:
+  `accurate-sound-reproduction-using-dsp`,
+  `dafx-digital-audio-effects`,
+  `designing-audio-effect-plug-ins-in-cpp`,
+  `principles-and-applications-of-spatial-hearing`, and
+  `the-audio-programming-book`.
+- Added repo-safe Knowledge notes for each source under `docs/knowledge/`.
+- Updated `docs/knowledge/README.md`, `docs/system-status.md`, and
+  `docs/task-backlog.md` to reflect the six-source Knowledge seed set.
+
+### Why It Matters
+
+- Axiom Knowledge now has seed references for spatial hearing, digital audio
+  effects, real-time implementation patterns, reproduction accuracy, and
+  general audio-programming background.
+- The PDFs remain local-only; the repo contains citation metadata, original
+  summaries, Axiom relevance, and test-design questions.
+- These notes provide vocabulary and review context without claiming that any
+  source proves Axiom behavior.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-query "DAFX spatial hearing audio programming DSP"` found the new local source-index entries.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use the seed notes to create short concept notes only when a specific Axiom
+  test, review, or listening question needs them.
+- Keep raw PDFs and private local paths out of git.
+
+## Run 020 - Knowledge Source Audit Helper
+
+Date: 2026-06-08
+Status: Completed
+Scope: Codex-side Knowledge source integrity tooling.
+
+### What Was Implemented
+
+- Added `python3 tools/axiom-codex/axiom_codex.py knowledge-sources`.
+- The helper audits the local-only source index, required source fields, local
+  file existence, duplicate IDs, source status/type values, and matching
+  repo-safe notes.
+- Private `localPath` values stay hidden unless `--show-private-paths` is
+  explicitly used.
+- Added targeted unit tests for missing local files and private-path hiding.
+- Updated the command registry, helper reference, and tool inventory.
+
+### Why It Matters
+
+- Axiom can now verify that local PDF sources and repo-safe Knowledge notes
+  still line up after future source additions or machine moves.
+- Knowledge source health can be checked without committing PDFs or exposing
+  private paths.
+- This makes the local-source plus repo-note workflow repeatable for future
+  research intake.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper` passed with 11 tests.
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-sources` reported 6
+  checked sources with local files and repo notes.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Use `knowledge-sources` after adding or moving local PDFs.
+- Convert seed bibliography entries into short concept notes only when a
+  specific Axiom engineering question needs them.
+
+## Run 021 - Full-System Readiness Review
+
+Date: 2026-06-08
+Status: Completed
+Scope: Evidence-local full-system readiness review across Core DSP,
+Qualification, Pi/JDSP workflow, Codex tooling, Knowledge, documentation, and
+release posture.
+
+### What Was Implemented
+
+- Added `docs/axiom-full-system-review-2026-06-08.md`.
+- Updated `docs/README.md` and `docs/system-status.md` so the June 8 review is
+  the current assessment checkpoint.
+- Added `AX-TASK-022` through `AX-TASK-026` to `docs/task-backlog.md`.
+- Re-ran the local evidence snapshot without running real JDSP or creating a
+  candidate.
+
+### Why It Matters
+
+- Axiom now has a current, findings-first review that names strengths and
+  shortcomings honestly.
+- The review keeps `.11` as accepted, treats candidate readiness as a gate
+  rather than justification, and identifies the open `.11` Sub Harmonics
+  follow-up as the main Core evidence gap.
+- The next improvement set is visible in the backlog before any `.12`
+  discussion.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -p 'test_*.py'` passed with 170 tests.
+- `python3 tools/axiom-codex/axiom_codex.py ready-check` passed.
+- `python3 tools/axiom-codex/axiom_codex.py guard-check` passed.
+- `python3 tools/axiom-codex/axiom_codex.py skill-eval` passed.
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-sources` passed with 6
+  checked sources.
+- `node tools/axiom-team/bin/axiom-team.mjs doctor` passed.
+- `node tools/axiom-team/bin/axiom-team.mjs corpus-status --strict-metadata`
+  passed with 14 tracks.
+- `python3 scripts/evaluate_axiom_candidate_readiness.py` reported `READY`.
+- PR #12 remains an open draft with clean merge state.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Review and merge PR #12 only after explicit approval.
+- Run the targeted `.11` Sub Harmonics follow-up only when the JDSP route is
+  available and real-host measurement is approved.
+- Add structured spatial listening vocabulary before any new sound-changing
+  candidate.
+
+## Run 022 - Sub Harmonics Follow-Up Gate And Listening Vocabulary
+
+Date: 2026-06-08
+Status: Partially completed
+Scope: Targeted `.11` Sub Harmonics follow-up execution path, command
+correction, and structured spatial listening vocabulary.
+
+### What Was Implemented
+
+- Attempted the targeted `.11` Sub Harmonics map through the Node harness.
+- Identified that targeted maps must include the accepted `+4 dB` default
+  comparison point, not only `+10 dB` and `+12 dB`.
+- Updated the Codex `pi-handoff` helper and Node harness wrapper so targeted
+  map commands include `+4 dB` when needed.
+- Corrected the dashboard, harness docs, Pi runbook, and previous assessment
+  command examples.
+- Added required listening-record fields for lateral spread, localization blur,
+  depth impression, bass-image coupling, and route context.
+- Updated the Android validation package template and validator tests to match
+  the expanded listening-record schema.
+
+### Why It Matters
+
+- The `.11` Sub Harmonics boundary remains open for the right reason: route
+  availability, not a proven audio defect.
+- Future targeted map commands should no longer fail argument validation because
+  the default control point is missing.
+- Future listening records can describe spatial effects with enough precision
+  to support candidate decisions instead of relying on vague width comments.
+
+### Validation
+
+- The corrected targeted map reached the harness but failed before measurement
+  because the JDSP capture route was unavailable.
+- No `.12` candidate was created.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Restore the JDSP capture route, then rerun the targeted `.11` Sub Harmonics
+  map at `+4`, `+10`, and `+12 dB`.
+- Keep `AX-TASK-022` route-blocked until that real-host measurement completes.
+- Continue with PR #12 review/merge only after explicit approval.
+
+## Run 023 - Completed `.11` Sub Harmonics Follow-Up
+
+Date: 2026-06-08
+Status: Completed measurement; interpretation open
+Scope: Restore JDSP capture route, rerun the corrected targeted `.11` Sub
+Harmonics map, and record repo-safe evidence.
+
+### What Was Implemented
+
+- Restored the private JDSP Pulse route with the configured
+  `jdsp-audio-reset` helper.
+- Verified `WinSink`, `JamesDSP`, and `JamesDSP.monitor` on the private
+  `unix:/tmp/jdsp-win/native` server.
+- Reran the corrected targeted map at `+4`, `+10`, and `+12 dB` using the
+  dense/flawed/bass-oriented material filter.
+- Added `docs/sub-harmonics-follow-up-v4.1.4.11.md` as the repo-safe summary
+  of the local report.
+- Updated `docs/system-status.md`, `docs/task-backlog.md`, and `docs/README.md`
+  to point future sessions at the completed follow-up evidence.
+
+### Why It Matters
+
+- `AX-TASK-022` is no longer route-blocked; it has a completed real-JDSP
+  follow-up map.
+- The result did not show normal-material clipping through `+12 dB`.
+- The gate still failed because the default `+4 dB` dense-electronic item did
+  not qualify repeated level metrics, and elevated settings showed
+  terminal-pressure observations plus RMS retreat on selected material.
+- This is not automatic `.12` approval. It narrows the next question to
+  whether elevated-setting level retreat is audible as punch loss, bass blur,
+  limiter pumping, low-end crowding, or fatigue.
+
+### Validation
+
+- The Node harness completed the targeted map and recorded the gate in local
+  run state.
+- Raw WAV captures and generated JSON/Markdown reports remain local-only.
+- No EEL DSP scripts changed.
+
+### Next Recommended Work
+
+- Interpret the completed `.11` follow-up before proposing `.12`.
+- If further action is justified, create a narrow listening target around
+  elevated Sub Harmonics punch/level retreat rather than normal-material
+  clipping.
+- Keep PR publication and merge gated on explicit approval.
+
+## Run 024 - `.11` Sub Harmonics Interpretation
+
+Date: 2026-06-08
+Status: Completed
+Scope: No-candidate-yet interpretation of the completed `.11` Sub Harmonics
+follow-up and focused listening target definition.
+
+### What Was Implemented
+
+- Added `docs/sub-harmonics-interpretation-v4.1.4.11.md`.
+- Recorded the decision to keep `v4.1.4.11` accepted and not create `.12` from
+  the measurement alone.
+- Defined a focused listening target for accepted `.11` at `+4`, `+10`, and
+  `+12 dB` Sub Harmonics settings.
+- Updated `docs/system-status.md`, `docs/task-backlog.md`, and `docs/README.md`
+  so the interpretation record is discoverable.
+
+### Why It Matters
+
+- The completed real-JDSP follow-up now has an explicit engineering decision:
+  it found no normal-material clipping through `+12 dB`, but it did find
+  elevated-setting RMS retreat and terminal-pressure observations that should
+  be checked by ear before candidate work.
+- A future `.12` must be justified by a repeatable audible defect such as kick
+  softening, bass blur, limiter pumping, low-end crowding, fatigue, or practical
+  loudness loss.
+- The next step is structured listening on accepted `.11`, not EEL editing.
+
+### Validation
+
+- Documentation-only change.
+- No EEL DSP scripts changed.
+- No `.12` candidate was created.
+
+### Next Recommended Work
+
+- Run focused accepted-`.11` listening at `+4`, `+10`, and `+12 dB`.
+- Use the structured listening-record fields added in Run 022.
+- Keep publication, merge, and candidate creation gated on explicit approval.
+
+## Run 025 - `.11` Sub Harmonics Listening Target Template
+
+Date: 2026-06-08
+Status: Completed
+Scope: Focused accepted-`.11` listening target and local-copy listening-record
+template for the Sub Harmonics follow-up.
+
+### What Was Implemented
+
+- Added `docs/sub-harmonics-listening-target-v4.1.4.11.md`.
+- Added `docs/templates/sub-harmonics-listening-record-v4.1.4.11.json`.
+- Linked both files from `docs/README.md`.
+- Updated `docs/system-status.md` and `docs/task-backlog.md` so the next step
+  is the focused accepted-`.11` listening check.
+
+### Why It Matters
+
+- The `.11` follow-up now has a concrete listening workflow instead of only a
+  measurement interpretation.
+- The JSON template is designed to be copied into local state, filled with
+  private listening notes, and validated with
+  `scripts/validate_axiom_listening_record.py`.
+- The repo remains safe: it contains prompts, material classes, and public
+  workflow instructions, not private song titles or local listening results.
+
+### Validation
+
+- Documentation/template-only change.
+- No EEL DSP scripts changed.
+- No `.12` candidate was created.
+
+### Next Recommended Work
+
+- Copy the listening-record template into local state and perform the accepted
+  `.11` `+4`, `+10`, and `+12 dB` listening pass.
+- If no repeatable audible defect is heard, close the `.11` investigation
+  without `.12`.
+- If a repeatable defect is heard, draft a narrow `.12` hypothesis before any
+  EEL work.
+
+## Run 026 - Confirmatory `.11` Sub Harmonics Map
+
+Date: 2026-06-09
+Status: Completed
+Scope: Confirmatory real-JDSP map of accepted `.11` at `+4`, `+10`, and
+`+12 dB` Sub Harmonics using the existing investigation and local material
+filter.
+
+### What Was Implemented
+
+- Ran the documented `map-sub-gain` command for
+  `20260603T004349-post-acceptance-v4-1-4-1-0d309b`.
+- Used the accepted `src/axiom_binaural_dsp_v4.1.4.11.eel` file and temporary
+  external slider fixtures only.
+- Updated `docs/sub-harmonics-follow-up-v4.1.4.11.md` with the repo-safe
+  rerun summary.
+- Updated `docs/sub-harmonics-interpretation-v4.1.4.11.md` and
+  `docs/system-status.md` so the latest result is discoverable.
+
+### Why It Matters
+
+- The rerun confirmed that normal material stayed unclipped through `+12 dB`.
+- The map still failed, but the hard failure was the default `+4 dB`
+  dense-electronic repeatability qualification, not normal-material clipping.
+- Elevated `+10 dB` and `+12 dB` again showed repeatable RMS retreat on
+  hip-hop/trap-sub and bass-light material.
+- The engineering decision remains unchanged: keep `.11` accepted, do not
+  create `.12` yet, and use focused listening to decide whether the measured
+  retreat is audible as a real defect.
+
+### Validation
+
+- Real-JDSP map completed and wrote a full local aggregate report.
+- Documentation-only repo change.
+- No EEL DSP scripts changed.
+- No `.12` candidate was created.
+
+### Next Recommended Work
+
+- Perform the accepted `.11` focused listening pass at `+4`, `+10`, and
+  `+12 dB`.
+- Fill and validate the local listening record.
+- Create a `.12` hypothesis only if listening finds a repeatable
+  normal-material defect.
+
+## Run 027 - Filtered Sub Harmonics A/B Listening Packages
+
+Date: 2026-06-09
+Status: Completed
+Scope: Tooling and local package workflow for accepted `.11` Sub Harmonics
+listening at `+4` versus `+10` and `+4` versus `+12`.
+
+### What Was Implemented
+
+- Added `--include-regex` and `--exclude-regex` filters to
+  `scripts/build_axiom_ab_listening_package.py`.
+- Added API and CLI test coverage for filtered package selection.
+- Updated `docs/ab-listening-packages.md` with the filter workflow.
+- Updated `docs/tool-inventory.md` to mention the A/B package filters.
+- Updated `docs/sub-harmonics-listening-target-v4.1.4.11.md` with optional
+  local package commands for the Sub Harmonics listening pass.
+- Updated `docs/task-backlog.md` so `AX-TASK-022` reflects the prepared local
+  A/B package workflow.
+- Built local filtered packages from the completed `.11` Sub Harmonics map:
+  `+4` versus `+10` and `+4` versus `+12`, excluding flawed stress material.
+
+### Why It Matters
+
+- The listening step can now use blinded A/B files with gain recommendations
+  instead of relying only on manual slider switching.
+- Intentional flawed-source stress material can be excluded from
+  normal-material acceptance listening without copying or pruning capture
+  trees by hand.
+- The local packages directly target the measured concern: whether elevated
+  Sub Harmonics settings sound quieter, softer, blurrier, or more fatiguing
+  after level handling.
+
+### Validation
+
+- `python3 -m unittest tests.test_build_axiom_ab_listening_package`
+- `python3 -m unittest discover -s tests -p 'test_*.py'`
+- Generated `+4` versus `+10` package: `PASS_WITH_WARNINGS`
+- Generated `+4` versus `+12` package: `PASS_WITH_WARNINGS`
+- No EEL DSP scripts changed.
+- No `.12` candidate was created.
+
+### Next Recommended Work
+
+- Open the local listening package folder and audition the blinded A/B pairs.
+- Fill and validate the local listening record.
+- Treat any result as listening evidence for the `.11` investigation, not as
+  automatic `.12` approval.
+
+## Run 028 - Consolidated Local Review Helper
+
+Date: 2026-06-09
+Status: Completed
+Scope: Initial implementation of `AX-TASK-026`, a safe non-JDSP local review
+snapshot for Axiom Codex sessions.
+
+### What Was Implemented
+
+- Added `local-review` to `tools/axiom-codex/axiom_codex.py`.
+- Registered `local-review` in `tools/axiom-codex/command_surface.json`.
+- Added helper tests for command registration, JSON output, Markdown output,
+  report-file writing, and non-JDSP boundaries.
+- Updated `docs/task-backlog.md` to mark `AX-TASK-026` as initially complete.
+- Updated `docs/tool-inventory.md` and `docs/codex-operating-guide.md` so the
+  command is discoverable.
+
+### Why It Matters
+
+- A fresh Codex session can now run one command to collect git state, accepted
+  baseline identity, changed paths, guard-check, ready-check, Knowledge audit,
+  Python tests, Node harness tests, and a recommended next action.
+- The command is intentionally non-JDSP, so it can be used for orientation and
+  review without touching the audio route.
+- JSON and Markdown report output make it suitable for future dashboards,
+  handoffs, or PR summaries.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper`
+- Command-surface JSON validation.
+- `python3 tools/axiom-codex/axiom_codex.py local-review`
+- `python3 tools/axiom-codex/axiom_codex.py local-review --skip-tests --skip-knowledge`
+
+### Next Recommended Work
+
+- Use `local-review` as the standard orientation command before larger Axiom
+  development batches.
+- Consider a machine-readable task-state file next, so `local-review` and a
+  future `next-action` command can reason beyond Markdown tables.
+
+## Run 029 - Machine-Readable Task State And Next Action
+
+Date: 2026-06-09
+Status: Completed
+Scope: Initial implementation of `AX-TASK-027` and `AX-TASK-028`, a structured
+task-state layer and command-backed next-action helper for Axiom Codex planning.
+
+### What Was Implemented
+
+- Added `tools/axiom-codex/task_state.json` as the machine-readable task index.
+- Added `task-state` to `tools/axiom-codex/axiom_codex.py`.
+- Added `next-action` to `tools/axiom-codex/axiom_codex.py`.
+- Registered `task-state` in `tools/axiom-codex/command_surface.json`.
+- Registered `next-action` in `tools/axiom-codex/command_surface.json`.
+- Added task-state validation to `local-review`.
+- Added next-action planning output to `local-review`.
+- Added helper tests for task-state validation, next-action output, and CLI
+  behavior.
+- Updated `docs/task-backlog.md`, `docs/tool-inventory.md`, and
+  `docs/codex-operating-guide.md`.
+
+### Why It Matters
+
+- Agents can now inspect task phase, blocked state, approval requirements, and
+  recommended next actions without parsing only Markdown tables.
+- `next-action` can now recommend safe work while respecting dirty working
+  trees, listening blockers, and explicit approval gates.
+- The task metadata keeps `.11` Sub Harmonics correctly marked as blocked on
+  human listening while keeping Knowledge concept-note work available as a safe
+  Agentic Layer next step.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper`
+- `python3 tools/axiom-codex/axiom_codex.py task-state`
+- `python3 tools/axiom-codex/axiom_codex.py next-action --json`
+
+### Next Recommended Work
+
+- Use `local-review`, `task-state`, and `next-action` as the standard Agentic
+  Layer orientation sequence.
+
+## Run 030 - Knowledge Concept Notes
+
+Date: 2026-06-10
+Status: Completed
+Scope: Complete `AX-TASK-024` by converting seed Knowledge sources into
+repo-safe Axiom concept notes for test design.
+
+### What Was Implemented
+
+- Added `docs/knowledge/concepts/spatial-listening-vocabulary.md`.
+- Added `docs/knowledge/concepts/elevated-bass-headroom-tradeoff.md`.
+- Added `docs/knowledge/concepts/stage-isolation-and-fixture-scope.md`.
+- Added `docs/knowledge/concepts/reproduction-boundaries-and-profile-scope.md`.
+- Linked the concept notes from `docs/knowledge/README.md`.
+- Updated `docs/task-backlog.md` and `tools/axiom-codex/task_state.json` so
+  `AX-TASK-024` is complete.
+
+### Why It Matters
+
+- Axiom Knowledge now has a concept layer between broad bibliography notes and
+  concrete engineering work.
+- Future agents can use the notes as controlled vocabulary for listening
+  records, fixture design, Sub Harmonics interpretation, and profile-boundary
+  decisions.
+- The notes remain repo-safe: they cite Source IDs and summarize Axiom use in
+  original wording without copying protected source text or private paths.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-sources`
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-query "Sub Harmonics bass punch listening"`
+
+### Next Recommended Work
+
+- Run `next-action` after validation; with `AX-TASK-024` complete, the
+  remaining major open items are blocked on human listening or explicit
+  approval.
