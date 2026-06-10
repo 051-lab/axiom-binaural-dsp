@@ -86,6 +86,19 @@ outside git and are referenced through the local source index.
 | `accurate-sound-reproduction-using-dsp` | Reproduction accuracy, measurement discipline, and non-Core correction boundaries. |
 | `the-audio-programming-book` | General audio-programming literacy, tooling perspective, and DSP background. |
 
+## Concept Notes
+
+Concept notes translate seed sources into Axiom-specific test-design
+vocabulary. They are planning aids, not evidence that Axiom behaves a certain
+way.
+
+| Concept | Use |
+| --- | --- |
+| [Spatial listening vocabulary](concepts/spatial-listening-vocabulary.md) | Shared listening-record language for center image, spread, localization blur, depth, and bass-image coupling. |
+| [Elevated bass headroom tradeoff](concepts/elevated-bass-headroom-tradeoff.md) | Sub Harmonics listening questions around headroom, RMS retreat, punch, bass blur, and fatigue. |
+| [Stage isolation and fixture scope](concepts/stage-isolation-and-fixture-scope.md) | How to turn broad DSP ideas into narrow fixtures, measurements, and listening targets. |
+| [Reproduction boundaries and profile scope](concepts/reproduction-boundaries-and-profile-scope.md) | How to keep Core, future profiles, host/device behavior, and correction work separate. |
+
 ## Bibliography Entry Template
 
 ```markdown

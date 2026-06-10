@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-09",
+  "lastUpdated": "2026-06-10",
   "source": "docs/task-backlog.md",
   "tasks": [
     {
@@ -235,13 +235,13 @@
     },
     {
       "id": "AX-TASK-024",
-      "status": "proposed",
+      "status": "complete",
       "title": "Create Knowledge concept notes from seed sources",
       "area": "Knowledge",
-      "phase": "ready",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Create short concept notes tied to Axiom test-design questions without copying source text."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-025",

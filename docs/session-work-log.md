@@ -1134,3 +1134,41 @@ task-state layer and command-backed next-action helper for Axiom Codex planning.
 
 - Use `local-review`, `task-state`, and `next-action` as the standard Agentic
   Layer orientation sequence.
+
+## Run 030 - Knowledge Concept Notes
+
+Date: 2026-06-10
+Status: Completed
+Scope: Complete `AX-TASK-024` by converting seed Knowledge sources into
+repo-safe Axiom concept notes for test design.
+
+### What Was Implemented
+
+- Added `docs/knowledge/concepts/spatial-listening-vocabulary.md`.
+- Added `docs/knowledge/concepts/elevated-bass-headroom-tradeoff.md`.
+- Added `docs/knowledge/concepts/stage-isolation-and-fixture-scope.md`.
+- Added `docs/knowledge/concepts/reproduction-boundaries-and-profile-scope.md`.
+- Linked the concept notes from `docs/knowledge/README.md`.
+- Updated `docs/task-backlog.md` and `tools/axiom-codex/task_state.json` so
+  `AX-TASK-024` is complete.
+
+### Why It Matters
+
+- Axiom Knowledge now has a concept layer between broad bibliography notes and
+  concrete engineering work.
+- Future agents can use the notes as controlled vocabulary for listening
+  records, fixture design, Sub Harmonics interpretation, and profile-boundary
+  decisions.
+- The notes remain repo-safe: they cite Source IDs and summarize Axiom use in
+  original wording without copying protected source text or private paths.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-sources`
+- `python3 tools/axiom-codex/axiom_codex.py knowledge-query "Sub Harmonics bass punch listening"`
+
+### Next Recommended Work
+
+- Run `next-action` after validation; with `AX-TASK-024` complete, the
+  remaining major open items are blocked on human listening or explicit
+  approval.
