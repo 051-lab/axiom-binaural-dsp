@@ -1,0 +1,302 @@
+:root {
+  color-scheme: dark;
+  --bg: #101114;
+  --panel: #181b20;
+  --panel-2: #20242b;
+  --line: #343a43;
+  --text: #f1f3f5;
+  --muted: #a7b0bb;
+  --accent: #2fbf91;
+  --accent-2: #5aa9e6;
+  --danger: #f06a6a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, Segoe UI, system-ui, sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #06110d;
+  font-weight: 700;
+}
+
+input,
+select {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #0d0f12;
+  color: var(--text);
+  padding: 0 10px;
+}
+
+.shell {
+  min-height: 100vh;
+}
+
+.topbar {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+  background: #14171b;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 16px;
+}
+
+p,
+.muted {
+  color: var(--muted);
+}
+
+.top-actions,
+.transport,
+.test-tools,
+.eel-load,
+.jdsp-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(360px, 520px) minmax(420px, 1fr);
+  min-height: calc(100vh - 76px);
+}
+
+.library,
+.player,
+.jdsp {
+  min-width: 0;
+  padding: 16px;
+  border-right: 1px solid var(--line);
+}
+
+.jdsp {
+  border-right: 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-head input {
+  width: min(100%, 260px);
+}
+
+.albums {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.album-pill {
+  height: 32px;
+  border-radius: 999px;
+}
+
+.tracks {
+  display: grid;
+  gap: 6px;
+  max-height: calc(100vh - 180px);
+  overflow: auto;
+}
+
+.track {
+  width: 100%;
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.track strong {
+  display: block;
+  font-size: 14px;
+}
+
+.track span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.now-playing {
+  display: grid;
+  grid-template-columns: 86px 1fr;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.cover {
+  width: 86px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #07110e;
+  font-weight: 900;
+  font-size: 26px;
+}
+
+.transport {
+  margin-bottom: 14px;
+}
+
+.slider-label {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+  color: var(--muted);
+}
+
+input[type="range"] {
+  width: 100%;
+  padding: 0;
+}
+
+.test-tools {
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.eel-panel,
+.bookmarks {
+  margin-top: 20px;
+}
+
+.eel-panel h2,
+.bookmarks h2 {
+  margin-bottom: 10px;
+}
+
+.eel-panel select,
+.eel-panel input {
+  width: 100%;
+}
+
+.eel-load {
+  margin-top: 8px;
+}
+
+#eelStatus {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.bookmark-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.jdsp-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.jdsp-actions a {
+  color: var(--accent-2);
+  text-decoration: none;
+}
+
+.jdsp iframe,
+.jdsp-placeholder {
+  width: 100%;
+  height: calc(100vh - 140px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #050607;
+}
+
+.jdsp iframe {
+  display: none;
+}
+
+.jdsp iframe.loaded {
+  display: block;
+}
+
+.jdsp-placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.jdsp-placeholder.hidden {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .library,
+  .player,
+  .jdsp {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tracks {
+    max-height: 420px;
+  }
+}

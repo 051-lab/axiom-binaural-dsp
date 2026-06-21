@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Axiom Player</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div>
+        <h1>Axiom Player</h1>
+        <p id="routeStatus">Checking JamesDSP route...</p>
+      </div>
+      <div class="top-actions">
+        <button id="startRoute">Start Route</button>
+        <button id="reloadLibrary">Reload Library</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="library">
+        <div class="section-head">
+          <h2>Library</h2>
+          <input id="search" type="search" placeholder="Search tracks, albums, artists">
+        </div>
+        <div id="albums" class="albums"></div>
+        <div id="tracks" class="tracks"></div>
+      </section>
+
+      <section class="player">
+        <div class="now-playing">
+          <div class="cover">AX</div>
+          <div>
+            <h2 id="nowTitle">Nothing playing</h2>
+            <p id="nowMeta">Select a track from the library.</p>
+          </div>
+        </div>
+
+        <div class="transport">
+          <button id="previous">Prev</button>
+          <button id="toggle" class="primary">Play/Pause</button>
+          <button id="next">Next</button>
+        </div>
+
+        <label class="slider-label">
+          <span id="timeText">0:00 / 0:00</span>
+          <input id="seek" type="range" min="0" max="1000" value="0">
+        </label>
+
+        <label class="slider-label">
+          <span>Volume</span>
+          <input id="volume" type="range" min="0" max="100" value="70">
+        </label>
+
+        <div class="test-tools">
+          <button id="loopA">Loop A</button>
+          <button id="loopB">Loop B</button>
+          <button id="clearLoop">Clear Loop</button>
+          <button id="bookmark">Bookmark</button>
+        </div>
+
+        <div class="eel-panel">
+          <h2>EEL Script</h2>
+          <select id="eelScripts"></select>
+          <div class="eel-load">
+            <input id="eelPath" type="text" placeholder="Optional local .eel path">
+            <button id="loadEel">Validate + Load</button>
+          </div>
+          <p id="eelStatus">Accepted baseline loads when the route starts.</p>
+        </div>
+
+        <div class="bookmarks">
+          <h2>Bookmarks</h2>
+          <div id="bookmarks"></div>
+        </div>
+      </section>
+
+      <section class="jdsp">
+        <div class="section-head">
+          <h2>JamesDSP</h2>
+          <div class="jdsp-actions">
+            <button id="jdspLoad">Load UI</button>
+            <button id="jdspUnload">Unload</button>
+            <a id="jdspOpen" href="#" target="_blank" rel="noreferrer">Open</a>
+          </div>
+        </div>
+        <div id="jdspPlaceholder" class="jdsp-placeholder">JamesDSP UI is unloaded.</div>
+        <iframe id="jdspFrame" title="JamesDSP UI"></iframe>
+      </section>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
