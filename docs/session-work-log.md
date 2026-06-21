@@ -1247,3 +1247,42 @@ Scope: First hardening batch for `AX-TASK-018` through `AX-TASK-021`.
 
 - Replace the current free-form `agent-review` scaffold with a validated,
   machine-readable multi-role findings record.
+
+## Run 033 - Validated Agent Review Records
+
+Date: 2026-06-21
+Status: Completed
+Scope: Replace the free-form `agent-review` scaffold with a validated
+machine-readable multi-role review record.
+
+### What Was Implemented
+
+- Added an `axiom-agent-review` schema for draft multi-role reviews.
+- Added `agent-review --json` and `agent-review --output <record.json>`.
+- Linked each review role to its Codex profile and Pi role source.
+- Added decision enums, forbidden-scope boundaries, evidence-status markers,
+  findings arrays, and evidence-needed arrays.
+- Added validation for unknown roles, duplicate roles, malformed decisions, and
+  missing record fields.
+- Added `AX-TASK-035` as the completed multi-role review-record milestone.
+
+### Why It Matters
+
+- Future agents can produce structured review artifacts that are both readable
+  and machine-checkable.
+- Draft review records are explicitly marked as not evidence until findings are
+  completed.
+- Multi-role review output can now feed future orchestration without parsing a
+  loose Markdown scaffold.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper`
+- `python3 tools/axiom-codex/axiom_codex.py agent-review --topic "Agentic Layer review contract" --json`
+- `python3 tools/axiom-codex/axiom_codex.py agentic-audit`
+- `python3 tools/axiom-codex/axiom_codex.py ready-check`
+
+### Next Recommended Work
+
+- Improve `next-action` so it can intentionally select from initial-maintenance
+  Agentic work instead of reporting that no unblocked task is available.

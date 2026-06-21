@@ -129,6 +129,7 @@ PR #10 as commit `c498688`.
 | Axiom Codex skill | local v1 installed | `~/.codex/skills/axiom-engineering` from `../tools/codex-skills/axiom-engineering/` |
 | Axiom Codex helper CLI | contract-hardened v3 | `../tools/axiom-codex/axiom_codex.py` |
 | Agentic contract audit | complete | `agentic-audit`; command, profile, approval, and skill-eval contracts |
+| Multi-role review records | complete | `agent-review --json`; validated draft findings schema |
 | Airwindows Knowledge intake | local metadata workflow | `knowledge/airwindows-open-source-dsp.md`, `knowledge/concepts/airwindows-concept-taxonomy.md`, `airwindows-index` helper |
 | Qualification evidence ingestion | initial implementation complete | `evidence-ingest` helper; local-only normalized bundles |
 | Qualification evidence status | initial implementation complete | `evidence-status`; optional `status-summary --evidence` and `next-action --evidence` |
@@ -249,9 +250,9 @@ Summary:
 
 ## Current Best Next Actions
 
-1. Continue Agentic Layer hardening by making multi-role reviews produce
-   validated machine-readable findings instead of an unvalidated text
-   scaffold.
+1. Continue Agentic Layer hardening by teaching `next-action` to select from
+   initial-maintenance Agentic work instead of reporting that no unblocked task
+   exists.
 2. Keep the completed `.11` Sub Harmonics result as a watch item; do not draft
    `Axiom Clean R012` without a new repeatable normal-material problem.
 3. Use Knowledge seed notes to support specific test-design questions, not to

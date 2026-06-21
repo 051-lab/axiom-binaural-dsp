@@ -215,18 +215,21 @@
       "helperCommand": "python3 tools/axiom-codex/axiom_codex.py agent-review --topic \"...\"",
       "touchesJDSP": false,
       "requiresApproval": false,
-      "purpose": "Create a multi-role review scaffold grounded in the local Pi role docs.",
+      "purpose": "Create a validated multi-role review record grounded in local Codex profiles and Pi role docs.",
       "inputs": [
         "topic",
-        "optional role list"
+        "optional role list",
+        "optional --json",
+        "optional --output <record.json>"
       ],
       "outputs": [
-        "role findings scaffold",
+        "validated review record",
+        "role findings entries",
         "evidence-needed section",
         "decision choices"
       ],
       "boundaries": [
-        "scaffold is not evidence until completed",
+        "draft record is not evidence until completed",
         "findings must cite concrete repo state or measurement artifacts"
       ]
     },

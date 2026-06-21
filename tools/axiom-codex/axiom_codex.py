@@ -42,6 +42,28 @@ DEFAULT_REVIEW_ROLES = [
     "safety-auditor",
     "release-steward",
 ]
+REVIEW_DECISIONS = {"draft", "continue", "stop", "delegate-to-Pi", "needs-user-approval"}
+REVIEW_RECORD_REQUIRED_FIELDS = {
+    "schemaVersion",
+    "recordType",
+    "status",
+    "topic",
+    "scope",
+    "forbiddenScope",
+    "roles",
+    "decision",
+    "evidenceStatus",
+    "boundaries",
+}
+REVIEW_ROLE_REQUIRED_FIELDS = {
+    "role",
+    "profileSource",
+    "roleSource",
+    "purpose",
+    "findings",
+    "evidenceNeeded",
+    "decision",
+}
 
 PRIVATE_AUDIO_EXTENSIONS = {
     ".aif",
@@ -1309,23 +1331,170 @@ def agent_profiles(args: argparse.Namespace) -> int:
     return 0
 
 
+def profile_lookup() -> dict[str, tuple[str, pathlib.Path, str, str]]:
+    return {slug: (slug, path, title, purpose) for slug, path, title, purpose in load_agent_profiles()}
+
+
+def build_agent_review_record(topic: str, roles: list[str] | None = None) -> dict[str, Any]:
+    topic = topic.strip()
+    selected_roles = roles or DEFAULT_REVIEW_ROLES
+    profiles = profile_lookup()
+    role_entries: list[dict[str, Any]] = []
+    for role in selected_roles:
+        profile = profiles.get(role)
+        if profile:
+            _, profile_path, _, purpose = profile
+            profile_text = profile_path.read_text(encoding="utf-8")
+            source_match = re.search(r"^Role source:\s+`([^`]+)`\s*$", profile_text, flags=re.MULTILINE)
+            role_source = source_match.group(1) if source_match else str((ROLE_ROOT / f"{role}.md").relative_to(REPO_ROOT))
+            profile_source = str(profile_path.relative_to(REPO_ROOT))
+        else:
+            purpose = ""
+            role_source = str((ROLE_ROOT / f"{role}.md").relative_to(REPO_ROOT))
+            profile_source = str((CODEX_AGENT_PROFILE_ROOT / f"{role}.md").relative_to(REPO_ROOT))
+        role_entries.append(
+            {
+                "role": role,
+                "profileSource": profile_source,
+                "roleSource": role_source,
+                "purpose": purpose,
+                "findings": [],
+                "evidenceNeeded": [],
+                "decision": "draft",
+            }
+        )
+    return {
+        "schemaVersion": 1,
+        "recordType": "axiom-agent-review",
+        "status": "draft",
+        "topic": topic,
+        "scope": "",
+        "forbiddenScope": [
+            "no accepted-baseline edits",
+            "no private artifacts",
+            "no unscoped DSP changes",
+            "no publication, merge, candidate, or accepted-baseline promotion without explicit user approval",
+        ],
+        "roles": role_entries,
+        "decision": "draft",
+        "evidenceStatus": "not_evidence_until_completed",
+        "boundaries": [
+            "review records are planning and safety artifacts",
+            "empty findings mean the review is incomplete",
+            "metrics, external research, and helper output are not listening acceptance",
+            "real-JDSP, candidate, publication, merge, and accepted-baseline work still require their normal gates",
+        ],
+    }
+
+
+def validate_agent_review_record(data: Any) -> list[Check]:
+    checks: list[Check] = []
+    if not isinstance(data, dict):
+        return [Check("agent review record", "fail", "record must be an object")]
+    missing = sorted(REVIEW_RECORD_REQUIRED_FIELDS - set(data))
+    if missing:
+        checks.append(Check("review required fields", "fail", f"missing {', '.join(missing)}"))
+    if data.get("schemaVersion") != 1:
+        checks.append(Check("review schema", "fail", "schemaVersion must be 1"))
+    if data.get("recordType") != "axiom-agent-review":
+        checks.append(Check("review record type", "fail", "recordType must be axiom-agent-review"))
+    if not isinstance(data.get("topic"), str) or not data.get("topic", "").strip():
+        checks.append(Check("review topic", "fail", "topic must be non-empty text"))
+    if str(data.get("decision")) not in REVIEW_DECISIONS:
+        checks.append(Check("review decision", "fail", f"decision must be one of {', '.join(sorted(REVIEW_DECISIONS))}"))
+    if not isinstance(data.get("forbiddenScope"), list) or not data.get("forbiddenScope"):
+        checks.append(Check("review forbidden scope", "fail", "forbiddenScope must be a non-empty list"))
+    if not isinstance(data.get("boundaries"), list) or not data.get("boundaries"):
+        checks.append(Check("review boundaries", "fail", "boundaries must be a non-empty list"))
+
+    profiles = profile_lookup()
+    roles = data.get("roles")
+    if not isinstance(roles, list) or not roles:
+        checks.append(Check("review roles", "fail", "roles must be a non-empty array"))
+        roles = []
+    seen_roles: set[str] = set()
+    for entry in roles:
+        if not isinstance(entry, dict):
+            checks.append(Check("review role entry", "fail", "role entry must be an object"))
+            continue
+        role = str(entry.get("role", "missing-role"))
+        missing_role_fields = sorted(REVIEW_ROLE_REQUIRED_FIELDS - set(entry))
+        if missing_role_fields:
+            checks.append(Check("review role required fields", "fail", f"{role}: missing {', '.join(missing_role_fields)}"))
+        if role in seen_roles:
+            checks.append(Check("duplicate review role", "fail", role))
+        seen_roles.add(role)
+        if role not in profiles:
+            checks.append(Check("unknown review role", "fail", role))
+        if str(entry.get("decision")) not in REVIEW_DECISIONS:
+            checks.append(Check("review role decision", "fail", f"{role}: invalid decision"))
+        for field in ("findings", "evidenceNeeded"):
+            if not isinstance(entry.get(field), list):
+                checks.append(Check(f"review role {field}", "fail", f"{role}: {field} must be an array"))
+        for field in ("profileSource", "roleSource", "purpose"):
+            if not isinstance(entry.get(field), str):
+                checks.append(Check(f"review role {field}", "fail", f"{role}: {field} must be text"))
+    if not checks:
+        checks.append(Check("agent review record", "pass", f"{len(roles)} role(s) checked"))
+    return checks
+
+
+def agent_review_markdown(record: dict[str, Any], checks: list[Check]) -> str:
+    lines = [
+        "# Axiom Multi-Role Review Record",
+        "",
+        f"- schema: `{record['schemaVersion']}`",
+        f"- status: `{record['status']}`",
+        f"- topic: {record['topic']}",
+        f"- decision: `{record['decision']}`",
+        f"- evidence status: `{record['evidenceStatus']}`",
+        "",
+        "## Validation",
+        "",
+    ]
+    lines.extend(f"- {check.status}: {check.name} - {check.detail}" for check in checks)
+    lines.extend(["", "## Scope", "", record["scope"] or "[draft: define the narrow work area before implementation]", "", "## Forbidden Scope", ""])
+    lines.extend(f"- {item}" for item in record["forbiddenScope"])
+    lines.extend(["", "## Role Findings", ""])
+    for entry in record["roles"]:
+        lines.extend([
+            f"### {entry['role']}",
+            "",
+            f"- profile: `{entry['profileSource']}`",
+            f"- role source: `{entry['roleSource']}`",
+            f"- purpose: {entry['purpose'] or '[missing purpose]'}",
+            f"- decision: `{entry['decision']}`",
+            "",
+            "Findings:",
+        ])
+        if entry["findings"]:
+            lines.extend(f"- {item}" for item in entry["findings"])
+        else:
+            lines.append("- [draft: add concrete finding with file/evidence reference]")
+        lines.append("")
+        lines.append("Evidence needed:")
+        if entry["evidenceNeeded"]:
+            lines.extend(f"- {item}" for item in entry["evidenceNeeded"])
+        else:
+            lines.append("- [draft: add required measurement, docs, or approval]")
+        lines.append("")
+    lines.extend(["## Boundaries", ""])
+    lines.extend(f"- {item}" for item in record["boundaries"])
+    lines.append("")
+    return "\n".join(lines)
+
+
 def agent_review(args: argparse.Namespace) -> int:
-    topic = args.topic.strip()
-    roles = args.roles or DEFAULT_REVIEW_ROLES
-    print("# Axiom Multi-Role Review Scaffold\n")
-    print(f"Topic: {topic}\n")
-    print("Scope: Define the narrow work area before implementation.")
-    print("Forbidden scope: No accepted-baseline edits, private artifacts, or unscoped DSP changes.\n")
-    print("Instructions: complete each role section with concrete findings before using this as evidence.\n")
-    print("## Role Findings\n")
-    for role in roles:
-        print(f"### {role}")
-        print(role_summary(role))
-        print("\nFindings:\n- Add role-specific findings here.\n")
-        print("Evidence needed:\n- Add required measurements, docs, or user approvals here.\n")
-    print("## Decision\n")
-    print("- continue / stop / delegate-to-Pi / needs-user-approval")
-    return 0
+    record = build_agent_review_record(args.topic, args.roles)
+    checks = validate_agent_review_record(record)
+    failed = any(check.status == "fail" for check in checks)
+    if args.output:
+        args.output.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    if args.json:
+        print(json.dumps({"record": record, "checks": [check.__dict__ for check in checks]}, indent=2, sort_keys=True))
+    else:
+        print(agent_review_markdown(record, checks).rstrip())
+    return 1 if failed else 0
 
 
 def normalize_terms(query: str) -> list[str]:
@@ -2120,6 +2289,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     review = sub.add_parser("agent-review")
     review.add_argument("--topic", required=True)
+    review.add_argument("--json", action="store_true")
+    review.add_argument("--output", type=pathlib.Path)
     review.add_argument("--roles", nargs="*", choices=[
         "coordinator",
         "dsp-architect",

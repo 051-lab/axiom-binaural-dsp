@@ -290,6 +290,11 @@ Agentic contracts are now checked by both `agentic-audit` and `ready-check`.
 This turns the command surface, profile set, and skill-eval fixtures into
 validated runtime inputs rather than documentation-only registries.
 
+The multi-role review workflow now emits a validated `axiom-agent-review`
+record. Draft records include role-source links, decision enums, empty findings
+arrays, evidence-needed arrays, and explicit boundaries so future automation can
+distinguish an incomplete review scaffold from completed evidence.
+
 ## Immediate Next Questions
 
 Before implementation, decide:

@@ -111,6 +111,37 @@ class AxiomCodexHelperTests(unittest.TestCase):
             checks = axiom_codex.validate_agent_profiles(Path(directory))
         self.assertTrue(any(check.name == "profile required sections" for check in checks))
 
+    def test_agent_review_record_validates_default_roles(self) -> None:
+        record = axiom_codex.build_agent_review_record("Agentic review contract")
+        checks = axiom_codex.validate_agent_review_record(record)
+        self.assertFalse(
+            any(check.status == "fail" for check in checks),
+            "\n".join(f"{check.name}: {check.detail}" for check in checks),
+        )
+        self.assertEqual(record["recordType"], "axiom-agent-review")
+        self.assertEqual(record["decision"], "draft")
+        self.assertEqual(record["evidenceStatus"], "not_evidence_until_completed")
+        self.assertGreaterEqual(len(record["roles"]), 5)
+
+    def test_agent_review_record_rejects_unknown_role_and_bad_decision(self) -> None:
+        record = axiom_codex.build_agent_review_record("Bad record", ["coordinator"])
+        record["decision"] = "approve-release"
+        record["roles"].append(
+            {
+                "role": "unknown-role",
+                "profileSource": "missing.md",
+                "roleSource": "missing.md",
+                "purpose": "",
+                "findings": [],
+                "evidenceNeeded": [],
+                "decision": "draft",
+            }
+        )
+        checks = axiom_codex.validate_agent_review_record(record)
+        names = {check.name for check in checks if check.status == "fail"}
+        self.assertIn("review decision", names)
+        self.assertIn("unknown review role", names)
+
     def test_skill_eval_contract_rejects_duplicate_and_unknown_command(self) -> None:
         case = {
             "id": "fixture",
@@ -725,6 +756,53 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("command surface contract", result.stdout)
         self.assertIn("agent profile contract", result.stdout)
         self.assertIn("skill eval contract", result.stdout)
+
+    def test_cli_agent_review_json_outputs_valid_record(self) -> None:
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(HELPER_PATH),
+                "agent-review",
+                "--topic",
+                "Agentic review contract",
+                "--json",
+            ],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        payload = json.loads(result.stdout)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(payload["record"]["recordType"], "axiom-agent-review")
+        self.assertTrue(any(check["name"] == "agent review record" for check in payload["checks"]))
+        self.assertIn("dsp-architect", {entry["role"] for entry in payload["record"]["roles"]})
+
+    def test_cli_agent_review_writes_output_file(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "review.json"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(HELPER_PATH),
+                    "agent-review",
+                    "--topic",
+                    "Agentic review file",
+                    "--roles",
+                    "coordinator",
+                    "safety-auditor",
+                    "--output",
+                    str(output),
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            payload = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual([entry["role"] for entry in payload["roles"]], ["coordinator", "safety-auditor"])
+        self.assertIn("Axiom Multi-Role Review Record", result.stdout)
 
     def test_task_state_validates_machine_readable_backlog(self) -> None:
         data = axiom_codex.load_task_state()

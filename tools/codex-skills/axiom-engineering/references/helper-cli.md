@@ -46,7 +46,8 @@ fixture checks, and safe Knowledge search.
   local material, manifests, credentials, and private path leaks.
 - `agent-profiles`: list Codex-specific role profiles or print one profile
   source with `--role`.
-- `agent-review`: structured multi-role review scaffold from local role docs.
+- `agent-review`: validated multi-role review record from local Codex profiles
+  and Pi role docs; supports JSON output for future orchestration.
 - `airwindows-index`: create a local-only metadata index from an external
   Airwindows checkout for clean-room concept retrieval.
 - `airwindows-audit`: validate canonical metadata, forbidden fields and paths,

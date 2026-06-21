@@ -42,6 +42,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-032 | Initial implementation complete | Add automatic local evidence discovery | Agentic Layer | `evidence-catalog` helper and local-only default directory configuration | Codex can inventory normalized bundles, choose the newest valid one, and automatically include it in routine status and next-action orientation without hardcoded private paths. |
 | AX-TASK-033 | Complete | Reconcile current local change batch | Repository | Findings-first reconciliation report and local commit groups | Player path containment and dependency setup are complete, historical `.10` is restored, validation passes, and the approved local commit series is prepared without publishing. |
 | AX-TASK-034 | Complete | Add Agentic Layer contract audit | Agentic Layer | `agentic-audit` helper and blocking `ready-check` integration | Command registry/runtime mappings, aliases, JDSP approval flags, profile structure, role sources, and skill-eval fixtures fail closed when their contracts drift. |
+| AX-TASK-035 | Complete | Add validated multi-role review records | Agentic Layer | `agent-review --json` and `--output` record generation | Multi-role reviews now have schema versioning, role-source links, decision enums, evidence boundaries, validation checks, and machine-readable output without claiming the draft is evidence. |
 
 ## Current Priority
 
@@ -59,6 +60,8 @@ Recommended next actions:
    new repeatable normal-material problem before proposing `Axiom Clean R012`.
 6. Use `task-state` and `next-action` as the machine-readable planning source
    for future helper commands.
+7. Use `agent-review --json` or `--output` when a task needs structured role
+   findings before implementation or publication review.
 
 ## Progress Notes
 
@@ -125,6 +128,9 @@ Recommended next actions:
 - `AX-TASK-034` hardens `AX-TASK-018` through `AX-TASK-021` with strict
   command, runtime-mapping, profile, approval-boundary, and skill-eval
   contracts. `ready-check` now fails when those contracts drift.
+- `AX-TASK-035` replaces the free-form `agent-review` scaffold with a
+  validated review-record model that can be rendered as Markdown or emitted as
+  JSON for future orchestration.
 
 ## Graduation Checklist For Sound-Changing Work
 

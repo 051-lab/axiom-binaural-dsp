@@ -342,6 +342,16 @@
       "requiresApproval": false,
       "blockedBy": [],
       "nextAction": "Use agentic-audit and ready-check as blocking validation when command, profile, or skill-eval contracts change."
+    },
+    {
+      "id": "AX-TASK-035",
+      "status": "complete",
+      "title": "Add validated multi-role review records",
+      "area": "Agentic Layer",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Use agent-review --json or --output when a future task needs structured role findings."
     }
   ]
 }

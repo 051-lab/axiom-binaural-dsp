@@ -10,11 +10,15 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added `agentic-audit` to validate command registry/runtime mappings, native
   aliases, JDSP approval metadata, agent profile contracts, and skill-eval
   fixture schemas.
+- Added validated `agent-review` records with JSON/file output, role-source
+  links, decision enums, and explicit evidence boundaries.
 - Added adversarial regression coverage for malformed Agentic Layer metadata.
 
 ### Changed
 - Made `ready-check` consume the strict Agentic contract validators instead of
   checking only whether registry, profile, and fixture files exist.
+- Replaced the free-form multi-role review scaffold with a schema-validated
+  draft record that can still render as Markdown for human review.
 
 ---
 
