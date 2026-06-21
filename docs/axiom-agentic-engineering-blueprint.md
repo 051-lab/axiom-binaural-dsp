@@ -311,6 +311,12 @@ relative-path audits, automatic standard-index discovery, and explicit query
 opt-out. It remains a clean-room source of concepts and Labs questions rather
 than implementation instructions or candidate evidence.
 
+The qualification-evidence stack is complete for its two supported Windows host
+schemas. Ingestion produces source-hashed normalized records, status and
+next-action consume validated bundles, discovery selects the newest valid local
+bundle, and the catalog reports actual default configuration state. Unsupported
+schemas still fail closed, and automation never becomes listening acceptance.
+
 ## Immediate Next Questions
 
 Before implementation, decide:

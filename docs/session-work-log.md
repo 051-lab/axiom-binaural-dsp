@@ -1435,3 +1435,44 @@ Scope: Harden and graduate `AX-TASK-029`.
 ### Next Recommended Work
 
 - Continue with `AX-TASK-030`, the qualification evidence ingestion adapter.
+
+## Run 038 - Qualification Evidence Stack Graduation
+
+Date: 2026-06-21
+Status: Completed
+Scope: Audit, harden, and graduate `AX-TASK-030` through `AX-TASK-032`.
+
+### What Was Implemented
+
+- Verified source-hashed ingestion for Windows host soak and manual-recovery
+  report schemas.
+- Verified fail-closed handling for unsupported evidence schemas.
+- Verified evidence-status integration with status-summary and next-action.
+- Verified automatic discovery of the newest valid local bundle.
+- Corrected `defaultConfigured` so it reflects the actual saved local
+  configuration, not only whether the current command used `--set-default`.
+- Graduated `AX-TASK-030`, `031`, and `032` from initial to complete.
+- Added `AX-TASK-040` as the evidence-stack reconciliation milestone.
+
+### Why It Matters
+
+- The Agentic Layer can reliably orient itself from real host qualification
+  evidence without exposing private paths.
+- Environmental warnings remain distinct from audio-integrity failures.
+- Automation evidence remains explicitly separate from listening acceptance,
+  publication approval, and accepted-baseline promotion.
+
+### Validation
+
+- The configured catalog found one valid local bundle.
+- The bundle contains two records and reports
+  `pass_with_environment_warning`.
+- Status-summary and next-action automatically consumed the bundle.
+- Evidence catalog now reports `defaultConfigured: true` for the saved
+  directory.
+- Focused helper tests passed 42 tests before final full validation.
+
+### Next Recommended Work
+
+- Review the remaining seeded Knowledge work against a specific test-design
+  question rather than creating concept notes without a need.

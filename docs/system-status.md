@@ -134,9 +134,9 @@ PR #10 as commit `c498688`.
 | Foundational Agentic tasks | complete | `AX-TASK-018` through `AX-TASK-021`; contracts and regressions pass |
 | Agentic planning stack | complete | `AX-TASK-026` through `AX-TASK-028`; review, task state, and next action integrated |
 | Airwindows Knowledge intake | complete and hardened | 541 canonical effects; pinned provenance, strict audit, automatic query discovery |
-| Qualification evidence ingestion | initial implementation complete | `evidence-ingest` helper; local-only normalized bundles |
-| Qualification evidence status | initial implementation complete | `evidence-status`; optional `status-summary --evidence` and `next-action --evidence` |
-| Automatic evidence discovery | initial implementation complete | `evidence-catalog`; local-only default directory |
+| Qualification evidence ingestion | complete | source-hashed soak and recovery normalization; fail-closed schemas |
+| Qualification evidence status | complete | evidence-aware status and planning without automated acceptance |
+| Automatic evidence discovery | complete | newest valid local bundle and truthful default-configuration state |
 
 These docs and templates are workflow infrastructure. They do not change DSP
 behavior. Larger product lanes such as Axiom Reference, Immersive, Night, and
@@ -253,8 +253,8 @@ Summary:
 
 ## Current Best Next Actions
 
-1. Continue Agentic Layer hardening with the qualification-evidence stack,
-   starting from `AX-TASK-030`.
+1. Review the remaining seeded Knowledge work and decide whether a specific
+   test-design question justifies another concept note.
 2. Keep the completed `.11` Sub Harmonics result as a watch item; do not draft
    `Axiom Clean R012` without a new repeatable normal-material problem.
 3. Use Knowledge seed notes to support specific test-design questions, not to

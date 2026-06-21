@@ -1002,6 +1002,16 @@ def save_evidence_config(directory: pathlib.Path) -> None:
     )
 
 
+def evidence_directory_is_default(directory: pathlib.Path) -> bool:
+    configured = load_evidence_config()
+    if configured is None:
+        return False
+    try:
+        return configured.resolve() == directory.expanduser().resolve()
+    except OSError:
+        return False
+
+
 def configured_evidence_path(explicit: pathlib.Path | None, disabled: bool = False) -> pathlib.Path | None:
     if disabled:
         return None
@@ -1019,10 +1029,11 @@ def evidence_catalog(args: argparse.Namespace) -> int:
     payload = evidence_catalog_payload(args.directory)
     if args.set_default and payload["status"] == "pass":
         save_evidence_config(args.directory)
+    default_configured = payload["status"] == "pass" and evidence_directory_is_default(args.directory)
     public_payload = {
         **payload,
         "latestBundle": payload["latestBundleName"],
-        "defaultConfigured": bool(args.set_default and payload["status"] == "pass"),
+        "defaultConfigured": default_configured,
     }
     if args.json:
         print(json.dumps(public_payload, indent=2, sort_keys=True))
@@ -1032,7 +1043,7 @@ def evidence_catalog(args: argparse.Namespace) -> int:
     print(f"- JSON files: `{payload['bundleCount']}`")
     print(f"- valid bundles: `{payload['validBundleCount']}`")
     print(f"- latest valid bundle: `{payload['latestBundleName'] or 'none'}`")
-    if args.set_default and payload["status"] == "pass":
+    if default_configured:
         print("- default evidence directory: configured locally")
     print("\n## Bundles\n")
     for bundle in payload["bundles"]:

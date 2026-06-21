@@ -755,6 +755,24 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual(axiom_codex.configured_evidence_path(explicit), explicit)
         self.assertIsNone(axiom_codex.configured_evidence_path(explicit, disabled=True))
 
+    def test_evidence_directory_reports_existing_default_configuration(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = root / "evidence-config.json"
+            config.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "directory": str(root),
+                        "boundary": "local-only configuration; do not commit",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            with patch.object(axiom_codex, "DEFAULT_EVIDENCE_CONFIG", config):
+                self.assertTrue(axiom_codex.evidence_directory_is_default(root))
+                self.assertFalse(axiom_codex.evidence_directory_is_default(root / "other"))
+
     def test_pi_handoff_command_defaults_to_targeted_sub_gain_follow_up(self) -> None:
         command = axiom_codex.pi_handoff_command(
             argparse.Namespace(
@@ -898,7 +916,8 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertNotIn("AX-TASK-022", result.stdout)
         self.assertNotIn("AX-TASK-027", result.stdout)
         self.assertNotIn("AX-TASK-029", result.stdout)
-        self.assertIn("AX-TASK-030", result.stdout)
+        self.assertNotIn("AX-TASK-030", result.stdout)
+        self.assertIn("AX-TASK-003", result.stdout)
 
     def test_cli_next_action_reports_planning_guidance(self) -> None:
         result = subprocess.run(
@@ -916,7 +935,11 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertFalse(payload["includeMaintenance"])
 
     def test_cli_next_action_can_select_initial_maintenance(self) -> None:
-        with patch.object(axiom_codex, "git_changed_paths", return_value=[]):
+        task_state = self._initial_maintenance_task_state()
+        with (
+            patch.object(axiom_codex, "git_changed_paths", return_value=[]),
+            patch.object(axiom_codex, "load_task_state", return_value=task_state),
+        ):
             payload = axiom_codex.next_action_payload(evidence_path=None, include_maintenance=True)
         self.assertTrue(payload["includeMaintenance"])
         self.assertIsNotNone(payload["selectedTask"])
@@ -924,11 +947,35 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("maintenance task", payload["reason"])
 
     def test_next_action_dirty_tree_still_blocks_maintenance_recommendation(self) -> None:
-        with patch.object(axiom_codex, "git_changed_paths", return_value=["tools/fixture.py"]):
+        task_state = self._initial_maintenance_task_state()
+        with (
+            patch.object(axiom_codex, "git_changed_paths", return_value=["tools/fixture.py"]),
+            patch.object(axiom_codex, "load_task_state", return_value=task_state),
+        ):
             payload = axiom_codex.next_action_payload(evidence_path=None, include_maintenance=True)
         self.assertEqual(payload["reason"], "working tree has local changes")
         self.assertIsNotNone(payload["selectedTask"])
         self.assertEqual(payload["selectedTask"]["phase"], "initial")
+
+    @staticmethod
+    def _initial_maintenance_task_state() -> dict:
+        return {
+            "schemaVersion": 1,
+            "lastUpdated": "2026-06-21",
+            "source": "fixture",
+            "tasks": [
+                {
+                    "id": "AX-TASK-999",
+                    "status": "initial-implementation-complete",
+                    "title": "Fixture maintenance",
+                    "area": "Agentic Layer",
+                    "phase": "initial",
+                    "requiresApproval": False,
+                    "blockedBy": [],
+                    "nextAction": "Continue fixture maintenance.",
+                }
+            ],
+        }
 
     def test_cli_pi_handoff_prints_draft_without_execution(self) -> None:
         result = subprocess.run(

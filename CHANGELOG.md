@@ -19,6 +19,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   with explicit `--no-airwindows-index` opt-out.
 - Added strict Airwindows top-level repository, license, and safe-field audit
   checks.
+- Corrected evidence-catalog output so `defaultConfigured` reflects the actual
+  existing local configuration rather than only the current invocation flag.
 - Added adversarial regression coverage for malformed Agentic Layer metadata.
 
 ### Changed
@@ -32,6 +34,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   and next-action planning passed integrated command and regression checks.
 - Graduated `AX-TASK-029` after the real 541-effect Airwindows index passed
   hardened provenance, metadata, path, drift, and query checks.
+- Graduated `AX-TASK-030` through `AX-TASK-032` after the real Windows host
+  evidence bundle passed ingestion, validation, status, discovery, and
+  local-configuration checks.
 
 ---
 

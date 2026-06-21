@@ -295,33 +295,33 @@
     },
     {
       "id": "AX-TASK-030",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Add qualification evidence ingestion",
       "area": "Agentic Layer",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Extend evidence-ingest only when another stable local qualification report schema is available."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-031",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Connect qualification evidence to Agentic status",
       "area": "Agentic Layer",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Pass a current evidence bundle to status-summary or next-action when qualification state should affect orientation."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-032",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Add automatic local evidence discovery",
       "area": "Agentic Layer",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Keep the configured local evidence directory populated with normalized bundles from completed qualifications."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-033",
@@ -388,6 +388,16 @@
       "status": "complete",
       "title": "Harden and graduate Airwindows Knowledge intake",
       "area": "Knowledge",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-040",
+      "status": "complete",
+      "title": "Harden and graduate qualification evidence stack",
+      "area": "Agentic Layer",
       "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
