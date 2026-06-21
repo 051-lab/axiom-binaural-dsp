@@ -29,13 +29,18 @@ task is ready for scheduling or delegation.
 | AX-TASK-019 | Initial implementation complete | Create role-specific Codex agent profiles | Codex | `tools/axiom-codex/agent_profiles/` and `agent-profiles` helper | DSP architecture, EEL safety, measurement, qualification, release, tooling, research, safety, implementation, and coordination roles map to the existing role registry and have limited responsibilities. |
 | AX-TASK-020 | Initial implementation complete | Add automated guardrails for unsafe Axiom actions | Codex | `guard-check` helper and unit tests | Historical EEL edits, private artifact paths, source audio, captured WAVs, local manifests, credentials, and unsupported baseline changes are blocked or flagged before publication. |
 | AX-TASK-021 | Initial implementation complete | Add Axiom skill behavior evals | Codex | `tools/axiom-codex/skill_eval_cases.json` and `skill-eval` helper | The Axiom skill source is checked against representative prompts for status inspection, DSP-safety refusal, Pi handoff, Knowledge lookup, release-gate review, private-artifact handling, and session-log refresh. |
-| AX-TASK-022 | Listening package prepared | Close `.11` Sub Harmonics follow-up | Qualification | Updated investigation gate, summarized evidence, and local listening package workflow | The corrected and confirmatory `+4 dB`, `+10 dB`, and `+12 dB` Sub Harmonics maps completed through Pi/JDSP and are summarized in `docs/sub-harmonics-follow-up-v4.1.4.11.md`. `docs/sub-harmonics-interpretation-v4.1.4.11.md` keeps `.11` accepted and blocks `.12` for now. `docs/sub-harmonics-listening-target-v4.1.4.11.md` defines the focused accepted-`.11` listening check, including local filtered A/B package generation. |
+| AX-TASK-022 | Listening package prepared | Close `.11` Sub Harmonics follow-up | Qualification | Updated investigation gate, summarized evidence, and local listening package workflow | The corrected and confirmatory `+4 dB`, `+10 dB`, and `+12 dB` Sub Harmonics maps completed through Pi/JDSP and are summarized in `docs/sub-harmonics-follow-up-v4.1.4.11.md`. `docs/sub-harmonics-interpretation-v4.1.4.11.md` keeps `.11` accepted and blocks `Axiom Clean R012` for now. `docs/sub-harmonics-listening-target-v4.1.4.11.md` defines the focused accepted-`.11` listening check, including local filtered A/B package generation. |
 | AX-TASK-023 | Complete | Add structured spatial listening vocabulary | Qualification | Listening-record guidance update | Listening records distinguish center image, lateral spread, localization blur, depth impression, bass-image coupling, fatigue, and route context. |
 | AX-TASK-024 | Complete | Create Knowledge concept notes from seed sources | Knowledge | Short concept notes tied to Axiom questions | Seed bibliography now has focused concept notes for spatial listening vocabulary, elevated bass/headroom tradeoffs, stage isolation, and profile-scope boundaries without copying source text or claiming research proves Axiom behavior. |
 | AX-TASK-025 | Complete | Review and merge PR #12 | Repository | Merged Codex/Knowledge hardening PR | PR #12 was reviewed, validation passed, and the PR was merged after explicit approval. |
 | AX-TASK-026 | Initial implementation complete | Add consolidated local review/check command | Codex | `local-review` helper command | Future full-system reviews can run the standard local evidence snapshot with one safe, non-JDSP command that covers git state, accepted baseline, changed paths, guard-check, ready-check, Knowledge audit, Python tests, Node harness tests, and recommended next action. |
 | AX-TASK-027 | Initial implementation complete | Add machine-readable task state | Codex | `tools/axiom-codex/task_state.json` and `task-state` helper | Agentic planning can validate and summarize task status, blocked state, approval needs, and next actions without parsing only Markdown tables. |
 | AX-TASK-028 | Initial implementation complete | Add next-action helper | Codex | `next-action` helper command | Codex can recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, and approval gates without running JDSP or bypassing human decisions. |
+| AX-TASK-029 | Initial implementation complete | Add Airwindows Knowledge intake workflow | Knowledge | Source note, concept taxonomy, and `airwindows-index` helper | Airwindows can be indexed as local-only metadata for clean-room concept retrieval without vendoring code, copying implementation, or creating a DSP candidate. |
+| AX-TASK-030 | Initial implementation complete | Add qualification evidence ingestion | Agentic Layer | `evidence-ingest` helper and normalized local evidence bundle | Windows soak and manual-recovery JSON reports can be converted into compact, source-hashed evidence records without exposing private paths by default or treating automation as listening acceptance. |
+| AX-TASK-031 | Initial implementation complete | Connect qualification evidence to Agentic status | Agentic Layer | `evidence-status` helper plus optional `--evidence` status/next-action input | Codex can validate and summarize a normalized bundle during orientation, and failed or investigative evidence can block dependent planning without granting automated acceptance. |
+| AX-TASK-032 | Initial implementation complete | Add automatic local evidence discovery | Agentic Layer | `evidence-catalog` helper and local-only default directory configuration | Codex can inventory normalized bundles, choose the newest valid one, and automatically include it in routine status and next-action orientation without hardcoded private paths. |
+| AX-TASK-033 | Complete | Reconcile current local change batch | Repository | Findings-first reconciliation report and local commit groups | Player path containment and dependency setup are complete, historical `.10` is restored, validation passes, and the approved local commit series is prepared without publishing. |
 
 ## Current Priority
 
@@ -50,11 +55,11 @@ Recommended next actions:
    work can add native runtime wrappers only when a supported Codex command or
    subagent mechanism is available.
 5. Run focused accepted-`.11` listening from the filtered `+4` versus `+10`
-   and `+4` versus `+12` local A/B packages before proposing a `.12`
+   and `+4` versus `+12` local A/B packages before proposing an `Axiom Clean R012`
    hypothesis.
-6. Address the remaining `AX-TASK-022` listening work before proposing `.12`;
-   use `task-state` and `next-action` as the machine-readable planning source
-   for future helper commands.
+6. Address the remaining `AX-TASK-022` listening work before proposing
+   `Axiom Clean R012`; use `task-state` and `next-action` as the
+   machine-readable planning source for future helper commands.
 
 ## Progress Notes
 
@@ -94,17 +99,30 @@ Recommended next actions:
   implementations: command registry, Codex role profiles, guard-check
   preflight, and deterministic skill behavior eval fixtures.
 - `AX-TASK-022` through `AX-TASK-028` come from the 2026-06-08 full-system
-  readiness review and represent the next improvement set before any `.12`
-  candidate; `AX-TASK-023` is complete, and `AX-TASK-022` now has a completed
-  follow-up map, interpretation record, focused listening target, and local-copy
-  listening-record template. `AX-TASK-026` and `AX-TASK-027` now provide the
-  first command-backed local review and task-state foundation. `AX-TASK-028`
-  adds the first command-backed next-action recommendation.
+  readiness review and represent the next improvement set before any
+  `Axiom Clean R012` candidate; `AX-TASK-023` is complete, and `AX-TASK-022`
+  now has a completed follow-up map, interpretation record, focused listening
+  target, and local-copy listening-record template. `AX-TASK-026` and
+  `AX-TASK-027` now provide the first command-backed local review and
+  task-state foundation. `AX-TASK-028` adds the first command-backed
+  next-action recommendation.
 - `AX-TASK-024` is complete with concept notes under
   `docs/knowledge/concepts/` for spatial vocabulary, elevated bass/headroom
   tradeoffs, stage isolation, and profile-scope boundaries.
 - `AX-TASK-025` is complete: PR #12 merged the Codex/Knowledge hardening and
   Sub Harmonics follow-up batch after explicit approval.
+- `AX-TASK-029` adds Airwindows as an external open-source Knowledge pool with
+  repo-safe provenance, a concept taxonomy, and local-only metadata indexing.
+- `AX-TASK-030` adds the first Agentic Layer evidence adapter. It normalizes
+  Windows host soak and recovery qualification results while preserving the
+  distinction between raw report status, interpreted environment warnings, and
+  human listening acceptance.
+- `AX-TASK-031` makes normalized evidence queryable through `evidence-status`
+  and optionally visible to `status-summary` and `next-action`.
+- `AX-TASK-032` adds local evidence discovery and a private configuration
+  pointer so routine orientation no longer requires a bundle path.
+- `AX-TASK-033` is complete: the Player blockers are resolved, historical
+  `.10` is restored, and the approved commit series exists locally.
 
 ## Graduation Checklist For Sound-Changing Work
 

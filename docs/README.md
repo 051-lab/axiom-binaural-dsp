@@ -11,10 +11,13 @@ DSP. Use this file as the map before opening individual investigation records.
 | [session-work-log.md](session-work-log.md) | Source log for session work summaries; generates `session-work-log.pdf`. |
 | [current-state.md](current-state.md) | Accepted baseline, policy anchor, host settings, and local/private state boundary. |
 | [architecture.md](architecture.md) | Current DSP signal chain, processing math, and host ownership model. |
+| [versioning-and-naming.md](versioning-and-naming.md) | Future EEL naming policy: preserve legacy `v4.1.4.x` evidence IDs while using `Axiom Clean R012+` release labels going forward. |
 | [axiom-roadmap.md](axiom-roadmap.md) | Current development roadmap and candidate discipline. |
 | [axiom-system-roadmap.md](axiom-system-roadmap.md) | Product/profile system roadmap for Core, Labs, Knowledge, and Qualification. |
 | [axiom-full-system-review-2026-06-08.md](axiom-full-system-review-2026-06-08.md) | Current full-system readiness review across Core DSP, Qualification, Pi/JDSP workflow, Codex tooling, Knowledge, documentation, and release posture. |
 | [axiom-full-system-review-2026-06-08.html](axiom-full-system-review-2026-06-08.html) | Rendered HTML copy of the current full-system readiness review. |
+| [axiom-layer-progression-2026-06-10.md](axiom-layer-progression-2026-06-10.md) | Progression tracker for each major Axiom system layer, including Core DSP, Qualification, Codex orchestration, Agentic Layer, Knowledge, and release gates. |
+| [axiom-change-batch-reconciliation-2026-06-20.md](axiom-change-batch-reconciliation-2026-06-20.md) | Findings-first review of the current uncommitted naming, Agentic, Knowledge, and Player work, including blockers and proposed commit groups. |
 | [axiom-full-state-assessment-2026-06-04.md](axiom-full-state-assessment-2026-06-04.md) | Previous full-system assessment across Core DSP, Qualification, Agentic tooling, Knowledge, and repository housekeeping. |
 | [profile-matrix.md](profile-matrix.md) | Operational matrix for profile status, ownership, allowed changes, and tests. |
 | [axiom-operating-system-implementation-plan.md](axiom-operating-system-implementation-plan.md) | Ordered implementation plan for making the AI development ecosystem operational. |
@@ -32,6 +35,8 @@ DSP. Use this file as the map before opening individual investigation records.
 | File | Purpose |
 | --- | --- |
 | [knowledge/README.md](knowledge/README.md) | Knowledge bibliography and research-note rules. |
+| [knowledge/airwindows-open-source-dsp.md](knowledge/airwindows-open-source-dsp.md) | Repo-safe Airwindows provenance and clean-room concept boundary. |
+| [knowledge/concepts/airwindows-concept-taxonomy.md](knowledge/concepts/airwindows-concept-taxonomy.md) | Curated Airwindows effect-family taxonomy for Labs and test-design questions. |
 | [templates/labs-experiment.md](templates/labs-experiment.md) | Markdown template for Labs experiment notes. |
 | [templates/external-review-triage.md](templates/external-review-triage.md) | Markdown template for advisory LLM or human review triage. |
 | [templates/sub-harmonics-listening-record-v4.1.4.11.json](templates/sub-harmonics-listening-record-v4.1.4.11.json) | Local-copy template for the accepted-`.11` Sub Harmonics listening target. |
@@ -114,6 +119,8 @@ python3 tools/axiom-codex/axiom_codex.py knowledge-query "search terms"
 | [corpus-material.md](corpus-material.md) | Material-class taxonomy, manifest rules, and local/private corpus boundary. |
 | [listening-records.md](listening-records.md) | Structured human listening evidence format. |
 | [ab-listening-packages.md](ab-listening-packages.md) | Local level-matched A/B listening package workflow. |
+| [axiom-player.md](axiom-player.md) | Local browser music player for Windows/WSL playback through JDSP4Linux, with embedded JamesDSP UI and EEL testing controls. |
+| [wsl-jdsp-listening.md](wsl-jdsp-listening.md) | Local Windows/WSL route for informal playback through JDSP4Linux and the accepted Axiom Liveprog script. |
 | [android-validation.md](android-validation.md) | RootlessJamesDSP package and phone-side validation checklist. |
 | [device-matrix.md](device-matrix.md) | Device and route validation matrix. |
 | [device-readiness-packages.md](device-readiness-packages.md) | Local route-checklist package workflow. |

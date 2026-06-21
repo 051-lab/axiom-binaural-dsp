@@ -331,7 +331,7 @@
       "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Prepare the proposed commit groups after explicit user approval."
+      "nextAction": "Review the local commit series; publish or push only after explicit user approval."
     }
   ]
 }

@@ -68,8 +68,18 @@ Required before creating a sound-changing candidate:
 - diagnostic or fixture evidence exists;
 - required tests are known.
 
+External research or open-source code repositories, including Airwindows, can
+only supply Knowledge or Labs questions at this gate. They do not satisfy the
+diagnostic evidence, measurement, listening target, or acceptance requirements
+by themselves.
+
 Candidate creation must make a new versioned EEL file. Do not edit the accepted
 baseline or historical versions in place.
+
+Future Axiom Clean candidates should follow `docs/versioning-and-naming.md`:
+use `Axiom Clean R012`, `Axiom Clean R013`, and matching
+`src/axiom_clean_r012.eel` style filenames instead of extending the legacy
+`v4.1.4.x` sequence.
 
 ## Candidate Qualification Gate
 
@@ -105,6 +115,7 @@ promoted.
 Required before merging an official accepted script:
 
 - versioned EEL candidate file;
+- human-facing release label recorded using the current naming policy;
 - qualification document for the new version;
 - `CHANGELOG.md` update;
 - `tools/axiom-team/policy.json` updated to the new accepted path and SHA-256;

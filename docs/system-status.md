@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-06-09
+Last updated: 2026-06-20
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
@@ -11,6 +11,7 @@ tasks.
 
 | Item | Value |
 | --- | --- |
+| Human-facing label | `Axiom Clean R011` |
 | Accepted version | `v4.1.4.11` |
 | Accepted script | `src/axiom_binaural_dsp_v4.1.4.11.eel` |
 | SHA-256 | `ad7dd7b33f2e62ff03ae08d7101c7ac333d707baef26b952806990ad979b0b0e` |
@@ -22,12 +23,18 @@ restrained low-mid width baseline and changes only the elevated-bass reserve
 slope above the default `+4 dB` Sub Harmonics setting from `0.750 dB/dB` to
 `0.500 dB/dB`.
 
+Future Axiom Clean EEL iterations should use the `Axiom Clean R012+` release
+label and matching `src/axiom_clean_r012.eel` style filenames. Historical
+`v4.1.4.x` files remain evidence anchors; do not continue that sequence for
+new sound-changing candidates. See `versioning-and-naming.md`.
+
 ## Active Candidate
 
 None.
 
-No sound-changing `.12` or v5 candidate should be created until the candidate
-readiness gate passes and a new scoped hypothesis has measurement support.
+No sound-changing `Axiom Clean R012` or v5 candidate should be created until
+the candidate readiness gate passes and a new scoped hypothesis has measurement
+support.
 
 ## Host Baseline
 
@@ -69,9 +76,10 @@ Known result:
 - the summarized evidence record is
   `sub-harmonics-follow-up-v4.1.4.11.md`;
 - the interpretation record is
-  `sub-harmonics-interpretation-v4.1.4.11.md`: no `.12` candidate is justified
-  yet; the next step is focused listening around elevated-setting punch,
-  practical loudness, bass clarity, limiter pumping, and fatigue;
+  `sub-harmonics-interpretation-v4.1.4.11.md`: no `Axiom Clean R012`
+  candidate is justified yet; the next step is focused listening around
+  elevated-setting punch, practical loudness, bass clarity, limiter pumping,
+  and fatigue;
 - the listening target is
   `sub-harmonics-listening-target-v4.1.4.11.md`, with a local-copy JSON
   template at `templates/sub-harmonics-listening-record-v4.1.4.11.json`;
@@ -113,10 +121,95 @@ PR #10 as commit `c498688`.
 | Agentic engineering blueprint | local v1 source-ready | `axiom-agentic-engineering-blueprint.md` |
 | Axiom Codex skill | local v1 installed | `~/.codex/skills/axiom-engineering` from `../tools/codex-skills/axiom-engineering/` |
 | Axiom Codex helper CLI | local v2 source-ready | `../tools/axiom-codex/axiom_codex.py` |
+| Airwindows Knowledge intake | local metadata workflow | `knowledge/airwindows-open-source-dsp.md`, `knowledge/concepts/airwindows-concept-taxonomy.md`, `airwindows-index` helper |
+| Qualification evidence ingestion | initial implementation complete | `evidence-ingest` helper; local-only normalized bundles |
+| Qualification evidence status | initial implementation complete | `evidence-status`; optional `status-summary --evidence` and `next-action --evidence` |
+| Automatic evidence discovery | initial implementation complete | `evidence-catalog`; local-only default directory |
 
 These docs and templates are workflow infrastructure. They do not change DSP
 behavior. Larger product lanes such as Axiom Reference, Immersive, Night, and
 Studio Path are defined but not built as official products.
+
+## Native Windows Listening Host
+
+The local Axiom JamesDSP Controller is implemented under the external
+`JamesDSP4Windows_Decluttered/AxiomConsoleHarness` workspace. It provides a
+native Windows WASAPI route from VB-CABLE through JamesDSP/Axiom to a physical
+output. This is local tooling and does not alter the accepted Axiom EEL.
+
+Completed host capabilities:
+
+- portable package, ZIP archive, and Inno Setup installer/uninstaller;
+- upgrade-safe Local AppData settings, profiles, runtime files, and diagnostics;
+- named multi-profile management with a protected qualification baseline;
+- persistent health telemetry, threshold warnings, and session summaries;
+- stable-ID Windows default-route ownership and restoration;
+- optional tray, sign-in startup, automatic processor start, and restore-on-exit;
+- automated first-run, route, single-instance, crash-recovery, telemetry, and
+  package smoke tests;
+- unattended soak tooling with generated audio, mixed crash/parameter events,
+  default-route restoration, and JSON/Markdown evidence;
+- low-latency Axiom slider updates through `LiveProgSetVar`, avoiding EEL
+  recompilation for normal control changes;
+- DSP packet-deadline and full-buffer critical-stall telemetry;
+- typed EEL variable writes that match NSEEL's `float` storage;
+- differential config reloads that avoid reapplying the complete DSP graph for
+  slider-only changes;
+- High process priority, MMCSS `Pro Audio / Critical` scheduling, and a
+  resilient `200 ms` buffer with approximately `40 ms` steady queued latency;
+- soak evidence that separates audio-integrity failures from AC/battery
+  environment changes;
+- centralized `0.2.0` controller/installer version metadata;
+- release preflight checks for stable AC power, High performance mode, disabled
+  AC sleep/hibernate, pending reboot state, package/install hashes, route
+  availability, and competing processes;
+- an overnight wrapper that temporarily disables AC sleep and restores the
+  exact preceding timeout in all exit paths;
+- a certificate-aware Authenticode signing and verification tool that keeps
+  private keys, passwords, and certificate thumbprints outside the repository.
+
+The final 2026-06-20 package smoke suite passed. A stressed 12-minute portable
+gate passed with 72,498 packets, 24/24 reloads, one crash recovery, zero drops,
+zero starvation, zero deadline misses, and 27.64% maximum buffer use. A
+15-minute loaded-desktop gate passed with 91,500 packets, 15/15 reloads, zero
+losses, zero deadline misses, and 25.83% maximum buffer use.
+
+The installed one-hour endurance run at
+`%LOCALAPPDATA%\Axiom\SoakTests\20260620-042409` processed 361,987 packets and
+passed every audio-integrity gate: zero dropped frames, zero render starvation,
+12/12 reloads, a 0.3036% deadline-miss rate, and 42.67% maximum buffer use.
+Windows changed from battery to AC during the run, producing 19 non-lossy
+capture discontinuity notifications; the historical report therefore recorded
+`fail` under the older combined gate. Future reports classify that condition as
+an environment warning instead of a processor failure.
+
+The `0.2.0` package, installer, and installed application pass the full smoke
+suite. A short end-to-end overnight-wrapper simulation passed and confirmed
+that the preceding 10-minute AC sleep timeout was restored after cleanup.
+
+The 2026-06-20 manual recovery qualification passed on the VB-CABLE to USB-C
+EarPods route. Removing the EarPods stopped processing and placed the controller
+in route-recovery waiting while preserving the stable endpoint ID. Reconnecting
+the same endpoint restored VB-CABLE route ownership and restarted processing
+automatically. A Modern Standby cycle preserved the route and resumed with zero
+drops, starvation, conversion errors, render errors, deadline misses, or
+critical stalls. Local evidence is retained under
+`%LOCALAPPDATA%\Axiom\ManualRecovery\20260620-074834`.
+
+The Agentic Layer can now ingest the soak and manual-recovery JSON schemas into
+one source-hashed evidence bundle. It preserves the historical soak report's
+raw `fail` while classifying its audio result as
+`pass_with_environment_warning`, and it classifies the manual recovery record
+as `pass`. The normalized bundle remains local, hides private paths by default,
+and does not constitute listening acceptance or release promotion. The first
+bundle is retained at
+`%LOCALAPPDATA%\Axiom\AgenticEvidence\20260620-windows-host-qualification.json`.
+
+Remaining productization work is the full power-stable overnight installed
+gate and provisioning a trusted code-signing certificate before external
+distribution. Windows SDK `signtool.exe` is installed, but no usable
+code-signing certificate is currently present; all four release artifacts
+correctly verify as unsigned.
 
 ## Latest Assessment
 
@@ -129,9 +222,9 @@ Summary:
 - Full Python tests passed with 170 tests.
 - Pi doctor, strict corpus metadata, candidate readiness, Codex helper
   readiness, guard checks, skill evals, and Knowledge source audit passed.
-- Candidate readiness is `READY`, but no `.12` candidate is justified yet; the
-  completed `.11` Sub Harmonics follow-up produced a listening target, not an
-  EEL edit boundary.
+- Candidate readiness is `READY`, but no `Axiom Clean R012` candidate is
+  justified yet; the completed `.11` Sub Harmonics follow-up produced a
+  listening target, not an EEL edit boundary.
 - The 2026-06-08 corrected targeted rerun and 2026-06-09 confirmatory rerun
   both produced full reports: no normal-material clipping through `+12 dB`,
   but failed gates due to default dense-electronic repeatability qualification
@@ -139,16 +232,21 @@ Summary:
 - Listening records now require structured spatial fields for center image,
   lateral spread, localization blur, depth impression, bass-image coupling, and
   route context.
-- Draft PR #12 is open and clean for the Codex/Knowledge hardening batch.
+- Airwindows is available as an external open-source Knowledge source through
+  repo-safe notes and local-only metadata indexing; it can inform Labs
+  questions but not justify candidate creation by itself.
+- PR #12 merged the Codex/Knowledge hardening batch after explicit approval.
 - Axiom Knowledge has six local-source-backed seed notes and a passing source
   audit.
 
 ## Current Best Next Actions
 
-1. Review and merge PR #12 only after explicit approval.
+1. Review the local commit series recorded in
+   `axiom-change-batch-reconciliation-2026-06-20.md`; publish or push only
+   after explicit approval.
 2. Run focused listening on accepted `.11` using
    `sub-harmonics-listening-target-v4.1.4.11.md` and the filtered local A/B
-   packages before proposing `.12`.
+   packages before proposing `Axiom Clean R012`.
 3. Use the structured spatial listening vocabulary for that listening record.
 4. Use Knowledge seed notes to support specific test-design questions, not to
    justify DSP changes by themselves.
