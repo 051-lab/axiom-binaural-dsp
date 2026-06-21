@@ -120,8 +120,8 @@ Current status:
 - The narrowly scoped `.11` reserve-law change has been accepted after
   listening against `.10`.
 - Remaining Phase 4 work is to use `.11` as the policy anchor, rerun readiness
-  before any `.12` proposal, and avoid new sound changes without a measured
-  hypothesis.
+  before any `Axiom Clean R012` proposal, and avoid new sound changes without
+  a measured hypothesis.
 
 ## Acceptance Criteria For The Roadmap
 

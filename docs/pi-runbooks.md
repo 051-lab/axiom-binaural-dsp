@@ -70,7 +70,7 @@ Decision:
 
 Use when:
 
-- considering any sound-changing `.12`, v5, or profile candidate;
+- considering any sound-changing `Axiom Clean R012`, v5, or profile candidate;
 - deciding whether measurement foundations are strong enough for DSP work.
 
 Inputs:

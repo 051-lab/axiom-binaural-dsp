@@ -6,6 +6,7 @@ Last updated: 2026-06-02
 
 | Item | Value |
 | --- | --- |
+| Human-facing label | `Axiom Clean R011` |
 | Accepted version | `v4.1.4.11` |
 | Accepted script | `src/axiom_binaural_dsp_v4.1.4.11.eel` |
 | SHA-256 | `ad7dd7b33f2e62ff03ae08d7101c7ac333d707baef26b952806990ad979b0b0e` |
@@ -16,6 +17,10 @@ Last updated: 2026-06-02
 low-mid width setting and reduces only the elevated-bass reserve slope above
 the default `+4 dB` Sub Harmonics setting from `0.750 dB/dB` to
 `0.500 dB/dB`. `v4.1.4.10` remains the previous accepted reference.
+
+For future EEL iterations, use the readable `Axiom Clean R012+` naming scheme
+instead of extending the confusing `v4.1.4.x` sequence. See
+`docs/versioning-and-naming.md`.
 
 ## Active Listening Candidate
 
@@ -45,6 +50,9 @@ internal crossfeed or internal limiter stage.
   evidence, qualification, listening acceptance, and maintenance ownership.
 - Historical `.eel` files are preserved. Sound-changing work creates a new
   versioned script instead of editing an accepted or historical script.
+- Future Axiom Clean candidates should use `Axiom Clean R012`, `Axiom Clean
+  R013`, and matching `src/axiom_clean_r012.eel` style filenames unless a later
+  approved naming policy replaces this rule.
 
 ## Public Repo State
 

@@ -10,6 +10,7 @@ before changing EEL code or host configuration.
 | Item | Detail |
 |------|--------|
 | Current accepted baseline | `src/axiom_binaural_dsp_v4.1.4.11.eel` |
+| Human-facing baseline label | `Axiom Clean R011` |
 | Active listening candidate | none |
 | Runtime | JamesDSP / JDSP4Linux EEL2 Liveprog |
 | Device policy | Speaker-neutral script; optional crossfeed belongs to the host |
@@ -20,6 +21,11 @@ before changing EEL code or host configuration.
 only the elevated-bass reserve slope above the accepted `+4 dB` Sub Harmonics
 default from `0.750 dB/dB` to `0.500 dB/dB`. It was accepted after listening
 against `v4.1.4.10`; `.10` remains the previous accepted reference.
+
+Future Axiom Clean EEL iterations should use the `Axiom Clean R012+` release
+label and matching `src/axiom_clean_r012.eel` style filenames. Preserve
+historical `v4.1.4.x` files as evidence anchors; do not continue that sequence
+for new sound-changing candidates. See `docs/versioning-and-naming.md`.
 
 ## Current Signal Chain
 
@@ -107,6 +113,7 @@ assume the intended host configuration is already active.
 | `docs/session-work-log.md` | Source log for session work summaries and generated PDF copies |
 | `docs/current-state.md` | Current accepted baseline, host policy, and repo/local state boundary |
 | `docs/architecture.md` | Active DSP architecture and host ownership |
+| `docs/versioning-and-naming.md` | Future EEL release-label policy and legacy version-ID boundary |
 | `docs/axiom-roadmap.md` | 90-day foundations-first roadmap |
 | `docs/axiom-system-roadmap.md` | Product/profile roadmap for Core, Labs, Knowledge, and Qualification |
 | `docs/profile-matrix.md` | Profile status, ownership, allowed changes, and required tests |
