@@ -381,6 +381,38 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("BassDrive", result.stdout)
         self.assertNotIn(str(index), result.stdout)
 
+    def test_knowledge_query_auto_discovers_standard_airwindows_index(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            index = Path(directory) / "index.json"
+            index.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 2,
+                        "sourceId": "airwindows-open-source-dsp",
+                        "title": "Airwindows Open Source DSP",
+                        "repoUrl": "https://github.com/airwindows/airwindows",
+                        "license": "MIT",
+                        "pinnedCommit": "1" * 40,
+                        "generatedBy": "test",
+                        "boundary": "metadata-only",
+                        "effects": [
+                            {
+                                "name": "BassDrive",
+                                "sourcePaths": ["plugins/WinVST/BassDrive/BassDriveProc.cpp"],
+                                "tags": ["bass", "nonlinear"],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            with patch.object(axiom_codex, "DEFAULT_AIRWINDOWS_INDEX", index):
+                resolved = axiom_codex.resolve_airwindows_index(None)
+        self.assertEqual(resolved, index)
+
+    def test_airwindows_index_can_be_explicitly_disabled(self) -> None:
+        self.assertIsNone(axiom_codex.resolve_airwindows_index(Path("/tmp/index.json"), disabled=True))
+
     def test_airwindows_audit_rejects_noncanonical_or_unsafe_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             index = Path(directory) / "index.json"
@@ -405,6 +437,38 @@ class AxiomCodexHelperTests(unittest.TestCase):
             checks = axiom_codex.audit_airwindows_index(index)
         self.assertTrue(any(check.status == "fail" and check.name == "Airwindows relative path" for check in checks))
         self.assertTrue(any(check.status == "fail" and check.name == "Airwindows metadata fields" for check in checks))
+
+    def test_airwindows_audit_rejects_unsafe_top_level_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            index = Path(directory) / "index.json"
+            index.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 2,
+                        "sourceId": "airwindows-open-source-dsp",
+                        "title": "Airwindows Open Source DSP",
+                        "repoUrl": "https://example.invalid/fork",
+                        "license": "unknown",
+                        "pinnedCommit": "1" * 40,
+                        "generatedBy": "test",
+                        "boundary": "metadata-only",
+                        "localPath": "/private/checkout",
+                        "effects": [
+                            {
+                                "name": "Fixture",
+                                "tags": ["uncategorized"],
+                                "sourcePaths": ["plugins/Fixture.cpp"],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            checks = axiom_codex.audit_airwindows_index(index)
+        names = {check.name for check in checks if check.status == "fail"}
+        self.assertIn("Airwindows repository URL", names)
+        self.assertIn("Airwindows license", names)
+        self.assertIn("Airwindows top-level fields", names)
 
     def test_airwindows_audit_reports_checkout_drift(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -833,7 +897,8 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("Axiom Task State", result.stdout)
         self.assertNotIn("AX-TASK-022", result.stdout)
         self.assertNotIn("AX-TASK-027", result.stdout)
-        self.assertIn("AX-TASK-029", result.stdout)
+        self.assertNotIn("AX-TASK-029", result.stdout)
+        self.assertIn("AX-TASK-030", result.stdout)
 
     def test_cli_next_action_reports_planning_guidance(self) -> None:
         result = subprocess.run(

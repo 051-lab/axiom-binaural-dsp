@@ -133,7 +133,7 @@ PR #10 as commit `c498688`.
 | Maintenance-aware planning | complete | `next-action --include-maintenance`; explicit opt-in for initial hardening |
 | Foundational Agentic tasks | complete | `AX-TASK-018` through `AX-TASK-021`; contracts and regressions pass |
 | Agentic planning stack | complete | `AX-TASK-026` through `AX-TASK-028`; review, task state, and next action integrated |
-| Airwindows Knowledge intake | local metadata workflow | `knowledge/airwindows-open-source-dsp.md`, `knowledge/concepts/airwindows-concept-taxonomy.md`, `airwindows-index` helper |
+| Airwindows Knowledge intake | complete and hardened | 541 canonical effects; pinned provenance, strict audit, automatic query discovery |
 | Qualification evidence ingestion | initial implementation complete | `evidence-ingest` helper; local-only normalized bundles |
 | Qualification evidence status | initial implementation complete | `evidence-status`; optional `status-summary --evidence` and `next-action --evidence` |
 | Automatic evidence discovery | initial implementation complete | `evidence-catalog`; local-only default directory |
@@ -253,9 +253,8 @@ Summary:
 
 ## Current Best Next Actions
 
-1. Continue Agentic Layer hardening with
-   `next-action --include-maintenance --no-evidence` when intentionally working
-   on initial Agentic tasks.
+1. Continue Agentic Layer hardening with the qualification-evidence stack,
+   starting from `AX-TASK-030`.
 2. Keep the completed `.11` Sub Harmonics result as a watch item; do not draft
    `Axiom Clean R012` without a new repeatable normal-material problem.
 3. Use Knowledge seed notes to support specific test-design questions, not to

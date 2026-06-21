@@ -15,6 +15,10 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added `next-action --include-maintenance` so ongoing Agentic hardening can
   intentionally select initial-maintenance tasks without changing default
   conservative planning.
+- Added automatic standard Airwindows-index discovery for Knowledge queries
+  with explicit `--no-airwindows-index` opt-out.
+- Added strict Airwindows top-level repository, license, and safe-field audit
+  checks.
 - Added adversarial regression coverage for malformed Agentic Layer metadata.
 
 ### Changed
@@ -26,6 +30,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   guardrail, and behavior-eval acceptance criteria passed hardened validation.
 - Graduated `AX-TASK-026` through `AX-TASK-028` after local review, task-state,
   and next-action planning passed integrated command and regression checks.
+- Graduated `AX-TASK-029` after the real 541-effect Airwindows index passed
+  hardened provenance, metadata, path, drift, and query checks.
 
 ---
 

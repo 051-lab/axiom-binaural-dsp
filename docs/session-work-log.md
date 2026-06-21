@@ -1396,3 +1396,42 @@ criteria.
 
 - Run maintenance-aware planning again to select the next incomplete Agentic
   capability.
+
+## Run 037 - Airwindows Knowledge Intake Graduation
+
+Date: 2026-06-21
+Status: Completed
+Scope: Harden and graduate `AX-TASK-029`.
+
+### What Was Implemented
+
+- Added automatic discovery of the standard local Airwindows metadata index.
+- Added `knowledge-query --no-airwindows-index` for explicit opt-out.
+- Added strict top-level audit checks for upstream repository URL, MIT license,
+  and unexpected metadata fields.
+- Preserved metadata-only effect records, relative upstream paths, and private
+  checkout-path suppression.
+- Graduated `AX-TASK-029` from initial to complete.
+- Added `AX-TASK-039` as the Airwindows hardening and reconciliation milestone.
+
+### Why It Matters
+
+- Airwindows concept retrieval now works without requiring users or agents to
+  remember a private index path.
+- Unsafe root-level fields cannot bypass the existing per-effect metadata
+  checks.
+- The workflow remains clean-room by default and cannot justify an Axiom
+  candidate by itself.
+
+### Validation
+
+- Real index audit passed for 541 canonical effects.
+- Pinned index and checkout both resolved to
+  `1a84b7d4ccec52c2a7b9f1e8a9046e93d09c9ce0`.
+- Repository URL and MIT license checks passed.
+- Automatic query discovery and explicit opt-out both passed.
+- `python3 -m unittest tests.test_axiom_codex_helper` passed 41 tests.
+
+### Next Recommended Work
+
+- Continue with `AX-TASK-030`, the qualification evidence ingestion adapter.

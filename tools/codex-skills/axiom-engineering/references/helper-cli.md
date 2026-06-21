@@ -56,8 +56,9 @@ fixture checks, and safe Knowledge search.
 - `airwindows-audit`: validate canonical metadata, forbidden fields and paths,
   duplicate effects, and optional checkout commit drift.
 - `knowledge-query`: search repo-safe notes and optional local-only source
-  metadata without exposing private paths by default; optionally searches a
-  local Airwindows metadata index.
+  metadata without exposing private paths by default; auto-discovers the
+  standard local Airwindows metadata index when present and supports
+  `--no-airwindows-index`.
 - `knowledge-sources`: audit the local-only source index, local file
   existence, and matching repo-safe notes without exposing private paths by
   default.

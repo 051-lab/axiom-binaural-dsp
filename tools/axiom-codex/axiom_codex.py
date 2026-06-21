@@ -130,6 +130,17 @@ PROFILE_REQUIRED_SECTIONS = {"Purpose", "May Do", "Must Not Do", "Required Outpu
 SKILL_EVAL_REQUIRED_FIELDS = {"id", "prompt", "expected"}
 AIRWINDOWS_SOURCE_ID = "airwindows-open-source-dsp"
 AIRWINDOWS_REPO_URL = "https://github.com/airwindows/airwindows"
+AIRWINDOWS_INDEX_FIELDS = {
+    "schemaVersion",
+    "sourceId",
+    "title",
+    "repoUrl",
+    "license",
+    "pinnedCommit",
+    "generatedBy",
+    "boundary",
+    "effects",
+}
 EVIDENCE_BOUNDARIES = [
     "ingested automation evidence is not listening acceptance",
     "ingestion does not create or promote a candidate, release, or accepted baseline",
@@ -1623,6 +1634,17 @@ def load_airwindows_index(index_path: pathlib.Path | None) -> dict[str, Any] | N
     return data
 
 
+def resolve_airwindows_index(
+    explicit_path: pathlib.Path | None,
+    disabled: bool = False,
+) -> pathlib.Path | None:
+    if disabled:
+        return None
+    if explicit_path is not None:
+        return explicit_path.expanduser()
+    return DEFAULT_AIRWINDOWS_INDEX if DEFAULT_AIRWINDOWS_INDEX.exists() else None
+
+
 def airwindows_effect_public_fields(effect: dict[str, Any]) -> dict[str, Any]:
     source_paths = effect.get("sourcePaths")
     if not isinstance(source_paths, list):
@@ -1675,6 +1697,17 @@ def audit_airwindows_index(index_path: pathlib.Path, repo: pathlib.Path | None =
             str(data.get("sourceId")),
         )
     )
+    checks.append(
+        Check(
+            "Airwindows repository URL",
+            "pass" if data.get("repoUrl") == AIRWINDOWS_REPO_URL else "fail",
+            str(data.get("repoUrl")),
+        )
+    )
+    checks.append(Check("Airwindows license", "pass" if data.get("license") == "MIT" else "fail", str(data.get("license"))))
+    forbidden_root = sorted(set(data) - AIRWINDOWS_INDEX_FIELDS)
+    if forbidden_root:
+        checks.append(Check("Airwindows top-level fields", "fail", ", ".join(forbidden_root)))
 
     effects = data.get("effects")
     if not isinstance(effects, list):
@@ -1836,7 +1869,8 @@ def knowledge_query(args: argparse.Namespace) -> int:
         score = score_text(json.dumps(public_fields, sort_keys=True), terms)
         if score:
             source_matches.append((score, public_fields))
-    airwindows_index = load_airwindows_index(args.airwindows_index)
+    airwindows_index_path = resolve_airwindows_index(args.airwindows_index, args.no_airwindows_index)
+    airwindows_index = load_airwindows_index(airwindows_index_path)
     airwindows_matches = airwindows_query_matches(airwindows_index, terms, args.limit) if airwindows_index else []
 
     print("# Axiom Knowledge Query\n")
@@ -1863,9 +1897,11 @@ def knowledge_query(args: argparse.Namespace) -> int:
     else:
         print("- no local source matches")
     print("\n## Airwindows Local Index\n")
-    if args.airwindows_index is None:
-        print("- no Airwindows index requested")
-    elif not args.airwindows_index.expanduser().exists():
+    if args.no_airwindows_index:
+        print("- Airwindows index disabled")
+    elif airwindows_index_path is None:
+        print("- standard Airwindows index not found")
+    elif not airwindows_index_path.exists():
         print("- Airwindows index not found")
     elif airwindows_matches:
         for score, effect in airwindows_matches:
@@ -2334,6 +2370,7 @@ def build_parser() -> argparse.ArgumentParser:
     knowledge.add_argument("query")
     knowledge.add_argument("--index", type=pathlib.Path, default=DEFAULT_LOCAL_INDEX)
     knowledge.add_argument("--airwindows-index", type=pathlib.Path)
+    knowledge.add_argument("--no-airwindows-index", action="store_true")
     knowledge.add_argument("--limit", type=int, default=8)
     knowledge.add_argument("--show-private-paths", action="store_true")
     knowledge.set_defaults(func=knowledge_query)

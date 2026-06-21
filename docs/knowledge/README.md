@@ -74,8 +74,7 @@ python3 tools/axiom-codex/axiom_codex.py airwindows-audit \
   --repo ~/.local/share/axiom-knowledge/sources/airwindows/repo
 
 python3 tools/axiom-codex/axiom_codex.py knowledge-query \
-  "bass nonlinear" \
-  --airwindows-index ~/.local/share/axiom-knowledge/sources/airwindows/index.json
+  "bass nonlinear"
 ```
 
 The schema-v2 index is metadata-only: one canonical record per effect, merged
@@ -83,7 +82,9 @@ tags, relative upstream source paths, and a pinned commit. `airwindows-audit`
 checks schema integrity, duplicate effects, unsafe fields or paths, and commit
 drift against an optional local checkout. The index must not contain source
 code, private checkout paths, copied implementation details, or candidate
-instructions.
+instructions. `knowledge-query` auto-discovers this standard index when it
+exists; use `--no-airwindows-index` to restrict a query to notes and the normal
+local source index.
 
 ## Suggested Categories
 

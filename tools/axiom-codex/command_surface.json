@@ -297,6 +297,7 @@
         "query text",
         "optional local index",
         "optional Airwindows metadata index",
+        "optional --no-airwindows-index",
         "optional result limit"
       ],
       "outputs": [
@@ -308,6 +309,7 @@
       "boundaries": [
         "Knowledge can inform tests",
         "Knowledge is not proof of Axiom behavior",
+        "standard local Airwindows index is auto-discovered when present",
         "private paths hidden unless explicitly requested"
       ]
     },

@@ -36,7 +36,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-026 | Complete | Add consolidated local review/check command | Codex | `local-review` helper command | The standard non-JDSP evidence snapshot covers git state, baseline, changes, guard, readiness, Agentic contracts, Knowledge, Python tests, Node tests, and recommended action. |
 | AX-TASK-027 | Complete | Add machine-readable task state | Codex | `tools/axiom-codex/task_state.json` and `task-state` helper | Task metadata validates and reports status, phase, blockers, approvals, and next actions without parsing only Markdown tables. |
 | AX-TASK-028 | Complete | Add next-action helper | Codex | `next-action` helper command | Planning accounts for task metadata, dirty trees, evidence, blockers, approvals, and explicit maintenance opt-in without running JDSP or granting decisions. |
-| AX-TASK-029 | Initial implementation complete | Add Airwindows Knowledge intake workflow | Knowledge | Source note, concept taxonomy, and `airwindows-index` helper | Airwindows can be indexed as local-only metadata for clean-room concept retrieval without vendoring code, copying implementation, or creating a DSP candidate. |
+| AX-TASK-029 | Complete | Add Airwindows Knowledge intake workflow | Knowledge | Source note, concept taxonomy, indexing, audit, and query discovery | Airwindows is indexed as local-only canonical metadata with pinned provenance, strict field/path auditing, automatic safe query discovery, and clean-room boundaries without vendoring code or creating a candidate. |
 | AX-TASK-030 | Initial implementation complete | Add qualification evidence ingestion | Agentic Layer | `evidence-ingest` helper and normalized local evidence bundle | Windows soak and manual-recovery JSON reports can be converted into compact, source-hashed evidence records without exposing private paths by default or treating automation as listening acceptance. |
 | AX-TASK-031 | Initial implementation complete | Connect qualification evidence to Agentic status | Agentic Layer | `evidence-status` helper plus optional `--evidence` status/next-action input | Codex can validate and summarize a normalized bundle during orientation, and failed or investigative evidence can block dependent planning without granting automated acceptance. |
 | AX-TASK-032 | Initial implementation complete | Add automatic local evidence discovery | Agentic Layer | `evidence-catalog` helper and local-only default directory configuration | Codex can inventory normalized bundles, choose the newest valid one, and automatically include it in routine status and next-action orientation without hardcoded private paths. |
@@ -46,6 +46,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-036 | Complete | Add maintenance-aware next-action planning | Agentic Layer | `next-action --include-maintenance` | Agentic maintenance tasks stay excluded by default, but can be selected explicitly while preserving dirty-tree, evidence, blocker, and approval-gate protections. |
 | AX-TASK-037 | Complete | Graduate foundational Agentic contracts | Agentic Layer | Reconciled task state for `AX-TASK-018` through `021` | Command, profile, guardrail, and behavior-eval foundations meet their original acceptance criteria and pass hardened contract, regression, and guard checks. |
 | AX-TASK-038 | Complete | Graduate Agentic planning stack | Agentic Layer | Reconciled task state for `AX-TASK-026` through `028` | Local review, machine-readable task state, and next-action planning meet their acceptance criteria and operate together under regression and safety checks. |
+| AX-TASK-039 | Complete | Harden and graduate Airwindows Knowledge intake | Knowledge | Automatic index discovery and stricter metadata audit | The real 541-effect index passes pinned-commit, upstream URL, MIT license, canonical-effect, safe-field, relative-path, and checkout-drift checks; queries auto-discover it with explicit opt-out. |
 
 ## Current Priority
 
@@ -120,7 +121,8 @@ Recommended next actions:
 - `AX-TASK-025` is complete: PR #12 merged the Codex/Knowledge hardening and
   Sub Harmonics follow-up batch after explicit approval.
 - `AX-TASK-029` adds Airwindows as an external open-source Knowledge pool with
-  repo-safe provenance, a concept taxonomy, and local-only metadata indexing.
+  repo-safe provenance, a concept taxonomy, local-only canonical metadata
+  indexing, automatic query discovery, and strict metadata audits.
 - `AX-TASK-030` adds the first Agentic Layer evidence adapter. It normalizes
   Windows host soak and recovery qualification results while preserving the
   distinction between raw report status, interpreted environment warnings, and
@@ -144,6 +146,8 @@ Recommended next actions:
   original acceptance criteria and hardened contract checks passed.
 - `AX-TASK-038` graduates the local-review, task-state, and next-action
   planning stack after command-level and regression validation passed.
+- `AX-TASK-039` graduates the Airwindows intake after hardening top-level
+  metadata checks and automatic standard-index discovery.
 
 ## Graduation Checklist For Sound-Changing Work
 

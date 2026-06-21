@@ -305,6 +305,12 @@ tasks are now complete rather than provisional. Their artifacts remain
 maintainable, but structural drift is blocked by `agentic-audit`, `ready-check`,
 and regression tests.
 
+The Airwindows Knowledge intake is also complete. The local-only index uses
+canonical metadata records, pinned upstream provenance, strict safe-field and
+relative-path audits, automatic standard-index discovery, and explicit query
+opt-out. It remains a clean-room source of concepts and Labs questions rather
+than implementation instructions or candidate evidence.
+
 ## Immediate Next Questions
 
 Before implementation, decide:

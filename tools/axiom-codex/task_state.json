@@ -285,13 +285,13 @@
     },
     {
       "id": "AX-TASK-029",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Add Airwindows Knowledge intake workflow",
       "area": "Knowledge",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Use the Airwindows metadata index only for clean-room concept retrieval and Labs questions."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-030",
@@ -378,6 +378,16 @@
       "status": "complete",
       "title": "Graduate Agentic planning stack",
       "area": "Agentic Layer",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-039",
+      "status": "complete",
+      "title": "Harden and graduate Airwindows Knowledge intake",
+      "area": "Knowledge",
       "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
