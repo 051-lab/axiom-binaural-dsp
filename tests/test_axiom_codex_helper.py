@@ -832,7 +832,8 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("Axiom Task State", result.stdout)
         self.assertNotIn("AX-TASK-022", result.stdout)
-        self.assertIn("AX-TASK-027", result.stdout)
+        self.assertNotIn("AX-TASK-027", result.stdout)
+        self.assertIn("AX-TASK-029", result.stdout)
 
     def test_cli_next_action_reports_planning_guidance(self) -> None:
         result = subprocess.run(

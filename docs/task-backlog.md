@@ -33,9 +33,9 @@ task is ready for scheduling or delegation.
 | AX-TASK-023 | Complete | Add structured spatial listening vocabulary | Qualification | Listening-record guidance update | Listening records distinguish center image, lateral spread, localization blur, depth impression, bass-image coupling, fatigue, and route context. |
 | AX-TASK-024 | Complete | Create Knowledge concept notes from seed sources | Knowledge | Short concept notes tied to Axiom questions | Seed bibliography now has focused concept notes for spatial listening vocabulary, elevated bass/headroom tradeoffs, stage isolation, and profile-scope boundaries without copying source text or claiming research proves Axiom behavior. |
 | AX-TASK-025 | Complete | Review and merge PR #12 | Repository | Merged Codex/Knowledge hardening PR | PR #12 was reviewed, validation passed, and the PR was merged after explicit approval. |
-| AX-TASK-026 | Initial implementation complete | Add consolidated local review/check command | Codex | `local-review` helper command | Future full-system reviews can run the standard local evidence snapshot with one safe, non-JDSP command that covers git state, accepted baseline, changed paths, guard-check, ready-check, Agentic contract audit, Knowledge audit, Python tests, Node harness tests, and recommended next action. |
-| AX-TASK-027 | Initial implementation complete | Add machine-readable task state | Codex | `tools/axiom-codex/task_state.json` and `task-state` helper | Agentic planning can validate and summarize task status, blocked state, approval needs, and next actions without parsing only Markdown tables. |
-| AX-TASK-028 | Initial implementation complete | Add next-action helper | Codex | `next-action` helper command | Codex can recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, and approval gates without running JDSP or bypassing human decisions. |
+| AX-TASK-026 | Complete | Add consolidated local review/check command | Codex | `local-review` helper command | The standard non-JDSP evidence snapshot covers git state, baseline, changes, guard, readiness, Agentic contracts, Knowledge, Python tests, Node tests, and recommended action. |
+| AX-TASK-027 | Complete | Add machine-readable task state | Codex | `tools/axiom-codex/task_state.json` and `task-state` helper | Task metadata validates and reports status, phase, blockers, approvals, and next actions without parsing only Markdown tables. |
+| AX-TASK-028 | Complete | Add next-action helper | Codex | `next-action` helper command | Planning accounts for task metadata, dirty trees, evidence, blockers, approvals, and explicit maintenance opt-in without running JDSP or granting decisions. |
 | AX-TASK-029 | Initial implementation complete | Add Airwindows Knowledge intake workflow | Knowledge | Source note, concept taxonomy, and `airwindows-index` helper | Airwindows can be indexed as local-only metadata for clean-room concept retrieval without vendoring code, copying implementation, or creating a DSP candidate. |
 | AX-TASK-030 | Initial implementation complete | Add qualification evidence ingestion | Agentic Layer | `evidence-ingest` helper and normalized local evidence bundle | Windows soak and manual-recovery JSON reports can be converted into compact, source-hashed evidence records without exposing private paths by default or treating automation as listening acceptance. |
 | AX-TASK-031 | Initial implementation complete | Connect qualification evidence to Agentic status | Agentic Layer | `evidence-status` helper plus optional `--evidence` status/next-action input | Codex can validate and summarize a normalized bundle during orientation, and failed or investigative evidence can block dependent planning without granting automated acceptance. |
@@ -45,6 +45,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-035 | Complete | Add validated multi-role review records | Agentic Layer | `agent-review --json` and `--output` record generation | Multi-role reviews now have schema versioning, role-source links, decision enums, evidence boundaries, validation checks, and machine-readable output without claiming the draft is evidence. |
 | AX-TASK-036 | Complete | Add maintenance-aware next-action planning | Agentic Layer | `next-action --include-maintenance` | Agentic maintenance tasks stay excluded by default, but can be selected explicitly while preserving dirty-tree, evidence, blocker, and approval-gate protections. |
 | AX-TASK-037 | Complete | Graduate foundational Agentic contracts | Agentic Layer | Reconciled task state for `AX-TASK-018` through `021` | Command, profile, guardrail, and behavior-eval foundations meet their original acceptance criteria and pass hardened contract, regression, and guard checks. |
+| AX-TASK-038 | Complete | Graduate Agentic planning stack | Agentic Layer | Reconciled task state for `AX-TASK-026` through `028` | Local review, machine-readable task state, and next-action planning meet their acceptance criteria and operate together under regression and safety checks. |
 
 ## Current Priority
 
@@ -141,6 +142,8 @@ Recommended next actions:
   as generally actionable.
 - `AX-TASK-037` graduates the four foundational Agentic tasks after their
   original acceptance criteria and hardened contract checks passed.
+- `AX-TASK-038` graduates the local-review, task-state, and next-action
+  planning stack after command-level and regression validation passed.
 
 ## Graduation Checklist For Sound-Changing Work
 

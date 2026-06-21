@@ -255,33 +255,33 @@
     },
     {
       "id": "AX-TASK-026",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Add consolidated local review/check command",
       "area": "Codex",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Use local-review as the standard orientation command and build next-action on top of task-state."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-027",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Add machine-readable task state",
       "area": "Codex",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Keep task_state.json synchronized with docs/task-backlog.md."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-028",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Add next-action helper",
       "area": "Codex",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Use next-action after local-review to choose the next safe Axiom work item."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-029",
@@ -367,6 +367,16 @@
       "id": "AX-TASK-037",
       "status": "complete",
       "title": "Graduate foundational Agentic contracts",
+      "area": "Agentic Layer",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-038",
+      "status": "complete",
+      "title": "Graduate Agentic planning stack",
       "area": "Agentic Layer",
       "phase": "done",
       "requiresApproval": false,

@@ -1360,3 +1360,39 @@ acceptance criteria after contract hardening.
 
 - Run `next-action --include-maintenance --no-evidence` to select the next
   incomplete Agentic maintenance target.
+
+## Run 036 - Agentic Planning Stack Graduation
+
+Date: 2026-06-21
+Status: Completed
+Scope: Reconcile `AX-TASK-026` through `AX-TASK-028` against their acceptance
+criteria.
+
+### What Was Implemented
+
+- Verified the consolidated `local-review` command and report outputs.
+- Verified machine-readable task-state validation and open-task reporting.
+- Verified default and maintenance-aware next-action planning.
+- Graduated `AX-TASK-026`, `027`, and `028` from initial to complete.
+- Added `AX-TASK-038` as the planning-stack reconciliation milestone.
+
+### Why It Matters
+
+- The Agentic planning path is now a completed system capability rather than a
+  provisional implementation.
+- Repository orientation, task interpretation, and safe next-step selection
+  operate as one tested workflow.
+- Future changes can be tracked as maintenance or extensions without keeping
+  the original build tasks artificially open.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py local-review --no-untracked --skip-tests`
+- `python3 tools/axiom-codex/axiom_codex.py task-state --json`
+- `python3 tools/axiom-codex/axiom_codex.py next-action --json --include-maintenance --no-evidence`
+- Focused planning tests in `tests/test_axiom_codex_helper.py`
+
+### Next Recommended Work
+
+- Run maintenance-aware planning again to select the next incomplete Agentic
+  capability.

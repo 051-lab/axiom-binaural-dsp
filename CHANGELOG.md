@@ -24,6 +24,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   draft record that can still render as Markdown for human review.
 - Graduated `AX-TASK-018` through `AX-TASK-021` after their command, profile,
   guardrail, and behavior-eval acceptance criteria passed hardened validation.
+- Graduated `AX-TASK-026` through `AX-TASK-028` after local review, task-state,
+  and next-action planning passed integrated command and regression checks.
 
 ---
 
