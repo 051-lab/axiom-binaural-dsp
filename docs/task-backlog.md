@@ -43,6 +43,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-033 | Complete | Reconcile current local change batch | Repository | Findings-first reconciliation report and local commit groups | Player path containment and dependency setup are complete, historical `.10` is restored, validation passes, and the approved local commit series is prepared without publishing. |
 | AX-TASK-034 | Complete | Add Agentic Layer contract audit | Agentic Layer | `agentic-audit` helper and blocking `ready-check` integration | Command registry/runtime mappings, aliases, JDSP approval flags, profile structure, role sources, and skill-eval fixtures fail closed when their contracts drift. |
 | AX-TASK-035 | Complete | Add validated multi-role review records | Agentic Layer | `agent-review --json` and `--output` record generation | Multi-role reviews now have schema versioning, role-source links, decision enums, evidence boundaries, validation checks, and machine-readable output without claiming the draft is evidence. |
+| AX-TASK-036 | Complete | Add maintenance-aware next-action planning | Agentic Layer | `next-action --include-maintenance` | Agentic maintenance tasks stay excluded by default, but can be selected explicitly while preserving dirty-tree, evidence, blocker, and approval-gate protections. |
 
 ## Current Priority
 
@@ -62,6 +63,9 @@ Recommended next actions:
    for future helper commands.
 7. Use `agent-review --json` or `--output` when a task needs structured role
    findings before implementation or publication review.
+8. Use `next-action --include-maintenance` only when intentionally continuing
+   Agentic hardening; leave default `next-action` conservative for normal
+   planning.
 
 ## Progress Notes
 
@@ -131,6 +135,9 @@ Recommended next actions:
 - `AX-TASK-035` replaces the free-form `agent-review` scaffold with a
   validated review-record model that can be rendered as Markdown or emitted as
   JSON for future orchestration.
+- `AX-TASK-036` adds explicit maintenance-aware planning so `next-action` can
+  guide ongoing Agentic hardening without treating all initial-maintenance work
+  as generally actionable.
 
 ## Graduation Checklist For Sound-Changing Work
 

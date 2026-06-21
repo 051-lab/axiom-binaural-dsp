@@ -1286,3 +1286,40 @@ machine-readable multi-role review record.
 
 - Improve `next-action` so it can intentionally select from initial-maintenance
   Agentic work instead of reporting that no unblocked task is available.
+
+## Run 034 - Maintenance-Aware Next Action
+
+Date: 2026-06-21
+Status: Completed
+Scope: Harden `next-action` so Agentic maintenance work can be selected
+explicitly without weakening default planning boundaries.
+
+### What Was Implemented
+
+- Added `next-action --include-maintenance`.
+- Kept initial-maintenance tasks excluded from default `next-action`.
+- Preserved dirty-tree, evidence-failure, approval-gate, blocker, and seeded
+  task protections.
+- Added machine-readable `includeMaintenance` output.
+- Updated the Markdown output to render the full boundary list.
+- Added `AX-TASK-036` as the completed maintenance-aware planning milestone.
+
+### Why It Matters
+
+- Agents can now continue Agentic hardening without manual interpretation of
+  the open task list.
+- Normal planning remains conservative and will not treat initial-maintenance
+  work as generally actionable.
+- The selected maintenance task is visible even when the current working tree
+  must be validated first.
+
+### Validation
+
+- `python3 -m unittest tests.test_axiom_codex_helper`
+- `python3 tools/axiom-codex/axiom_codex.py next-action --include-maintenance --no-evidence`
+- `python3 tools/axiom-codex/axiom_codex.py agentic-audit`
+
+### Next Recommended Work
+
+- Use `next-action --include-maintenance --no-evidence` after this commit to
+  pick the next Agentic hardening target.

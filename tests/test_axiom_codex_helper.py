@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 
@@ -845,6 +846,23 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("recommendedAction", payload)
         self.assertIn("planning guidance", "\n".join(payload["boundaries"]))
+        self.assertIsNone(payload["selectedTask"])
+        self.assertFalse(payload["includeMaintenance"])
+
+    def test_cli_next_action_can_select_initial_maintenance(self) -> None:
+        with patch.object(axiom_codex, "git_changed_paths", return_value=[]):
+            payload = axiom_codex.next_action_payload(evidence_path=None, include_maintenance=True)
+        self.assertTrue(payload["includeMaintenance"])
+        self.assertIsNotNone(payload["selectedTask"])
+        self.assertEqual(payload["selectedTask"]["phase"], "initial")
+        self.assertIn("maintenance task", payload["reason"])
+
+    def test_next_action_dirty_tree_still_blocks_maintenance_recommendation(self) -> None:
+        with patch.object(axiom_codex, "git_changed_paths", return_value=["tools/fixture.py"]):
+            payload = axiom_codex.next_action_payload(evidence_path=None, include_maintenance=True)
+        self.assertEqual(payload["reason"], "working tree has local changes")
+        self.assertIsNotNone(payload["selectedTask"])
+        self.assertEqual(payload["selectedTask"]["phase"], "initial")
 
     def test_cli_pi_handoff_prints_draft_without_execution(self) -> None:
         result = subprocess.run(

@@ -295,6 +295,11 @@ record. Draft records include role-source links, decision enums, empty findings
 arrays, evidence-needed arrays, and explicit boundaries so future automation can
 distinguish an incomplete review scaffold from completed evidence.
 
+The next-action planner now has an explicit `--include-maintenance` mode for
+ongoing Agentic hardening. Default planning remains conservative: dirty working
+trees, evidence failures, blockers, approval gates, and seeded tasks still take
+priority over maintenance selection.
+
 ## Immediate Next Questions
 
 Before implementation, decide:

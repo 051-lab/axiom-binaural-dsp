@@ -39,6 +39,9 @@ fixture checks, and safe Knowledge search.
   not listening acceptance or release approval.
 - `evidence-status`: validate and summarize a normalized bundle for optional
   use by `status-summary --evidence` and `next-action --evidence`.
+- `next-action`: recommend the next safe work item from task-state metadata;
+  initial-maintenance Agentic hardening tasks require explicit
+  `--include-maintenance`.
 - `evidence-catalog`: inventory local bundles, select the newest valid bundle,
   and optionally configure its directory for automatic status orientation.
 - `guard-check`: fail on known unsafe changed paths or added text, including

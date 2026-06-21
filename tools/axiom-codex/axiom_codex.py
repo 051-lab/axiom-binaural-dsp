@@ -406,8 +406,10 @@ def open_tasks(tasks: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [task for task in tasks if str(task.get("phase")) != "done"]
 
 
-def actionable_tasks(tasks: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    blocked_phases = {"done", "blocked-on-listening", "requires-approval", "initial", "seeded"}
+def actionable_tasks(tasks: list[dict[str, Any]], include_maintenance: bool = False) -> list[dict[str, Any]]:
+    blocked_phases = {"done", "blocked-on-listening", "requires-approval", "seeded"}
+    if not include_maintenance:
+        blocked_phases.add("initial")
     return [
         task for task in tasks
         if str(task.get("phase")) not in blocked_phases
@@ -416,13 +418,16 @@ def actionable_tasks(tasks: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
 
 
-def next_action_payload(evidence_path: pathlib.Path | None = None) -> dict[str, Any]:
+def next_action_payload(
+    evidence_path: pathlib.Path | None = None,
+    include_maintenance: bool = False,
+) -> dict[str, Any]:
     data = load_task_state()
     checks = validate_task_state_data(data)
     changed_paths = git_changed_paths()
     evidence = evidence_status_payload(evidence_path) if evidence_path else None
     tasks = data["tasks"]
-    actionable = sorted(actionable_tasks(tasks), key=task_priority)
+    actionable = sorted(actionable_tasks(tasks, include_maintenance=include_maintenance), key=task_priority)
     blocked = sorted(
         [task for task in open_tasks(tasks) if task.get("blockedBy") or task.get("requiresApproval")],
         key=task_priority,
@@ -442,7 +447,11 @@ def next_action_payload(evidence_path: pathlib.Path | None = None) -> dict[str, 
     elif actionable:
         task = actionable[0]
         action = f"{task['id']}: {task['nextAction']}"
-        reason = f"{task['id']} is the highest-priority unblocked task"
+        reason = (
+            f"{task['id']} is the highest-priority unblocked maintenance task"
+            if str(task.get("phase")) == "initial"
+            else f"{task['id']} is the highest-priority unblocked task"
+        )
     else:
         task = None
         action = "No unblocked task is available; inspect blocked or approval-gated tasks."
@@ -455,11 +464,13 @@ def next_action_payload(evidence_path: pathlib.Path | None = None) -> dict[str, 
         "qualificationEvidence": evidence,
         "changedPaths": changed_paths,
         "blockedTasks": blocked,
+        "includeMaintenance": include_maintenance,
         "checks": [check.__dict__ for check in checks],
         "boundaries": [
             "next-action is planning guidance only",
             "does not approve publication, merge, listening acceptance, or accepted-baseline promotion",
             "does not run JDSP",
+            "initial-maintenance tasks are selected only when explicitly requested",
         ],
     }
 
@@ -498,7 +509,7 @@ def task_state(args: argparse.Namespace) -> int:
 
 def next_action(args: argparse.Namespace) -> int:
     evidence_path = configured_evidence_path(args.evidence, args.no_evidence)
-    payload = next_action_payload(evidence_path)
+    payload = next_action_payload(evidence_path, include_maintenance=args.include_maintenance)
     if args.json:
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 1 if payload["status"] == "fail" else 0
@@ -530,7 +541,9 @@ def next_action(args: argparse.Namespace) -> int:
         for task in payload["blockedTasks"]:
             blocked = ", ".join(task.get("blockedBy", [])) or "approval required"
             print(f"- `{task['id']}` {task['title']}: {blocked}")
-    print("\nBoundary: next-action is planning guidance. It does not approve DSP, publication, merge, listening, or baseline changes.")
+    print("\n## Boundaries\n")
+    for boundary in payload["boundaries"]:
+        print(f"- {boundary}")
     return 1 if payload["status"] == "fail" else 0
 
 
@@ -2244,6 +2257,7 @@ def build_parser() -> argparse.ArgumentParser:
     next_parser.add_argument("--json", action="store_true")
     next_parser.add_argument("--evidence", type=pathlib.Path)
     next_parser.add_argument("--no-evidence", action="store_true")
+    next_parser.add_argument("--include-maintenance", action="store_true")
     next_parser.set_defaults(func=next_action)
 
     evidence = sub.add_parser("evidence-ingest")

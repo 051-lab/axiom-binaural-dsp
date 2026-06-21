@@ -352,6 +352,16 @@
       "requiresApproval": false,
       "blockedBy": [],
       "nextAction": "Use agent-review --json or --output when a future task needs structured role findings."
+    },
+    {
+      "id": "AX-TASK-036",
+      "status": "complete",
+      "title": "Add maintenance-aware next-action planning",
+      "area": "Agentic Layer",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Use next-action --include-maintenance when intentionally continuing initial Agentic hardening work."
     }
   ]
 }

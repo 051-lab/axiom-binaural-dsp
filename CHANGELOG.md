@@ -12,6 +12,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   fixture schemas.
 - Added validated `agent-review` records with JSON/file output, role-source
   links, decision enums, and explicit evidence boundaries.
+- Added `next-action --include-maintenance` so ongoing Agentic hardening can
+  intentionally select initial-maintenance tasks without changing default
+  conservative planning.
 - Added adversarial regression coverage for malformed Agentic Layer metadata.
 
 ### Changed

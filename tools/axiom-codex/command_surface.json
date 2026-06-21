@@ -170,9 +170,10 @@
       "helperCommand": "python3 tools/axiom-codex/axiom_codex.py next-action",
       "touchesJDSP": false,
       "requiresApproval": false,
-      "purpose": "Recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, and approval gates.",
+      "purpose": "Recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, approval gates, and optional maintenance opt-in.",
       "inputs": [
-        "optional --json"
+        "optional --json",
+        "optional --include-maintenance"
       ],
       "outputs": [
         "recommended action",
@@ -182,6 +183,7 @@
       ],
       "boundaries": [
         "planning guidance only",
+        "initial-maintenance tasks require explicit opt-in",
         "does not run JDSP",
         "does not approve publication, merge, listening, or baseline changes"
       ]
