@@ -207,6 +207,55 @@
       ]
     },
     {
+      "name": "airwindows-audit",
+      "trigger": "$axiom-engineering Airwindows audit",
+      "nativeAlias": "/axiom-airwindows-audit",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py airwindows-audit --repo <local-airwindows-repo>",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Validate the local Airwindows metadata index and report whether its pinned commit matches the optional local checkout.",
+      "inputs": [
+        "optional metadata index path",
+        "optional local Airwindows repository path",
+        "optional --json"
+      ],
+      "outputs": [
+        "schema and metadata safety checks",
+        "canonical effect count",
+        "checkout commit drift status"
+      ],
+      "boundaries": [
+        "read-only audit",
+        "does not fetch or update Airwindows",
+        "does not approve DSP reuse or candidate creation"
+      ]
+    },
+    {
+      "name": "airwindows-index",
+      "trigger": "$axiom-engineering Airwindows index",
+      "nativeAlias": "/axiom-airwindows-index",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py airwindows-index --repo <local-airwindows-repo>",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Create a local-only metadata index from a pinned Airwindows checkout for clean-room concept retrieval.",
+      "inputs": [
+        "local Airwindows repository path",
+        "optional output path"
+      ],
+      "outputs": [
+        "local metadata-only index",
+        "pinned upstream commit",
+        "effect names, relative upstream paths, and concept tags"
+      ],
+      "boundaries": [
+        "does not vendor Airwindows code",
+        "does not store source snippets or local paths",
+        "does not approve DSP reuse or candidate creation"
+      ]
+    },
+    {
       "name": "knowledge-query",
       "trigger": "$axiom-engineering knowledge query",
       "nativeAlias": "/axiom-knowledge",
@@ -218,11 +267,13 @@
       "inputs": [
         "query text",
         "optional local index",
+        "optional Airwindows metadata index",
         "optional result limit"
       ],
       "outputs": [
         "repo-safe note matches",
         "local source metadata matches",
+        "optional Airwindows metadata matches",
         "Knowledge boundary reminder"
       ],
       "boundaries": [
@@ -254,6 +305,83 @@
         "does not copy PDFs into git",
         "does not expose private paths by default",
         "does not turn research into Axiom evidence"
+      ]
+    },
+    {
+      "name": "evidence-catalog",
+      "trigger": "$axiom-engineering qualification evidence catalog",
+      "nativeAlias": "/axiom-evidence-catalog",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py evidence-catalog <directory> [--set-default]",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Discover normalized qualification bundles, validate them, select the newest valid record, and optionally configure its directory for automatic Codex orientation.",
+      "inputs": [
+        "local evidence directory",
+        "optional --set-default",
+        "optional --json"
+      ],
+      "outputs": [
+        "bundle inventory without private paths",
+        "latest valid bundle selection",
+        "optional local-only default configuration"
+      ],
+      "boundaries": [
+        "does not print or commit the configured directory",
+        "does not ingest raw reports",
+        "does not grant listening acceptance or release approval"
+      ]
+    },
+    {
+      "name": "evidence-ingest",
+      "trigger": "$axiom-engineering qualification evidence ingest",
+      "nativeAlias": "/axiom-evidence",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py evidence-ingest <report.json> [<report.json> ...]",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Normalize local Windows soak and manual-recovery reports into a compact qualification evidence bundle for agent review.",
+      "inputs": [
+        "one or more supported local JSON qualification reports",
+        "optional local output path",
+        "optional --json",
+        "optional --show-private-paths"
+      ],
+      "outputs": [
+        "source hashes and report types",
+        "normalized gates, metrics, warnings, and decisions",
+        "aggregate evidence decision"
+      ],
+      "boundaries": [
+        "does not run JDSP or alter the audio route",
+        "does not expose private paths by default",
+        "does not treat automation as listening acceptance",
+        "does not create or promote a candidate, release, or accepted baseline"
+      ]
+    },
+    {
+      "name": "evidence-status",
+      "trigger": "$axiom-engineering qualification evidence status",
+      "nativeAlias": "/axiom-evidence-status",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py evidence-status <bundle.json>",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Validate and summarize a normalized local qualification evidence bundle for Codex orientation and planning.",
+      "inputs": [
+        "local normalized evidence bundle",
+        "optional --json"
+      ],
+      "outputs": [
+        "bundle validation status",
+        "aggregate decision and record summaries",
+        "warning and critical-failure counts"
+      ],
+      "boundaries": [
+        "read-only local evidence review",
+        "does not expose source paths",
+        "does not convert automation into listening acceptance",
+        "does not authorize publication or baseline promotion"
       ]
     },
     {

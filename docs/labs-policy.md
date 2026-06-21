@@ -56,6 +56,8 @@ Labs may include:
 - isolated changes to one stage for screening;
 - broad research branches when clearly marked as non-candidate work;
 - scripts and reports that improve understanding of stage behavior.
+- clean-room concept extraction from external open-source DSP repositories,
+  using metadata and original Axiom notes rather than copied implementation.
 
 ## Forbidden Work
 
@@ -68,6 +70,8 @@ Labs must not:
 - commit captured audio, source music, private manifests, credentials, or local
   run folders;
 - commit copyrighted books or long copyrighted excerpts;
+- copy external source code, constants, comments, or distinctive implementation
+  structure into Axiom without a separate provenance and license review;
 - make claims stronger than repository evidence supports.
 
 ## Promotion Path

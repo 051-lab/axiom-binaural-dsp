@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-10",
+  "lastUpdated": "2026-06-20",
   "source": "docs/task-backlog.md",
   "tasks": [
     {
@@ -282,6 +282,56 @@
       "requiresApproval": false,
       "blockedBy": [],
       "nextAction": "Use next-action after local-review to choose the next safe Axiom work item."
+    },
+    {
+      "id": "AX-TASK-029",
+      "status": "initial-implementation-complete",
+      "title": "Add Airwindows Knowledge intake workflow",
+      "area": "Knowledge",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Use the Airwindows metadata index only for clean-room concept retrieval and Labs questions."
+    },
+    {
+      "id": "AX-TASK-030",
+      "status": "initial-implementation-complete",
+      "title": "Add qualification evidence ingestion",
+      "area": "Agentic Layer",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Extend evidence-ingest only when another stable local qualification report schema is available."
+    },
+    {
+      "id": "AX-TASK-031",
+      "status": "initial-implementation-complete",
+      "title": "Connect qualification evidence to Agentic status",
+      "area": "Agentic Layer",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Pass a current evidence bundle to status-summary or next-action when qualification state should affect orientation."
+    },
+    {
+      "id": "AX-TASK-032",
+      "status": "initial-implementation-complete",
+      "title": "Add automatic local evidence discovery",
+      "area": "Agentic Layer",
+      "phase": "initial",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Keep the configured local evidence directory populated with normalized bundles from completed qualifications."
+    },
+    {
+      "id": "AX-TASK-033",
+      "status": "complete",
+      "title": "Reconcile current local change batch",
+      "area": "Repository",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Prepare the proposed commit groups after explicit user approval."
     }
   ]
 }

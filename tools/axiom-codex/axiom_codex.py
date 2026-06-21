@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+import datetime
+import hashlib
 import json
 import pathlib
 import re
@@ -19,6 +21,8 @@ POLICY_PATH = REPO_ROOT / "tools" / "axiom-team" / "policy.json"
 SYSTEM_STATUS = REPO_ROOT / "docs" / "system-status.md"
 KNOWLEDGE_ROOT = REPO_ROOT / "docs" / "knowledge"
 DEFAULT_LOCAL_INDEX = pathlib.Path.home() / ".local" / "share" / "axiom-knowledge" / "source-index.json"
+DEFAULT_AIRWINDOWS_INDEX = pathlib.Path.home() / ".local" / "share" / "axiom-knowledge" / "sources" / "airwindows" / "index.json"
+DEFAULT_EVIDENCE_CONFIG = pathlib.Path.home() / ".local" / "share" / "axiom" / "evidence-config.json"
 ROLE_ROOT = REPO_ROOT / "tools" / "axiom-team" / "roles"
 CODEX_ROOT = REPO_ROOT / "tools" / "axiom-codex"
 COMMAND_SURFACE = CODEX_ROOT / "command_surface.json"
@@ -87,6 +91,24 @@ SOURCE_REQUIRED_FIELDS = {"id", "title", "type", "topics", "axiomUse", "status"}
 SOURCE_TYPES = {"book", "paper", "article", "documentation", "video", "other"}
 SOURCE_STATUSES = {"unread", "reading", "summarized", "rejected"}
 TASK_REQUIRED_FIELDS = {"id", "status", "title", "area", "phase", "requiresApproval", "blockedBy", "nextAction"}
+AIRWINDOWS_SOURCE_ID = "airwindows-open-source-dsp"
+AIRWINDOWS_REPO_URL = "https://github.com/airwindows/airwindows"
+EVIDENCE_BOUNDARIES = [
+    "ingested automation evidence is not listening acceptance",
+    "ingestion does not create or promote a candidate, release, or accepted baseline",
+    "raw reports and private paths remain local",
+]
+EVIDENCE_DECISIONS = {"pass", "pass_with_environment_warning", "investigate", "fail"}
+
+AIRWINDOWS_TAG_RULES = [
+    ("bass", ("bass", "sub", "low")),
+    ("dynamics", ("compress", "comp", "limit", "gate", "density", "pressure", "transient")),
+    ("filtering", ("filter", "eq", "tone", "capacitor", "slew", "biquad")),
+    ("high-frequency", ("air", "desk", "deess", "de-ess", "treble", "high", "hiss")),
+    ("nonlinear", ("nonlinear", "drive", "clip", "saturat", "distort", "tube", "console", "grit", "crunch")),
+    ("spatial", ("stereo", "mid", "side", "width", "binaural", "distance", "space")),
+    ("dither-noise-shaping", ("dither", "noise", "bit", "floating")),
+]
 
 
 @dataclass
@@ -117,6 +139,19 @@ def load_policy() -> dict[str, Any]:
 
 def load_json(path: pathlib.Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_json(path: pathlib.Path, payload: Any) -> None:
+    path.expanduser().parent.mkdir(parents=True, exist_ok=True)
+    path.expanduser().write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def file_sha256(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def git_status() -> str:
@@ -267,17 +302,26 @@ def actionable_tasks(tasks: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
 
 
-def next_action_payload() -> dict[str, Any]:
+def next_action_payload(evidence_path: pathlib.Path | None = None) -> dict[str, Any]:
     data = load_task_state()
     checks = validate_task_state_data(data)
     changed_paths = git_changed_paths()
+    evidence = evidence_status_payload(evidence_path) if evidence_path else None
     tasks = data["tasks"]
     actionable = sorted(actionable_tasks(tasks), key=task_priority)
     blocked = sorted(
         [task for task in open_tasks(tasks) if task.get("blockedBy") or task.get("requiresApproval")],
         key=task_priority,
     )
-    if changed_paths:
+    if evidence and evidence["status"] == "fail":
+        action = "Repair or replace the invalid qualification evidence bundle before using it for planning."
+        reason = "qualification evidence bundle validation failed"
+        task = None
+    elif evidence and evidence["aggregateDecision"] in {"fail", "investigate"}:
+        action = "Review the qualification evidence failures before starting dependent product or release work."
+        reason = f"qualification evidence decision is {evidence['aggregateDecision']}"
+        task = None
+    elif changed_paths:
         action = "Finish validating and reviewing the current local change batch before starting new work."
         reason = "working tree has local changes"
         task = actionable[0] if actionable else None
@@ -294,6 +338,7 @@ def next_action_payload() -> dict[str, Any]:
         "recommendedAction": action,
         "reason": reason,
         "selectedTask": task,
+        "qualificationEvidence": evidence,
         "changedPaths": changed_paths,
         "blockedTasks": blocked,
         "checks": [check.__dict__ for check in checks],
@@ -338,7 +383,8 @@ def task_state(args: argparse.Namespace) -> int:
 
 
 def next_action(args: argparse.Namespace) -> int:
-    payload = next_action_payload()
+    evidence_path = configured_evidence_path(args.evidence, args.no_evidence)
+    payload = next_action_payload(evidence_path)
     if args.json:
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 1 if payload["status"] == "fail" else 0
@@ -357,6 +403,14 @@ def next_action(args: argparse.Namespace) -> int:
         print("\n## Current Change Batch\n")
         for path in payload["changedPaths"]:
             print(f"- `{path}`")
+    evidence = payload.get("qualificationEvidence")
+    if evidence:
+        print("\n## Qualification Evidence\n")
+        print(f"- status: `{evidence['status']}`")
+        print(f"- aggregate decision: `{evidence.get('aggregateDecision', 'unknown')}`")
+        print(f"- records: `{evidence.get('recordCount', 0)}`")
+        print(f"- warnings: `{evidence.get('warningCount', 0)}`")
+        print(f"- critical failures: `{evidence.get('criticalFailureCount', 0)}`")
     if payload["blockedTasks"]:
         print("\n## Blocked Or Approval-Gated Tasks\n")
         for task in payload["blockedTasks"]:
@@ -401,7 +455,484 @@ def command_surface(args: argparse.Namespace) -> int:
     return 0
 
 
-def status_summary(_: argparse.Namespace) -> int:
+def evidence_source_fields(path: pathlib.Path, show_private_paths: bool) -> dict[str, Any]:
+    fields: dict[str, Any] = {
+        "sourceName": path.name,
+        "sourceSha256": file_sha256(path),
+    }
+    if show_private_paths:
+        fields["sourcePath"] = str(path.resolve())
+    return fields
+
+
+def normalized_gate(name: str, passed: bool, detail: str = "") -> dict[str, Any]:
+    gate = {"name": name, "passed": passed}
+    if detail:
+        gate["detail"] = detail
+    return gate
+
+
+def normalize_soak_evidence(
+    path: pathlib.Path,
+    data: dict[str, Any],
+    show_private_paths: bool,
+) -> dict[str, Any]:
+    raw_gates = data.get("gates")
+    metrics = data.get("metrics")
+    if not isinstance(raw_gates, list) or not isinstance(metrics, dict):
+        raise ValueError("soak report requires `gates` array and `metrics` object")
+
+    gates = [
+        normalized_gate(
+            str(gate.get("name", "unnamed gate")),
+            bool(gate.get("passed")),
+            str(gate.get("detail", "")),
+        )
+        for gate in raw_gates
+        if isinstance(gate, dict)
+    ]
+    failed_names = {gate["name"] for gate in gates if not gate["passed"]}
+    power = data.get("power") if isinstance(data.get("power"), dict) else {}
+    source_changes = power.get("sourceChanges") if isinstance(power.get("sourceChanges"), list) else []
+    integrity_metric_names = [
+        "processedFrames",
+        "packets",
+        "droppedFrames",
+        "conversionErrors",
+        "discontinuities",
+        "renderStarvations",
+        "renderErrors",
+        "dspCalls",
+        "dspDeadlineMisses",
+        "dspDeadlineMissRate",
+        "dspCriticalStalls",
+        "maximumDspUs",
+        "maximumRenderPadding",
+        "renderBufferFrames",
+        "maximumRenderPaddingRate",
+        "crashRecoveries",
+        "configReloads",
+    ]
+    selected_metrics = {name: metrics[name] for name in integrity_metric_names if name in metrics}
+    zero_loss = all(
+        metrics.get(name) == 0
+        for name in [
+            "droppedFrames",
+            "conversionErrors",
+            "renderStarvations",
+            "renderErrors",
+            "dspCriticalStalls",
+        ]
+    )
+    environment_gate_names = {"power source remained stable"}
+    coupled_discontinuity = (
+        "bounded discontinuities" in failed_names
+        and bool(source_changes)
+        and zero_loss
+    )
+    ignored_for_integrity = set(environment_gate_names)
+    if coupled_discontinuity:
+        ignored_for_integrity.add("bounded discontinuities")
+    critical_failures = sorted(failed_names - ignored_for_integrity)
+    warnings: list[str] = []
+    if failed_names & environment_gate_names:
+        warnings.append(f"power source changed {len(source_changes)} time(s) during the run")
+    if coupled_discontinuity:
+        warnings.append(
+            "discontinuity gate failed during a recorded power transition with zero dropped frames, "
+            "starvation, conversion errors, render errors, or critical stalls"
+        )
+
+    source_result = str(data.get("result", "unknown"))
+    if critical_failures:
+        decision = "fail"
+    elif source_result == "pass" and not warnings:
+        decision = "pass"
+    elif warnings and not critical_failures:
+        decision = "pass_with_environment_warning"
+    else:
+        decision = "investigate"
+
+    route = data.get("route") if isinstance(data.get("route"), dict) else {}
+    capture = route.get("capture") if isinstance(route.get("capture"), dict) else {}
+    output = route.get("output") if isinstance(route.get("output"), dict) else {}
+    return {
+        **evidence_source_fields(path, show_private_paths),
+        "kind": "windows-host-soak",
+        "scope": "windows-host-endurance",
+        "sourceResult": source_result,
+        "decision": decision,
+        "startedAt": data.get("startedAt"),
+        "endedAt": data.get("endedAt"),
+        "route": {
+            "captureName": capture.get("name"),
+            "outputName": output.get("name"),
+        },
+        "metrics": selected_metrics,
+        "gates": gates,
+        "criticalFailures": critical_failures,
+        "warnings": warnings,
+    }
+
+
+def normalize_manual_recovery_evidence(
+    path: pathlib.Path,
+    data: dict[str, Any],
+    show_private_paths: bool,
+) -> dict[str, Any]:
+    raw_gates = data.get("gates")
+    if not isinstance(raw_gates, dict):
+        raise ValueError("manual recovery report requires `gates` object")
+    gates: list[dict[str, Any]] = []
+    for name, value in raw_gates.items():
+        if isinstance(value, bool):
+            gates.append(normalized_gate(name, value))
+        elif isinstance(value, (int, float)):
+            gates.append(normalized_gate(name, value == 0, str(value)))
+        else:
+            gates.append(normalized_gate(name, False, f"unsupported value: {value!r}"))
+    failed = sorted(gate["name"] for gate in gates if not gate["passed"])
+    source_result = str(data.get("result", "unknown"))
+    if failed or source_result == "fail":
+        decision = "fail"
+    elif source_result == "pass":
+        decision = "pass"
+    else:
+        decision = "investigate"
+
+    route = data.get("qualifiedRoute") if isinstance(data.get("qualifiedRoute"), dict) else {}
+    standby = data.get("modernStandby") if isinstance(data.get("modernStandby"), dict) else {}
+    return {
+        **evidence_source_fields(path, show_private_paths),
+        "kind": "windows-manual-recovery",
+        "scope": "windows-route-and-sleep-recovery",
+        "sourceResult": source_result,
+        "decision": decision,
+        "route": {
+            "captureName": route.get("captureName"),
+            "outputName": route.get("outputName"),
+            "bufferMs": route.get("bufferMs"),
+        },
+        "modernStandbyObserved": bool(standby.get("enteredEventId") and standby.get("exitedEventId")),
+        "gates": gates,
+        "criticalFailures": failed,
+        "warnings": [],
+    }
+
+
+def normalize_evidence_file(path: pathlib.Path, show_private_paths: bool = False) -> dict[str, Any]:
+    expanded = path.expanduser()
+    if not expanded.is_file():
+        raise ValueError(f"evidence file does not exist: {path}")
+    try:
+        data = json.loads(expanded.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"invalid JSON in {path.name}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise ValueError(f"evidence file must contain a JSON object: {path.name}")
+    if isinstance(data.get("gates"), list) and isinstance(data.get("metrics"), dict):
+        return normalize_soak_evidence(expanded, data, show_private_paths)
+    if isinstance(data.get("gates"), dict) and isinstance(data.get("qualifiedRoute"), dict):
+        return normalize_manual_recovery_evidence(expanded, data, show_private_paths)
+    raise ValueError(f"unsupported qualification evidence schema: {path.name}")
+
+
+def aggregate_evidence_decision(records: list[dict[str, Any]]) -> str:
+    decisions = {str(record.get("decision")) for record in records}
+    for decision in ["fail", "investigate", "pass_with_environment_warning", "pass"]:
+        if decision in decisions:
+            return decision
+    return "investigate"
+
+
+def build_evidence_bundle(paths: list[pathlib.Path], show_private_paths: bool = False) -> dict[str, Any]:
+    records = [normalize_evidence_file(path, show_private_paths) for path in paths]
+    return {
+        "schemaVersion": 1,
+        "recordType": "axiom-qualification-evidence-bundle",
+        "generatedAtUtc": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+        "aggregateDecision": aggregate_evidence_decision(records),
+        "records": records,
+        "boundaries": EVIDENCE_BOUNDARIES,
+    }
+
+
+def validate_evidence_bundle(data: Any) -> list[Check]:
+    if not isinstance(data, dict):
+        return [Check("evidence bundle shape", "fail", "top-level value must be an object")]
+    checks: list[Check] = []
+    if data.get("schemaVersion") != 1:
+        checks.append(Check("evidence schema version", "fail", str(data.get("schemaVersion"))))
+    if data.get("recordType") != "axiom-qualification-evidence-bundle":
+        checks.append(Check("evidence record type", "fail", str(data.get("recordType"))))
+    decision = data.get("aggregateDecision")
+    if decision not in EVIDENCE_DECISIONS:
+        checks.append(Check("evidence aggregate decision", "fail", str(decision)))
+    records = data.get("records")
+    if not isinstance(records, list) or not records:
+        checks.append(Check("evidence records", "fail", "records must be a non-empty array"))
+        return checks
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            checks.append(Check("evidence record shape", "fail", f"record {index} must be an object"))
+            continue
+        missing = [
+            field
+            for field in ["kind", "scope", "sourceName", "sourceSha256", "sourceResult", "decision", "gates"]
+            if field not in record
+        ]
+        if missing:
+            checks.append(Check("evidence record fields", "fail", f"record {index}: missing {', '.join(missing)}"))
+        if record.get("decision") not in EVIDENCE_DECISIONS:
+            checks.append(Check("evidence record decision", "fail", f"record {index}: {record.get('decision')}"))
+        source_hash = record.get("sourceSha256")
+        if not isinstance(source_hash, str) or re.fullmatch(r"[0-9a-f]{64}", source_hash) is None:
+            checks.append(Check("evidence source hash", "fail", f"record {index}: invalid SHA-256"))
+        if "sourcePath" in record:
+            checks.append(Check("evidence private path", "warn", f"record {index} contains sourcePath"))
+    if not any(check.status == "fail" for check in checks):
+        checks.append(Check("evidence bundle", "pass", f"{len(records)} record(s) checked"))
+    return checks
+
+
+def evidence_status_payload(path: pathlib.Path) -> dict[str, Any]:
+    expanded = path.expanduser()
+    if not expanded.is_file():
+        return {
+            "status": "fail",
+            "aggregateDecision": "unknown",
+            "recordCount": 0,
+            "warningCount": 0,
+            "criticalFailureCount": 0,
+            "checks": [Check("evidence bundle exists", "fail", path.name).__dict__],
+            "boundaries": EVIDENCE_BOUNDARIES,
+        }
+    try:
+        data = json.loads(expanded.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as exc:
+        return {
+            "status": "fail",
+            "aggregateDecision": "unknown",
+            "recordCount": 0,
+            "warningCount": 0,
+            "criticalFailureCount": 0,
+            "checks": [Check("evidence bundle JSON", "fail", str(exc)).__dict__],
+            "boundaries": EVIDENCE_BOUNDARIES,
+        }
+    checks = validate_evidence_bundle(data)
+    records = data.get("records", []) if isinstance(data, dict) else []
+    valid_records = [record for record in records if isinstance(record, dict)]
+    return {
+        "status": "fail" if any(check.status == "fail" for check in checks) else "pass",
+        "aggregateDecision": data.get("aggregateDecision", "unknown") if isinstance(data, dict) else "unknown",
+        "generatedAtUtc": data.get("generatedAtUtc") if isinstance(data, dict) else None,
+        "recordCount": len(valid_records),
+        "warningCount": sum(len(record.get("warnings", [])) for record in valid_records if isinstance(record.get("warnings", []), list)),
+        "criticalFailureCount": sum(
+            len(record.get("criticalFailures", []))
+            for record in valid_records
+            if isinstance(record.get("criticalFailures", []), list)
+        ),
+        "records": [
+            {
+                "kind": record.get("kind"),
+                "scope": record.get("scope"),
+                "sourceName": record.get("sourceName"),
+                "sourceResult": record.get("sourceResult"),
+                "decision": record.get("decision"),
+                "warningCount": len(record.get("warnings", [])) if isinstance(record.get("warnings", []), list) else 0,
+                "criticalFailureCount": (
+                    len(record.get("criticalFailures", []))
+                    if isinstance(record.get("criticalFailures", []), list)
+                    else 0
+                ),
+            }
+            for record in valid_records
+        ],
+        "checks": [check.__dict__ for check in checks],
+        "boundaries": EVIDENCE_BOUNDARIES,
+    }
+
+
+def evidence_status(args: argparse.Namespace) -> int:
+    payload = evidence_status_payload(args.bundle)
+    if args.json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 1 if payload["status"] == "fail" else 0
+    print("# Axiom Qualification Evidence Status\n")
+    print(f"- validation: `{payload['status']}`")
+    print(f"- aggregate decision: `{payload['aggregateDecision']}`")
+    print(f"- records: `{payload['recordCount']}`")
+    print(f"- warnings: `{payload['warningCount']}`")
+    print(f"- critical failures: `{payload['criticalFailureCount']}`")
+    print("\n## Records\n")
+    for record in payload.get("records", []):
+        print(
+            f"- `{record['kind']}` `{record['sourceName']}`: decision={record['decision']}; "
+            f"warnings={record['warningCount']}; critical failures={record['criticalFailureCount']}"
+        )
+    print("\n## Checks\n")
+    for check in payload["checks"]:
+        print(f"- {check['status']}: {check['name']} - {check['detail']}")
+    print("\nBoundary: " + "; ".join(EVIDENCE_BOUNDARIES) + ".")
+    return 1 if payload["status"] == "fail" else 0
+
+
+def evidence_bundle_sort_key(path: pathlib.Path) -> tuple[str, int, str]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError):
+        return ("", 0, path.name)
+    generated = data.get("generatedAtUtc", "") if isinstance(data, dict) else ""
+    try:
+        modified = path.stat().st_mtime_ns
+    except OSError:
+        modified = 0
+    return (str(generated), modified, path.name)
+
+
+def evidence_catalog_payload(directory: pathlib.Path) -> dict[str, Any]:
+    expanded = directory.expanduser()
+    if not expanded.is_dir():
+        return {
+            "status": "fail",
+            "bundleCount": 0,
+            "validBundleCount": 0,
+            "latestBundleName": None,
+            "latestBundle": None,
+            "bundles": [],
+            "checks": [Check("evidence directory", "fail", "directory does not exist").__dict__],
+            "boundaries": EVIDENCE_BOUNDARIES,
+        }
+    bundles: list[dict[str, Any]] = []
+    for path in sorted(expanded.glob("*.json")):
+        status = evidence_status_payload(path)
+        bundles.append(
+            {
+                "name": path.name,
+                "path": path,
+                "status": status["status"],
+                "aggregateDecision": status["aggregateDecision"],
+                "generatedAtUtc": status.get("generatedAtUtc"),
+                "recordCount": status["recordCount"],
+                "warningCount": status["warningCount"],
+                "criticalFailureCount": status["criticalFailureCount"],
+            }
+        )
+    valid = [bundle for bundle in bundles if bundle["status"] == "pass"]
+    latest = max(valid, key=lambda bundle: evidence_bundle_sort_key(bundle["path"])) if valid else None
+    return {
+        "status": "pass" if latest else "fail",
+        "bundleCount": len(bundles),
+        "validBundleCount": len(valid),
+        "latestBundleName": latest["name"] if latest else None,
+        "latestBundle": latest["path"] if latest else None,
+        "bundles": [
+            {key: value for key, value in bundle.items() if key != "path"}
+            for bundle in bundles
+        ],
+        "checks": [
+            Check(
+                "evidence catalog",
+                "pass" if latest else "fail",
+                f"{len(valid)} valid bundle(s) from {len(bundles)} JSON file(s)",
+            ).__dict__
+        ],
+        "boundaries": EVIDENCE_BOUNDARIES,
+    }
+
+
+def load_evidence_config() -> pathlib.Path | None:
+    if not DEFAULT_EVIDENCE_CONFIG.is_file():
+        return None
+    try:
+        data = json.loads(DEFAULT_EVIDENCE_CONFIG.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    directory = data.get("directory") if isinstance(data, dict) else None
+    return pathlib.Path(directory).expanduser() if isinstance(directory, str) and directory else None
+
+
+def save_evidence_config(directory: pathlib.Path) -> None:
+    write_json(
+        DEFAULT_EVIDENCE_CONFIG,
+        {
+            "schemaVersion": 1,
+            "directory": str(directory.expanduser().resolve()),
+            "boundary": "local-only configuration; do not commit",
+        },
+    )
+
+
+def configured_evidence_path(explicit: pathlib.Path | None, disabled: bool = False) -> pathlib.Path | None:
+    if disabled:
+        return None
+    if explicit:
+        return explicit
+    directory = load_evidence_config()
+    if directory is None:
+        return None
+    catalog = evidence_catalog_payload(directory)
+    latest = catalog.get("latestBundle")
+    return latest if isinstance(latest, pathlib.Path) else None
+
+
+def evidence_catalog(args: argparse.Namespace) -> int:
+    payload = evidence_catalog_payload(args.directory)
+    if args.set_default and payload["status"] == "pass":
+        save_evidence_config(args.directory)
+    public_payload = {
+        **payload,
+        "latestBundle": payload["latestBundleName"],
+        "defaultConfigured": bool(args.set_default and payload["status"] == "pass"),
+    }
+    if args.json:
+        print(json.dumps(public_payload, indent=2, sort_keys=True))
+        return 1 if payload["status"] == "fail" else 0
+    print("# Axiom Qualification Evidence Catalog\n")
+    print(f"- validation: `{payload['status']}`")
+    print(f"- JSON files: `{payload['bundleCount']}`")
+    print(f"- valid bundles: `{payload['validBundleCount']}`")
+    print(f"- latest valid bundle: `{payload['latestBundleName'] or 'none'}`")
+    if args.set_default and payload["status"] == "pass":
+        print("- default evidence directory: configured locally")
+    print("\n## Bundles\n")
+    for bundle in payload["bundles"]:
+        print(
+            f"- `{bundle['name']}`: validation={bundle['status']}; "
+            f"decision={bundle['aggregateDecision']}; records={bundle['recordCount']}"
+        )
+    print("\nBoundary: catalog paths remain in local configuration and are not printed or committed.")
+    return 1 if payload["status"] == "fail" else 0
+
+
+def evidence_ingest(args: argparse.Namespace) -> int:
+    try:
+        payload = build_evidence_bundle(args.paths, args.show_private_paths)
+    except ValueError as exc:
+        print(f"evidence-ingest: {exc}", file=sys.stderr)
+        return 2
+    if args.output:
+        write_json(args.output, payload)
+    if args.json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0
+    print("# Axiom Qualification Evidence Ingest\n")
+    print(f"- aggregate decision: `{payload['aggregateDecision']}`")
+    print(f"- records: `{len(payload['records'])}`")
+    for record in payload["records"]:
+        warning_suffix = f"; warnings={len(record['warnings'])}" if record["warnings"] else ""
+        print(
+            f"- `{record['kind']}` `{record['sourceName']}`: "
+            f"source={record['sourceResult']}; decision={record['decision']}{warning_suffix}"
+        )
+    if args.output:
+        print(f"- local output: `{args.output.expanduser()}`")
+    print("\nBoundary: " + "; ".join(EVIDENCE_BOUNDARIES) + ".")
+    return 0
+
+
+def status_summary(args: argparse.Namespace) -> int:
     policy = load_policy()
     accepted = policy["acceptedBaseline"]
     system_text = SYSTEM_STATUS.read_text(encoding="utf-8") if SYSTEM_STATUS.exists() else ""
@@ -422,6 +953,15 @@ def status_summary(_: argparse.Namespace) -> int:
     print(active_candidate)
     print("\n## Current Open Investigation\n")
     print(open_investigation)
+    evidence_path = configured_evidence_path(args.evidence, args.no_evidence)
+    if evidence_path:
+        evidence = evidence_status_payload(evidence_path)
+        print("\n## Qualification Evidence\n")
+        print(f"- validation: `{evidence['status']}`")
+        print(f"- aggregate decision: `{evidence['aggregateDecision']}`")
+        print(f"- records: `{evidence['recordCount']}`")
+        print(f"- warnings: `{evidence['warningCount']}`")
+        print(f"- critical failures: `{evidence['criticalFailureCount']}`")
     print("\n## Safe Next Step\n")
     print("Use Codex for docs/tooling orchestration. Use Pi/harness for real-JDSP, candidate, publication, and merge workflows.")
     return 0
@@ -668,6 +1208,213 @@ def score_text(text: str, terms: list[str]) -> int:
     return sum(lowered.count(term) for term in terms)
 
 
+def relative_posix(path: pathlib.Path, root: pathlib.Path) -> str:
+    return path.relative_to(root).as_posix()
+
+
+def git_head(repo: pathlib.Path) -> str:
+    result = run_in(repo, ["git", "rev-parse", "HEAD"])
+    if result.returncode != 0:
+        raise SystemExit(f"could not resolve Airwindows git HEAD: {result.stderr.strip()}")
+    return result.stdout.strip()
+
+
+def airwindows_effect_name(path: pathlib.Path) -> str:
+    if path.name in {"what.txt", "Airwindopedia.txt"}:
+        return path.stem
+    if "plugins" in path.parts:
+        plugin_index = path.parts.index("plugins")
+        candidate_index = plugin_index + 2
+        if candidate_index < len(path.parts) and path.parts[candidate_index] == "src":
+            candidate_index += 1
+        if candidate_index < len(path.parts):
+            return path.parts[candidate_index]
+    if path.parent.name:
+        return path.parent.name
+    return path.stem
+
+
+def airwindows_tags(name: str, relative_path: str) -> list[str]:
+    haystack = f"{name} {relative_path}".lower()
+    tags = [
+        tag
+        for tag, needles in AIRWINDOWS_TAG_RULES
+        if any(needle in haystack for needle in needles)
+    ]
+    return tags or ["uncategorized"]
+
+
+def discover_airwindows_effects(repo: pathlib.Path) -> list[dict[str, Any]]:
+    effects_by_name: dict[str, dict[str, Any]] = {}
+    for path in sorted(repo.rglob("*")):
+        if not path.is_file():
+            continue
+        if ".git" in path.parts:
+            continue
+        if path.suffix.lower() not in {".cpp", ".h", ".txt"}:
+            continue
+        rel = relative_posix(path, repo)
+        if rel.startswith("plugins/WinVST/") and not path.name.endswith("Proc.cpp"):
+            continue
+        if path.suffix.lower() in {".cpp", ".h"} and "plugins" not in path.parts:
+            continue
+        name = airwindows_effect_name(path)
+        key = name.lower()
+        entry = effects_by_name.setdefault(
+            key,
+            {
+                "name": name,
+                "tags": set(),
+                "sourcePaths": [],
+            },
+        )
+        entry["tags"].update(airwindows_tags(name, rel))
+        entry["sourcePaths"].append(rel)
+
+    effects: list[dict[str, Any]] = []
+    for entry in effects_by_name.values():
+        effects.append(
+            {
+                "name": entry["name"],
+                "tags": sorted(entry["tags"]),
+                "sourcePaths": sorted(set(entry["sourcePaths"])),
+            }
+        )
+    return sorted(effects, key=lambda item: item["name"].lower())
+
+
+def build_airwindows_index(repo: pathlib.Path) -> dict[str, Any]:
+    root = repo.expanduser().resolve()
+    if not root.exists() or not root.is_dir():
+        raise SystemExit(f"Airwindows repo path does not exist or is not a directory: {repo}")
+    return {
+        "schemaVersion": 2,
+        "sourceId": AIRWINDOWS_SOURCE_ID,
+        "title": "Airwindows Open Source DSP",
+        "repoUrl": AIRWINDOWS_REPO_URL,
+        "license": "MIT",
+        "pinnedCommit": git_head(root),
+        "generatedBy": "axiom_codex.py airwindows-index",
+        "boundary": "metadata-only index for clean-room concept extraction; no source code, copied snippets, or local paths",
+        "effects": discover_airwindows_effects(root),
+    }
+
+
+def load_airwindows_index(index_path: pathlib.Path | None) -> dict[str, Any] | None:
+    if index_path is None:
+        return None
+    expanded = index_path.expanduser()
+    if not expanded.exists():
+        return None
+    data = json.loads(expanded.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise SystemExit(f"invalid Airwindows index: {expanded}")
+    return data
+
+
+def airwindows_effect_public_fields(effect: dict[str, Any]) -> dict[str, Any]:
+    source_paths = effect.get("sourcePaths")
+    if not isinstance(source_paths, list):
+        relative_path = effect.get("relativePath", "")
+        source_paths = [relative_path] if isinstance(relative_path, str) and relative_path else []
+    return {
+        "name": effect.get("name", ""),
+        "sourcePaths": source_paths,
+        "tags": effect.get("tags", []),
+    }
+
+
+def airwindows_query_matches(index: dict[str, Any], terms: list[str], limit: int) -> list[tuple[int, dict[str, Any]]]:
+    matches: list[tuple[int, dict[str, Any]]] = []
+    for effect in index.get("effects", []):
+        if not isinstance(effect, dict):
+            continue
+        public_fields = airwindows_effect_public_fields(effect)
+        score_fields = {
+            "name": public_fields["name"],
+            "tags": public_fields["tags"],
+        }
+        score = score_text(json.dumps(score_fields, sort_keys=True), terms)
+        if score:
+            matches.append((score, public_fields))
+    return sorted(matches, key=lambda item: (item[0], str(item[1].get("name", ""))), reverse=True)[:limit]
+
+
+def audit_airwindows_index(index_path: pathlib.Path, repo: pathlib.Path | None = None) -> list[Check]:
+    expanded = index_path.expanduser()
+    if not expanded.exists():
+        return [Check("Airwindows index exists", "fail", str(expanded))]
+    try:
+        data = json.loads(expanded.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return [Check("Airwindows index JSON", "fail", str(exc))]
+    if not isinstance(data, dict):
+        return [Check("Airwindows index shape", "fail", "top-level value must be an object")]
+
+    checks: list[Check] = []
+    schema_version = data.get("schemaVersion")
+    checks.append(Check("Airwindows schema version", "pass" if schema_version == 2 else "fail", str(schema_version)))
+    pinned = data.get("pinnedCommit")
+    pinned_valid = isinstance(pinned, str) and re.fullmatch(r"[0-9a-f]{40}", pinned) is not None
+    checks.append(Check("Airwindows pinned commit", "pass" if pinned_valid else "fail", str(pinned)))
+    checks.append(
+        Check(
+            "Airwindows source ID",
+            "pass" if data.get("sourceId") == AIRWINDOWS_SOURCE_ID else "fail",
+            str(data.get("sourceId")),
+        )
+    )
+
+    effects = data.get("effects")
+    if not isinstance(effects, list):
+        return checks + [Check("Airwindows effects", "fail", "`effects` must be an array")]
+    names: set[str] = set()
+    for effect in effects:
+        if not isinstance(effect, dict):
+            checks.append(Check("Airwindows effect entry", "fail", "effect must be an object"))
+            continue
+        name = effect.get("name")
+        if not isinstance(name, str) or not name.strip():
+            checks.append(Check("Airwindows effect name", "fail", "missing effect name"))
+            continue
+        lowered = name.lower()
+        if lowered in names:
+            checks.append(Check("Airwindows duplicate effect", "fail", name))
+        names.add(lowered)
+        tags = effect.get("tags")
+        paths = effect.get("sourcePaths")
+        if not isinstance(tags, list) or not all(isinstance(tag, str) and tag for tag in tags):
+            checks.append(Check("Airwindows effect tags", "fail", name))
+        if not isinstance(paths, list) or not paths or not all(isinstance(path, str) and path for path in paths):
+            checks.append(Check("Airwindows source paths", "fail", name))
+            continue
+        for path in paths:
+            pure = pathlib.PurePosixPath(path)
+            if pure.is_absolute() or ".." in pure.parts:
+                checks.append(Check("Airwindows relative path", "fail", f"{name}: {path}"))
+                break
+        forbidden = set(effect) - {"name", "tags", "sourcePaths"}
+        if forbidden:
+            checks.append(Check("Airwindows metadata fields", "fail", f"{name}: {', '.join(sorted(forbidden))}"))
+
+    if repo is not None:
+        root = repo.expanduser().resolve()
+        if not root.exists():
+            checks.append(Check("Airwindows checkout", "fail", str(root)))
+        else:
+            current = git_head(root)
+            checks.append(
+                Check(
+                    "Airwindows checkout drift",
+                    "pass" if current == pinned else "warn",
+                    f"index={pinned} checkout={current}",
+                )
+            )
+    if not any(check.status == "fail" for check in checks):
+        checks.append(Check("Airwindows index audit", "pass", f"{len(effects)} canonical effect(s) checked"))
+    return checks
+
+
 def load_local_sources(index_path: pathlib.Path) -> list[dict[str, Any]]:
     if not index_path.exists():
         return []
@@ -778,6 +1525,8 @@ def knowledge_query(args: argparse.Namespace) -> int:
         score = score_text(json.dumps(public_fields, sort_keys=True), terms)
         if score:
             source_matches.append((score, public_fields))
+    airwindows_index = load_airwindows_index(args.airwindows_index)
+    airwindows_matches = airwindows_query_matches(airwindows_index, terms, args.limit) if airwindows_index else []
 
     print("# Axiom Knowledge Query\n")
     print(f"query: {args.query}\n")
@@ -802,8 +1551,47 @@ def knowledge_query(args: argparse.Namespace) -> int:
                 print(f"  localPath: {source['localPath']}")
     else:
         print("- no local source matches")
+    print("\n## Airwindows Local Index\n")
+    if args.airwindows_index is None:
+        print("- no Airwindows index requested")
+    elif not args.airwindows_index.expanduser().exists():
+        print("- Airwindows index not found")
+    elif airwindows_matches:
+        for score, effect in airwindows_matches:
+            tags = ", ".join(effect.get("tags", [])) if isinstance(effect.get("tags"), list) else ""
+            paths = effect.get("sourcePaths", [])
+            representative = paths[0] if isinstance(paths, list) and paths else ""
+            path_count = len(paths) if isinstance(paths, list) else 0
+            print(f"- score {score}: {effect.get('name', 'unnamed')} :: {tags} :: {representative} (+{max(0, path_count - 1)} paths)")
+    else:
+        print("- no Airwindows index matches")
     print("\nBoundary: Knowledge can inform tests; it is not proof of Axiom behavior.")
     return 0
+
+
+def airwindows_index(args: argparse.Namespace) -> int:
+    payload = build_airwindows_index(args.repo)
+    write_json(args.output, payload)
+    print("# Axiom Airwindows Index\n")
+    print(f"- source: {payload['sourceId']}")
+    print(f"- pinned commit: {payload['pinnedCommit']}")
+    print(f"- effects indexed: {len(payload['effects'])}")
+    print(f"- output: {args.output.expanduser()}")
+    print("\nBoundary: metadata-only local index. It does not vendor Airwindows code or approve DSP reuse.")
+    return 0
+
+
+def airwindows_audit(args: argparse.Namespace) -> int:
+    checks = audit_airwindows_index(args.index, args.repo)
+    failed = any(check.status == "fail" for check in checks)
+    if args.json:
+        print(json.dumps([check.__dict__ for check in checks], indent=2, sort_keys=True))
+        return 1 if failed else 0
+    print("# Axiom Airwindows Index Audit\n")
+    for check in checks:
+        print(f"- {check.status}: {check.name} - {check.detail}")
+    print("\nBoundary: this validates local metadata and commit drift. It does not approve DSP reuse or candidate creation.")
+    return 1 if failed else 0
 
 
 def knowledge_sources(args: argparse.Namespace) -> int:
@@ -1059,7 +1847,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
 
-    sub.add_parser("status-summary").set_defaults(func=status_summary)
+    status = sub.add_parser("status-summary")
+    status.add_argument("--evidence", type=pathlib.Path)
+    status.add_argument("--no-evidence", action="store_true")
+    status.set_defaults(func=status_summary)
     sub.add_parser("ready-check").set_defaults(func=ready_check)
 
     local = sub.add_parser("local-review")
@@ -1082,7 +1873,27 @@ def main() -> int:
 
     next_parser = sub.add_parser("next-action")
     next_parser.add_argument("--json", action="store_true")
+    next_parser.add_argument("--evidence", type=pathlib.Path)
+    next_parser.add_argument("--no-evidence", action="store_true")
     next_parser.set_defaults(func=next_action)
+
+    evidence = sub.add_parser("evidence-ingest")
+    evidence.add_argument("paths", nargs="+", type=pathlib.Path)
+    evidence.add_argument("--output", type=pathlib.Path)
+    evidence.add_argument("--json", action="store_true")
+    evidence.add_argument("--show-private-paths", action="store_true")
+    evidence.set_defaults(func=evidence_ingest)
+
+    evidence_check = sub.add_parser("evidence-status")
+    evidence_check.add_argument("bundle", type=pathlib.Path)
+    evidence_check.add_argument("--json", action="store_true")
+    evidence_check.set_defaults(func=evidence_status)
+
+    evidence_list = sub.add_parser("evidence-catalog")
+    evidence_list.add_argument("directory", type=pathlib.Path)
+    evidence_list.add_argument("--set-default", action="store_true")
+    evidence_list.add_argument("--json", action="store_true")
+    evidence_list.set_defaults(func=evidence_catalog)
 
     profiles = sub.add_parser("agent-profiles")
     profiles.add_argument("--role")
@@ -1123,9 +1934,21 @@ def main() -> int:
     ])
     review.set_defaults(func=agent_review)
 
+    airwindows = sub.add_parser("airwindows-index")
+    airwindows.add_argument("--repo", type=pathlib.Path, required=True)
+    airwindows.add_argument("--output", type=pathlib.Path, default=DEFAULT_AIRWINDOWS_INDEX)
+    airwindows.set_defaults(func=airwindows_index)
+
+    airwindows_check = sub.add_parser("airwindows-audit")
+    airwindows_check.add_argument("--index", type=pathlib.Path, default=DEFAULT_AIRWINDOWS_INDEX)
+    airwindows_check.add_argument("--repo", type=pathlib.Path)
+    airwindows_check.add_argument("--json", action="store_true")
+    airwindows_check.set_defaults(func=airwindows_audit)
+
     knowledge = sub.add_parser("knowledge-query")
     knowledge.add_argument("query")
     knowledge.add_argument("--index", type=pathlib.Path, default=DEFAULT_LOCAL_INDEX)
+    knowledge.add_argument("--airwindows-index", type=pathlib.Path)
     knowledge.add_argument("--limit", type=int, default=8)
     knowledge.add_argument("--show-private-paths", action="store_true")
     knowledge.set_defaults(func=knowledge_query)

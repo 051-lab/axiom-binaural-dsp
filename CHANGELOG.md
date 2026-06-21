@@ -106,6 +106,12 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 ## [Unreleased] - Measurement Qualification Expansion
 
 ### Added
+- Added an Airwindows Knowledge intake workflow with repo-safe provenance,
+  clean-room concept taxonomy, and a local-only metadata index helper for
+  source IDs, effect names, tags, relative upstream paths, and pinned commits.
+- Canonicalized Airwindows indexing to one schema-v2 record per effect and
+  added an audit command for metadata safety, duplicate detection, and checkout
+  commit drift.
 - Added a pre-candidate high-frequency width screen for accepted `.10` that
   compares temporary `slider6` alternatives across presence-edge, brilliance,
   and air bands without modifying the accepted baseline.

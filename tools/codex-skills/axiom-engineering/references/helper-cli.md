@@ -6,9 +6,14 @@ Use the helper CLI for safe orchestration support:
 python3 tools/axiom-codex/axiom_codex.py status-summary
 python3 tools/axiom-codex/axiom_codex.py ready-check
 python3 tools/axiom-codex/axiom_codex.py command-surface
+python3 tools/axiom-codex/axiom_codex.py evidence-ingest <report.json> [<report.json> ...]
+python3 tools/axiom-codex/axiom_codex.py evidence-status <bundle.json>
+python3 tools/axiom-codex/axiom_codex.py evidence-catalog <directory> --set-default
 python3 tools/axiom-codex/axiom_codex.py guard-check
 python3 tools/axiom-codex/axiom_codex.py agent-profiles
 python3 tools/axiom-codex/axiom_codex.py agent-review --topic "..."
+python3 tools/axiom-codex/axiom_codex.py airwindows-index --repo ~/.local/share/axiom-knowledge/sources/airwindows/repo
+python3 tools/axiom-codex/axiom_codex.py airwindows-audit --repo ~/.local/share/axiom-knowledge/sources/airwindows/repo
 python3 tools/axiom-codex/axiom_codex.py knowledge-query "query text"
 python3 tools/axiom-codex/axiom_codex.py knowledge-sources
 python3 tools/axiom-codex/axiom_codex.py pi-handoff
@@ -25,14 +30,26 @@ fixture checks, and safe Knowledge search.
 - `ready-check`: documentation/static safety checks only.
 - `command-surface`: list the repo-tracked command registry that future native
   aliases or plugin commands should wrap.
+- `evidence-ingest`: normalize supported local qualification JSON into a
+  source-hashed bundle; private paths are hidden by default and the result is
+  not listening acceptance or release approval.
+- `evidence-status`: validate and summarize a normalized bundle for optional
+  use by `status-summary --evidence` and `next-action --evidence`.
+- `evidence-catalog`: inventory local bundles, select the newest valid bundle,
+  and optionally configure its directory for automatic status orientation.
 - `guard-check`: fail on known unsafe changed paths or added text, including
   accepted/historical EEL scope, policy changes, private audio, captures,
   local material, manifests, credentials, and private path leaks.
 - `agent-profiles`: list Codex-specific role profiles or print one profile
   source with `--role`.
 - `agent-review`: structured multi-role review scaffold from local role docs.
+- `airwindows-index`: create a local-only metadata index from an external
+  Airwindows checkout for clean-room concept retrieval.
+- `airwindows-audit`: validate canonical metadata, forbidden fields and paths,
+  duplicate effects, and optional checkout commit drift.
 - `knowledge-query`: search repo-safe notes and optional local-only source
-  metadata without exposing private paths by default.
+  metadata without exposing private paths by default; optionally searches a
+  local Airwindows metadata index.
 - `knowledge-sources`: audit the local-only source index, local file
   existence, and matching repo-safe notes without exposing private paths by
   default.

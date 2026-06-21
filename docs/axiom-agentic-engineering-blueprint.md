@@ -42,10 +42,11 @@ Already implemented:
 - Safe Codex helper CLI under `tools/axiom-codex/`.
 - Dry-run-capable skill install helper at `tools/install_axiom_codex_skill.py`.
 - Local-only Knowledge source-index schema and repo-safe source-note template.
+- Qualification evidence ingestion for Windows host soak and manual-recovery
+  JSON reports through the `evidence-ingest` helper.
 
 Not implemented yet:
 
-- Installed native Codex skill under `~/.codex/skills/axiom-engineering`.
 - Native Codex CLI slash commands outside the Pi harness.
 - Autonomous Knowledge ingestion from private books or PDFs.
 - Any agent permission to bypass user approval for candidate, publication,
@@ -182,6 +183,12 @@ Supported commands:
   docs.
 - `knowledge-query`: search Axiom Knowledge notes and return only
   cited, summarized context.
+- `evidence-ingest`: normalize supported local qualification reports into
+  source-hashed evidence records while keeping private paths hidden by default.
+- `evidence-status`: validate and summarize normalized evidence; optionally
+  feed it into status and next-action orientation without granting acceptance.
+- `evidence-catalog`: discover the newest valid local bundle and configure
+  automatic evidence-aware orientation without repository-stored private paths.
 
 Native Codex slash commands are not assumed available in v1. Pi remains the
 slash-command runtime for Axiom execution.
@@ -229,8 +236,8 @@ Create a local Axiom Codex skill that can be installed under `~/.codex/skills/`.
 It should load Axiom-specific operating instructions, role summaries, and
 workflow shortcuts without replacing the existing repo gates.
 
-Status: repo-tracked skill source implemented. Local install remains pending
-explicit user approval.
+Status: repo-tracked skill source implemented and synchronized to the local
+installation under `~/.codex/skills/axiom-engineering`.
 
 ### Phase 3: Knowledge Integration
 
@@ -271,6 +278,11 @@ Connect the agent layer to repo maintenance:
 - PR preparation;
 - runbook selection;
 - post-merge reconciliation.
+
+Initial implementation now includes machine-readable task state, next-action
+selection, consolidated local review, and qualification evidence ingestion.
+Evidence adapters remain deliberately schema-specific: unsupported reports fail
+closed until their semantics and safety boundaries are defined.
 
 ## Immediate Next Questions
 

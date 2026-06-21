@@ -53,3 +53,16 @@ Minimum source fields:
 When returning Knowledge results, summarize concepts and cite note/source IDs.
 Do not print private `localPath` values unless the user explicitly asks for a
 local-only inventory audit.
+
+## External Open-Source Code Repositories
+
+Public source repositories such as Airwindows may be indexed only as
+repo-external source material. Keep local checkouts and generated indexes
+outside git. Repo-safe notes may include citation metadata, license notes,
+short original summaries, concept tags, and test-design questions.
+
+Default to clean-room concept extraction even when the upstream license permits
+reuse. Do not copy source code, comments, constants, distinctive structure, or
+translated implementation logic into Axiom without a separate provenance and
+license review. Open-source concepts may start a Labs question; they do not
+justify candidate creation or accepted-baseline changes.

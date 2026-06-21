@@ -61,6 +61,30 @@ python3 tools/axiom-codex/axiom_codex.py knowledge-query "psychoacoustics"
 
 By default, the helper does not print private `localPath` values.
 
+## Local Airwindows Index
+
+Airwindows is handled as an external open-source inspiration pool, not vendored
+code. Keep the checkout and generated index outside this repository:
+
+```bash
+python3 tools/axiom-codex/axiom_codex.py airwindows-index \
+  --repo ~/.local/share/axiom-knowledge/sources/airwindows/repo
+
+python3 tools/axiom-codex/axiom_codex.py airwindows-audit \
+  --repo ~/.local/share/axiom-knowledge/sources/airwindows/repo
+
+python3 tools/axiom-codex/axiom_codex.py knowledge-query \
+  "bass nonlinear" \
+  --airwindows-index ~/.local/share/axiom-knowledge/sources/airwindows/index.json
+```
+
+The schema-v2 index is metadata-only: one canonical record per effect, merged
+tags, relative upstream source paths, and a pinned commit. `airwindows-audit`
+checks schema integrity, duplicate effects, unsafe fields or paths, and commit
+drift against an optional local checkout. The index must not contain source
+code, private checkout paths, copied implementation details, or candidate
+instructions.
+
 ## Suggested Categories
 
 | Category | Example Use |
@@ -85,6 +109,7 @@ outside git and are referenced through the local source index.
 | `designing-audio-effect-plug-ins-in-cpp` | Real-time DSP implementation patterns that must be translated through EEL2/JDSP constraints. |
 | `accurate-sound-reproduction-using-dsp` | Reproduction accuracy, measurement discipline, and non-Core correction boundaries. |
 | `the-audio-programming-book` | General audio-programming literacy, tooling perspective, and DSP background. |
+| `airwindows-open-source-dsp` | Open-source effect taxonomy for clean-room concept extraction and Labs questions. |
 
 ## Concept Notes
 
@@ -98,6 +123,7 @@ way.
 | [Elevated bass headroom tradeoff](concepts/elevated-bass-headroom-tradeoff.md) | Sub Harmonics listening questions around headroom, RMS retreat, punch, bass blur, and fatigue. |
 | [Stage isolation and fixture scope](concepts/stage-isolation-and-fixture-scope.md) | How to turn broad DSP ideas into narrow fixtures, measurements, and listening targets. |
 | [Reproduction boundaries and profile scope](concepts/reproduction-boundaries-and-profile-scope.md) | How to keep Core, future profiles, host/device behavior, and correction work separate. |
+| [Airwindows concept taxonomy](concepts/airwindows-concept-taxonomy.md) | Clean-room retrieval vocabulary for Airwindows-inspired Labs and test-design questions. |
 
 ## Bibliography Entry Template
 
