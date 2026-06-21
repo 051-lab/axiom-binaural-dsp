@@ -1,6 +1,6 @@
 # Axiom Sub Harmonics Follow-Up v4.1.4.11
 
-Date: 2026-06-08
+Date: 2026-06-21
 
 ## Scope
 
@@ -140,6 +140,17 @@ The useful signal is narrower:
   audible as bass blur, kick softening, low-end crowding, limiter pumping, or
   fatigue.
 
-Recommended next action: keep `v4.1.4.11` accepted, keep the investigation
-open, and prepare a narrow listening/diagnostic question before any `.12`
-candidate is created.
+## Listening Closeout
+
+Focused blinded listening completed on 2026-06-21 using the prepared
+gain-adjusted `+4` versus `+10` and `+4` versus `+12` packages.
+
+- `+4` versus `+10` was split 2-2 by material class.
+- `+4` was preferred over `+12` in all four material classes.
+- Combined preference was `+4` in six of eight comparisons.
+- Earlier observations retained clean kick impact and musical clarity at
+  elevated settings, but noted reduced aliveness, quicker fatigue, and slight
+  pumping.
+
+Decision: keep `v4.1.4.11` / `Axiom Clean R011` accepted, close this
+investigation as a watch item, and do not create `Axiom Clean R012`.

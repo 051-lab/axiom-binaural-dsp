@@ -660,7 +660,9 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("AX-TASK-031", task_ids)
         self.assertIn("AX-TASK-032", task_ids)
         self.assertFalse(any(check.status == "fail" for check in checks))
-        self.assertTrue(any(task["phase"] == "blocked-on-listening" for task in data["tasks"]))
+        listening_task = next(task for task in data["tasks"] if task["id"] == "AX-TASK-022")
+        self.assertEqual(listening_task["status"], "complete-watch-item")
+        self.assertEqual(listening_task["phase"], "done")
 
     def test_cli_task_state_lists_open_tasks(self) -> None:
         result = subprocess.run(
@@ -672,7 +674,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("Axiom Task State", result.stdout)
-        self.assertIn("AX-TASK-022", result.stdout)
+        self.assertNotIn("AX-TASK-022", result.stdout)
         self.assertIn("AX-TASK-027", result.stdout)
 
     def test_cli_next_action_reports_planning_guidance(self) -> None:

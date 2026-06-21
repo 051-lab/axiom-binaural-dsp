@@ -53,7 +53,7 @@ not part of the measured Axiom comparison baseline.
 
 | Run | Status | Meaning |
 | --- | --- | --- |
-| `20260603T004349-post-acceptance-v4-1-4-1-0d309b` | `investigating` | Post-acceptance `.11` dense-material limiter pressure and elevated Sub Harmonics range audit. |
+| `20260603T004349-post-acceptance-v4-1-4-1-0d309b` | `closed_watch_item` | `.11` elevated Sub Harmonics follow-up closed after blinded listening; no candidate justified. |
 
 Known result:
 
@@ -85,9 +85,16 @@ Known result:
   template at `templates/sub-harmonics-listening-record-v4.1.4.11.json`;
 - filtered local A/B packages can now be generated from completed Sub Harmonics
   map render folders, excluding flawed stress material from normal-material
-  listening checks.
+  listening checks;
+- 2026-06-21 blinded listening split `+4` versus `+10` 2-2 by material and
+  preferred `+4` over `+12` in all four material classes;
+- combined preference was `+4` in six of eight comparisons; earlier listening
+  retained clarity and clean kick impact at elevated settings but noted reduced
+  aliveness, quicker fatigue, and slight pumping;
+- outcome: close as a watch item, keep `Axiom Clean R011` accepted, and do not
+  create `Axiom Clean R012`.
 
-Current follow-up command, if a confirmatory rerun is needed:
+Historical follow-up command, only if new evidence later justifies a rerun:
 
 ```bash
 node tools/axiom-team/bin/axiom-team.mjs map-sub-gain \
@@ -244,11 +251,9 @@ Summary:
 1. Review the local commit series recorded in
    `axiom-change-batch-reconciliation-2026-06-20.md`; publish or push only
    after explicit approval.
-2. Run focused listening on accepted `.11` using
-   `sub-harmonics-listening-target-v4.1.4.11.md` and the filtered local A/B
-   packages before proposing `Axiom Clean R012`.
-3. Use the structured spatial listening vocabulary for that listening record.
-4. Use Knowledge seed notes to support specific test-design questions, not to
+2. Keep the completed `.11` Sub Harmonics result as a watch item; do not draft
+   `Axiom Clean R012` without a new repeatable normal-material problem.
+3. Use Knowledge seed notes to support specific test-design questions, not to
    justify DSP changes by themselves.
 
 ## Refresh Commands

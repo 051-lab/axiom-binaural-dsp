@@ -1,6 +1,6 @@
 # v4.1.4.11 Sub Harmonics Listening Target
 
-Date: 2026-06-08
+Date: 2026-06-21
 
 ## Purpose
 
@@ -9,6 +9,9 @@ This is a focused listening target for accepted `v4.1.4.11`. It does not create
 
 Use it to decide whether the completed `.11` Sub Harmonics follow-up should be
 closed as a watch item or turned into a narrow future `.12` hypothesis.
+
+Status: completed. The 2026-06-21 outcome was `watch_item`; no candidate was
+created.
 
 ## Source Evidence
 

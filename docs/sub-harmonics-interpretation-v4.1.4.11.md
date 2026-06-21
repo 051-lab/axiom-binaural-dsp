@@ -1,14 +1,14 @@
 # v4.1.4.11 Sub Harmonics Follow-Up Interpretation
 
-Date: 2026-06-08
+Date: 2026-06-21
 
 ## Status
 
 No `.12` DSP listening candidate is justified from the completed `.11` follow-up
 alone. `src/axiom_binaural_dsp_v4.1.4.11.eel` remains the accepted baseline.
 
-The `.11` Sub Harmonics investigation remains useful, but the next step is a
-narrow listening target, not an EEL change.
+The `.11` Sub Harmonics investigation is closed as a watch item. Focused
+blinded listening did not justify an EEL change.
 
 ## Question
 
@@ -71,7 +71,34 @@ Keep these boundaries:
 - no baseline-status change;
 - no claim that elevated `Sub Harmonics Gain` is broken globally.
 
-## Listening Target
+## 2026-06-21 Blinded Listening Result
+
+The prepared gain-adjusted A/B packages compared the accepted `+4 dB` control
+point against `+10 dB` and `+12 dB` across four normal-material classes.
+
+| Comparison | Bass-light piano | Dense electronic | Hip-hop | Upright bass | Summary |
+| --- | --- | --- | --- | --- | --- |
+| `+4` vs `+10` | `+4` | `+10` | `+10` | `+4` | split 2-2 |
+| `+4` vs `+12` | `+4` | `+4` | `+4` | `+4` | `+4` preferred 4-0 |
+
+Combined, the accepted `+4 dB` setting was preferred in six of eight blinded
+comparisons. Earlier observations found that `+10/+12 dB` could add bass
+weight while preserving clarity and clean kick impact, but could also reduce
+aliveness, increase short-session fatigue, and introduce slight pumping.
+
+Interpretation:
+
+- `+10 dB` is material-dependent rather than consistently defective;
+- `+12 dB` is consistently less preferred than the accepted default in this
+  package;
+- the result supports user-control guidance and a watch item, not a new reserve
+  law or `Axiom Clean R012` candidate;
+- the accepted `+4 dB` default and accepted `.11` baseline remain unchanged.
+
+The full structured record remains local because it contains route context.
+Its validator status is `pass`.
+
+## Listening Target (Completed)
 
 Use accepted `.11` only. This is not candidate acceptance listening.
 
@@ -150,3 +177,5 @@ repeatable audible defect at elevated settings.
 
 If listening is inconclusive, keep `.11` accepted and keep the topic as a
 watch item rather than creating a candidate.
+
+Outcome: closed as `watch_item`; no candidate hypothesis needed.

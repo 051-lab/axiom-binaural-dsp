@@ -215,13 +215,13 @@
     },
     {
       "id": "AX-TASK-022",
-      "status": "listening-package-prepared",
+      "status": "complete-watch-item",
       "title": "Close .11 Sub Harmonics follow-up",
       "area": "Qualification",
-      "phase": "blocked-on-listening",
+      "phase": "done",
       "requiresApproval": false,
-      "blockedBy": ["human-listening"],
-      "nextAction": "Audition the filtered +4 vs +10 and +4 vs +12 local A/B packages, then validate the local listening record."
+      "blockedBy": [],
+      "nextAction": "Keep the result as a watch item; require a new repeatable normal-material problem before proposing Axiom Clean R012."
     },
     {
       "id": "AX-TASK-023",

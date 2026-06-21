@@ -29,7 +29,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-019 | Initial implementation complete | Create role-specific Codex agent profiles | Codex | `tools/axiom-codex/agent_profiles/` and `agent-profiles` helper | DSP architecture, EEL safety, measurement, qualification, release, tooling, research, safety, implementation, and coordination roles map to the existing role registry and have limited responsibilities. |
 | AX-TASK-020 | Initial implementation complete | Add automated guardrails for unsafe Axiom actions | Codex | `guard-check` helper and unit tests | Historical EEL edits, private artifact paths, source audio, captured WAVs, local manifests, credentials, and unsupported baseline changes are blocked or flagged before publication. |
 | AX-TASK-021 | Initial implementation complete | Add Axiom skill behavior evals | Codex | `tools/axiom-codex/skill_eval_cases.json` and `skill-eval` helper | The Axiom skill source is checked against representative prompts for status inspection, DSP-safety refusal, Pi handoff, Knowledge lookup, release-gate review, private-artifact handling, and session-log refresh. |
-| AX-TASK-022 | Listening package prepared | Close `.11` Sub Harmonics follow-up | Qualification | Updated investigation gate, summarized evidence, and local listening package workflow | The corrected and confirmatory `+4 dB`, `+10 dB`, and `+12 dB` Sub Harmonics maps completed through Pi/JDSP and are summarized in `docs/sub-harmonics-follow-up-v4.1.4.11.md`. `docs/sub-harmonics-interpretation-v4.1.4.11.md` keeps `.11` accepted and blocks `Axiom Clean R012` for now. `docs/sub-harmonics-listening-target-v4.1.4.11.md` defines the focused accepted-`.11` listening check, including local filtered A/B package generation. |
+| AX-TASK-022 | Complete: watch item | Close `.11` Sub Harmonics follow-up | Qualification | Measurement summary, blinded listening result, and validated local record | Blinded listening split `+4` versus `+10` 2-2 and preferred `+4` over `+12` 4-0. Combined preference was `+4` in six of eight comparisons. Keep `Axiom Clean R011` accepted; no `R012` candidate is justified. |
 | AX-TASK-023 | Complete | Add structured spatial listening vocabulary | Qualification | Listening-record guidance update | Listening records distinguish center image, lateral spread, localization blur, depth impression, bass-image coupling, fatigue, and route context. |
 | AX-TASK-024 | Complete | Create Knowledge concept notes from seed sources | Knowledge | Short concept notes tied to Axiom questions | Seed bibliography now has focused concept notes for spatial listening vocabulary, elevated bass/headroom tradeoffs, stage isolation, and profile-scope boundaries without copying source text or claiming research proves Axiom behavior. |
 | AX-TASK-025 | Complete | Review and merge PR #12 | Repository | Merged Codex/Knowledge hardening PR | PR #12 was reviewed, validation passed, and the PR was merged after explicit approval. |
@@ -54,12 +54,10 @@ Recommended next actions:
 4. Treat `AX-TASK-018` through `AX-TASK-021` as initial infrastructure; future
    work can add native runtime wrappers only when a supported Codex command or
    subagent mechanism is available.
-5. Run focused accepted-`.11` listening from the filtered `+4` versus `+10`
-   and `+4` versus `+12` local A/B packages before proposing an `Axiom Clean R012`
-   hypothesis.
-6. Address the remaining `AX-TASK-022` listening work before proposing
-   `Axiom Clean R012`; use `task-state` and `next-action` as the
-   machine-readable planning source for future helper commands.
+5. Keep the completed `.11` Sub Harmonics result as a watch item and require a
+   new repeatable normal-material problem before proposing `Axiom Clean R012`.
+6. Use `task-state` and `next-action` as the machine-readable planning source
+   for future helper commands.
 
 ## Progress Notes
 
