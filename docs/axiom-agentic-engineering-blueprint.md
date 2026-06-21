@@ -300,6 +300,11 @@ ongoing Agentic hardening. Default planning remains conservative: dirty working
 trees, evidence failures, blockers, approval gates, and seeded tasks still take
 priority over maintenance selection.
 
+The foundational command-surface, role-profile, guardrail, and skill-eval
+tasks are now complete rather than provisional. Their artifacts remain
+maintainable, but structural drift is blocked by `agentic-audit`, `ready-check`,
+and regression tests.
+
 ## Immediate Next Questions
 
 Before implementation, decide:

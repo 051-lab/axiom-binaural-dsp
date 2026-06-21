@@ -175,43 +175,43 @@
     },
     {
       "id": "AX-TASK-018",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Define Axiom Codex command surface",
       "area": "Codex",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Keep command registry synchronized with helper commands."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-019",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Create role-specific Codex agent profiles",
       "area": "Codex",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Refine profiles when a role repeatedly needs clearer responsibility boundaries."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-020",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Add automated guardrails for unsafe Axiom actions",
       "area": "Codex",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Extend guard rules when new private artifact classes or approval gates appear."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-021",
-      "status": "initial-implementation-complete",
+      "status": "complete",
       "title": "Add Axiom skill behavior evals",
       "area": "Codex",
-      "phase": "initial",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Add eval cases when new helper commands or hard-boundary behaviors are introduced."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-022",
@@ -362,6 +362,16 @@
       "requiresApproval": false,
       "blockedBy": [],
       "nextAction": "Use next-action --include-maintenance when intentionally continuing initial Agentic hardening work."
+    },
+    {
+      "id": "AX-TASK-037",
+      "status": "complete",
+      "title": "Graduate foundational Agentic contracts",
+      "area": "Agentic Layer",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
     }
   ]
 }

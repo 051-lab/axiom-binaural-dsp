@@ -131,6 +131,7 @@ PR #10 as commit `c498688`.
 | Agentic contract audit | complete | `agentic-audit`; command, profile, approval, and skill-eval contracts |
 | Multi-role review records | complete | `agent-review --json`; validated draft findings schema |
 | Maintenance-aware planning | complete | `next-action --include-maintenance`; explicit opt-in for initial hardening |
+| Foundational Agentic tasks | complete | `AX-TASK-018` through `AX-TASK-021`; contracts and regressions pass |
 | Airwindows Knowledge intake | local metadata workflow | `knowledge/airwindows-open-source-dsp.md`, `knowledge/concepts/airwindows-concept-taxonomy.md`, `airwindows-index` helper |
 | Qualification evidence ingestion | initial implementation complete | `evidence-ingest` helper; local-only normalized bundles |
 | Qualification evidence status | initial implementation complete | `evidence-status`; optional `status-summary --evidence` and `next-action --evidence` |

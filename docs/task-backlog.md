@@ -25,10 +25,10 @@ task is ready for scheduling or delegation.
 | AX-TASK-015 | Complete | Build issue templates for DSP candidates and docs work | Repository | `.github/ISSUE_TEMPLATE/` updates | Issues capture scope, forbidden scope, evidence, tests, and release impact. |
 | AX-TASK-016 | Complete | Add system status dashboard | Repository | `docs/system-status.md` | A fresh agent can see accepted baseline, active candidate, open investigations, roadmap state, and next work. |
 | AX-TASK-017 | Complete | Add Pi runbooks | Harness | `docs/pi-runbooks.md` | Pi/Codex sessions have repeatable missions for audit, investigations, Labs, qualification, advisory triage, housekeeping, and publication. |
-| AX-TASK-018 | Initial implementation complete | Define Axiom Codex command surface | Codex | `tools/axiom-codex/command_surface.json` and `command-surface` helper | Repeated workflows such as status, ready-check, role review, Knowledge lookup, Pi handoff, guard check, skill eval, and session-log update have clear trigger names, inputs, outputs, and safety boundaries. |
-| AX-TASK-019 | Initial implementation complete | Create role-specific Codex agent profiles | Codex | `tools/axiom-codex/agent_profiles/` and `agent-profiles` helper | DSP architecture, EEL safety, measurement, qualification, release, tooling, research, safety, implementation, and coordination roles map to the existing role registry and have limited responsibilities. |
-| AX-TASK-020 | Initial implementation complete | Add automated guardrails for unsafe Axiom actions | Codex | `guard-check` helper and unit tests | Historical EEL edits, private artifact paths, source audio, captured WAVs, local manifests, credentials, and unsupported baseline changes are blocked or flagged before publication. |
-| AX-TASK-021 | Initial implementation complete | Add Axiom skill behavior evals | Codex | `tools/axiom-codex/skill_eval_cases.json` and `skill-eval` helper | The Axiom skill source is checked against representative prompts for status inspection, DSP-safety refusal, Pi handoff, Knowledge lookup, release-gate review, private-artifact handling, and session-log refresh. |
+| AX-TASK-018 | Complete | Define Axiom Codex command surface | Codex | `tools/axiom-codex/command_surface.json` and `command-surface` helper | Repeated workflows have clear triggers, inputs, outputs, and boundaries; `agentic-audit` validates registry/runtime synchronization and aliases. |
+| AX-TASK-019 | Complete | Create role-specific Codex agent profiles | Codex | `tools/axiom-codex/agent_profiles/` and `agent-profiles` helper | Ten bounded roles map to tracked Pi role sources; required sections and mappings fail closed under `agentic-audit`. |
+| AX-TASK-020 | Complete | Add automated guardrails for unsafe Axiom actions | Codex | `guard-check` helper and unit tests | Historical EEL edits, private artifacts, audio, manifests, credentials, policy changes, and private path leaks are blocked or flagged with adversarial regression coverage. |
+| AX-TASK-021 | Complete | Add Axiom skill behavior evals | Codex | `tools/axiom-codex/skill_eval_cases.json` and `skill-eval` helper | Seven representative safety and workflow fixtures validate command mappings and required behavior terms; malformed fixtures fail contract validation. |
 | AX-TASK-022 | Complete: watch item | Close `.11` Sub Harmonics follow-up | Qualification | Measurement summary, blinded listening result, and validated local record | Blinded listening split `+4` versus `+10` 2-2 and preferred `+4` over `+12` 4-0. Combined preference was `+4` in six of eight comparisons. Keep `Axiom Clean R011` accepted; no `R012` candidate is justified. |
 | AX-TASK-023 | Complete | Add structured spatial listening vocabulary | Qualification | Listening-record guidance update | Listening records distinguish center image, lateral spread, localization blur, depth impression, bass-image coupling, fatigue, and route context. |
 | AX-TASK-024 | Complete | Create Knowledge concept notes from seed sources | Knowledge | Short concept notes tied to Axiom questions | Seed bibliography now has focused concept notes for spatial listening vocabulary, elevated bass/headroom tradeoffs, stage isolation, and profile-scope boundaries without copying source text or claiming research proves Axiom behavior. |
@@ -44,6 +44,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-034 | Complete | Add Agentic Layer contract audit | Agentic Layer | `agentic-audit` helper and blocking `ready-check` integration | Command registry/runtime mappings, aliases, JDSP approval flags, profile structure, role sources, and skill-eval fixtures fail closed when their contracts drift. |
 | AX-TASK-035 | Complete | Add validated multi-role review records | Agentic Layer | `agent-review --json` and `--output` record generation | Multi-role reviews now have schema versioning, role-source links, decision enums, evidence boundaries, validation checks, and machine-readable output without claiming the draft is evidence. |
 | AX-TASK-036 | Complete | Add maintenance-aware next-action planning | Agentic Layer | `next-action --include-maintenance` | Agentic maintenance tasks stay excluded by default, but can be selected explicitly while preserving dirty-tree, evidence, blocker, and approval-gate protections. |
+| AX-TASK-037 | Complete | Graduate foundational Agentic contracts | Agentic Layer | Reconciled task state for `AX-TASK-018` through `021` | Command, profile, guardrail, and behavior-eval foundations meet their original acceptance criteria and pass hardened contract, regression, and guard checks. |
 
 ## Current Priority
 
@@ -101,9 +102,9 @@ Recommended next actions:
 - `AX-TASK-014` is implemented through the required-test columns in
   `docs/profile-matrix.md`.
 - `AX-TASK-017` is implemented as `docs/pi-runbooks.md`.
-- `AX-TASK-018` through `AX-TASK-021` have initial repo-tracked
-  implementations: command registry, Codex role profiles, guard-check
-  preflight, and deterministic skill behavior eval fixtures.
+- `AX-TASK-018` through `AX-TASK-021` are complete. Their command registry,
+  Codex role profiles, guard-check preflight, and deterministic behavior evals
+  now have strict contract validation and adversarial regression coverage.
 - `AX-TASK-022` through `AX-TASK-028` come from the 2026-06-08 full-system
   readiness review and represent the next improvement set before any
   `Axiom Clean R012` candidate; `AX-TASK-023` is complete, and `AX-TASK-022`
@@ -138,6 +139,8 @@ Recommended next actions:
 - `AX-TASK-036` adds explicit maintenance-aware planning so `next-action` can
   guide ongoing Agentic hardening without treating all initial-maintenance work
   as generally actionable.
+- `AX-TASK-037` graduates the four foundational Agentic tasks after their
+  original acceptance criteria and hardened contract checks passed.
 
 ## Graduation Checklist For Sound-Changing Work
 

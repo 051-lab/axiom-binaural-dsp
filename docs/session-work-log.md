@@ -1323,3 +1323,40 @@ explicitly without weakening default planning boundaries.
 
 - Use `next-action --include-maintenance --no-evidence` after this commit to
   pick the next Agentic hardening target.
+
+## Run 035 - Foundational Agentic Task Graduation
+
+Date: 2026-06-21
+Status: Completed
+Scope: Reconcile `AX-TASK-018` through `AX-TASK-021` against their original
+acceptance criteria after contract hardening.
+
+### What Was Implemented
+
+- Audited command-surface coverage and runtime mappings.
+- Audited all ten Codex profiles and their Pi role-source mappings.
+- Audited guardrail coverage for EEL, policy, private artifact, manifest,
+  credential, and private-path boundaries.
+- Audited all seven deterministic skill behavior fixtures.
+- Graduated `AX-TASK-018`, `019`, `020`, and `021` from initial to complete.
+- Added `AX-TASK-037` as the reconciliation milestone.
+
+### Why It Matters
+
+- The Agentic foundation no longer appears perpetually provisional after its
+  acceptance criteria have been met.
+- Future changes remain maintenance work protected by contract and regression
+  tests rather than reopening the original implementation tasks.
+- Maintenance-aware planning can now move to the next genuinely incomplete
+  Agentic capability.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py agentic-audit --json`
+- `python3 tools/axiom-codex/axiom_codex.py skill-eval --json`
+- `python3 tools/axiom-codex/axiom_codex.py guard-check --json`
+
+### Next Recommended Work
+
+- Run `next-action --include-maintenance --no-evidence` to select the next
+  incomplete Agentic maintenance target.
