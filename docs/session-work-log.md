@@ -1207,3 +1207,43 @@ Harmonics follow-up, local-review, task-state, and next-action batch.
 ### Next Recommended Work
 
 - Close `AX-TASK-022` only after actual listening evidence exists.
+
+## Run 032 - Agentic Contract Hardening
+
+Date: 2026-06-21
+Status: Completed
+Scope: First hardening batch for `AX-TASK-018` through `AX-TASK-021`.
+
+### What Was Implemented
+
+- Added the `agentic-audit` helper command.
+- Added strict command-surface validation for required fields, duplicate names
+  and aliases, helper-to-runtime mappings, and JDSP approval boundaries.
+- Added profile validation for role-source mappings and required sections.
+- Added skill-eval schema, duplicate-ID, command-mapping, and term validation.
+- Integrated these contracts into `ready-check` and `local-review`.
+- Added adversarial regression tests and synchronized the installed
+  `$axiom-engineering` skill.
+- Added `AX-TASK-034` as the completed contract-audit milestone.
+
+### Why It Matters
+
+- Agentic registries are now validated runtime inputs rather than
+  documentation-only files.
+- Unsafe approval metadata and command/runtime drift fail before publication.
+- Future role and behavior-fixture changes have deterministic structural gates.
+
+### Validation
+
+- `python3 -m unittest discover -s tests -p 'test_*.py'` passed 206 tests.
+- `npm test` under `tools/axiom-team` passed 23 tests.
+- `python3 tools/axiom-codex/axiom_codex.py agentic-audit` passed.
+- `python3 tools/axiom-codex/axiom_codex.py local-review --no-untracked`
+  passed.
+- `python3 tools/axiom-codex/axiom_codex.py guard-check --json` returned no
+  findings.
+
+### Next Recommended Work
+
+- Replace the current free-form `agent-review` scaffold with a validated,
+  machine-readable multi-role findings record.

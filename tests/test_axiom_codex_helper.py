@@ -38,6 +38,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
             "local-review",
             "guard-check",
             "command-surface",
+            "agentic-audit",
             "task-state",
             "next-action",
             "evidence-ingest",
@@ -63,6 +64,70 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertFalse(commands["evidence-ingest"]["touchesJDSP"])
         self.assertFalse(commands["evidence-status"]["touchesJDSP"])
         self.assertFalse(commands["evidence-catalog"]["touchesJDSP"])
+
+    def test_agentic_contracts_validate(self) -> None:
+        checks = [
+            *axiom_codex.validate_command_surface_data(axiom_codex.load_command_surface()),
+            *axiom_codex.validate_agent_profiles(),
+            *axiom_codex.validate_skill_eval_data(axiom_codex.load_skill_eval_cases()),
+        ]
+        self.assertFalse(
+            any(check.status == "fail" for check in checks),
+            "\n".join(f"{check.name}: {check.detail}" for check in checks),
+        )
+
+    def test_command_surface_contract_rejects_drift_and_unsafe_jdsp_mapping(self) -> None:
+        command = {
+            "name": "fixture",
+            "trigger": "fixture trigger",
+            "nativeAlias": "/axiom-fixture",
+            "layer": "Codex helper",
+            "helperCommand": "python3 tools/axiom-codex/axiom_codex.py missing-runtime",
+            "touchesJDSP": True,
+            "requiresApproval": False,
+            "purpose": "Fixture.",
+            "inputs": [],
+            "outputs": ["result"],
+            "boundaries": ["fixture only"],
+        }
+        duplicate = dict(command, name="fixture-two")
+        checks = axiom_codex.validate_command_surface_data(
+            {"schemaVersion": 1, "commands": [command, duplicate]},
+            runtime_commands={"fixture"},
+        )
+        names = {check.name for check in checks if check.status == "fail"}
+        self.assertIn("duplicate native alias", names)
+        self.assertIn("JDSP approval boundary", names)
+        self.assertIn("helper command mapping", names)
+        self.assertIn("helper runtime command", names)
+
+    def test_agent_profile_contract_rejects_missing_sections(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            profile = Path(directory) / "fixture.md"
+            profile.write_text(
+                "# Fixture\n\nRole source: `tools/axiom-team/roles/fixture.md`\n\n## Purpose\n\nTest.\n",
+                encoding="utf-8",
+            )
+            checks = axiom_codex.validate_agent_profiles(Path(directory))
+        self.assertTrue(any(check.name == "profile required sections" for check in checks))
+
+    def test_skill_eval_contract_rejects_duplicate_and_unknown_command(self) -> None:
+        case = {
+            "id": "fixture",
+            "prompt": "Run fixture.",
+            "expected": {
+                "helperCommands": ["missing-command"],
+                "requiredTerms": [],
+            },
+        }
+        checks = axiom_codex.validate_skill_eval_data(
+            {"schemaVersion": 1, "cases": [case, dict(case)]},
+            known_commands={"status-summary"},
+        )
+        names = {check.name for check in checks if check.status == "fail"}
+        self.assertIn("duplicate skill eval id", names)
+        self.assertIn("skill eval command mapping", names)
+        self.assertIn("skill eval required terms", names)
 
     def test_agent_profiles_mirror_team_roles(self) -> None:
         profiles = {profile[0] for profile in axiom_codex.load_agent_profiles()}
@@ -647,6 +712,19 @@ class AxiomCodexHelperTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("status-inspection", result.stdout)
+
+    def test_cli_agentic_audit_passes(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(HELPER_PATH), "agentic-audit"],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("command surface contract", result.stdout)
+        self.assertIn("agent profile contract", result.stdout)
+        self.assertIn("skill eval contract", result.stdout)
 
     def test_task_state_validates_machine_readable_backlog(self) -> None:
         data = axiom_codex.load_task_state()

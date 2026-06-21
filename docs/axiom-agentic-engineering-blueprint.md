@@ -228,7 +228,9 @@ Create the durable docs and artifacts that define the system:
 - handoff protocol between Codex and Pi.
 
 Status: implemented for v1 through the blueprint, Codex skill references, and
-helper CLI.
+helper CLI. The first hardening pass adds `agentic-audit`, which fails closed
+on command registry/runtime drift, duplicate aliases, unsafe JDSP approval
+metadata, incomplete role profiles, and malformed behavior fixtures.
 
 ### Phase 2: Native Codex Skill Pack
 
@@ -283,6 +285,10 @@ Initial implementation now includes machine-readable task state, next-action
 selection, consolidated local review, and qualification evidence ingestion.
 Evidence adapters remain deliberately schema-specific: unsupported reports fail
 closed until their semantics and safety boundaries are defined.
+
+Agentic contracts are now checked by both `agentic-audit` and `ready-check`.
+This turns the command surface, profile set, and skill-eval fixtures into
+validated runtime inputs rather than documentation-only registries.
 
 ## Immediate Next Questions
 

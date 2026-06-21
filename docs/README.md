@@ -76,6 +76,7 @@ Use the safe Codex helper CLI for orchestration support:
 ```bash
 python3 tools/axiom-codex/axiom_codex.py status-summary
 python3 tools/axiom-codex/axiom_codex.py ready-check
+python3 tools/axiom-codex/axiom_codex.py agentic-audit
 python3 tools/axiom-codex/axiom_codex.py agent-review --topic "review topic"
 python3 tools/axiom-codex/axiom_codex.py knowledge-query "search terms"
 ```

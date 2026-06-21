@@ -6,6 +6,7 @@ Use the helper CLI for safe orchestration support:
 python3 tools/axiom-codex/axiom_codex.py status-summary
 python3 tools/axiom-codex/axiom_codex.py ready-check
 python3 tools/axiom-codex/axiom_codex.py command-surface
+python3 tools/axiom-codex/axiom_codex.py agentic-audit
 python3 tools/axiom-codex/axiom_codex.py evidence-ingest <report.json> [<report.json> ...]
 python3 tools/axiom-codex/axiom_codex.py evidence-status <bundle.json>
 python3 tools/axiom-codex/axiom_codex.py evidence-catalog <directory> --set-default
@@ -30,6 +31,9 @@ fixture checks, and safe Knowledge search.
 - `ready-check`: documentation/static safety checks only.
 - `command-surface`: list the repo-tracked command registry that future native
   aliases or plugin commands should wrap.
+- `agentic-audit`: fail closed on command/runtime drift, duplicate aliases,
+  unsafe JDSP approval metadata, incomplete profiles, or malformed skill-eval
+  fixtures.
 - `evidence-ingest`: normalize supported local qualification JSON into a
   source-hashed bundle; private paths are hidden by default and the result is
   not listening acceptance or release approval.

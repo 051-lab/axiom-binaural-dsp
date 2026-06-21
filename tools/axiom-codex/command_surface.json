@@ -52,7 +52,7 @@
       "helperCommand": "python3 tools/axiom-codex/axiom_codex.py local-review",
       "touchesJDSP": false,
       "requiresApproval": false,
-      "purpose": "Run one non-JDSP local evidence snapshot covering git state, accepted baseline, changed paths, guard-check, ready-check, optional Knowledge audit, Python tests, Node harness tests, and recommended next action.",
+      "purpose": "Run one non-JDSP local evidence snapshot covering git state, accepted baseline, changed paths, guard-check, ready-check, Agentic contract audit, optional Knowledge audit, Python tests, Node harness tests, and recommended next action.",
       "inputs": [
         "optional --skip-tests",
         "optional --skip-knowledge",
@@ -62,6 +62,7 @@
       "outputs": [
         "local review Markdown or JSON",
         "check status table",
+        "Agentic contract status",
         "recommended next action",
         "optional report files"
       ],
@@ -113,6 +114,29 @@
       "boundaries": [
         "registry only",
         "does not install native slash commands"
+      ]
+    },
+    {
+      "name": "agentic-audit",
+      "trigger": "$axiom-engineering agentic contract audit",
+      "nativeAlias": "/axiom-agentic-audit",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py agentic-audit",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Validate command registry, runtime mappings, agent profile structure, and skill-eval fixture contracts as one blocking Agentic Layer check.",
+      "inputs": [
+        "optional --json"
+      ],
+      "outputs": [
+        "command contract checks",
+        "profile contract checks",
+        "skill-eval contract checks"
+      ],
+      "boundaries": [
+        "static Agentic Layer validation only",
+        "does not run JDSP",
+        "does not grant approval or execute registered commands"
       ]
     },
     {

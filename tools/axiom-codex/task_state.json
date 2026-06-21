@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-20",
+  "lastUpdated": "2026-06-21",
   "source": "docs/task-backlog.md",
   "tasks": [
     {
@@ -331,7 +331,17 @@
       "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Review the local commit series; publish or push only after explicit user approval."
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-034",
+      "status": "complete",
+      "title": "Add Agentic Layer contract audit",
+      "area": "Agentic Layer",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Use agentic-audit and ready-check as blocking validation when command, profile, or skill-eval contracts change."
     }
   ]
 }

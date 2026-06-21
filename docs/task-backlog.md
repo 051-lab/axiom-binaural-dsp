@@ -33,7 +33,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-023 | Complete | Add structured spatial listening vocabulary | Qualification | Listening-record guidance update | Listening records distinguish center image, lateral spread, localization blur, depth impression, bass-image coupling, fatigue, and route context. |
 | AX-TASK-024 | Complete | Create Knowledge concept notes from seed sources | Knowledge | Short concept notes tied to Axiom questions | Seed bibliography now has focused concept notes for spatial listening vocabulary, elevated bass/headroom tradeoffs, stage isolation, and profile-scope boundaries without copying source text or claiming research proves Axiom behavior. |
 | AX-TASK-025 | Complete | Review and merge PR #12 | Repository | Merged Codex/Knowledge hardening PR | PR #12 was reviewed, validation passed, and the PR was merged after explicit approval. |
-| AX-TASK-026 | Initial implementation complete | Add consolidated local review/check command | Codex | `local-review` helper command | Future full-system reviews can run the standard local evidence snapshot with one safe, non-JDSP command that covers git state, accepted baseline, changed paths, guard-check, ready-check, Knowledge audit, Python tests, Node harness tests, and recommended next action. |
+| AX-TASK-026 | Initial implementation complete | Add consolidated local review/check command | Codex | `local-review` helper command | Future full-system reviews can run the standard local evidence snapshot with one safe, non-JDSP command that covers git state, accepted baseline, changed paths, guard-check, ready-check, Agentic contract audit, Knowledge audit, Python tests, Node harness tests, and recommended next action. |
 | AX-TASK-027 | Initial implementation complete | Add machine-readable task state | Codex | `tools/axiom-codex/task_state.json` and `task-state` helper | Agentic planning can validate and summarize task status, blocked state, approval needs, and next actions without parsing only Markdown tables. |
 | AX-TASK-028 | Initial implementation complete | Add next-action helper | Codex | `next-action` helper command | Codex can recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, and approval gates without running JDSP or bypassing human decisions. |
 | AX-TASK-029 | Initial implementation complete | Add Airwindows Knowledge intake workflow | Knowledge | Source note, concept taxonomy, and `airwindows-index` helper | Airwindows can be indexed as local-only metadata for clean-room concept retrieval without vendoring code, copying implementation, or creating a DSP candidate. |
@@ -41,6 +41,7 @@ task is ready for scheduling or delegation.
 | AX-TASK-031 | Initial implementation complete | Connect qualification evidence to Agentic status | Agentic Layer | `evidence-status` helper plus optional `--evidence` status/next-action input | Codex can validate and summarize a normalized bundle during orientation, and failed or investigative evidence can block dependent planning without granting automated acceptance. |
 | AX-TASK-032 | Initial implementation complete | Add automatic local evidence discovery | Agentic Layer | `evidence-catalog` helper and local-only default directory configuration | Codex can inventory normalized bundles, choose the newest valid one, and automatically include it in routine status and next-action orientation without hardcoded private paths. |
 | AX-TASK-033 | Complete | Reconcile current local change batch | Repository | Findings-first reconciliation report and local commit groups | Player path containment and dependency setup are complete, historical `.10` is restored, validation passes, and the approved local commit series is prepared without publishing. |
+| AX-TASK-034 | Complete | Add Agentic Layer contract audit | Agentic Layer | `agentic-audit` helper and blocking `ready-check` integration | Command registry/runtime mappings, aliases, JDSP approval flags, profile structure, role sources, and skill-eval fixtures fail closed when their contracts drift. |
 
 ## Current Priority
 
@@ -51,9 +52,9 @@ Recommended next actions:
    review checkpoint.
 3. Use the locally installed `$axiom-engineering` skill for new Axiom Codex
    sessions.
-4. Treat `AX-TASK-018` through `AX-TASK-021` as initial infrastructure; future
-   work can add native runtime wrappers only when a supported Codex command or
-   subagent mechanism is available.
+4. Use `agentic-audit` as the blocking contract check for `AX-TASK-018`
+   through `AX-TASK-021`; add native runtime wrappers only when a supported
+   Codex command or subagent mechanism is available.
 5. Keep the completed `.11` Sub Harmonics result as a watch item and require a
    new repeatable normal-material problem before proposing `Axiom Clean R012`.
 6. Use `task-state` and `next-action` as the machine-readable planning source
@@ -121,6 +122,9 @@ Recommended next actions:
   pointer so routine orientation no longer requires a bundle path.
 - `AX-TASK-033` is complete: the Player blockers are resolved, historical
   `.10` is restored, and the approved commit series exists locally.
+- `AX-TASK-034` hardens `AX-TASK-018` through `AX-TASK-021` with strict
+  command, runtime-mapping, profile, approval-boundary, and skill-eval
+  contracts. `ready-check` now fails when those contracts drift.
 
 ## Graduation Checklist For Sound-Changing Work
 

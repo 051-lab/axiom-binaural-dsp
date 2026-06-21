@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
@@ -127,7 +127,8 @@ PR #10 as commit `c498688`.
 | Session work log PDF workflow | merged | `session-work-log.md`, `session-work-log.pdf` |
 | Agentic engineering blueprint | local v1 source-ready | `axiom-agentic-engineering-blueprint.md` |
 | Axiom Codex skill | local v1 installed | `~/.codex/skills/axiom-engineering` from `../tools/codex-skills/axiom-engineering/` |
-| Axiom Codex helper CLI | local v2 source-ready | `../tools/axiom-codex/axiom_codex.py` |
+| Axiom Codex helper CLI | contract-hardened v3 | `../tools/axiom-codex/axiom_codex.py` |
+| Agentic contract audit | complete | `agentic-audit`; command, profile, approval, and skill-eval contracts |
 | Airwindows Knowledge intake | local metadata workflow | `knowledge/airwindows-open-source-dsp.md`, `knowledge/concepts/airwindows-concept-taxonomy.md`, `airwindows-index` helper |
 | Qualification evidence ingestion | initial implementation complete | `evidence-ingest` helper; local-only normalized bundles |
 | Qualification evidence status | initial implementation complete | `evidence-status`; optional `status-summary --evidence` and `next-action --evidence` |
@@ -248,9 +249,9 @@ Summary:
 
 ## Current Best Next Actions
 
-1. Review the local commit series recorded in
-   `axiom-change-batch-reconciliation-2026-06-20.md`; publish or push only
-   after explicit approval.
+1. Continue Agentic Layer hardening by making multi-role reviews produce
+   validated machine-readable findings instead of an unvalidated text
+   scaffold.
 2. Keep the completed `.11` Sub Harmonics result as a watch item; do not draft
    `Axiom Clean R012` without a new repeatable normal-material problem.
 3. Use Knowledge seed notes to support specific test-design questions, not to
@@ -262,6 +263,7 @@ Use these commands when updating this dashboard:
 
 ```bash
 git status -sb
+python3 tools/axiom-codex/axiom_codex.py agentic-audit
 node tools/axiom-team/bin/axiom-team.mjs doctor
 node tools/axiom-team/bin/axiom-team.mjs status
 scripts/evaluate_axiom_candidate_readiness.py \

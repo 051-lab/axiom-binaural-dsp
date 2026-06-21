@@ -4,6 +4,20 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 
 ---
 
+## [Unreleased] - Agentic Layer Hardening
+
+### Added
+- Added `agentic-audit` to validate command registry/runtime mappings, native
+  aliases, JDSP approval metadata, agent profile contracts, and skill-eval
+  fixture schemas.
+- Added adversarial regression coverage for malformed Agentic Layer metadata.
+
+### Changed
+- Made `ready-check` consume the strict Agentic contract validators instead of
+  checking only whether registry, profile, and fixture files exist.
+
+---
+
 ## [4.1.4.11] - 2026-06-01 - Accepted Reduced Elevated-Bass Reserve Baseline
 
 ### Changed

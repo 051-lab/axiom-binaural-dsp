@@ -91,6 +91,21 @@ SOURCE_REQUIRED_FIELDS = {"id", "title", "type", "topics", "axiomUse", "status"}
 SOURCE_TYPES = {"book", "paper", "article", "documentation", "video", "other"}
 SOURCE_STATUSES = {"unread", "reading", "summarized", "rejected"}
 TASK_REQUIRED_FIELDS = {"id", "status", "title", "area", "phase", "requiresApproval", "blockedBy", "nextAction"}
+COMMAND_REQUIRED_FIELDS = {
+    "name",
+    "trigger",
+    "nativeAlias",
+    "layer",
+    "helperCommand",
+    "touchesJDSP",
+    "requiresApproval",
+    "purpose",
+    "inputs",
+    "outputs",
+    "boundaries",
+}
+PROFILE_REQUIRED_SECTIONS = {"Purpose", "May Do", "Must Not Do", "Required Output"}
+SKILL_EVAL_REQUIRED_FIELDS = {"id", "prompt", "expected"}
 AIRWINDOWS_SOURCE_ID = "airwindows-open-source-dsp"
 AIRWINDOWS_REPO_URL = "https://github.com/airwindows/airwindows"
 EVIDENCE_BOUNDARIES = [
@@ -234,6 +249,83 @@ def load_command_surface() -> dict[str, Any]:
     if not isinstance(data, dict) or not isinstance(data.get("commands"), list):
         raise SystemExit(f"invalid command surface: {COMMAND_SURFACE}")
     return data
+
+
+def parser_subcommands(parser: argparse.ArgumentParser) -> set[str]:
+    for action in parser._actions:
+        if isinstance(action, argparse._SubParsersAction):
+            return set(action.choices)
+    return set()
+
+
+def validate_command_surface_data(
+    data: dict[str, Any],
+    runtime_commands: set[str] | None = None,
+) -> list[Check]:
+    checks: list[Check] = []
+    commands = data.get("commands", [])
+    if data.get("schemaVersion") != 1:
+        checks.append(Check("command surface schema", "fail", "schemaVersion must be 1"))
+    if not isinstance(commands, list):
+        return [Check("command surface commands", "fail", "`commands` must be an array")]
+
+    seen_names: set[str] = set()
+    seen_aliases: set[str] = set()
+    runtime_commands = runtime_commands if runtime_commands is not None else parser_subcommands(build_parser())
+    for command in commands:
+        if not isinstance(command, dict):
+            checks.append(Check("command surface entry", "fail", "command entry must be an object"))
+            continue
+        name = str(command.get("name", "missing-name"))
+        missing = sorted(COMMAND_REQUIRED_FIELDS - set(command))
+        if missing:
+            checks.append(Check("command required fields", "fail", f"{name}: missing {', '.join(missing)}"))
+        if name in seen_names:
+            checks.append(Check("duplicate command name", "fail", name))
+        seen_names.add(name)
+        if not re.fullmatch(r"[a-z][a-z0-9-]*", name):
+            checks.append(Check("command name format", "fail", name))
+
+        alias = str(command.get("nativeAlias", ""))
+        if alias in seen_aliases:
+            checks.append(Check("duplicate native alias", "fail", alias))
+        seen_aliases.add(alias)
+        if not re.fullmatch(r"/axiom-[a-z0-9-]+", alias):
+            checks.append(Check("native alias format", "fail", f"{name}: {alias or 'missing'}"))
+
+        for field in ("touchesJDSP", "requiresApproval"):
+            if not isinstance(command.get(field), bool):
+                checks.append(Check(f"command {field}", "fail", f"{name}: {field} must be boolean"))
+        if command.get("touchesJDSP") and not command.get("requiresApproval"):
+            checks.append(Check("JDSP approval boundary", "fail", f"{name}: JDSP commands must require approval"))
+        for field in ("inputs", "outputs", "boundaries"):
+            value = command.get(field)
+            if not isinstance(value, list) or not all(isinstance(item, str) and item.strip() for item in value):
+                checks.append(Check(f"command {field}", "fail", f"{name}: {field} must be a non-empty string array"))
+        for field in ("trigger", "layer", "helperCommand", "purpose"):
+            if not isinstance(command.get(field), str) or not command[field].strip():
+                checks.append(Check(f"command {field}", "fail", f"{name}: {field} must be non-empty text"))
+
+        helper = str(command.get("helperCommand", ""))
+        try:
+            helper_parts = shlex.split(helper)
+        except ValueError as exc:
+            checks.append(Check("helper command syntax", "fail", f"{name}: {exc}"))
+            helper_parts = []
+        if "tools/axiom-codex/axiom_codex.py" in helper_parts:
+            script_index = helper_parts.index("tools/axiom-codex/axiom_codex.py")
+            mapped = helper_parts[script_index + 1] if len(helper_parts) > script_index + 1 else ""
+            if mapped != name:
+                checks.append(Check("helper command mapping", "fail", f"{name}: maps to {mapped or 'no subcommand'}"))
+            if mapped not in runtime_commands:
+                checks.append(Check("helper runtime command", "fail", f"{name}: runtime subcommand is missing"))
+
+    missing_registry = sorted(runtime_commands - seen_names)
+    if missing_registry:
+        checks.append(Check("unregistered runtime command", "fail", ", ".join(missing_registry)))
+    if not checks:
+        checks.append(Check("command surface contract", "pass", f"{len(commands)} command(s) checked"))
+    return checks
 
 
 def load_task_state() -> dict[str, Any]:
@@ -990,14 +1082,9 @@ def ready_check(_: argparse.Namespace) -> int:
     baseline = REPO_ROOT / policy["acceptedBaseline"]["path"]
     checks.append(Check("accepted baseline exists", "pass" if baseline.exists() else "fail", str(baseline.relative_to(REPO_ROOT)) if baseline.exists() else str(baseline)))
 
-    surface = load_command_surface()
-    checks.append(Check("Codex command surface", "pass" if surface.get("commands") else "fail", f"{len(surface.get('commands', []))} commands"))
-
-    profile_files = sorted(CODEX_AGENT_PROFILE_ROOT.glob("*.md"))
-    checks.append(Check("Codex agent profiles", "pass" if profile_files else "fail", f"{len(profile_files)} profiles"))
-
-    eval_cases = load_skill_eval_cases()
-    checks.append(Check("Axiom skill eval cases", "pass" if eval_cases.get("cases") else "fail", f"{len(eval_cases.get('cases', []))} cases"))
+    checks.extend(validate_command_surface_data(load_command_surface()))
+    checks.extend(validate_agent_profiles())
+    checks.extend(validate_skill_eval_data(load_skill_eval_cases()))
 
     print("# Axiom Codex Ready Check\n")
     failed = False
@@ -1016,6 +1103,7 @@ def local_review_payload(args: argparse.Namespace) -> dict[str, Any]:
         command_payload("git diff --check", ["git", "diff", "--check"], timeout=30),
         command_payload("guard-check", [sys.executable, str(pathlib.Path(__file__).resolve()), "guard-check", "--json"], timeout=60),
         command_payload("ready-check", [sys.executable, str(pathlib.Path(__file__).resolve()), "ready-check"], timeout=120),
+        command_payload("agentic-audit", [sys.executable, str(pathlib.Path(__file__).resolve()), "agentic-audit", "--json"], timeout=60),
         command_payload("task-state", [sys.executable, str(pathlib.Path(__file__).resolve()), "task-state", "--json"], timeout=60),
         command_payload("next-action", [sys.executable, str(pathlib.Path(__file__).resolve()), "next-action", "--json"], timeout=60),
     ]
@@ -1159,6 +1247,47 @@ def load_agent_profiles() -> list[tuple[str, pathlib.Path, str, str]]:
         purpose = markdown_section(text, "Purpose")
         profiles.append((path.stem, path, title, purpose))
     return profiles
+
+
+def validate_agent_profiles(profile_root: pathlib.Path = CODEX_AGENT_PROFILE_ROOT) -> list[Check]:
+    checks: list[Check] = []
+    paths = sorted(profile_root.glob("*.md"))
+    seen_titles: set[str] = set()
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        title_match = re.search(r"^#\s+(.+)$", text, flags=re.MULTILINE)
+        title = title_match.group(1).strip() if title_match else ""
+        if not title:
+            checks.append(Check("profile title", "fail", f"{path.name}: missing H1 title"))
+        elif title in seen_titles:
+            checks.append(Check("duplicate profile title", "fail", title))
+        seen_titles.add(title)
+
+        source_match = re.search(r"^Role source:\s+`([^`]+)`\s*$", text, flags=re.MULTILINE)
+        if not source_match:
+            checks.append(Check("profile role source", "fail", f"{path.name}: missing role source"))
+        else:
+            source = REPO_ROOT / source_match.group(1)
+            expected = ROLE_ROOT / path.name
+            if source.resolve() != expected.resolve():
+                checks.append(Check("profile role mapping", "fail", f"{path.name}: expected {expected.relative_to(REPO_ROOT)}"))
+            elif not source.is_file():
+                checks.append(Check("profile role source", "fail", f"{path.name}: source file does not exist"))
+
+        missing_sections = sorted(
+            heading for heading in PROFILE_REQUIRED_SECTIONS
+            if not re.search(rf"^## {re.escape(heading)}\s*$", text, flags=re.MULTILINE)
+        )
+        if missing_sections:
+            checks.append(Check("profile required sections", "fail", f"{path.name}: missing {', '.join(missing_sections)}"))
+        for heading in PROFILE_REQUIRED_SECTIONS - set(missing_sections):
+            if not markdown_section(text, heading):
+                checks.append(Check("profile section content", "fail", f"{path.name}: {heading} is empty"))
+    if not paths:
+        checks.append(Check("agent profiles", "fail", "no profile files found"))
+    elif not checks:
+        checks.append(Check("agent profile contract", "pass", f"{len(paths)} profile(s) checked"))
+    return checks
 
 
 def agent_profiles(args: argparse.Namespace) -> int:
@@ -1797,6 +1926,54 @@ def load_skill_eval_cases() -> dict[str, Any]:
     return data
 
 
+def validate_skill_eval_data(
+    data: dict[str, Any],
+    known_commands: set[str] | None = None,
+) -> list[Check]:
+    checks: list[Check] = []
+    cases = data.get("cases", [])
+    if data.get("schemaVersion") != 1:
+        checks.append(Check("skill eval schema", "fail", "schemaVersion must be 1"))
+    if not isinstance(cases, list):
+        return [Check("skill eval cases", "fail", "`cases` must be an array")]
+    known_commands = known_commands if known_commands is not None else set(command_surface_lookup())
+    seen: set[str] = set()
+    for case in cases:
+        if not isinstance(case, dict):
+            checks.append(Check("skill eval entry", "fail", "case entry must be an object"))
+            continue
+        case_id = str(case.get("id", "missing-id"))
+        missing = sorted(SKILL_EVAL_REQUIRED_FIELDS - set(case))
+        if missing:
+            checks.append(Check("skill eval required fields", "fail", f"{case_id}: missing {', '.join(missing)}"))
+        if case_id in seen:
+            checks.append(Check("duplicate skill eval id", "fail", case_id))
+        seen.add(case_id)
+        if not re.fullmatch(r"[a-z][a-z0-9-]*", case_id):
+            checks.append(Check("skill eval id format", "fail", case_id))
+        if not isinstance(case.get("prompt"), str) or not case.get("prompt", "").strip():
+            checks.append(Check("skill eval prompt", "fail", f"{case_id}: prompt must be non-empty text"))
+        expected = case.get("expected")
+        if not isinstance(expected, dict):
+            checks.append(Check("skill eval expected", "fail", f"{case_id}: expected must be an object"))
+            continue
+        helper_commands = expected.get("helperCommands")
+        required_terms = expected.get("requiredTerms")
+        if not isinstance(helper_commands, list) or not helper_commands:
+            checks.append(Check("skill eval helper commands", "fail", f"{case_id}: helperCommands must be non-empty"))
+        else:
+            unknown = sorted({str(name) for name in helper_commands} - known_commands)
+            if unknown:
+                checks.append(Check("skill eval command mapping", "fail", f"{case_id}: unknown {', '.join(unknown)}"))
+        if not isinstance(required_terms, list) or not required_terms or not all(
+            isinstance(term, str) and term.strip() for term in required_terms
+        ):
+            checks.append(Check("skill eval required terms", "fail", f"{case_id}: requiredTerms must be non-empty strings"))
+    if not checks:
+        checks.append(Check("skill eval contract", "pass", f"{len(cases)} case(s) checked"))
+    return checks
+
+
 def skill_eval_corpus() -> str:
     sources: list[str] = []
     for path in [SKILL_SOURCE / "SKILL.md", *sorted((SKILL_SOURCE / "references").glob("*.md")), COMMAND_SURFACE]:
@@ -1811,9 +1988,11 @@ def skill_eval(args: argparse.Namespace) -> int:
     data = load_skill_eval_cases()
     commands = command_surface_lookup()
     corpus = skill_eval_corpus()
-    checks: list[Check] = []
+    checks = validate_skill_eval_data(data, set(commands))
 
     for case in data["cases"]:
+        if not isinstance(case, dict) or not isinstance(case.get("expected"), dict):
+            continue
         case_id = str(case.get("id", "unnamed"))
         prompt = str(case.get("prompt", "")).strip()
         expected = case.get("expected", {})
@@ -1843,7 +2022,24 @@ def skill_eval(args: argparse.Namespace) -> int:
     return 1 if failed else 0
 
 
-def main() -> int:
+def agentic_audit(args: argparse.Namespace) -> int:
+    checks = [
+        *validate_command_surface_data(load_command_surface()),
+        *validate_agent_profiles(),
+        *validate_skill_eval_data(load_skill_eval_cases()),
+    ]
+    failed = any(check.status == "fail" for check in checks)
+    if args.json:
+        print(json.dumps([check.__dict__ for check in checks], indent=2, sort_keys=True))
+        return 1 if failed else 0
+    print("# Axiom Agentic Contract Audit\n")
+    for check in checks:
+        print(f"- {check.status}: {check.name} - {check.detail}")
+    print("\nBoundary: this validates Agentic Layer contracts and mappings. It does not run JDSP or grant approval.")
+    return 1 if failed else 0
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -1866,6 +2062,10 @@ def main() -> int:
     surface = sub.add_parser("command-surface")
     surface.add_argument("--json", action="store_true")
     surface.set_defaults(func=command_surface)
+
+    audit = sub.add_parser("agentic-audit")
+    audit.add_argument("--json", action="store_true")
+    audit.set_defaults(func=agentic_audit)
 
     tasks = sub.add_parser("task-state")
     tasks.add_argument("--json", action="store_true")
@@ -1959,6 +2159,11 @@ def main() -> int:
     sources.add_argument("--show-private-paths", action="store_true")
     sources.set_defaults(func=knowledge_sources)
 
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
     args = parser.parse_args()
     return args.func(args)
 
