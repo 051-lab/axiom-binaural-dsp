@@ -931,7 +931,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("recommendedAction", payload)
         self.assertIn("planning guidance", "\n".join(payload["boundaries"]))
-        self.assertIsNone(payload["selectedTask"])
+        self.assertEqual(payload["selectedTask"]["id"], "AX-TASK-041")
         self.assertFalse(payload["includeMaintenance"])
 
     def test_cli_next_action_can_select_initial_maintenance(self) -> None:

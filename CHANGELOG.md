@@ -15,6 +15,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added `next-action --include-maintenance` so ongoing Agentic hardening can
   intentionally select initial-maintenance tasks without changing default
   conservative planning.
+- Added the 2026-06-22 layer progression review with updated completion
+  estimates and the next Agentic milestone.
 - Added automatic standard Airwindows-index discovery for Knowledge queries
   with explicit `--no-airwindows-index` opt-out.
 - Added strict Airwindows top-level repository, license, and safe-field audit
@@ -37,6 +39,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Graduated `AX-TASK-030` through `AX-TASK-032` after the real Windows host
   evidence bundle passed ingestion, validation, status, discovery, and
   local-configuration checks.
+- Added `AX-TASK-041` as the ready implementation task for completed
+  Agentic review-record validation and planning integration.
 
 ---
 

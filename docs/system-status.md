@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
@@ -225,7 +225,11 @@ correctly verify as unsigned.
 
 ## Latest Assessment
 
-The current full-system readiness review is
+The current layer progression review is
+`axiom-layer-progression-2026-06-22.md`. It estimates the currently defined
+Axiom engineering system at **87% complete**.
+
+The previous findings-first full-system readiness review remains
 `axiom-full-system-review-2026-06-08.md`.
 
 Summary:
@@ -253,12 +257,11 @@ Summary:
 
 ## Current Best Next Actions
 
-1. Review the remaining seeded Knowledge work and decide whether a specific
-   test-design question justifies another concept note.
+1. Implement `AX-TASK-041`, the completed Agentic review-record lifecycle.
 2. Keep the completed `.11` Sub Harmonics result as a watch item; do not draft
    `Axiom Clean R012` without a new repeatable normal-material problem.
-3. Use Knowledge seed notes to support specific test-design questions, not to
-   justify DSP changes by themselves.
+3. After the review lifecycle, choose host stabilization, Knowledge-driven
+   Labs, a future profile, or continued Core watch posture.
 
 ## Refresh Commands
 

@@ -1476,3 +1476,41 @@ Scope: Audit, harden, and graduate `AX-TASK-030` through `AX-TASK-032`.
 
 - Review the remaining seeded Knowledge work against a specific test-design
   question rather than creating concept notes without a need.
+
+## Run 039 - Updated Layer Progression Assessment
+
+Date: 2026-06-22
+Status: Completed
+Scope: Reassess the full Axiom system after publishing the Agentic hardening,
+Airwindows intake, evidence stack, Windows host qualification, and `.11`
+listening closeout.
+
+### What Was Implemented
+
+- Added `docs/axiom-layer-progression-2026-06-22.md`.
+- Updated completion estimates for eleven Axiom layers.
+- Estimated the currently defined Axiom engineering system at 87% complete.
+- Distinguished current-system readiness from unbuilt future product profiles.
+- Identified the completed-review lifecycle as the highest-value Agentic gap.
+- Added ready task `AX-TASK-041`.
+- Updated the system dashboard and documentation index.
+
+### Why It Matters
+
+- The old June 10 percentages no longer understated the Agentic, Core,
+  Qualification, host, and publication layers.
+- Axiom now has a concrete next implementation target instead of an arbitrary
+  DSP revision or unscoped Knowledge expansion.
+- Future product work is separated from system infrastructure completion.
+
+### Validation
+
+- `status-summary`, `task-state`, and `next-action` were reviewed.
+- Agentic contracts passed for 20 commands, 10 profiles, and 7 skill fixtures.
+- Knowledge source audit passed for 7 registered sources.
+- Git was synchronized with `origin/main` before the assessment.
+
+### Next Recommended Work
+
+- Implement `AX-TASK-041`: completed Agentic review-record validation and safe
+  planning integration.

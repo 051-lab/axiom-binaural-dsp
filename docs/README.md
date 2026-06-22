@@ -17,6 +17,7 @@ DSP. Use this file as the map before opening individual investigation records.
 | [axiom-full-system-review-2026-06-08.md](axiom-full-system-review-2026-06-08.md) | Current full-system readiness review across Core DSP, Qualification, Pi/JDSP workflow, Codex tooling, Knowledge, documentation, and release posture. |
 | [axiom-full-system-review-2026-06-08.html](axiom-full-system-review-2026-06-08.html) | Rendered HTML copy of the current full-system readiness review. |
 | [axiom-layer-progression-2026-06-10.md](axiom-layer-progression-2026-06-10.md) | Progression tracker for each major Axiom system layer, including Core DSP, Qualification, Codex orchestration, Agentic Layer, Knowledge, and release gates. |
+| [axiom-layer-progression-2026-06-22.md](axiom-layer-progression-2026-06-22.md) | Current layer-completion assessment after Agentic hardening, evidence integration, Airwindows intake, Windows host qualification, and `.11` closeout. |
 | [axiom-change-batch-reconciliation-2026-06-20.md](axiom-change-batch-reconciliation-2026-06-20.md) | Findings-first review of the current uncommitted naming, Agentic, Knowledge, and Player work, including blockers and proposed commit groups. |
 | [axiom-full-state-assessment-2026-06-04.md](axiom-full-state-assessment-2026-06-04.md) | Previous full-system assessment across Core DSP, Qualification, Agentic tooling, Knowledge, and repository housekeeping. |
 | [profile-matrix.md](profile-matrix.md) | Operational matrix for profile status, ownership, allowed changes, and tests. |

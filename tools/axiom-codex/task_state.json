@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-21",
+  "lastUpdated": "2026-06-22",
   "source": "docs/task-backlog.md",
   "tasks": [
     {
@@ -402,6 +402,16 @@
       "requiresApproval": false,
       "blockedBy": [],
       "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-041",
+      "status": "ready",
+      "title": "Complete Agentic review-record lifecycle",
+      "area": "Agentic Layer",
+      "phase": "ready",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Add review-record status validation and safe planning integration for completed multi-role reviews."
     }
   ]
 }
