@@ -246,3 +246,10 @@ a healthy state. The correct next move is not an arbitrary DSP revision. It is
 to finish the review-record lifecycle, then deliberately choose whether the
 next investment is host productization, Knowledge-driven Labs, or a future
 profile.
+
+## Post-Assessment Update
+
+`AX-TASK-041` was completed later on 2026-06-22. The review-record lifecycle
+now validates completed findings and evidence references and can provide
+bounded input to `next-action`. The remaining next step is therefore the
+product-direction gate described above.

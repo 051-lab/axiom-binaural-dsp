@@ -1514,3 +1514,42 @@ listening closeout.
 
 - Implement `AX-TASK-041`: completed Agentic review-record validation and safe
   planning integration.
+
+## Run 040 - Completed Agent Review Lifecycle
+
+Date: 2026-06-22
+Status: Completed
+Scope: Implement `AX-TASK-041`.
+
+### What Was Implemented
+
+- Added `agent-review-status <review.json>`.
+- Added lifecycle validation for `draft` and `complete` review records.
+- Required completed records to contain scope, non-draft decisions, role
+  findings, and repo-safe evidence references.
+- Added private-path rejection for completed review content.
+- Added `next-action --review <review.json>`.
+- Added bounded planning behavior for `stop`, `delegate-to-Pi`, and
+  `needs-user-approval` decisions.
+- Kept completed reviews explicitly separate from approval and execution.
+- Marked `AX-TASK-041` complete.
+
+### Why It Matters
+
+- Agentic reviews can now move from generated drafts to durable,
+  machine-validated decisions.
+- Planning can consume a completed review without parsing Markdown.
+- Review output still cannot execute JDSP, publish, merge, create a candidate,
+  or promote a baseline.
+
+### Validation
+
+- Completed-record validation tests cover missing findings, missing evidence
+  references, invalid decisions, and private paths.
+- CLI tests cover review status output and next-action stop behavior.
+- Agentic command contracts pass with 21 registered commands.
+
+### Next Recommended Work
+
+- Choose the next product-direction lane: Windows host stabilization,
+  Knowledge-driven Labs, a future profile, or continued Core watch posture.

@@ -317,6 +317,12 @@ next-action consume validated bundles, discovery selects the newest valid local
 bundle, and the catalog reports actual default configuration state. Unsupported
 schemas still fail closed, and automation never becomes listening acceptance.
 
+The review-record lifecycle is complete. Draft records can be generated,
+completed records require scope, findings, evidence references, and bounded
+decisions, and private paths fail validation. `next-action --review` can stop,
+delegate, or request approval based on a valid completed review, but it cannot
+execute those actions or grant authority.
+
 ## Immediate Next Questions
 
 Before implementation, decide:

@@ -47,6 +47,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
             "evidence-catalog",
             "agent-profiles",
             "agent-review",
+            "agent-review-status",
             "airwindows-audit",
             "airwindows-index",
             "knowledge-query",
@@ -135,6 +136,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
                 "purpose": "",
                 "findings": [],
                 "evidenceNeeded": [],
+                "evidenceReferences": [],
                 "decision": "draft",
             }
         )
@@ -142,6 +144,26 @@ class AxiomCodexHelperTests(unittest.TestCase):
         names = {check.name for check in checks if check.status == "fail"}
         self.assertIn("review decision", names)
         self.assertIn("unknown review role", names)
+
+    def test_completed_agent_review_requires_findings_and_references(self) -> None:
+        record = axiom_codex.build_agent_review_record("Incomplete completed review", ["coordinator"])
+        record["status"] = "complete"
+        record["scope"] = "Agentic tooling review."
+        record["decision"] = "continue"
+        record["evidenceStatus"] = "completed_review_not_authority"
+        record["roles"][0]["decision"] = "continue"
+        checks = axiom_codex.validate_agent_review_record(record)
+        names = {check.name for check in checks if check.status == "fail"}
+        self.assertIn("completed role findings", names)
+        self.assertIn("completed role evidenceReferences", names)
+
+    def test_completed_agent_review_validates_and_rejects_private_paths(self) -> None:
+        record = self._completed_agent_review()
+        checks = axiom_codex.validate_agent_review_record(record)
+        self.assertFalse(any(check.status == "fail" for check in checks))
+        record["roles"][0]["evidenceReferences"] = [r"C:\Users\private\report.json"]
+        checks = axiom_codex.validate_agent_review_record(record)
+        self.assertTrue(any(check.name == "completed review private path" for check in checks))
 
     def test_skill_eval_contract_rejects_duplicate_and_unknown_command(self) -> None:
         case = {
@@ -887,6 +909,36 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual([entry["role"] for entry in payload["roles"]], ["coordinator", "safety-auditor"])
         self.assertIn("Axiom Multi-Role Review Record", result.stdout)
 
+    def test_cli_agent_review_status_summarizes_completed_record(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            review = Path(directory) / "review.json"
+            review.write_text(json.dumps(self._completed_agent_review()), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(HELPER_PATH), "agent-review-status", str(review), "--json"],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+        payload = json.loads(result.stdout)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(payload["validation"], "pass")
+        self.assertEqual(payload["lifecycleStatus"], "complete")
+        self.assertEqual(payload["decision"], "continue")
+        self.assertEqual(payload["completedRoleCount"], payload["roleCount"])
+
+    def test_next_action_honors_completed_review_stop_decision(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            review = Path(directory) / "review.json"
+            record = self._completed_agent_review()
+            record["decision"] = "stop"
+            review.write_text(json.dumps(record), encoding="utf-8")
+            with patch.object(axiom_codex, "git_changed_paths", return_value=[]):
+                payload = axiom_codex.next_action_payload(review_path=review)
+        self.assertIsNone(payload["selectedTask"])
+        self.assertEqual(payload["agentReview"]["decision"], "stop")
+        self.assertIn("Stop the reviewed work", payload["recommendedAction"])
+
     def test_task_state_validates_machine_readable_backlog(self) -> None:
         data = axiom_codex.load_task_state()
         checks = axiom_codex.validate_task_state_data(data)
@@ -931,7 +983,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("recommendedAction", payload)
         self.assertIn("planning guidance", "\n".join(payload["boundaries"]))
-        self.assertEqual(payload["selectedTask"]["id"], "AX-TASK-041")
+        self.assertIsNone(payload["selectedTask"])
         self.assertFalse(payload["includeMaintenance"])
 
     def test_cli_next_action_can_select_initial_maintenance(self) -> None:
@@ -976,6 +1028,19 @@ class AxiomCodexHelperTests(unittest.TestCase):
                 }
             ],
         }
+
+    @staticmethod
+    def _completed_agent_review() -> dict:
+        record = axiom_codex.build_agent_review_record("Completed fixture review", ["coordinator", "safety-auditor"])
+        record["status"] = "complete"
+        record["scope"] = "Review Agentic tooling changes."
+        record["decision"] = "continue"
+        record["evidenceStatus"] = "completed_review_not_authority"
+        for entry in record["roles"]:
+            entry["decision"] = "continue"
+            entry["findings"] = ["No blocking issue found in the reviewed tooling scope."]
+            entry["evidenceReferences"] = ["tests/test_axiom_codex_helper.py"]
+        return record
 
     def test_cli_pi_handoff_prints_draft_without_execution(self) -> None:
         result = subprocess.run(

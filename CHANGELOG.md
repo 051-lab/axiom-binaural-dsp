@@ -17,6 +17,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   conservative planning.
 - Added the 2026-06-22 layer progression review with updated completion
   estimates and the next Agentic milestone.
+- Added `agent-review-status` and optional `next-action --review` integration
+  for validated completed multi-role review records.
 - Added automatic standard Airwindows-index discovery for Knowledge queries
   with explicit `--no-airwindows-index` opt-out.
 - Added strict Airwindows top-level repository, license, and safe-field audit
@@ -41,6 +43,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   local-configuration checks.
 - Added `AX-TASK-041` as the ready implementation task for completed
   Agentic review-record validation and planning integration.
+- Completed `AX-TASK-041`; completed reviews now require findings and
+  repo-safe evidence references and remain explicitly non-authoritative.
 
 ---
 

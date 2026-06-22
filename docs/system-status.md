@@ -130,6 +130,7 @@ PR #10 as commit `c498688`.
 | Axiom Codex helper CLI | contract-hardened v3 | `../tools/axiom-codex/axiom_codex.py` |
 | Agentic contract audit | complete | `agentic-audit`; command, profile, approval, and skill-eval contracts |
 | Multi-role review records | complete | `agent-review --json`; validated draft findings schema |
+| Completed review lifecycle | complete | `agent-review-status`; completed findings and bounded planning decisions |
 | Maintenance-aware planning | complete | `next-action --include-maintenance`; explicit opt-in for initial hardening |
 | Foundational Agentic tasks | complete | `AX-TASK-018` through `AX-TASK-021`; contracts and regressions pass |
 | Agentic planning stack | complete | `AX-TASK-026` through `AX-TASK-028`; review, task state, and next action integrated |
@@ -257,7 +258,8 @@ Summary:
 
 ## Current Best Next Actions
 
-1. Implement `AX-TASK-041`, the completed Agentic review-record lifecycle.
+1. Choose the next product-direction lane: host stabilization,
+   Knowledge-driven Labs, a future profile, or continued Core watch posture.
 2. Keep the completed `.11` Sub Harmonics result as a watch item; do not draft
    `Axiom Clean R012` without a new repeatable normal-material problem.
 3. After the review lifecycle, choose host stabilization, Knowledge-driven

@@ -43,6 +43,11 @@ DEFAULT_REVIEW_ROLES = [
     "release-steward",
 ]
 REVIEW_DECISIONS = {"draft", "continue", "stop", "delegate-to-Pi", "needs-user-approval"}
+REVIEW_STATUSES = {"draft", "complete"}
+REVIEW_EVIDENCE_STATUSES = {
+    "not_evidence_until_completed",
+    "completed_review_not_authority",
+}
 REVIEW_RECORD_REQUIRED_FIELDS = {
     "schemaVersion",
     "recordType",
@@ -62,6 +67,7 @@ REVIEW_ROLE_REQUIRED_FIELDS = {
     "purpose",
     "findings",
     "evidenceNeeded",
+    "evidenceReferences",
     "decision",
 }
 
@@ -432,11 +438,13 @@ def actionable_tasks(tasks: list[dict[str, Any]], include_maintenance: bool = Fa
 def next_action_payload(
     evidence_path: pathlib.Path | None = None,
     include_maintenance: bool = False,
+    review_path: pathlib.Path | None = None,
 ) -> dict[str, Any]:
     data = load_task_state()
     checks = validate_task_state_data(data)
     changed_paths = git_changed_paths()
     evidence = evidence_status_payload(evidence_path) if evidence_path else None
+    review = agent_review_status_payload(review_path) if review_path else None
     tasks = data["tasks"]
     actionable = sorted(actionable_tasks(tasks, include_maintenance=include_maintenance), key=task_priority)
     blocked = sorted(
@@ -450,6 +458,26 @@ def next_action_payload(
     elif evidence and evidence["aggregateDecision"] in {"fail", "investigate"}:
         action = "Review the qualification evidence failures before starting dependent product or release work."
         reason = f"qualification evidence decision is {evidence['aggregateDecision']}"
+        task = None
+    elif review and review["validation"] == "fail":
+        action = "Repair the invalid Agentic review record before using its decision for planning."
+        reason = "Agentic review record validation failed"
+        task = None
+    elif review and review["lifecycleStatus"] == "draft":
+        action = "Complete the Agentic review findings and evidence references before dependent work."
+        reason = "Agentic review record is still draft"
+        task = None
+    elif review and review["decision"] == "stop":
+        action = "Stop the reviewed work and resolve the recorded findings before continuing."
+        reason = "completed Agentic review decision is stop"
+        task = None
+    elif review and review["decision"] == "delegate-to-Pi":
+        action = "Prepare a bounded Pi handoff for the reviewed work; do not run JDSP from next-action."
+        reason = "completed Agentic review decision is delegate-to-Pi"
+        task = None
+    elif review and review["decision"] == "needs-user-approval":
+        action = "Request explicit user approval for the reviewed action before continuing."
+        reason = "completed Agentic review decision requires user approval"
         task = None
     elif changed_paths:
         action = "Finish validating and reviewing the current local change batch before starting new work."
@@ -473,6 +501,7 @@ def next_action_payload(
         "reason": reason,
         "selectedTask": task,
         "qualificationEvidence": evidence,
+        "agentReview": review,
         "changedPaths": changed_paths,
         "blockedTasks": blocked,
         "includeMaintenance": include_maintenance,
@@ -520,7 +549,11 @@ def task_state(args: argparse.Namespace) -> int:
 
 def next_action(args: argparse.Namespace) -> int:
     evidence_path = configured_evidence_path(args.evidence, args.no_evidence)
-    payload = next_action_payload(evidence_path, include_maintenance=args.include_maintenance)
+    payload = next_action_payload(
+        evidence_path,
+        include_maintenance=args.include_maintenance,
+        review_path=args.review,
+    )
     if args.json:
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 1 if payload["status"] == "fail" else 0
@@ -547,6 +580,13 @@ def next_action(args: argparse.Namespace) -> int:
         print(f"- records: `{evidence.get('recordCount', 0)}`")
         print(f"- warnings: `{evidence.get('warningCount', 0)}`")
         print(f"- critical failures: `{evidence.get('criticalFailureCount', 0)}`")
+    review = payload.get("agentReview")
+    if review:
+        print("\n## Agent Review\n")
+        print(f"- validation: `{review['validation']}`")
+        print(f"- lifecycle status: `{review['lifecycleStatus']}`")
+        print(f"- decision: `{review['decision']}`")
+        print(f"- roles completed: `{review['completedRoleCount']}/{review['roleCount']}`")
     if payload["blockedTasks"]:
         print("\n## Blocked Or Approval-Gated Tasks\n")
         for task in payload["blockedTasks"]:
@@ -1395,6 +1435,7 @@ def build_agent_review_record(topic: str, roles: list[str] | None = None) -> dic
                 "purpose": purpose,
                 "findings": [],
                 "evidenceNeeded": [],
+                "evidenceReferences": [],
                 "decision": "draft",
             }
         )
@@ -1433,10 +1474,23 @@ def validate_agent_review_record(data: Any) -> list[Check]:
         checks.append(Check("review schema", "fail", "schemaVersion must be 1"))
     if data.get("recordType") != "axiom-agent-review":
         checks.append(Check("review record type", "fail", "recordType must be axiom-agent-review"))
+    status = str(data.get("status"))
+    if status not in REVIEW_STATUSES:
+        checks.append(Check("review status", "fail", f"status must be one of {', '.join(sorted(REVIEW_STATUSES))}"))
     if not isinstance(data.get("topic"), str) or not data.get("topic", "").strip():
         checks.append(Check("review topic", "fail", "topic must be non-empty text"))
-    if str(data.get("decision")) not in REVIEW_DECISIONS:
+    decision = str(data.get("decision"))
+    if decision not in REVIEW_DECISIONS:
         checks.append(Check("review decision", "fail", f"decision must be one of {', '.join(sorted(REVIEW_DECISIONS))}"))
+    evidence_status = str(data.get("evidenceStatus"))
+    if evidence_status not in REVIEW_EVIDENCE_STATUSES:
+        checks.append(
+            Check(
+                "review evidence status",
+                "fail",
+                f"evidenceStatus must be one of {', '.join(sorted(REVIEW_EVIDENCE_STATUSES))}",
+            )
+        )
     if not isinstance(data.get("forbiddenScope"), list) or not data.get("forbiddenScope"):
         checks.append(Check("review forbidden scope", "fail", "forbiddenScope must be a non-empty list"))
     if not isinstance(data.get("boundaries"), list) or not data.get("boundaries"):
@@ -1463,12 +1517,44 @@ def validate_agent_review_record(data: Any) -> list[Check]:
             checks.append(Check("unknown review role", "fail", role))
         if str(entry.get("decision")) not in REVIEW_DECISIONS:
             checks.append(Check("review role decision", "fail", f"{role}: invalid decision"))
-        for field in ("findings", "evidenceNeeded"):
+        for field in ("findings", "evidenceNeeded", "evidenceReferences"):
             if not isinstance(entry.get(field), list):
                 checks.append(Check(f"review role {field}", "fail", f"{role}: {field} must be an array"))
         for field in ("profileSource", "roleSource", "purpose"):
             if not isinstance(entry.get(field), str):
                 checks.append(Check(f"review role {field}", "fail", f"{role}: {field} must be text"))
+
+    if status == "complete":
+        if not isinstance(data.get("scope"), str) or not data.get("scope", "").strip():
+            checks.append(Check("completed review scope", "fail", "complete review requires non-empty scope"))
+        if decision == "draft":
+            checks.append(Check("completed review decision", "fail", "complete review decision cannot be draft"))
+        if evidence_status != "completed_review_not_authority":
+            checks.append(
+                Check(
+                    "completed review evidence status",
+                    "fail",
+                    "complete review must use completed_review_not_authority",
+                )
+            )
+        for entry in roles:
+            if not isinstance(entry, dict):
+                continue
+            role = str(entry.get("role", "missing-role"))
+            if entry.get("decision") == "draft":
+                checks.append(Check("completed role decision", "fail", f"{role}: decision cannot be draft"))
+            for field in ("findings", "evidenceReferences"):
+                values = entry.get(field)
+                if not isinstance(values, list) or not values or not all(isinstance(value, str) and value.strip() for value in values):
+                    checks.append(Check(f"completed role {field}", "fail", f"{role}: {field} must contain non-empty text"))
+            review_text = "\n".join(
+                value
+                for field in ("findings", "evidenceNeeded", "evidenceReferences")
+                for value in entry.get(field, [])
+                if isinstance(value, str)
+            )
+            if any(pattern.search(review_text) for pattern in PRIVATE_CONTENT_PATTERNS):
+                checks.append(Check("completed review private path", "fail", f"{role}: private path content detected"))
     if not checks:
         checks.append(Check("agent review record", "pass", f"{len(roles)} role(s) checked"))
     return checks
@@ -1513,6 +1599,12 @@ def agent_review_markdown(record: dict[str, Any], checks: list[Check]) -> str:
         else:
             lines.append("- [draft: add required measurement, docs, or approval]")
         lines.append("")
+        lines.append("Evidence references:")
+        if entry["evidenceReferences"]:
+            lines.extend(f"- {item}" for item in entry["evidenceReferences"])
+        else:
+            lines.append("- [draft: add repo-safe file, check, or local evidence ID]")
+        lines.append("")
     lines.extend(["## Boundaries", ""])
     lines.extend(f"- {item}" for item in record["boundaries"])
     lines.append("")
@@ -1530,6 +1622,69 @@ def agent_review(args: argparse.Namespace) -> int:
     else:
         print(agent_review_markdown(record, checks).rstrip())
     return 1 if failed else 0
+
+
+def agent_review_status_payload(path: pathlib.Path) -> dict[str, Any]:
+    expanded = path.expanduser()
+    boundaries = [
+        "completed review records are bounded planning artifacts, not approval",
+        "review decisions do not execute JDSP, publication, merge, candidate creation, or baseline promotion",
+        "private paths and raw local evidence must not enter review records",
+    ]
+    if not expanded.is_file():
+        return {
+            "validation": "fail",
+            "lifecycleStatus": "unknown",
+            "decision": "unknown",
+            "roleCount": 0,
+            "completedRoleCount": 0,
+            "checks": [Check("agent review exists", "fail", path.name).__dict__],
+            "boundaries": boundaries,
+        }
+    try:
+        data = json.loads(expanded.read_text(encoding="utf-8-sig"))
+    except json.JSONDecodeError as exc:
+        return {
+            "validation": "fail",
+            "lifecycleStatus": "unknown",
+            "decision": "unknown",
+            "roleCount": 0,
+            "completedRoleCount": 0,
+            "checks": [Check("agent review JSON", "fail", str(exc)).__dict__],
+            "boundaries": boundaries,
+        }
+    checks = validate_agent_review_record(data)
+    roles = data.get("roles", []) if isinstance(data, dict) else []
+    valid_roles = [entry for entry in roles if isinstance(entry, dict)]
+    return {
+        "validation": "fail" if any(check.status == "fail" for check in checks) else "pass",
+        "lifecycleStatus": data.get("status", "unknown") if isinstance(data, dict) else "unknown",
+        "decision": data.get("decision", "unknown") if isinstance(data, dict) else "unknown",
+        "topic": data.get("topic") if isinstance(data, dict) else None,
+        "roleCount": len(valid_roles),
+        "completedRoleCount": sum(1 for entry in valid_roles if entry.get("decision") != "draft"),
+        "checks": [check.__dict__ for check in checks],
+        "boundaries": boundaries,
+    }
+
+
+def agent_review_status(args: argparse.Namespace) -> int:
+    payload = agent_review_status_payload(args.review)
+    if args.json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 1 if payload["validation"] == "fail" else 0
+    print("# Axiom Agent Review Status\n")
+    print(f"- validation: `{payload['validation']}`")
+    print(f"- lifecycle status: `{payload['lifecycleStatus']}`")
+    print(f"- decision: `{payload['decision']}`")
+    print(f"- roles completed: `{payload['completedRoleCount']}/{payload['roleCount']}`")
+    print("\n## Checks\n")
+    for check in payload["checks"]:
+        print(f"- {check['status']}: {check['name']} - {check['detail']}")
+    print("\n## Boundaries\n")
+    for boundary in payload["boundaries"]:
+        print(f"- {boundary}")
+    return 1 if payload["validation"] == "fail" else 0
 
 
 def normalize_terms(query: str) -> list[str]:
@@ -2305,6 +2460,7 @@ def build_parser() -> argparse.ArgumentParser:
     next_parser.add_argument("--evidence", type=pathlib.Path)
     next_parser.add_argument("--no-evidence", action="store_true")
     next_parser.add_argument("--include-maintenance", action="store_true")
+    next_parser.add_argument("--review", type=pathlib.Path)
     next_parser.set_defaults(func=next_action)
 
     evidence = sub.add_parser("evidence-ingest")
@@ -2365,6 +2521,11 @@ def build_parser() -> argparse.ArgumentParser:
         "tooling-engineer",
     ])
     review.set_defaults(func=agent_review)
+
+    review_status = sub.add_parser("agent-review-status")
+    review_status.add_argument("review", type=pathlib.Path)
+    review_status.add_argument("--json", action="store_true")
+    review_status.set_defaults(func=agent_review_status)
 
     airwindows = sub.add_parser("airwindows-index")
     airwindows.add_argument("--repo", type=pathlib.Path, required=True)

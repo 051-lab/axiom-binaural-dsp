@@ -173,7 +173,8 @@
       "purpose": "Recommend the next safe Axiom work item from task-state metadata, current working-tree state, blockers, approval gates, and optional maintenance opt-in.",
       "inputs": [
         "optional --json",
-        "optional --include-maintenance"
+        "optional --include-maintenance",
+        "optional --review <review.json>"
       ],
       "outputs": [
         "recommended action",
@@ -184,6 +185,7 @@
       "boundaries": [
         "planning guidance only",
         "initial-maintenance tasks require explicit opt-in",
+        "review decisions are advisory inputs and never grant authority",
         "does not run JDSP",
         "does not approve publication, merge, listening, or baseline changes"
       ]
@@ -233,6 +235,31 @@
       "boundaries": [
         "draft record is not evidence until completed",
         "findings must cite concrete repo state or measurement artifacts"
+      ]
+    },
+    {
+      "name": "agent-review-status",
+      "trigger": "$axiom-engineering agent review status",
+      "nativeAlias": "/axiom-review-status",
+      "layer": "Codex helper",
+      "helperCommand": "python3 tools/axiom-codex/axiom_codex.py agent-review-status <review.json>",
+      "touchesJDSP": false,
+      "requiresApproval": false,
+      "purpose": "Validate draft or completed Agentic review records and summarize their bounded decision for planning.",
+      "inputs": [
+        "review JSON",
+        "optional --json"
+      ],
+      "outputs": [
+        "record validation status",
+        "draft or complete lifecycle status",
+        "bounded decision",
+        "completed role count"
+      ],
+      "boundaries": [
+        "completed reviews are planning artifacts, not approval",
+        "does not execute JDSP, publication, merge, candidate creation, or baseline promotion",
+        "private paths and raw local evidence are rejected"
       ]
     },
     {

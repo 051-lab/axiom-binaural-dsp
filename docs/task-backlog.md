@@ -48,13 +48,14 @@ task is ready for scheduling or delegation.
 | AX-TASK-038 | Complete | Graduate Agentic planning stack | Agentic Layer | Reconciled task state for `AX-TASK-026` through `028` | Local review, machine-readable task state, and next-action planning meet their acceptance criteria and operate together under regression and safety checks. |
 | AX-TASK-039 | Complete | Harden and graduate Airwindows Knowledge intake | Knowledge | Automatic index discovery and stricter metadata audit | The real 541-effect index passes pinned-commit, upstream URL, MIT license, canonical-effect, safe-field, relative-path, and checkout-drift checks; queries auto-discover it with explicit opt-out. |
 | AX-TASK-040 | Complete | Harden and graduate qualification evidence stack | Agentic Layer | Reconciled ingestion, status, and discovery workflow | The real Windows host bundle validates with two source-hashed records, automatic orientation works, configured-directory state is accurate, and evidence remains distinct from listening or release approval. |
-| AX-TASK-041 | Ready | Complete Agentic review-record lifecycle | Agentic Layer | `agent-review-status` and planning integration | Completed review records validate non-empty findings and evidence references, distinguish draft from complete, summarize bounded decisions, and never grant JDSP, publication, candidate, merge, or baseline authority. |
+| AX-TASK-041 | Complete | Complete Agentic review-record lifecycle | Agentic Layer | `agent-review-status` and `next-action --review` | Completed review records require scope, findings, evidence references, and non-draft decisions; private paths fail validation; bounded decisions inform planning without granting JDSP, publication, candidate, merge, or baseline authority. |
 
 ## Current Priority
 
 Recommended next actions:
 
-1. Implement `AX-TASK-041`, the completed Agentic review-record lifecycle.
+1. Choose the next product-direction lane: host stabilization,
+   Knowledge-driven Labs, a future profile, or continued Core watch posture.
 2. Use `docs/axiom-full-system-review-2026-06-08.md` as the current readiness
    review history and `docs/axiom-layer-progression-2026-06-22.md` as the
    current layer checkpoint.

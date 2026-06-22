@@ -13,6 +13,7 @@ python3 tools/axiom-codex/axiom_codex.py evidence-catalog <directory> --set-defa
 python3 tools/axiom-codex/axiom_codex.py guard-check
 python3 tools/axiom-codex/axiom_codex.py agent-profiles
 python3 tools/axiom-codex/axiom_codex.py agent-review --topic "..."
+python3 tools/axiom-codex/axiom_codex.py agent-review-status <review.json>
 python3 tools/axiom-codex/axiom_codex.py airwindows-index --repo ~/.local/share/axiom-knowledge/sources/airwindows/repo
 python3 tools/axiom-codex/axiom_codex.py airwindows-audit --repo ~/.local/share/axiom-knowledge/sources/airwindows/repo
 python3 tools/axiom-codex/axiom_codex.py knowledge-query "query text"
@@ -51,6 +52,9 @@ fixture checks, and safe Knowledge search.
   source with `--role`.
 - `agent-review`: validated multi-role review record from local Codex profiles
   and Pi role docs; supports JSON output for future orchestration.
+- `agent-review-status`: validate draft or completed review records, require
+  findings and evidence references for completed roles, reject private paths,
+  and summarize bounded decisions without granting authority.
 - `airwindows-index`: create a local-only metadata index from an external
   Airwindows checkout for clean-room concept retrieval.
 - `airwindows-audit`: validate canonical metadata, forbidden fields and paths,
