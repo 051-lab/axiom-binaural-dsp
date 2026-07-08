@@ -8,6 +8,11 @@ Codex-specific profile specs live under `tools/axiom-codex/agent_profiles/`.
 Use `python3 tools/axiom-codex/axiom_codex.py agent-profiles` to list them or
 `--role <name>` to print one profile.
 
+When actual subagents are available, follow
+`docs/axiom-subagent-operating-model.md`. Subagents are advisory by default,
+Codex remains coordinator/integrator, and Pi/harness ownership still applies to
+real-JDSP, candidate, qualification, publication, and merge work.
+
 | Role | Owner Layer | Purpose | Required Output |
 | --- | --- | --- | --- |
 | Coordinator | Codex/Pi | Own run flow, delegation, and unresolved decisions. | Work plan, role assignments, blocked decisions. |

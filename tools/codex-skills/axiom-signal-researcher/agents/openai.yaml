@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Signal Researcher"
+  short_description: "Turn audio-DSP research into Axiom test questions."
+  default_prompt: "Use $axiom-signal-researcher to search Axiom Knowledge and convert research into safe test-design questions."
+  brand_color: "#8EA7E8"
+
+policy:
+  allow_implicit_invocation: true

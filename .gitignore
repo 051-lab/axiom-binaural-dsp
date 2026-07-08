@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .pi/
 .axiom-team/
+
+# Local Axiom Knowledge source files
+docs/knowledge/pdfs/*.pdf
+docs/knowledge/source-index.local.json

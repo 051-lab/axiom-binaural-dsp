@@ -17,6 +17,11 @@ Codex may coordinate work, create documentation, run tests, prepare branches,
 and publish approved changes. It must not silently change the accepted audio
 baseline or merge experiments into the official line without qualification.
 
+When specialist parallel review is useful, use
+`docs/axiom-subagent-operating-model.md`. Subagents are advisory by default:
+Codex remains the coordinator and integrator, and Pi/harness ownership still
+applies to real-JDSP, candidate, qualification, publication, and merge work.
+
 ## Responsibilities
 
 ### Repository Organization
@@ -47,6 +52,8 @@ Codex selects validation based on risk:
 - Next-step planning: `python3 tools/axiom-codex/axiom_codex.py next-action`
   for a safe recommendation that respects task blockers and approval gates.
 - EEL static safety: `scripts/validate_axiom_static.sh` on the relevant script.
+  Labs EEL fixtures under `src/labs/` are allowed only as non-authoritative
+  experiment files and still trigger a `guard-check` warning.
 - Candidate work: candidate readiness, scoped qualification, real-JDSP gates,
   and a listening package.
 - Accepted baseline promotion: qualification record, policy hash update,
@@ -64,8 +71,9 @@ Use branch names that reveal intent:
 - `codex/vX.Y.Z-...` for versioned candidate work;
 - `labs/...` for experiments that are not eligible for direct promotion.
 
-Do not edit an accepted EEL file in place. A sound-changing edit creates a new
-versioned script and a candidate record.
+Do not edit an accepted EEL file in place. A sound-changing Core edit creates a
+new versioned script and a candidate record. Labs fixtures may live under
+`src/labs/` when clearly marked as non-authoritative experiments.
 
 ### Issue Creation
 
@@ -155,6 +163,11 @@ Use this flow unless the user explicitly asks for a smaller task:
 6. Update docs if behavior or workflow changed.
 7. Summarize changed files, validation, assumptions, and next actions.
 8. Commit or publish only after user approval when publication is involved.
+
+For complex Agentic, Knowledge, DSP/Labs, Qualification, or Release decisions,
+Codex may add bounded specialist subagent review before implementation. Capture
+decision-making findings in an `agent-review` record when the output should
+guide later work.
 
 ## DSP Graduation Ladder
 

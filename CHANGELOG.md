@@ -7,6 +7,22 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 ## [Unreleased] - Agentic Layer Hardening
 
 ### Added
+- Added a Labs-only width-profile fixture derived from accepted `.11`, changing
+  only the global side-width default from `135` to `100` for controlled
+  listening against `Axiom Clean R011`.
+- Added a Labs-only width-plus-bass-saturation fixture derived from the
+  supported width fixture, changing only the generated-sub saturation
+  arithmetic for controlled listening before any candidate discussion.
+- Recorded the preliminary bass-saturation Labs listening decision: B, the
+  width-plus-bass-saturation fixture, is a supported Labs ingredient only.
+- Added a combined supported-ingredients review concluding that width plus
+  bass-saturation justifies `Axiom Clean R012` candidate-readiness planning,
+  but not candidate creation or baseline promotion.
+- Added the `Axiom Clean R012` candidate-readiness plan and 2026-07-08
+  development standstill roadmap, leaving no active candidate and no urgent
+  unblocked implementation task before the audit shift.
+- Added Labs review, plan, and listening-target documentation for triaging
+  `experimental03` without promoting the full multi-variable script.
 - Added `agentic-audit` to validate command registry/runtime mappings, native
   aliases, JDSP approval metadata, agent profile contracts, and skill-eval
   fixture schemas.

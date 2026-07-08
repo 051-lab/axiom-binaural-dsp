@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Tooling Engineer"
+  short_description: "Build and validate Axiom helper tooling."
+  default_prompt: "Use $axiom-tooling-engineer to work on Axiom helper commands, validators, tests, and Agentic Layer contracts."
+  brand_color: "#86C06A"
+
+policy:
+  allow_implicit_invocation: true

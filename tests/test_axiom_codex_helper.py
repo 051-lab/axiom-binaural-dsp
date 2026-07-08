@@ -165,6 +165,52 @@ class AxiomCodexHelperTests(unittest.TestCase):
         checks = axiom_codex.validate_agent_review_record(record)
         self.assertTrue(any(check.name == "completed review private path" for check in checks))
 
+    def test_agent_review_accepts_optional_subagent_metadata(self) -> None:
+        record = self._completed_agent_review()
+        record["reviewRun"] = {
+            "runId": "subagent-review-fixture",
+            "createdAtUtc": "2026-07-06T12:00:00Z",
+            "orchestrator": "codex",
+            "runtime": "multi_agent_v1",
+            "inputRefs": ["docs/axiom-subagent-operating-model.md"],
+            "contextSha256": "a" * 64,
+        }
+        record["roles"][0]["subagent"] = {
+            "status": "completed",
+            "startedAtUtc": "2026-07-06T12:00:01Z",
+            "completedAtUtc": "2026-07-06T12:00:30Z",
+            "runtime": "multi_agent_v1.explorer",
+            "promptSha256": "b" * 64,
+            "resultSha256": "c" * 64,
+            "transcriptRef": "agent-transcript-001",
+        }
+        checks = axiom_codex.validate_agent_review_record(record)
+        with tempfile.TemporaryDirectory() as directory:
+            payload_path = Path(directory) / "review.json"
+            payload_path.write_text(json.dumps(record), encoding="utf-8")
+            payload = axiom_codex.agent_review_status_payload(payload_path)
+        self.assertFalse(any(check.status == "fail" for check in checks))
+        self.assertEqual(payload["provenance"], "mixed")
+        self.assertEqual(payload["subagentRoleCount"], 1)
+        self.assertEqual(payload["completedSubagentCount"], 1)
+
+    def test_agent_review_rejects_raw_or_private_subagent_metadata(self) -> None:
+        record = self._completed_agent_review()
+        record["reviewRun"] = {
+            "runId": "bad-review",
+            "inputRefs": [r"C:\Users\private\source.json"],
+        }
+        record["roles"][0]["subagent"] = {
+            "status": "completed",
+            "transcriptRef": "/tmp/raw-transcript.json",
+            "rawTranscript": "do not store raw transcript text",
+        }
+        checks = axiom_codex.validate_agent_review_record(record)
+        names = {check.name for check in checks if check.status == "fail"}
+        self.assertIn("review run inputRefs", names)
+        self.assertIn("review subagent fields", names)
+        self.assertIn("review subagent transcriptRef", names)
+
     def test_skill_eval_contract_rejects_duplicate_and_unknown_command(self) -> None:
         case = {
             "id": "fixture",
@@ -224,6 +270,14 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("audio", details)
         self.assertIn("manifest", details)
         self.assertIn("credential", details)
+
+    def test_guard_warns_for_labs_eel_fixture(self) -> None:
+        findings = axiom_codex.classify_guard_paths(
+            ["src/labs/axiom_binaural_dsp_v4.1.4.11_width_profile_lab.eel"],
+            policy={"acceptedBaseline": {"path": "src/axiom_binaural_dsp_v4.1.4.11.eel"}},
+        )
+        self.assertTrue(any(finding.status == "warn" and finding.name == "Labs EEL fixture gate" for finding in findings))
+        self.assertFalse(any(finding.status == "fail" for finding in findings))
 
     def test_guard_flags_private_paths_in_added_text(self) -> None:
         findings = axiom_codex.classify_guard_paths(
@@ -565,6 +619,88 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertNotIn("private-capture-id", rendered)
         self.assertNotIn(r"C:\Users\private", rendered)
         self.assertNotIn(str(report), rendered)
+
+    def test_evidence_ingest_normalizes_partial_soak_investigate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            report = Path(directory) / "soak-report.json"
+            report.write_text(
+                json.dumps(
+                    {
+                        "schemaVersion": 1,
+                        "result": "error",
+                        "error": "Stream was not readable.",
+                        "startedAt": "2026-06-23T06:37:28Z",
+                        "endedAt": "2026-06-23T11:06:38Z",
+                        "requestedDurationMinutes": 480,
+                        "route": {
+                            "capture": {"name": "CABLE Input", "id": "private-capture-id"},
+                            "output": {"name": "EarPods", "id": "private-output-id"},
+                        },
+                        "classification": {
+                            "evidenceDecision": "investigate",
+                            "failureCategory": "harness_error",
+                            "completedFullDuration": False,
+                            "completedDurationMinutes": 269.1,
+                            "requestedDurationMinutes": 480,
+                            "audioIntegrityPassed": False,
+                            "harnessError": True,
+                        },
+                        "metrics": {
+                            "processedFrames": 774858701,
+                            "packets": 1614381,
+                            "droppedFrames": 46,
+                            "conversionErrors": 0,
+                            "discontinuities": 105,
+                            "renderStarvations": 0,
+                            "renderErrors": 0,
+                            "dspCalls": 1614381,
+                            "dspDeadlineMisses": 86,
+                            "dspDeadlineMissRate": 0.000053,
+                            "dspCriticalStalls": 0,
+                            "configReloads": 13,
+                        },
+                        "healthAnalysis": {
+                            "sampleCount": 3229,
+                            "dropEvents": [{"timestamp": "2026-06-23T09:43:43Z", "dropDelta": 46}],
+                            "discontinuityEvents": [{"timestamp": "2026-06-23T10:34:59Z", "discontinuityDelta": 68}],
+                            "deadlineEvents": [{"timestamp": "2026-06-23T10:34:59Z", "deadlineMissDelta": 84}],
+                        },
+                        "environmentEvents": [
+                            {
+                                "reason": "drop",
+                                "count": 2,
+                                "events": [
+                                    {
+                                        "provider": "Microsoft-Windows-Hyper-V-VmSwitch",
+                                        "message": r"C:\Users\private should not escape",
+                                    }
+                                ],
+                            }
+                        ],
+                        "healthReadWarnings": [{"message": "private warning detail"}],
+                        "gates": [
+                            {"name": "no dropped frames", "passed": False, "detail": "dropped=46"},
+                            {"name": "no render errors", "passed": True, "detail": "errors=0"},
+                            {"name": "no render starvations", "passed": True, "detail": "starvations=0"},
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            payload = axiom_codex.build_evidence_bundle([report])
+        rendered = json.dumps(payload, sort_keys=True)
+        record = payload["records"][0]
+        self.assertEqual(payload["aggregateDecision"], "investigate")
+        self.assertEqual(record["sourceResult"], "error")
+        self.assertEqual(record["decision"], "investigate")
+        self.assertEqual(record["classification"]["failureCategory"], "harness_error")
+        self.assertFalse(record["classification"]["completedFullDuration"])
+        self.assertEqual(record["healthAnalysis"]["dropEventCount"], 1)
+        self.assertEqual(record["environmentEventWindows"][0]["reason"], "drop")
+        self.assertIn("harness error", "\n".join(record["warnings"]))
+        self.assertIn("incomplete duration", "\n".join(record["warnings"]))
+        self.assertNotIn(r"C:\Users\private", rendered)
+        self.assertNotIn("private warning detail", rendered)
 
     def test_evidence_ingest_normalizes_manual_recovery_and_writes_bundle(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -969,7 +1105,10 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertNotIn("AX-TASK-027", result.stdout)
         self.assertNotIn("AX-TASK-029", result.stdout)
         self.assertNotIn("AX-TASK-030", result.stdout)
-        self.assertIn("AX-TASK-003", result.stdout)
+        self.assertNotIn("AX-TASK-003", result.stdout)
+        self.assertNotIn("AX-TASK-043", result.stdout)
+        self.assertNotIn("AX-TASK-044", result.stdout)
+        self.assertNotIn("AX-TASK-046", result.stdout)
 
     def test_cli_next_action_reports_planning_guidance(self) -> None:
         result = subprocess.run(
@@ -984,6 +1123,8 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("recommendedAction", payload)
         self.assertIn("planning guidance", "\n".join(payload["boundaries"]))
         self.assertIsNone(payload["selectedTask"])
+        self.assertIn("current local change batch", payload["recommendedAction"])
+        self.assertTrue(payload["changedPaths"])
         self.assertFalse(payload["includeMaintenance"])
 
     def test_cli_next_action_can_select_initial_maintenance(self) -> None:

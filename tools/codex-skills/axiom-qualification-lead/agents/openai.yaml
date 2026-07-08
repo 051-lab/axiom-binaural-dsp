@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Qualification Lead"
+  short_description: "Review Axiom evidence and gate readiness."
+  default_prompt: "Use $axiom-qualification-lead to assess Axiom evidence, missing gates, and listening eligibility."
+  brand_color: "#E5D166"
+
+policy:
+  allow_implicit_invocation: true

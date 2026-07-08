@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "spatial-sound-principles-and-applications-xie",
+      "title": "Spatial Sound: Principles and Applications",
+      "authors": ["Bosun Xie"],
+      "year": 2023,
+      "type": "book",
+      "topics": [
+        "spatial audio",
+        "HRTF",
+        "binaural reproduction",
+        "Ambisonics",
+        "wave field synthesis",
+        "headphone equalization",
+        "virtual auditory display",
+        "subjective assessment"
+      ],
+      "localPath": "pdfs/spatial-sound-principles-and-applications-xie.pdf",
+      "publicUrl": "",
+      "licenseNotes": "Local user-provided PDF. Do not copy source text into the repo; use only citation metadata, short original summaries, and test-design notes.",
+      "axiomUse": "Inform Axiom Knowledge notes and test-design questions around spatial-audio systems, HRTF/binaural rendering, Ambisonics, wave field synthesis, headphone equalization, subjective spatial assessment, and future host/profile boundaries. This source does not prove Axiom behavior.",
+      "status": "unread"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Implementation Lead"
+  short_description: "Plan narrow Axiom implementation work."
+  default_prompt: "Use $axiom-implementation-lead to turn approved Axiom scope into a minimal implementation and validation plan."
+  brand_color: "#9FD6A4"
+
+policy:
+  allow_implicit_invocation: true

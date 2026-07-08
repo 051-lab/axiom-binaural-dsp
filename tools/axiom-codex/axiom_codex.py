@@ -20,7 +20,8 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
 POLICY_PATH = REPO_ROOT / "tools" / "axiom-team" / "policy.json"
 SYSTEM_STATUS = REPO_ROOT / "docs" / "system-status.md"
 KNOWLEDGE_ROOT = REPO_ROOT / "docs" / "knowledge"
-DEFAULT_LOCAL_INDEX = pathlib.Path.home() / ".local" / "share" / "axiom-knowledge" / "source-index.json"
+DEFAULT_LOCAL_INDEX = KNOWLEDGE_ROOT / "source-index.local.json"
+LEGACY_LOCAL_INDEX = pathlib.Path.home() / ".local" / "share" / "axiom-knowledge" / "source-index.json"
 DEFAULT_AIRWINDOWS_INDEX = pathlib.Path.home() / ".local" / "share" / "axiom-knowledge" / "sources" / "airwindows" / "index.json"
 DEFAULT_EVIDENCE_CONFIG = pathlib.Path.home() / ".local" / "share" / "axiom" / "evidence-config.json"
 ROLE_ROOT = REPO_ROOT / "tools" / "axiom-team" / "roles"
@@ -69,6 +70,30 @@ REVIEW_ROLE_REQUIRED_FIELDS = {
     "evidenceNeeded",
     "evidenceReferences",
     "decision",
+}
+REVIEW_RUN_FIELDS = {
+    "runId",
+    "createdAtUtc",
+    "orchestrator",
+    "runtime",
+    "inputRefs",
+    "contextSha256",
+}
+REVIEW_SUBAGENT_FIELDS = {
+    "status",
+    "startedAtUtc",
+    "completedAtUtc",
+    "runtime",
+    "promptSha256",
+    "resultSha256",
+    "transcriptRef",
+}
+REVIEW_SUBAGENT_STATUSES = {
+    "simulated",
+    "spawned",
+    "completed",
+    "failed",
+    "cancelled",
 }
 
 PRIVATE_AUDIO_EXTENSIONS = {
@@ -672,6 +697,10 @@ def normalize_soak_evidence(
     failed_names = {gate["name"] for gate in gates if not gate["passed"]}
     power = data.get("power") if isinstance(data.get("power"), dict) else {}
     source_changes = power.get("sourceChanges") if isinstance(power.get("sourceChanges"), list) else []
+    classification = data.get("classification") if isinstance(data.get("classification"), dict) else {}
+    health_analysis = data.get("healthAnalysis") if isinstance(data.get("healthAnalysis"), dict) else {}
+    environment_events = data.get("environmentEvents") if isinstance(data.get("environmentEvents"), list) else []
+    health_read_warnings = data.get("healthReadWarnings") if isinstance(data.get("healthReadWarnings"), list) else []
     integrity_metric_names = [
         "processedFrames",
         "packets",
@@ -711,7 +740,23 @@ def normalize_soak_evidence(
     ignored_for_integrity = set(environment_gate_names)
     if coupled_discontinuity:
         ignored_for_integrity.add("bounded discontinuities")
-    critical_failures = sorted(failed_names - ignored_for_integrity)
+    source_result = str(data.get("result", "unknown"))
+    harness_error = bool(classification.get("harnessError")) or source_result == "error"
+    completed_full_duration = bool(classification.get("completedFullDuration", source_result != "error"))
+    clear_processor_or_audio_failure_names = {
+        "controller remained running",
+        "processor remained running",
+        "health telemetry recorded",
+        "audio frames processed",
+        "audio packets observed",
+    }
+    failed_after_environment = failed_names - ignored_for_integrity
+    if harness_error:
+        critical_failures = sorted(failed_after_environment & clear_processor_or_audio_failure_names)
+    elif completed_full_duration:
+        critical_failures = sorted(failed_after_environment)
+    else:
+        critical_failures = []
     warnings: list[str] = []
     if failed_names & environment_gate_names:
         warnings.append(f"power source changed {len(source_changes)} time(s) during the run")
@@ -720,9 +765,30 @@ def normalize_soak_evidence(
             "discontinuity gate failed during a recorded power transition with zero dropped frames, "
             "starvation, conversion errors, render errors, or critical stalls"
         )
+    if harness_error:
+        warnings.append(f"harness error: {str(data.get('error', classification.get('error', 'unknown')))}")
+    if not completed_full_duration:
+        completed_minutes = classification.get("completedDurationMinutes")
+        requested_minutes = classification.get("requestedDurationMinutes", data.get("requestedDurationMinutes"))
+        warnings.append(f"incomplete duration: {completed_minutes} of {requested_minutes} requested minutes")
+    if health_read_warnings:
+        warnings.append(f"health history read warnings: {len(health_read_warnings)}")
+    correlated_event_windows = [
+        window
+        for window in environment_events
+        if isinstance(window, dict) and int(window.get("count") or 0) > 0
+    ]
+    if correlated_event_windows:
+        reasons = sorted({str(window.get("reason", "unknown")) for window in correlated_event_windows})
+        warnings.append(
+            "environment events near telemetry changes: "
+            + ", ".join(reasons)
+        )
 
-    source_result = str(data.get("result", "unknown"))
-    if critical_failures:
+    classified_decision = str(classification.get("evidenceDecision", ""))
+    if classified_decision in EVIDENCE_DECISIONS and classified_decision != "pass":
+        decision = classified_decision
+    elif critical_failures:
         decision = "fail"
     elif source_result == "pass" and not warnings:
         decision = "pass"
@@ -734,6 +800,26 @@ def normalize_soak_evidence(
     route = data.get("route") if isinstance(data.get("route"), dict) else {}
     capture = route.get("capture") if isinstance(route.get("capture"), dict) else {}
     output = route.get("output") if isinstance(route.get("output"), dict) else {}
+    health_summary = {
+        "sampleCount": health_analysis.get("sampleCount"),
+        "dropEventCount": len(health_analysis.get("dropEvents", []))
+        if isinstance(health_analysis.get("dropEvents"), list)
+        else 0,
+        "discontinuityEventCount": len(health_analysis.get("discontinuityEvents", []))
+        if isinstance(health_analysis.get("discontinuityEvents"), list)
+        else 0,
+        "deadlineEventCount": len(health_analysis.get("deadlineEvents", []))
+        if isinstance(health_analysis.get("deadlineEvents"), list)
+        else 0,
+    }
+    environment_summary = [
+        {
+            "reason": str(window.get("reason", "unknown")),
+            "count": int(window.get("count") or 0),
+        }
+        for window in environment_events
+        if isinstance(window, dict)
+    ]
     return {
         **evidence_source_fields(path, show_private_paths),
         "kind": "windows-host-soak",
@@ -746,7 +832,16 @@ def normalize_soak_evidence(
             "captureName": capture.get("name"),
             "outputName": output.get("name"),
         },
+        "classification": {
+            "failureCategory": classification.get("failureCategory"),
+            "completedFullDuration": classification.get("completedFullDuration"),
+            "completedDurationMinutes": classification.get("completedDurationMinutes"),
+            "audioIntegrityPassed": classification.get("audioIntegrityPassed"),
+            "harnessError": classification.get("harnessError"),
+        },
         "metrics": selected_metrics,
+        "healthAnalysis": health_summary,
+        "environmentEventWindows": environment_summary,
         "gates": gates,
         "criticalFailures": critical_failures,
         "warnings": warnings,
@@ -1463,6 +1558,86 @@ def build_agent_review_record(topic: str, roles: list[str] | None = None) -> dic
     }
 
 
+def review_metadata_text(value: Any) -> str:
+    if isinstance(value, dict):
+        return "\n".join(
+            f"{key}: {review_metadata_text(nested)}"
+            for key, nested in sorted(value.items(), key=lambda item: str(item[0]))
+        )
+    if isinstance(value, (list, tuple, set)):
+        return "\n".join(review_metadata_text(nested) for nested in value)
+    return str(value)
+
+
+def review_metadata_contains_private_path(value: Any) -> bool:
+    text = review_metadata_text(value)
+    return any(pattern.search(text) for pattern in PRIVATE_CONTENT_PATTERNS)
+
+
+def is_sha256_text(value: Any) -> bool:
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+
+def validate_text_field(checks: list[Check], name: str, value: Any, *, required: bool = False) -> None:
+    if value is None and not required:
+        return
+    if not isinstance(value, str) or (required and not value.strip()):
+        checks.append(Check(name, "fail", "must be non-empty text" if required else "must be text"))
+        return
+    if review_metadata_contains_private_path(value):
+        checks.append(Check(name, "fail", "private path content detected"))
+
+
+def validate_review_run_metadata(value: Any) -> list[Check]:
+    if value is None:
+        return []
+    if not isinstance(value, dict):
+        return [Check("review run metadata", "fail", "reviewRun must be an object")]
+    checks: list[Check] = []
+    extra = sorted(set(value) - REVIEW_RUN_FIELDS)
+    if extra:
+        checks.append(Check("review run fields", "fail", ", ".join(extra)))
+    validate_text_field(checks, "review run id", value.get("runId"), required=True)
+    validate_text_field(checks, "review run createdAtUtc", value.get("createdAtUtc"))
+    validate_text_field(checks, "review run orchestrator", value.get("orchestrator"))
+    validate_text_field(checks, "review run runtime", value.get("runtime"))
+    input_refs = value.get("inputRefs")
+    if input_refs is not None:
+        if not isinstance(input_refs, list) or not all(isinstance(item, str) and item.strip() for item in input_refs):
+            checks.append(Check("review run inputRefs", "fail", "inputRefs must be an array of non-empty text"))
+        elif review_metadata_contains_private_path(input_refs):
+            checks.append(Check("review run inputRefs", "fail", "private path content detected"))
+    if "contextSha256" in value and not is_sha256_text(value.get("contextSha256")):
+        checks.append(Check("review run context hash", "fail", "contextSha256 must be a lowercase SHA-256 hex digest"))
+    return checks
+
+
+def validate_review_subagent_metadata(role: str, value: Any) -> list[Check]:
+    if value is None:
+        return []
+    if not isinstance(value, dict):
+        return [Check("review subagent metadata", "fail", f"{role}: subagent must be an object")]
+    checks: list[Check] = []
+    extra = sorted(set(value) - REVIEW_SUBAGENT_FIELDS)
+    if extra:
+        checks.append(Check("review subagent fields", "fail", f"{role}: {', '.join(extra)}"))
+    if value.get("status") not in REVIEW_SUBAGENT_STATUSES:
+        checks.append(Check("review subagent status", "fail", f"{role}: invalid status"))
+    for field in ("startedAtUtc", "completedAtUtc", "runtime"):
+        validate_text_field(checks, f"review subagent {field}", value.get(field))
+    for field in ("promptSha256", "resultSha256"):
+        if field in value and not is_sha256_text(value.get(field)):
+            checks.append(Check(f"review subagent {field}", "fail", f"{role}: must be a lowercase SHA-256 hex digest"))
+    transcript_ref = value.get("transcriptRef")
+    if transcript_ref is not None:
+        validate_text_field(checks, "review subagent transcriptRef", transcript_ref)
+        if isinstance(transcript_ref, str) and ("/" in transcript_ref or "\\" in transcript_ref):
+            checks.append(Check("review subagent transcriptRef", "fail", f"{role}: transcriptRef must be an opaque ID, not a path"))
+    if review_metadata_contains_private_path(value):
+        checks.append(Check("review subagent private path", "fail", f"{role}: private path content detected"))
+    return checks
+
+
 def validate_agent_review_record(data: Any) -> list[Check]:
     checks: list[Check] = []
     if not isinstance(data, dict):
@@ -1495,6 +1670,7 @@ def validate_agent_review_record(data: Any) -> list[Check]:
         checks.append(Check("review forbidden scope", "fail", "forbiddenScope must be a non-empty list"))
     if not isinstance(data.get("boundaries"), list) or not data.get("boundaries"):
         checks.append(Check("review boundaries", "fail", "boundaries must be a non-empty list"))
+    checks.extend(validate_review_run_metadata(data.get("reviewRun")))
 
     profiles = profile_lookup()
     roles = data.get("roles")
@@ -1523,6 +1699,7 @@ def validate_agent_review_record(data: Any) -> list[Check]:
         for field in ("profileSource", "roleSource", "purpose"):
             if not isinstance(entry.get(field), str):
                 checks.append(Check(f"review role {field}", "fail", f"{role}: {field} must be text"))
+        checks.extend(validate_review_subagent_metadata(role, entry.get("subagent")))
 
     if status == "complete":
         if not isinstance(data.get("scope"), str) or not data.get("scope", "").strip():
@@ -1574,6 +1751,16 @@ def agent_review_markdown(record: dict[str, Any], checks: list[Check]) -> str:
         "",
     ]
     lines.extend(f"- {check.status}: {check.name} - {check.detail}" for check in checks)
+    if record.get("reviewRun"):
+        run = record["reviewRun"]
+        lines.extend([
+            "",
+            "## Review Run",
+            "",
+            f"- run id: `{run.get('runId', '')}`",
+            f"- orchestrator: `{run.get('orchestrator', '')}`",
+            f"- runtime: `{run.get('runtime', '')}`",
+        ])
     lines.extend(["", "## Scope", "", record["scope"] or "[draft: define the narrow work area before implementation]", "", "## Forbidden Scope", ""])
     lines.extend(f"- {item}" for item in record["forbiddenScope"])
     lines.extend(["", "## Role Findings", ""])
@@ -1585,9 +1772,14 @@ def agent_review_markdown(record: dict[str, Any], checks: list[Check]) -> str:
             f"- role source: `{entry['roleSource']}`",
             f"- purpose: {entry['purpose'] or '[missing purpose]'}",
             f"- decision: `{entry['decision']}`",
-            "",
-            "Findings:",
         ])
+        if entry.get("subagent"):
+            subagent = entry["subagent"]
+            lines.append(f"- subagent status: `{subagent.get('status', '')}`")
+            lines.append(f"- subagent runtime: `{subagent.get('runtime', '')}`")
+            if subagent.get("transcriptRef"):
+                lines.append(f"- subagent transcript ref: `{subagent['transcriptRef']}`")
+        lines.extend(["", "Findings:"])
         if entry["findings"]:
             lines.extend(f"- {item}" for item in entry["findings"])
         else:
@@ -1638,6 +1830,9 @@ def agent_review_status_payload(path: pathlib.Path) -> dict[str, Any]:
             "decision": "unknown",
             "roleCount": 0,
             "completedRoleCount": 0,
+            "subagentRoleCount": 0,
+            "completedSubagentCount": 0,
+            "provenance": "unknown",
             "checks": [Check("agent review exists", "fail", path.name).__dict__],
             "boundaries": boundaries,
         }
@@ -1650,12 +1845,27 @@ def agent_review_status_payload(path: pathlib.Path) -> dict[str, Any]:
             "decision": "unknown",
             "roleCount": 0,
             "completedRoleCount": 0,
+            "subagentRoleCount": 0,
+            "completedSubagentCount": 0,
+            "provenance": "unknown",
             "checks": [Check("agent review JSON", "fail", str(exc)).__dict__],
             "boundaries": boundaries,
         }
     checks = validate_agent_review_record(data)
     roles = data.get("roles", []) if isinstance(data, dict) else []
     valid_roles = [entry for entry in roles if isinstance(entry, dict)]
+    subagent_roles = [entry for entry in valid_roles if isinstance(entry.get("subagent"), dict)]
+    completed_subagents = [
+        entry
+        for entry in subagent_roles
+        if entry.get("subagent", {}).get("status") == "completed"
+    ]
+    if subagent_roles and len(subagent_roles) == len(valid_roles):
+        provenance = "subagent"
+    elif subagent_roles:
+        provenance = "mixed"
+    else:
+        provenance = "simulated"
     return {
         "validation": "fail" if any(check.status == "fail" for check in checks) else "pass",
         "lifecycleStatus": data.get("status", "unknown") if isinstance(data, dict) else "unknown",
@@ -1663,6 +1873,9 @@ def agent_review_status_payload(path: pathlib.Path) -> dict[str, Any]:
         "topic": data.get("topic") if isinstance(data, dict) else None,
         "roleCount": len(valid_roles),
         "completedRoleCount": sum(1 for entry in valid_roles if entry.get("decision") != "draft"),
+        "subagentRoleCount": len(subagent_roles),
+        "completedSubagentCount": len(completed_subagents),
+        "provenance": provenance,
         "checks": [check.__dict__ for check in checks],
         "boundaries": boundaries,
     }
@@ -1678,6 +1891,8 @@ def agent_review_status(args: argparse.Namespace) -> int:
     print(f"- lifecycle status: `{payload['lifecycleStatus']}`")
     print(f"- decision: `{payload['decision']}`")
     print(f"- roles completed: `{payload['completedRoleCount']}/{payload['roleCount']}`")
+    print(f"- provenance: `{payload['provenance']}`")
+    print(f"- subagents completed: `{payload['completedSubagentCount']}/{payload['subagentRoleCount']}`")
     print("\n## Checks\n")
     for check in payload["checks"]:
         print(f"- {check['status']}: {check['name']} - {check['detail']}")
@@ -1936,6 +2151,22 @@ def load_local_sources(index_path: pathlib.Path) -> list[dict[str, Any]]:
     return []
 
 
+def resolve_local_index_path(index_path: pathlib.Path) -> pathlib.Path:
+    expanded = index_path.expanduser()
+    if expanded.exists():
+        return expanded
+    if expanded == DEFAULT_LOCAL_INDEX and LEGACY_LOCAL_INDEX.exists():
+        return LEGACY_LOCAL_INDEX
+    return expanded
+
+
+def resolve_source_local_path(index_path: pathlib.Path, local_path: str) -> pathlib.Path:
+    path = pathlib.Path(local_path).expanduser()
+    if path.is_absolute():
+        return path
+    return index_path.expanduser().parent / path
+
+
 def repo_knowledge_source_ids() -> set[str]:
     ids: set[str] = set()
     for path in sorted(KNOWLEDGE_ROOT.rglob("*.md")):
@@ -1950,7 +2181,7 @@ def repo_knowledge_source_ids() -> set[str]:
 
 def audit_knowledge_sources(index_path: pathlib.Path) -> tuple[list[dict[str, Any]], list[Check]]:
     checks: list[Check] = []
-    expanded = index_path.expanduser()
+    expanded = resolve_local_index_path(index_path)
     if not expanded.exists():
         return [], [Check("source index exists", "fail", str(expanded))]
     try:
@@ -1989,7 +2220,7 @@ def audit_knowledge_sources(index_path: pathlib.Path) -> tuple[list[dict[str, An
         local_path = source.get("localPath")
         local_exists: bool | None = None
         if isinstance(local_path, str) and local_path:
-            local_exists = pathlib.Path(local_path).expanduser().exists()
+            local_exists = resolve_source_local_path(expanded, local_path).exists()
             if not local_exists:
                 checks.append(Check("local source file", "fail", f"{source_id}: registered localPath does not exist"))
 
@@ -2028,7 +2259,8 @@ def knowledge_query(args: argparse.Namespace) -> int:
             excerpt = next((line.strip() for line in text.splitlines() if score_text(line, terms)), text.splitlines()[0] if text else "")
             matches.append((score, str(path.relative_to(REPO_ROOT)), excerpt[:240]))
 
-    local_sources = load_local_sources(args.index.expanduser())
+    index_path = resolve_local_index_path(args.index)
+    local_sources = load_local_sources(index_path)
     source_matches: list[tuple[int, dict[str, Any]]] = []
     for source in local_sources:
         public_fields = {key: value for key, value in source.items() if args.show_private_paths or key != "localPath"}
@@ -2048,8 +2280,8 @@ def knowledge_query(args: argparse.Namespace) -> int:
     else:
         print("- no repo-safe note matches")
     print("\n## Local Source Index\n")
-    if not args.index.expanduser().exists():
-        print(f"- local index not found: {args.index.expanduser()}")
+    if not index_path.exists():
+        print(f"- local index not found: {index_path}")
     elif source_matches:
         for score, source in sorted(source_matches, key=lambda item: item[0], reverse=True)[: args.limit]:
             title = source.get("title", "untitled")
@@ -2108,7 +2340,8 @@ def airwindows_audit(args: argparse.Namespace) -> int:
 
 
 def knowledge_sources(args: argparse.Namespace) -> int:
-    sources, checks = audit_knowledge_sources(args.index)
+    index_path = resolve_local_index_path(args.index)
+    sources, checks = audit_knowledge_sources(index_path)
     failed = any(check.status == "fail" for check in checks)
     if args.json:
         payload_sources = []
@@ -2121,7 +2354,7 @@ def knowledge_sources(args: argparse.Namespace) -> int:
         return 1 if failed else 0
 
     print("# Axiom Knowledge Sources\n")
-    print(f"index: {args.index.expanduser() if args.show_private_paths else 'local source index'}\n")
+    print(f"index: {index_path if args.show_private_paths else 'local source index'}\n")
     print("## Checks\n")
     for check in checks:
         print(f"- {check.status}: {check.name} - {check.detail}")
@@ -2222,7 +2455,11 @@ def path_parts(path: str) -> set[str]:
 
 def is_docs_safe_schema(path: str) -> bool:
     lowered = path.lower().replace("\\", "/")
-    return lowered.endswith("source-index.schema.json") or lowered.startswith("docs/knowledge/templates/")
+    return (
+        lowered.endswith("source-index.schema.json")
+        or lowered.endswith("source-index.local.example.json")
+        or lowered.startswith("docs/knowledge/templates/")
+    )
 
 
 def is_guard_fixture_path(path: str) -> bool:
@@ -2230,6 +2467,11 @@ def is_guard_fixture_path(path: str) -> bool:
         "tools/axiom-codex/axiom_codex.py",
         "tests/test_axiom_codex_helper.py",
     }
+
+
+def is_labs_eel_path(path: str) -> bool:
+    lowered = path.lower().replace("\\", "/")
+    return lowered.startswith("src/labs/") and lowered.endswith(".eel")
 
 
 def classify_guard_paths(
@@ -2260,7 +2502,9 @@ def classify_guard_paths(
 
         if path == accepted_path:
             add("fail", "accepted baseline immutability", f"{path} is the accepted baseline; do not edit it in place.")
-        if lowered.startswith("src/") and suffix == ".eel":
+        if is_labs_eel_path(path):
+            add("warn", "Labs EEL fixture gate", f"{path} changes DSP behavior in Labs scope; keep it non-authoritative and run scoped validation before listening.")
+        elif lowered.startswith("src/") and suffix == ".eel":
             add("fail", "EEL script change gate", f"{path} touches Axiom DSP script scope; use scoped candidate/Pi gates before changing EEL.")
         if path == "tools/axiom-team/policy.json":
             add("fail", "policy approval gate", f"{path} changes accepted-baseline or harness policy; explicit user approval is required.")
@@ -2273,7 +2517,7 @@ def classify_guard_paths(
         if "manifest" in name and suffix in {".json", ".yaml", ".yml"} and not is_docs_safe_schema(path):
             add("fail", "local manifest path", f"{path} looks like a local material manifest; commit only sanitized summaries.")
 
-        if not is_guard_fixture_path(path):
+        if not is_guard_fixture_path(path) and not is_docs_safe_schema(path):
             text = text_by_path.get(raw_path) or text_by_path.get(path) or ""
             for pattern in PRIVATE_CONTENT_PATTERNS:
                 if pattern.search(text):

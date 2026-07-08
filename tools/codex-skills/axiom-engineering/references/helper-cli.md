@@ -47,14 +47,18 @@ fixture checks, and safe Knowledge search.
   and optionally configure its directory for automatic status orientation.
 - `guard-check`: fail on known unsafe changed paths or added text, including
   accepted/historical EEL scope, policy changes, private audio, captures,
-  local material, manifests, credentials, and private path leaks.
+  local material, manifests, credentials, and private path leaks. Labs EEL
+  fixtures under `src/labs/` warn rather than fail, but remain
+  non-authoritative and still require scoped validation before listening.
 - `agent-profiles`: list Codex-specific role profiles or print one profile
   source with `--role`.
 - `agent-review`: validated multi-role review record from local Codex profiles
-  and Pi role docs; supports JSON output for future orchestration.
+  and Pi role docs; supports JSON output and optional safe subagent provenance
+  metadata for future orchestration.
 - `agent-review-status`: validate draft or completed review records, require
-  findings and evidence references for completed roles, reject private paths,
-  and summarize bounded decisions without granting authority.
+  findings and evidence references for completed roles, reject private paths or
+  raw transcript metadata, and summarize bounded decisions and provenance
+  without granting authority.
 - `airwindows-index`: create a local-only metadata index from an external
   Airwindows checkout for clean-room concept retrieval.
 - `airwindows-audit`: validate canonical metadata, forbidden fields and paths,

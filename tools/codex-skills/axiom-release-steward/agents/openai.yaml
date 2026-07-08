@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Release Steward"
+  short_description: "Check Axiom release and publication readiness."
+  default_prompt: "Use $axiom-release-steward to check Axiom PR, publication, merge, or baseline-promotion readiness."
+  brand_color: "#B0A0E8"
+
+policy:
+  allow_implicit_invocation: true

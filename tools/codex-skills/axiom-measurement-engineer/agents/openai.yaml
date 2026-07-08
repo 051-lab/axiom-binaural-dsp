@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Measurement Engineer"
+  short_description: "Design Axiom measurements and evidence boundaries."
+  default_prompt: "Use $axiom-measurement-engineer to design an Axiom test plan, artifact policy, and pass/fail meaning."
+  brand_color: "#66B6E5"
+
+policy:
+  allow_implicit_invocation: true

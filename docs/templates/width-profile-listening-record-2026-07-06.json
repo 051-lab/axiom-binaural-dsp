@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-07-06T18:00:00-05:00",
+  "listener": "local tester",
+  "axiom_version": "v4.1.4.11 width-profile Labs fixture",
+  "comparison_version": "accepted v4.1.4.11 / Axiom Clean R011",
+  "decision": "no_decision",
+  "acceptance_rationale": "",
+  "rejection_rationale": "",
+  "device": "replace with output device, such as USB-C EarPods, laptop speakers, wired DAC, or headphones",
+  "route": "Axiom JamesDSP Controller, same capture/output route for both scripts",
+  "host_settings": {
+    "jdsp_limiter_threshold_db": -1.0,
+    "jdsp_limiter_release_ms": 60.0,
+    "jdsp_postgain_db": 0.0,
+    "crossfeed_enabled": false
+  },
+  "slider_settings": {
+    "sub_harmonics_gain_db": 4.0,
+    "global_side_width_percent": 100.0,
+    "fletcher_munson_sensitivity_percent": 50.0,
+    "low_mid_width_percent": 126.0,
+    "high_width_percent": 110.0,
+    "stft_resonance_suppression_percent": 50.0
+  },
+  "material": [
+    {
+      "label": "centered vocal or piano item, local title redacted if public",
+      "source_type": "unknown",
+      "license_scope": "local listening only unless this is public-domain material",
+      "comparison_target": "accepted .11 versus width-profile Labs fixture",
+      "timestamp_or_excerpt": "replace with local timestamp or excerpt window",
+      "notes": "Listen for center image, vocal/piano focus, low-mid blur, and whether the fixture feels smaller."
+    },
+    {
+      "label": "dense electronic or modern pop item, local title redacted if public",
+      "source_type": "unknown",
+      "license_scope": "local listening only unless this is public-domain material",
+      "comparison_target": "accepted .11 versus width-profile Labs fixture",
+      "timestamp_or_excerpt": "replace with local timestamp or excerpt window",
+      "notes": "Listen for high-frequency openness, shimmer, fatigue, stereo image stability, and perceived aliveness."
+    },
+    {
+      "label": "hip-hop, kick-forward, or bass-forward item, local title redacted if public",
+      "source_type": "unknown",
+      "license_scope": "local listening only unless this is public-domain material",
+      "comparison_target": "accepted .11 versus width-profile Labs fixture",
+      "timestamp_or_excerpt": "replace with local timestamp or excerpt window",
+      "notes": "Listen for kick focus, bass anchoring, bass-image coupling, and whether reduced width weakens impact."
+    }
+  ],
+  "observations": {
+    "bass": "replace with whether bass remains anchored and full, loses size, or becomes clearer with the width fixture",
+    "punch": "replace with whether kick/snare/transient focus improves, stays the same, or weakens",
+    "center_image": "replace with whether centered vocal, kick, snare, or piano stays more stable on .11 or the width fixture",
+    "lateral_spread": "replace with whether the fixture reduces excessive spread or makes the mix feel too narrow",
+    "localization_blur": "replace with whether source positions are clearer, unchanged, or more smeared",
+    "depth_impression": "replace with whether depth feels preserved, flatter, or more stable",
+    "bass_image_coupling": "replace with whether bass weight stays attached to kick/center/main image",
+    "width": "replace with whether accepted .11 or the width fixture has the preferred stereo size",
+    "air": "replace with whether high-frequency air stays open or becomes dull/shimmery",
+    "harshness": "replace with whether either script makes bright material sharper or smoother",
+    "loudness": "replace with whether one script feels louder after fair level handling",
+    "fatigue": "replace with whether repeated listening is easier on .11 or the width fixture",
+    "route_context": "replace with output device, crossfeed state, Windows source endpoint, and processed output endpoint",
+    "artifacts": "replace with any pumping, crackle, image movement, dullness, or none heard",
+    "overall": "replace with .11 preferred, width lab preferred, material dependent, no reliable difference, or stop this path"
+  }
+}

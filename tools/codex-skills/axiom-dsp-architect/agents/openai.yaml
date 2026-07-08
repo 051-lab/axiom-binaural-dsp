@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom DSP Architect"
+  short_description: "Assess Axiom DSP ideas before candidate work."
+  default_prompt: "Use $axiom-dsp-architect to assess an Axiom DSP idea, affected stage, risk, and evidence needed."
+  brand_color: "#D08AE8"
+
+policy:
+  allow_implicit_invocation: true
