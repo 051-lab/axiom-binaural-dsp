@@ -1553,3 +1553,323 @@ Scope: Implement `AX-TASK-041`.
 
 - Choose the next product-direction lane: Windows host stabilization,
   Knowledge-driven Labs, a future profile, or continued Core watch posture.
+
+## Run 041 - Subagent Workflow And Spatial Knowledge Batch
+
+Date: 2026-07-06
+Status: Completed
+Scope: Implement bounded subagent workflow support and continue repo-safe
+Knowledge promotion around the Xie spatial-sound source.
+
+### What Was Implemented
+
+- Added `docs/axiom-subagent-operating-model.md` to define coordinator
+  authority, role routing, worker permissions, review provenance, and forbidden
+  scope for subagent use.
+- Added optional `reviewRun` and per-role `subagent` metadata validation to
+  Axiom Agentic review records.
+- Added provenance and subagent completion counts to `agent-review-status`.
+- Updated command registry, task state, backlog, tool inventory, Codex guide,
+  documentation index, and repo-tracked skill references.
+- Added `AX-TASK-042` as the completed subagent operating-model milestone.
+- Added installable persistent Axiom specialist skills for coordinator, safety,
+  tooling, research, DSP architecture, EEL, measurement, qualification,
+  release, and implementation planning roles.
+- Extended the skill installer with `--all-axiom-skills` so the umbrella skill
+  and all specialist skills can be installed or refreshed together.
+- Moved Axiom Knowledge source handling toward the local repo shelf model:
+  ignored PDFs under `docs/knowledge/pdfs/` and an ignored
+  `docs/knowledge/source-index.local.json`.
+- Added the Xie spatial-sound source note and the
+  `spatial-profile-host-boundaries` concept note.
+- Added `docs/local-repository-map.md` to reconcile the main repo, external
+  Knowledge scaffold, ignored PDF shelf, and historical worktrees.
+
+### Why It Matters
+
+- Axiom can now use real subagents without letting them bypass Codex, Pi,
+  JDSP, candidate, publication, or baseline authority.
+- Review records can distinguish simulated, mixed, and real-subagent
+  provenance while rejecting raw transcripts and private paths.
+- Spatial-audio sources now feed profile, host-path, Labs, and Qualification
+  questions without implying a Core EEL change.
+
+### Validation
+
+- `python3 tools/axiom-codex/axiom_codex.py local-review` passed.
+- `python3 tools/install_axiom_codex_skill.py --all-axiom-skills --dry-run`
+  confirmed the umbrella skill exists in the live Codex skill directory and
+  the new specialist skills are ready to install.
+- A temporary `/tmp` install confirmed all Axiom skill folders copy correctly.
+- `guard-check`, `ready-check`, `agentic-audit`, `task-state`,
+  `knowledge-sources`, Python tests, and Node harness tests passed through the
+  local review.
+- Focused `AxiomCodexHelperTests` passed 49 tests.
+- Knowledge queries find the new Xie note and spatial profile boundary note.
+- External directory review found the old Knowledge scaffold is small and
+  template-oriented, while the worktrees directory contains registered
+  historical Git worktrees. Some worktree branch tips are not contained in
+  `main`, so cleanup should be a branch audit, not deletion.
+- No `src/` or `scripts/` DSP diffs were present.
+
+### Next Recommended Work
+
+- Package the current local change batch for commit/publishing when git write
+  access and approval are available.
+- After the batch is clean, choose the next product-direction lane:
+  host stabilization, Knowledge-driven Labs, future profile design, or Core
+  watch posture.
+
+## Run 042 - Experimental03 Labs Intake
+
+Date: 2026-07-06
+Status: In progress
+Scope: Review the currently used experimental EEL script as Labs input and
+recover a controlled next step for Core DSP work.
+
+### What Was Implemented
+
+- Added `docs/labs-experimental03-review-2026-07-06.md` as the repo-safe
+  review record for `axiom-liveprog-experimental03.eel`.
+- Added `docs/labs-width-profile-plan-2026-07-06.md` as the controlled
+  one-variable follow-up plan.
+- Added `src/labs/axiom_binaural_dsp_v4.1.4.11_width_profile_lab.eel` as a
+  Labs-only `.11` fixture with only the global side-width default changed from
+  `135` to `100`.
+- Added `docs/labs-width-profile-listening-target-2026-07-06.md` for focused
+  listening against accepted `.11`.
+- Added `docs/labs-width-profile-controller-load-guide-2026-07-06.md` with the
+  exact Windows/WSL path and Controller restore steps.
+- Added `docs/templates/width-profile-listening-record-2026-07-06.json` as the
+  local-copy structured record template for the width-profile Labs pass.
+- Added `docs/labs-width-profile-post-listening-decision-map-2026-07-06.md`
+  so the post-listening outcome maps to stop, continue Labs, document no
+  action, or prepare a separate candidate discussion.
+- Registered `AX-TASK-043` as the active Labs planning task and advanced it to
+  fixture-ready state.
+- Updated the documentation index and system status so future sessions treat
+  `experimental03` as Labs input, not as a replacement for the accepted `.11`
+  baseline.
+
+### Why It Matters
+
+- The accepted `Axiom Clean R011` baseline remains protected.
+- The experimental script's useful ideas are preserved without promoting a
+  multi-variable, validator-failing file.
+- The next DSP move is now specific: isolate the width-profile hypothesis
+  before testing bass saturation or crest-adaptive STFT release.
+
+### Validation
+
+- `task-state` passed with 43 tracked tasks.
+- `guard-check` returned only the expected Labs EEL fixture warning.
+- `next-action` selected `AX-TASK-043` and directed the current batch toward
+  validation/review before starting sound-changing work.
+- `scripts/validate_axiom_static.sh src/axiom_binaural_dsp_v4.1.4.11.eel`
+  passed.
+- `scripts/validate_axiom_static.sh src/labs/axiom_binaural_dsp_v4.1.4.11_width_profile_lab.eel`
+  passed.
+- Focused `AxiomCodexHelperTests` passed 50 tests after adding the Labs EEL
+  guard-warning regression.
+- Attempted to open the Windows Controller and fixture folder from WSL, but the
+  Windows GUI launch failed with `UtilBindVsockAnyPort`; manual Controller
+  loading remains the current path for this session.
+- Width-profile listening template validation passed.
+
+### Next Recommended Work
+
+- Load the Labs fixture through the Controller Files tab and run the focused
+  listening pass against accepted `.11`, then validate the completed local
+  listening record.
+
+## Run 043 - Width Labs Listening Decision
+
+Date: 2026-07-06
+Status: Completed as preliminary Labs decision
+Scope: Interpret the first width-profile Labs listening result against the
+`experimental03` target.
+
+### What Was Implemented
+
+- Added `docs/labs-width-profile-listening-summary-2026-07-06.md`.
+- Advanced `AX-TASK-043` to `Labs-supported`.
+- Added `AX-TASK-044` for the next isolated `experimental03` ingredient:
+  bass-harmonic/saturation behavior.
+- Added `docs/labs-bass-saturation-plan-2026-07-06.md`, explicitly allowing
+  only the interpolated saturation idea and rejecting modulation, smoothing,
+  STFT, reserve, and claim-language changes for this step.
+- Updated system status, documentation index, task backlog, and machine-readable
+  task state.
+
+### Why It Matters
+
+- The width step is now treated as a supported contributor toward the
+  `experimental03` target sound.
+- The result remains Labs-only and does not promote the fixture or create
+  `Axiom Clean R012`.
+- The next decision is explicit: test bass saturation next, while deferring
+  modulation/LFO behavior because it has higher fatigue and image-stability
+  risk.
+
+### Validation
+
+- `task-state` passed with 44 tracked tasks.
+- `guard-check` returned only the expected Labs EEL fixture warning.
+- `ready-check` passed.
+
+### Next Recommended Work
+
+- Create the bass-saturation Labs fixture for `AX-TASK-044`.
+
+## Run 044 - Bass-Saturation Labs Fixture
+
+Date: 2026-07-06
+Status: Fixture ready for listening
+Scope: Isolate the bass-saturation ingredient from `experimental03` after the
+width-profile Labs step was preferred.
+
+### What Was Implemented
+
+- Added
+  `src/labs/axiom_binaural_dsp_v4.1.4.11_width_bass_saturation_lab.eel`.
+- Started from the supported width-profile Labs fixture.
+- Changed only the generated-sub saturation path by adding previous-sample and
+  midpoint saturation state/arithmetic.
+- Preserved accepted bass extraction filters, harmonic high-pass filters,
+  reserve law, host limiter ownership, and final output writeback.
+- Added `docs/labs-bass-saturation-listening-target-2026-07-06.md`.
+- Added `docs/labs-bass-saturation-controller-load-guide-2026-07-06.md`.
+- Added `docs/labs-bass-saturation-ab-sequence-2026-07-06.md`.
+- Added `docs/templates/bass-saturation-listening-record-2026-07-06.json`.
+- Added
+  `docs/labs-bass-saturation-post-listening-decision-map-2026-07-06.md`.
+- Updated the bass-saturation plan, system status, documentation index,
+  changelog, backlog, and task-state direction.
+
+### Why It Matters
+
+- The useful `experimental03` bass idea is now testable without importing the
+  validator-failing script, LFO/modulation behavior, smoothing changes, STFT
+  changes, or unsupported claims.
+- The next user-facing decision is concrete: compare the width fixture against
+  the width-plus-bass-saturation fixture.
+
+### Validation
+
+- Static validation passed for the bass-saturation fixture.
+- Diff review confirmed the fixture differs from the width fixture only in
+  label, bass-stage state variables, and generated-sub saturation arithmetic.
+
+### Next Recommended Work
+
+- Load the bass-saturation Labs fixture in the Axiom Controller and compare it
+  against the width-profile Labs fixture.
+
+## Run 045 - Bass-Saturation Labs Decision
+
+Date: 2026-07-06
+Status: Completed as preliminary Labs decision
+Scope: Record the user decision for the width-plus-bass-saturation fixture.
+
+### What Was Implemented
+
+- Added `docs/labs-bass-saturation-listening-summary-2026-07-06.md`.
+- Advanced `AX-TASK-044` to `Labs-supported`.
+- Updated system status, documentation index, task backlog, and
+  machine-readable task state.
+
+### Why It Matters
+
+- The bass-saturation ingredient is now a supported Labs contributor toward the
+  `experimental03` target.
+- The result remains Labs-only and does not promote the fixture, create
+  `Axiom Clean R012`, or change the accepted `Axiom Clean R011` baseline.
+
+### Validation
+
+- `task-state` passed with 44 tracked tasks.
+- `guard-check` returned only the expected Labs EEL fixture warnings.
+- `ready-check` passed.
+
+### Next Recommended Work
+
+- Review accepted `.11`, the width-profile fixture, and the
+  width-plus-bass-saturation fixture together before proposing any
+  candidate-readiness plan.
+
+## Run 046 - Supported Ingredients Review
+
+Date: 2026-07-06
+Status: Completed
+Scope: Review the supported width and bass-saturation Labs ingredients together
+before deciding whether candidate-readiness planning is justified.
+
+### What Was Implemented
+
+- Added `docs/labs-supported-ingredients-review-2026-07-06.md`.
+- Added `AX-TASK-045` as the completed combined-ingredient review.
+- Added `AX-TASK-046` as the planned `Axiom Clean R012`
+  candidate-readiness-plan task.
+- Updated system status, documentation index, task backlog, tests, and
+  machine-readable task state.
+
+### Why It Matters
+
+- The two supported Labs ingredients now have a bridge review before candidate
+  work.
+- The review explicitly excludes unsafe or unproven `experimental03` ideas:
+  modulation, claims language, parameter smoothing, STFT changes, reserve
+  changes, and internal limiting.
+- The next step is a plan, not candidate creation.
+
+### Validation
+
+- Focused `AxiomCodexHelperTests` passed 50 tests.
+- `task-state` passed with 46 tracked tasks.
+- `next-action --json` selected `AX-TASK-046`.
+- `guard-check` returned only the expected Labs EEL fixture warnings.
+
+### Next Recommended Work
+
+- Prepare the `Axiom Clean R012` candidate-readiness plan for the supported
+  width plus bass-saturation hypothesis.
+
+## Run 047 - Audit Standstill Closure
+
+Date: 2026-07-08
+Status: Completed
+Scope: Close urgent planned work and park non-urgent work before the project
+audit shift.
+
+### What Was Implemented
+
+- Added `docs/axiom-clean-r012-candidate-readiness-plan-2026-07-08.md`.
+- Added `docs/axiom-development-standstill-roadmap-2026-07-08.md`.
+- Completed `AX-TASK-046` as a plan-only gate.
+- Parked `AX-TASK-003` so Knowledge expansion is no longer an active audit
+  blocker.
+- Updated system status, documentation index, task backlog, task state, tests,
+  changelog, and session log.
+
+### Why It Matters
+
+- The project now has a clean halt point: accepted baseline unchanged, no active
+  candidate, Labs work documented, and no urgent unblocked implementation task.
+- A later restart has one clear entry point: the R012 candidate-readiness plan.
+- Candidate creation remains gated behind explicit future approval.
+
+### Validation
+
+- Focused `AxiomCodexHelperTests` passed 50 tests.
+- `task-state` passed with 46 tracked tasks and no open tasks.
+- `next-action --json` reported no selected task; it only recommends reviewing
+  the current local change batch because the worktree is dirty.
+- `ready-check` passed.
+- Static validation passed for accepted `.11`, the width Labs fixture, and the
+  width-plus-bass-saturation Labs fixture.
+- `guard-check` returned only the expected Labs EEL fixture warnings.
+
+### Next Recommended Work
+
+- Stop active implementation for the audit unless the user explicitly starts a
+  new post-audit project direction.

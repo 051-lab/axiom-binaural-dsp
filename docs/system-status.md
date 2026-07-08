@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-06-22
+Last updated: 2026-07-08
 
 This is the quick-start dashboard for Codex, Pi sessions, and future agents.
 Read this before choosing new work. It summarizes the current accepted line,
@@ -35,6 +35,63 @@ None.
 No sound-changing `Axiom Clean R012` or v5 candidate should be created until
 the candidate readiness gate passes and a new scoped hypothesis has measurement
 support.
+
+## Current Labs Intake
+
+`axiom-liveprog-experimental03.eel` has been reviewed as Labs input only. It is
+not an accepted baseline, active candidate, or `Axiom Clean R012` candidate.
+The review is recorded in `labs-experimental03-review-2026-07-06.md`.
+
+The next recommended DSP step is to isolate one controlled hypothesis from the
+experimental script, starting with the width-profile change. Do not promote the
+full experimental script directly. The width-profile isolation plan is recorded
+in `labs-width-profile-plan-2026-07-06.md`.
+
+The first Labs fixture is
+`src/labs/axiom_binaural_dsp_v4.1.4.11_width_profile_lab.eel`. It changes only
+the global side-width default from `135` to `100` and passed static validation.
+Use `labs-width-profile-controller-load-guide-2026-07-06.md` to load it in the
+Axiom Controller and `labs-width-profile-listening-target-2026-07-06.md` for
+the listening pass. Use
+`labs-width-profile-post-listening-decision-map-2026-07-06.md` after listening
+to decide whether to stop, continue Labs, or prepare a separate candidate
+discussion.
+
+Preliminary listening on 2026-07-06 classified the width step as
+`width lab preferred`: it moves accepted `.11` toward the desired
+`experimental03` direction. The result is recorded in
+`labs-width-profile-listening-summary-2026-07-06.md`. The next Labs step is to
+isolate the bass-harmonic/saturation contribution from `experimental03`; that
+plan is recorded in `labs-bass-saturation-plan-2026-07-06.md`.
+
+The bass-saturation Labs fixture is
+`src/labs/axiom_binaural_dsp_v4.1.4.11_width_bass_saturation_lab.eel`. It
+starts from the supported width fixture and changes only the generated-sub
+saturation arithmetic. It passed static validation on 2026-07-06. Use
+`labs-bass-saturation-controller-load-guide-2026-07-06.md` to load it in the
+Controller and `labs-bass-saturation-listening-target-2026-07-06.md` to compare
+it against the width-profile fixture before any candidate discussion. Use
+`labs-bass-saturation-post-listening-decision-map-2026-07-06.md` after
+listening to decide whether to keep, reject, retest, or constrain the bass
+idea.
+
+Preliminary listening on 2026-07-06 selected B, the width-plus-bass-saturation
+fixture, over the width-only fixture. The result is recorded in
+`labs-bass-saturation-listening-summary-2026-07-06.md` as a Labs-supported
+ingredient only. The next engineering step is a combined-ingredient review
+before any `Axiom Clean R012` candidate-readiness discussion.
+
+The combined review is recorded in
+`labs-supported-ingredients-review-2026-07-06.md`. It concludes that the
+supported width plus bass-saturation ingredients justify an `Axiom Clean R012`
+candidate-readiness plan, but not candidate creation, promotion, or accepted
+baseline changes.
+
+The candidate-readiness plan is recorded in
+`axiom-clean-r012-candidate-readiness-plan-2026-07-08.md`. The audit standstill
+roadmap is recorded in `axiom-development-standstill-roadmap-2026-07-08.md`.
+Current development is intentionally halted with no active candidate and no
+urgent unblocked implementation tasks.
 
 ## Host Baseline
 

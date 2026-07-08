@@ -7,8 +7,8 @@ device behavior.
 It has two layers:
 
 - repo-safe notes under `docs/knowledge/`;
-- local-only source metadata under
-  `~/.local/share/axiom-knowledge/source-index.json`.
+- local-only PDFs under `docs/knowledge/pdfs/`;
+- local-only source metadata under `docs/knowledge/source-index.local.json`.
 
 This directory should contain citations, short summaries, concept maps, and
 Axiom-specific research questions. It must not contain copyrighted books,
@@ -47,11 +47,23 @@ Forbidden:
 
 Use the local source index for private books, PDFs, library files, or personal
 research material that must not enter git. The schema is tracked at
-`source-index.schema.json`, but the actual index lives outside the repository:
+`source-index.schema.json`, and the example local index is tracked at
+`source-index.local.example.json`. The actual local index lives inside the
+repository for easy access but is ignored by git:
 
 ```text
-~/.local/share/axiom-knowledge/source-index.json
+docs/knowledge/source-index.local.json
 ```
+
+Source PDFs should use normalized source-ID filenames and live under the
+ignored local shelf:
+
+```text
+docs/knowledge/pdfs/
+```
+
+Use relative local path values from the source index directory, for example
+`pdfs/spatial-sound-principles-and-applications-xie.pdf`.
 
 The Codex helper can search repo-safe notes and sanitized local metadata:
 
@@ -100,12 +112,13 @@ local source index.
 ## Seed Source Notes
 
 These notes are repo-safe summaries of local-only source PDFs. The PDFs remain
-outside git and are referenced through the local source index.
+outside git and are referenced through the ignored local source index.
 
 | Source ID | Focus |
 | --- | --- |
 | `spatial-hearing-revised-edition` | Spatial-hearing vocabulary, localization, image stability, and binaural perception. |
 | `principles-and-applications-of-spatial-hearing` | Spatial-hearing applications, auditory displays, and listening-test vocabulary. |
+| `spatial-sound-principles-and-applications-xie` | Spatial-audio systems, HRTF/binaural rendering, Ambisonics, WFS, headphone equalization, and subjective assessment. |
 | `dafx-digital-audio-effects` | Digital-audio-effects taxonomy, DSP stage vocabulary, and fixture-design questions. |
 | `designing-audio-effect-plug-ins-in-cpp` | Real-time DSP implementation patterns that must be translated through EEL2/JDSP constraints. |
 | `accurate-sound-reproduction-using-dsp` | Reproduction accuracy, measurement discipline, and non-Core correction boundaries. |
@@ -124,6 +137,7 @@ way.
 | [Elevated bass headroom tradeoff](concepts/elevated-bass-headroom-tradeoff.md) | Sub Harmonics listening questions around headroom, RMS retreat, punch, bass blur, and fatigue. |
 | [Stage isolation and fixture scope](concepts/stage-isolation-and-fixture-scope.md) | How to turn broad DSP ideas into narrow fixtures, measurements, and listening targets. |
 | [Reproduction boundaries and profile scope](concepts/reproduction-boundaries-and-profile-scope.md) | How to keep Core, future profiles, host/device behavior, and correction work separate. |
+| [Spatial profile host boundaries](concepts/spatial-profile-host-boundaries.md) | How to route spatial-audio ideas into Core, host path, profile, Labs, and qualification lanes. |
 | [Airwindows concept taxonomy](concepts/airwindows-concept-taxonomy.md) | Clean-room retrieval vocabulary for Airwindows-inspired Labs and test-design questions. |
 
 ## Bibliography Entry Template

@@ -3,8 +3,8 @@
 Axiom Knowledge has two layers:
 
 1. Repo-safe public notes under `docs/knowledge/`.
-2. Local-only source index under
-   `~/.local/share/axiom-knowledge/source-index.json`.
+2. Local-only PDFs and source metadata under ignored files in
+   `docs/knowledge/`.
 
 ## Repo-Safe Notes
 
@@ -27,8 +27,15 @@ Forbidden:
 
 ## Local-Only Source Index
 
-The local index may include private paths to books, PDFs, notes, or local
-research files. It must never be committed.
+The local index may include paths to books, PDFs, notes, or local research
+files. It lives at `docs/knowledge/source-index.local.json` for easy access
+from the repository, but it is ignored by git and must never be committed.
+
+Local PDFs belong under `docs/knowledge/pdfs/`, also ignored by git. Prefer
+normalized source-ID filenames such as
+`spatial-sound-principles-and-applications-xie.pdf`.
+
+Use relative local source paths from `docs/knowledge/` when possible.
 
 Minimum source fields:
 
@@ -40,7 +47,7 @@ Minimum source fields:
   "year": 2026,
   "type": "book | paper | article | documentation | video | other",
   "topics": ["psychoacoustics", "DSP"],
-  "localPath": "/private/path/outside/repo",
+  "local source path": "pdfs/unique-source-id.pdf",
   "publicUrl": "",
   "licenseNotes": "Do not copy source text.",
   "axiomUse": "How this may inform Axiom tests.",

@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Coordinator"
+  short_description: "Route Axiom work and keep scope bounded."
+  default_prompt: "Use $axiom-coordinator to inspect Axiom state, classify the work lane, and choose the safest next action."
+  brand_color: "#66D7E5"
+
+policy:
+  allow_implicit_invocation: true

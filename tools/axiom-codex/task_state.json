@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lastUpdated": "2026-06-22",
+  "lastUpdated": "2026-07-08",
   "source": "docs/task-backlog.md",
   "tasks": [
     {
@@ -25,13 +25,13 @@
     },
     {
       "id": "AX-TASK-003",
-      "status": "seed-notes-added",
+      "status": "parked-seed-notes-added",
       "title": "Create Knowledge Base bibliography notes",
       "area": "Knowledge",
-      "phase": "seeded",
+      "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Promote selected seed sources into focused concept notes when they support a test-design question."
+      "nextAction": "Parked for audit standstill; promote additional seed sources only after the next project shift defines a Knowledge question."
     },
     {
       "id": "AX-TASK-004",
@@ -412,6 +412,56 @@
       "requiresApproval": false,
       "blockedBy": [],
       "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-042",
+      "status": "complete",
+      "title": "Add bounded subagent operating model",
+      "area": "Agentic Layer",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Use docs/axiom-subagent-operating-model.md when specialist parallel review would materially improve Axiom planning."
+    },
+    {
+      "id": "AX-TASK-043",
+      "status": "complete-labs-supported",
+      "title": "Triage experimental03 into controlled Labs hypotheses",
+      "area": "Labs",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-044",
+      "status": "complete-labs-supported",
+      "title": "Isolate experimental03 bass-saturation contribution",
+      "area": "Labs",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Review accepted .11, the width-profile Labs fixture, and the width-plus-bass-saturation Labs fixture together before proposing any Axiom Clean R012 candidate-readiness plan."
+    },
+    {
+      "id": "AX-TASK-045",
+      "status": "complete",
+      "title": "Review supported experimental03 ingredients together",
+      "area": "Labs",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None."
+    },
+    {
+      "id": "AX-TASK-046",
+      "status": "complete-plan-only",
+      "title": "Prepare Axiom Clean R012 candidate-readiness plan",
+      "area": "Qualification",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "None. Candidate creation requires a later explicit approval after the audit standstill."
     }
   ]
 }

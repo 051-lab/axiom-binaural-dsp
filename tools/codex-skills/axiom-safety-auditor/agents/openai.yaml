@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom Safety Auditor"
+  short_description: "Review Axiom changes for scope, privacy, and approval risk."
+  default_prompt: "Use $axiom-safety-auditor to review the current Axiom change batch for safety, privacy, and gate violations."
+  brand_color: "#E5B466"
+
+policy:
+  allow_implicit_invocation: true

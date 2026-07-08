@@ -10,7 +10,7 @@ task is ready for scheduling or delegation.
 | --- | --- | --- | --- | --- | --- |
 | AX-TASK-001 | Complete | Formalize Axiom Core identity | Core | Core policy note or README section | Accepted baseline, host ownership, and no-in-place-edit rules are visible from the starting docs. |
 | AX-TASK-002 | Complete | Create Labs branch policy | Labs | Branch policy doc or CONTRIBUTING section | Labs branches have naming, scope, artifact, and promotion rules. |
-| AX-TASK-003 | Seed notes added | Create Knowledge Base bibliography notes | Knowledge | `docs/knowledge/` seed source notes | Notes contain citations and summaries only, with no copyrighted book contents or private paths. |
+| AX-TASK-003 | Parked: seed notes added | Create Knowledge Base bibliography notes | Knowledge | `docs/knowledge/` seed source notes | Seed notes and selected concept notes exist; further Knowledge expansion is parked and is not an audit blocker. |
 | AX-TASK-004 | Complete | Create profile matrix | System | Profile matrix doc or table | Core, Reference, Immersive, Night, Studio Path, Labs, Knowledge, and Qualification are mapped to owner, status, allowed changes, and tests. |
 | AX-TASK-005 | Complete | Add listening protocol | Qualification | Listening protocol doc or extension to `listening-records.md` | Protocol defines material choice, level handling, device route, fatigue notes, comparison target, and acceptance decision format. |
 | AX-TASK-006 | Complete | Document advisory LLM review flow | Codex | Review-flow doc or operating-guide section | External LLM feedback has a repeatable path from critique to issue, research note, fixture, or rejection. |
@@ -49,30 +49,39 @@ task is ready for scheduling or delegation.
 | AX-TASK-039 | Complete | Harden and graduate Airwindows Knowledge intake | Knowledge | Automatic index discovery and stricter metadata audit | The real 541-effect index passes pinned-commit, upstream URL, MIT license, canonical-effect, safe-field, relative-path, and checkout-drift checks; queries auto-discover it with explicit opt-out. |
 | AX-TASK-040 | Complete | Harden and graduate qualification evidence stack | Agentic Layer | Reconciled ingestion, status, and discovery workflow | The real Windows host bundle validates with two source-hashed records, automatic orientation works, configured-directory state is accurate, and evidence remains distinct from listening or release approval. |
 | AX-TASK-041 | Complete | Complete Agentic review-record lifecycle | Agentic Layer | `agent-review-status` and `next-action --review` | Completed review records require scope, findings, evidence references, and non-draft decisions; private paths fail validation; bounded decisions inform planning without granting JDSP, publication, candidate, merge, or baseline authority. |
+| AX-TASK-042 | Complete | Add bounded subagent operating model | Agentic Layer | Subagent workflow doc plus optional review provenance validation | Codex remains coordinator/integrator, subagents are advisory by default, Pi keeps real-JDSP/candidate/publication ownership, and review records can capture safe subagent provenance without raw transcripts or private paths. |
+| AX-TASK-043 | Complete: Labs-supported | Triage experimental03 into controlled Labs hypotheses | Labs | `labs-experimental03-review-2026-07-06.md`, `labs-width-profile-plan-2026-07-06.md`, `labs-width-profile-listening-summary-2026-07-06.md`, `labs-width-profile-controller-load-guide-2026-07-06.md`, `labs-width-profile-post-listening-decision-map-2026-07-06.md`, `templates/width-profile-listening-record-2026-07-06.json`, and `src/labs/axiom_binaural_dsp_v4.1.4.11_width_profile_lab.eel` | The width-profile step is documented as a Labs-supported contributor toward the `experimental03` target without promotion to `Axiom Clean R012`. |
+| AX-TASK-044 | Complete: Labs-supported | Isolate experimental03 bass-saturation contribution | Labs | `labs-bass-saturation-plan-2026-07-06.md`, `labs-bass-saturation-controller-load-guide-2026-07-06.md`, `labs-bass-saturation-ab-sequence-2026-07-06.md`, `labs-bass-saturation-listening-target-2026-07-06.md`, `labs-bass-saturation-listening-summary-2026-07-06.md`, `labs-bass-saturation-post-listening-decision-map-2026-07-06.md`, and `src/labs/axiom_binaural_dsp_v4.1.4.11_width_bass_saturation_lab.eel` | The bass-harmonic/saturation idea is isolated separately from width, STFT, modulation, and smoothing; B was selected as a Labs-supported ingredient without candidate or baseline promotion. |
+| AX-TASK-045 | Complete | Review supported experimental03 ingredients together | Labs | `labs-supported-ingredients-review-2026-07-06.md` | The combined width plus bass-saturation result is reviewed against accepted `.11`, unsafe `experimental03` ideas remain excluded, and the next step is candidate-readiness planning rather than candidate creation. |
+| AX-TASK-046 | Complete: plan only | Prepare Axiom Clean R012 candidate-readiness plan | Qualification | `axiom-clean-r012-candidate-readiness-plan-2026-07-08.md` | The plan defines the exact hypothesis, filename policy, static checks, listening-record needs, real-JDSP scope, and approval gates before any official candidate is created. |
 
 ## Current Priority
 
 Recommended next actions:
 
-1. Choose the next product-direction lane: host stabilization,
-   Knowledge-driven Labs, a future profile, or continued Core watch posture.
+1. Hold development at the audit standstill documented in
+   `axiom-development-standstill-roadmap-2026-07-08.md`.
 2. Use `docs/axiom-full-system-review-2026-06-08.md` as the current readiness
    review history and `docs/axiom-layer-progression-2026-06-22.md` as the
    current layer checkpoint.
 3. Use the locally installed `$axiom-engineering` skill for new Axiom Codex
    sessions.
-4. Use `agentic-audit` as the blocking contract check for `AX-TASK-018`
-   through `AX-TASK-021`; add native runtime wrappers only when a supported
-   Codex command or subagent mechanism is available.
+4. Use `agentic-audit` as the blocking contract check for Agentic Layer helper
+   changes; use `docs/axiom-subagent-operating-model.md` when real subagent
+   review would materially improve planning.
 5. Keep the completed `.11` Sub Harmonics result as a watch item and require a
    new repeatable normal-material problem before proposing `Axiom Clean R012`.
 6. Use `task-state` and `next-action` as the machine-readable planning source
-   for future helper commands.
+   for future helper commands; at standstill there should be no urgent
+   unblocked implementation task.
 7. Use `agent-review --json` or `--output` when a task needs structured role
    findings before implementation or publication review.
 8. Use `next-action --include-maintenance` only when intentionally continuing
    Agentic hardening; leave default `next-action` conservative for normal
    planning.
+9. Treat `experimental03` as Labs input only. Do not promote the full script or
+   create `Axiom Clean R012` until a one-variable hypothesis passes validation
+   and listening planning.
 
 ## Progress Notes
 
@@ -155,6 +164,27 @@ Recommended next actions:
 - `AX-TASK-040` graduates `AX-TASK-030` through `032` after real-bundle
   ingestion, validation, status integration, discovery, and local configuration
   checks passed.
+- `AX-TASK-041` and `AX-TASK-042` complete the first review-record lifecycle
+  and subagent workflow boundary. Future real subagent runs can be represented
+  with optional safe provenance metadata while remaining non-authoritative
+  planning artifacts.
+- `AX-TASK-043` starts the next Knowledge-driven Labs lane by reviewing
+  `experimental03` against the accepted `.11` baseline and defining a
+  width-profile isolation plan and Labs fixture before any `Axiom Clean R012`
+  work.
+- `AX-TASK-043` is complete as a Labs-supported width result. The width step
+  should remain a supported ingredient, not an accepted baseline.
+- `AX-TASK-044` is complete as a Labs-supported bass-saturation result. B, the
+  width-plus-bass-saturation fixture, was selected as preferred over the
+  width-only fixture, but no candidate or accepted-baseline promotion has been
+  made.
+- `AX-TASK-045` reviews both supported `experimental03` ingredients together
+  and concludes that candidate-readiness planning is justified, while candidate
+  creation remains gated behind a separate approved plan.
+- `AX-TASK-046` is planned as that candidate-readiness bridge for a possible
+  `Axiom Clean R012`; it is now complete as a plan-only gate.
+- The 2026-07-08 audit standstill parks `AX-TASK-003`, closes `AX-TASK-046`,
+  and intentionally stops before candidate creation.
 
 ## Graduation Checklist For Sound-Changing Work
 

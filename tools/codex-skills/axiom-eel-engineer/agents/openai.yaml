@@ -1,0 +1,8 @@
+interface:
+  display_name: "Axiom EEL Engineer"
+  short_description: "Review Axiom EEL2/JDSP script safety."
+  default_prompt: "Use $axiom-eel-engineer to review Axiom EEL2/JDSP safety and candidate edit boundaries."
+  brand_color: "#CC6666"
+
+policy:
+  allow_implicit_invocation: true

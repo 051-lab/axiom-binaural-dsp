@@ -219,7 +219,7 @@
       "helperCommand": "python3 tools/axiom-codex/axiom_codex.py agent-review --topic \"...\"",
       "touchesJDSP": false,
       "requiresApproval": false,
-      "purpose": "Create a validated multi-role review record grounded in local Codex profiles and Pi role docs.",
+      "purpose": "Create a validated multi-role review record grounded in local Codex profiles and Pi role docs, optionally completed with simulated or real subagent findings.",
       "inputs": [
         "topic",
         "optional role list",
@@ -229,12 +229,14 @@
       "outputs": [
         "validated review record",
         "role findings entries",
+        "optional subagent provenance metadata",
         "evidence-needed section",
         "decision choices"
       ],
       "boundaries": [
         "draft record is not evidence until completed",
-        "findings must cite concrete repo state or measurement artifacts"
+        "findings must cite concrete repo state or measurement artifacts",
+        "real subagent findings remain planning artifacts"
       ]
     },
     {
@@ -245,7 +247,7 @@
       "helperCommand": "python3 tools/axiom-codex/axiom_codex.py agent-review-status <review.json>",
       "touchesJDSP": false,
       "requiresApproval": false,
-      "purpose": "Validate draft or completed Agentic review records and summarize their bounded decision for planning.",
+      "purpose": "Validate draft or completed Agentic review records and summarize their bounded decision and subagent provenance for planning.",
       "inputs": [
         "review JSON",
         "optional --json"
@@ -254,7 +256,8 @@
         "record validation status",
         "draft or complete lifecycle status",
         "bounded decision",
-        "completed role count"
+        "completed role count",
+        "provenance and subagent completion counts"
       ],
       "boundaries": [
         "completed reviews are planning artifacts, not approval",
