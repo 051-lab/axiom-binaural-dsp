@@ -107,18 +107,18 @@ assume the intended host configuration is already active.
 
 | File | Purpose |
 |------|---------|
+| `AXIOM.md` | Plain-language front door for the Axiom system, current baseline, and agent behavior |
 | `README.md` | User setup and testbench entry points |
 | `docs/README.md` | Documentation index and category map |
 | `docs/system-status.md` | Quick dashboard for accepted baseline, open investigations, and next work |
+| `docs/dsp-change-workflow.md` | Plain-language workflow for turning listening goals into scoped DSP changes |
+| `docs/archive/README.md` | Archive index for historical reviews, Labs notes, planning docs, and local maps |
 | `docs/session-work-log.md` | Source log for session work summaries and generated PDF copies |
 | `docs/current-state.md` | Current accepted baseline, host policy, and repo/local state boundary |
 | `docs/architecture.md` | Active DSP architecture and host ownership |
 | `docs/versioning-and-naming.md` | Future EEL release-label policy and legacy version-ID boundary |
 | `docs/axiom-roadmap.md` | 90-day foundations-first roadmap |
-| `docs/axiom-system-roadmap.md` | Product/profile roadmap for Core, Labs, Knowledge, and Qualification |
 | `docs/profile-matrix.md` | Profile status, ownership, allowed changes, and required tests |
-| `docs/axiom-operating-system-implementation-plan.md` | Ordered implementation plan for the AI development ecosystem |
-| `docs/ai-development-ecosystem.md` | Codex, Pi, user, and advisory LLM ecosystem model |
 | `docs/codex-operating-guide.md` | Codex responsibilities, prohibitions, branch discipline, and review flow |
 | `docs/pi-runbooks.md` | Repeatable terminal missions for Pi/Codex sessions |
 | `docs/labs-policy.md` | Branch, experiment, artifact, and promotion rules for Labs work |
@@ -138,5 +138,10 @@ assume the intended host configuration is already active.
 | `docs/JDSP4Linux_Knowledge_Base.md` | EEL2/JDSP runtime and preset reference |
 | `docs/engineering-harness.md` | Controlled Pi workflow, gates, and local-state policy |
 | `CHANGELOG.md` | Version history and decision record |
+
+Historical reviews, planning records, Labs notes, and local repository maps are
+kept under `docs/archive/`. Treat archived files as evidence/history, not active
+workflow instructions, unless a task explicitly promotes one back into current
+guidance.
 
 *Last updated: v4.1.4.11 accepted baseline - 2026-06-01*

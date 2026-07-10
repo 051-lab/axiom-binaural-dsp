@@ -7,6 +7,12 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 ## [Unreleased] - Agentic Layer Hardening
 
 ### Added
+- Added `AXIOM.md` as the plain-language front door for the system, accepted
+  baseline, current boundaries, and agent behavior.
+- Added `docs/dsp-change-workflow.md` to keep future sound-changing DSP work
+  centered on one listening goal and one scoped hypothesis at a time.
+- Added `docs/archive/README.md` and moved historical reviews, Labs notes,
+  planning records, and local maps into `docs/archive/`.
 - Added a Labs-only width-profile fixture derived from accepted `.11`, changing
   only the global side-width default from `135` to `100` for controlled
   listening against `Axiom Clean R011`.
@@ -44,6 +50,10 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added adversarial regression coverage for malformed Agentic Layer metadata.
 
 ### Changed
+- Simplified `docs/system-status.md` and `docs/README.md` so fresh sessions have
+  one clear current-state path instead of competing historical guidance.
+- Added `AX-TASK-047` to track the simplification reset without changing DSP
+  behavior, candidate state, or accepted-baseline policy.
 - Made `ready-check` consume the strict Agentic contract validators instead of
   checking only whether registry, profile, and fixture files exist.
 - Replaced the free-form multi-role review scaffold with a schema-validated

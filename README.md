@@ -8,6 +8,11 @@
 
 Axiom Binaural DSP is a device-neutral EEL2 enhancement core for JamesDSP. `v4.1.4.11` is the accepted listening baseline: it retains the `.10` restrained low-mid width setting and reduces the elevated-bass output reserve slope for more practical density above the default Sub Harmonics setting.
 
+For the shortest system orientation, start with [`AXIOM.md`](AXIOM.md). For
+new sound-changing work, use
+[`docs/dsp-change-workflow.md`](docs/dsp-change-workflow.md) before creating a
+Labs fixture or candidate.
+
 ## Features
 
 ### M/S Spatializer

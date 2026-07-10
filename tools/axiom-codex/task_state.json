@@ -441,7 +441,7 @@
       "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "Review accepted .11, the width-profile Labs fixture, and the width-plus-bass-saturation Labs fixture together before proposing any Axiom Clean R012 candidate-readiness plan."
+      "nextAction": "None."
     },
     {
       "id": "AX-TASK-045",
@@ -462,6 +462,16 @@
       "requiresApproval": false,
       "blockedBy": [],
       "nextAction": "None. Candidate creation requires a later explicit approval after the audit standstill."
+    },
+    {
+      "id": "AX-TASK-047",
+      "status": "complete",
+      "title": "Simplify active Axiom system guidance",
+      "area": "Docs",
+      "phase": "done",
+      "requiresApproval": false,
+      "blockedBy": [],
+      "nextAction": "Use AXIOM.md as the front door and docs/dsp-change-workflow.md before future sound-changing EEL work."
     }
   ]
 }

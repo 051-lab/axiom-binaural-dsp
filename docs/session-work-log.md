@@ -1873,3 +1873,50 @@ audit shift.
 
 - Stop active implementation for the audit unless the user explicitly starts a
   new post-audit project direction.
+
+## Run 048 - Axiom Simplification Reset
+
+Date: 2026-07-08
+Status: Completed
+Scope: Convert the user's written reset direction into active repository
+guidance without changing DSP behavior.
+
+### What Was Implemented
+
+- Added `AXIOM.md` as the plain-language front door for what Axiom is, what the
+  accepted baseline is, and how agents should work with user sound goals.
+- Added `docs/dsp-change-workflow.md` so future EEL work starts from one
+  listening goal and one controlled hypothesis.
+- Added `docs/archive/README.md`.
+- Moved historical reviews, Labs notes, planning records, and the local
+  repository map into `docs/archive/`.
+- Simplified `docs/system-status.md` and `docs/README.md`.
+- Added `AX-TASK-047` to the backlog and machine-readable task state.
+- Updated README, AGENTS, Codex operating guidance, and changelog references.
+
+### Why It Matters
+
+- The repo now has one obvious front door instead of several competing system
+  explanations.
+- Archived documents remain available as evidence, but they no longer read as
+  current instructions.
+- The reset keeps `Axiom Clean R011` accepted, keeps `Axiom Clean R012`
+  uncreated, and makes no sound-changing DSP edits.
+
+### Validation
+
+- Focused `AxiomCodexHelperTests` passed 50 tests.
+- `task-state` passed with 47 tracked tasks and no open tasks.
+- `next-action --json` selected no task because the current local cleanup batch
+  is still in progress.
+- `guard-check` passed with no guardrail findings.
+- `ready-check` passed.
+- Static validation passed for accepted `.11`, the width Labs fixture, and the
+  width-plus-bass-saturation Labs fixture.
+- `local-review --skip-tests` passed.
+
+### Next Recommended Work
+
+- Choose the next phase from the simplified state: either a scoped DSP
+  candidate discussion, Knowledge cleanup, Controller packaging/distribution,
+  or continued repo organization.

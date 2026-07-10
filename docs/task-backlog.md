@@ -50,38 +50,25 @@ task is ready for scheduling or delegation.
 | AX-TASK-040 | Complete | Harden and graduate qualification evidence stack | Agentic Layer | Reconciled ingestion, status, and discovery workflow | The real Windows host bundle validates with two source-hashed records, automatic orientation works, configured-directory state is accurate, and evidence remains distinct from listening or release approval. |
 | AX-TASK-041 | Complete | Complete Agentic review-record lifecycle | Agentic Layer | `agent-review-status` and `next-action --review` | Completed review records require scope, findings, evidence references, and non-draft decisions; private paths fail validation; bounded decisions inform planning without granting JDSP, publication, candidate, merge, or baseline authority. |
 | AX-TASK-042 | Complete | Add bounded subagent operating model | Agentic Layer | Subagent workflow doc plus optional review provenance validation | Codex remains coordinator/integrator, subagents are advisory by default, Pi keeps real-JDSP/candidate/publication ownership, and review records can capture safe subagent provenance without raw transcripts or private paths. |
-| AX-TASK-043 | Complete: Labs-supported | Triage experimental03 into controlled Labs hypotheses | Labs | `labs-experimental03-review-2026-07-06.md`, `labs-width-profile-plan-2026-07-06.md`, `labs-width-profile-listening-summary-2026-07-06.md`, `labs-width-profile-controller-load-guide-2026-07-06.md`, `labs-width-profile-post-listening-decision-map-2026-07-06.md`, `templates/width-profile-listening-record-2026-07-06.json`, and `src/labs/axiom_binaural_dsp_v4.1.4.11_width_profile_lab.eel` | The width-profile step is documented as a Labs-supported contributor toward the `experimental03` target without promotion to `Axiom Clean R012`. |
-| AX-TASK-044 | Complete: Labs-supported | Isolate experimental03 bass-saturation contribution | Labs | `labs-bass-saturation-plan-2026-07-06.md`, `labs-bass-saturation-controller-load-guide-2026-07-06.md`, `labs-bass-saturation-ab-sequence-2026-07-06.md`, `labs-bass-saturation-listening-target-2026-07-06.md`, `labs-bass-saturation-listening-summary-2026-07-06.md`, `labs-bass-saturation-post-listening-decision-map-2026-07-06.md`, and `src/labs/axiom_binaural_dsp_v4.1.4.11_width_bass_saturation_lab.eel` | The bass-harmonic/saturation idea is isolated separately from width, STFT, modulation, and smoothing; B was selected as a Labs-supported ingredient without candidate or baseline promotion. |
-| AX-TASK-045 | Complete | Review supported experimental03 ingredients together | Labs | `labs-supported-ingredients-review-2026-07-06.md` | The combined width plus bass-saturation result is reviewed against accepted `.11`, unsafe `experimental03` ideas remain excluded, and the next step is candidate-readiness planning rather than candidate creation. |
+| AX-TASK-043 | Complete: Labs-supported | Triage experimental03 into controlled Labs hypotheses | Labs | `docs/archive/labs/` records, `templates/width-profile-listening-record-2026-07-06.json`, and `src/labs/axiom_binaural_dsp_v4.1.4.11_width_profile_lab.eel` | The width-profile step is documented as a Labs-supported contributor toward the `experimental03` target without promotion to `Axiom Clean R012`. |
+| AX-TASK-044 | Complete: Labs-supported | Isolate experimental03 bass-saturation contribution | Labs | `docs/archive/labs/` records and `src/labs/axiom_binaural_dsp_v4.1.4.11_width_bass_saturation_lab.eel` | The bass-harmonic/saturation idea is isolated separately from width, STFT, modulation, and smoothing; B was selected as a Labs-supported ingredient without candidate or baseline promotion. |
+| AX-TASK-045 | Complete | Review supported experimental03 ingredients together | Labs | `docs/archive/labs/labs-supported-ingredients-review-2026-07-06.md` | The combined width plus bass-saturation result is reviewed against accepted `.11`, unsafe `experimental03` ideas remain excluded, and the next step is candidate-readiness planning rather than candidate creation. |
 | AX-TASK-046 | Complete: plan only | Prepare Axiom Clean R012 candidate-readiness plan | Qualification | `axiom-clean-r012-candidate-readiness-plan-2026-07-08.md` | The plan defines the exact hypothesis, filename policy, static checks, listening-record needs, real-JDSP scope, and approval gates before any official candidate is created. |
+| AX-TASK-047 | Complete | Simplify active Axiom system guidance | Docs | `AXIOM.md`, `docs/dsp-change-workflow.md`, `docs/archive/README.md`, and updated status/index docs | A fresh agent or user can start from one plain-language front door, historical docs are archived, and no DSP/candidate state changes were made. |
 
 ## Current Priority
 
 Recommended next actions:
 
-1. Hold development at the audit standstill documented in
-   `axiom-development-standstill-roadmap-2026-07-08.md`.
-2. Use `docs/axiom-full-system-review-2026-06-08.md` as the current readiness
-   review history and `docs/axiom-layer-progression-2026-06-22.md` as the
-   current layer checkpoint.
-3. Use the locally installed `$axiom-engineering` skill for new Axiom Codex
-   sessions.
-4. Use `agentic-audit` as the blocking contract check for Agentic Layer helper
-   changes; use `docs/axiom-subagent-operating-model.md` when real subagent
-   review would materially improve planning.
-5. Keep the completed `.11` Sub Harmonics result as a watch item and require a
-   new repeatable normal-material problem before proposing `Axiom Clean R012`.
-6. Use `task-state` and `next-action` as the machine-readable planning source
-   for future helper commands; at standstill there should be no urgent
-   unblocked implementation task.
-7. Use `agent-review --json` or `--output` when a task needs structured role
-   findings before implementation or publication review.
-8. Use `next-action --include-maintenance` only when intentionally continuing
-   Agentic hardening; leave default `next-action` conservative for normal
-   planning.
-9. Treat `experimental03` as Labs input only. Do not promote the full script or
-   create `Axiom Clean R012` until a one-variable hypothesis passes validation
-   and listening planning.
+1. Use `AXIOM.md` as the plain-language entry point for what Axiom is and what
+   agents should optimize for.
+2. Use `docs/dsp-change-workflow.md` before any new sound-changing EEL work.
+3. Keep `Axiom Clean R011` accepted and keep `Axiom Clean R012` uncreated until
+   the user explicitly approves a candidate from one scoped hypothesis.
+4. Use `task-state`, `next-action`, `guard-check`, and `ready-check` as the
+   machine-readable planning and safety checks.
+5. Use archived Labs/review/planning documents as history only unless a future
+   task intentionally promotes them back into active guidance.
 
 ## Progress Notes
 
@@ -97,9 +84,8 @@ Recommended next actions:
   record format remains in `docs/listening-records.md`.
 - `AX-TASK-006` is implemented in `docs/codex-operating-guide.md`; the issue
   template `external_llm_review.yml` provides the intake form.
-- `AX-TASK-007` is implemented across `docs/ai-development-ecosystem.md`,
-  `docs/codex-operating-guide.md`, and
-  `docs/axiom-operating-system-implementation-plan.md`.
+- `AX-TASK-007` is implemented across `docs/codex-operating-guide.md` and
+  historical planning records now stored under `docs/archive/planning/`.
 - `AX-TASK-008` is implemented as `docs/release-gates.md`.
 - `AX-TASK-009` has a current-facing stale-baseline scan passing locally.
 - `AX-TASK-010` is documented in `docs/engineering-harness.md`.
@@ -185,6 +171,9 @@ Recommended next actions:
   `Axiom Clean R012`; it is now complete as a plan-only gate.
 - The 2026-07-08 audit standstill parks `AX-TASK-003`, closes `AX-TASK-046`,
   and intentionally stops before candidate creation.
+- `AX-TASK-047` simplifies the active guidance layer after the user-identified
+  complexity problem: `AXIOM.md` is now the front door, DSP change work has a
+  short workflow, and historical reviews/plans/Labs notes are archived.
 
 ## Graduation Checklist For Sound-Changing Work
 

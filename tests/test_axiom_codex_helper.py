@@ -1086,6 +1086,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("AX-TASK-030", task_ids)
         self.assertIn("AX-TASK-031", task_ids)
         self.assertIn("AX-TASK-032", task_ids)
+        self.assertIn("AX-TASK-047", task_ids)
         self.assertFalse(any(check.status == "fail" for check in checks))
         listening_task = next(task for task in data["tasks"] if task["id"] == "AX-TASK-022")
         self.assertEqual(listening_task["status"], "complete-watch-item")
@@ -1109,6 +1110,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertNotIn("AX-TASK-043", result.stdout)
         self.assertNotIn("AX-TASK-044", result.stdout)
         self.assertNotIn("AX-TASK-046", result.stdout)
+        self.assertNotIn("AX-TASK-047", result.stdout)
 
     def test_cli_next_action_reports_planning_guidance(self) -> None:
         result = subprocess.run(

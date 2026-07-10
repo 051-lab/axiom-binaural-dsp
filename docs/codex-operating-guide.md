@@ -17,6 +17,11 @@ Codex may coordinate work, create documentation, run tests, prepare branches,
 and publish approved changes. It must not silently change the accepted audio
 baseline or merge experiments into the official line without qualification.
 
+For orientation, Codex should start from `AXIOM.md`, then
+`docs/system-status.md`, then the narrow workflow doc for the current task.
+Plain-language sound intent comes first; implementation detail follows after
+the requested listening change is clear.
+
 When specialist parallel review is useful, use
 `docs/axiom-subagent-operating-model.md`. Subagents are advisory by default:
 Codex remains the coordinator and integrator, and Pi/harness ownership still
