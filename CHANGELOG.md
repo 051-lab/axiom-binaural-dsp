@@ -7,6 +7,11 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 ## [Unreleased] - Agentic Layer Hardening
 
 ### Added
+- Added `src/axiom_clean_r012.eel` as the official `Axiom Clean R012`
+  listening candidate, created from accepted `.11` with only the approved
+  Labs ingredients: global side-width default `135% -> 100%` and the
+  interpolated generated-sub saturation arithmetic. This does not change the
+  accepted `Axiom Clean R011` baseline.
 - Added `AXIOM.md` as the plain-language front door for the system, accepted
   baseline, current boundaries, and agent behavior.
 - Added `docs/dsp-change-workflow.md` to keep future sound-changing DSP work

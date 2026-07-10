@@ -11,6 +11,9 @@ fi
 if [[ "$script_name" == axiom_binaural_dsp_v4.1.4.11_*.eel ]]; then
   script_family="axiom_binaural_dsp_v4.1.4.11.eel"
 fi
+if [[ "$script_name" == axiom_clean_r012.eel ]]; then
+  script_family="axiom_binaural_dsp_v4.1.4.11.eel"
+fi
 host_limiter_only=false
 host_crossfeed_only=false
 phase_preserving_bass=false
@@ -283,7 +286,8 @@ if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.9.eel" ] ||
   fi
 fi
 
-if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.11.eel" ]; then
+if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.11.eel" ] ||
+   [ "$script_name" = "axiom_clean_r012.eel" ]; then
   if ! grep -Fq 'headroomGain = exp(-1.0 * DB_2_LOG);' "$script_path" ||
      ! grep -Fq 'outputGain = (slider1 > 4.0) ? (headroomGain * exp(-((slider1 - 4.0) * 0.50) * DB_2_LOG)) : headroomGain;' "$script_path" ||
      ! grep -Fq 'out_L *= outputGain;' "$script_path" ||
