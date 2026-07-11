@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-07-08
+Last updated: 2026-07-10
 
 This is the short dashboard for the Axiom repo. Start here when choosing work,
 then use `../AXIOM.md` for the plain-language system intent and
@@ -13,9 +13,15 @@ then use `../AXIOM.md` for the plain-language system intent and
 | Accepted baseline | `Axiom Clean R011` |
 | Accepted script | `src/axiom_binaural_dsp_v4.1.4.11.eel` |
 | Accepted SHA-256 | `ad7dd7b33f2e62ff03ae08d7101c7ac333d707baef26b952806990ad979b0b0e` |
-| Active candidate | none |
-| Active listening candidate | none |
-| Next candidate label | `Axiom Clean R012`, only after explicit approval |
+| Active candidate | `Axiom Clean R012` |
+| Candidate script | `src/axiom_clean_r012.eel` |
+| Candidate SHA-256 | `774e3d601b471f98b1818ee4ba424abf9e71a494f4a5a228d45c3d6af3ce070d` |
+| Candidate status | `active_unqualified_listening_candidate` |
+| Candidate static validation | `passed` |
+| Candidate qualification plan | `complete` |
+| Candidate qualification execution | `pending` |
+| Candidate listening | `pending` |
+| Candidate promotion | `not_approved` |
 | Runtime target | JamesDSP / JDSP4Linux EEL2 Liveprog |
 | Host limiter | enabled, `-1.00 dB` threshold, `60 ms` release, `0 dB` postgain |
 
@@ -37,17 +43,23 @@ The current project direction is simplification and clarity:
 - return DSP work to natural-language sound goals, one controlled hypothesis at
   a time.
 
-No official `Axiom Clean R012` script exists yet. The readiness plan is
-`axiom-clean-r012-candidate-readiness-plan-2026-07-08.md`, but candidate
-creation still requires explicit approval.
+The owner authorized R012 candidate creation. The file exists and passes static
+validation. Qualification planning is complete; qualification execution and
+listening remain pending; promotion and accepted baseline replacement are not
+approved. `axiom-state.json` is authoritative.
 
 ## Active Candidate
 
-None.
+`Axiom Clean R012` is the active unqualified listening candidate:
 
-No sound-changing `Axiom Clean R012` or v5 candidate should be created until
-the user explicitly approves a scoped hypothesis, candidate file, qualification
-scope, and listening plan.
+```text
+src/axiom_clean_r012.eel
+```
+
+Its scoped changes are global side-width default normalization from `135%` to
+`100%` and interpolated generated-sub saturation arithmetic. It is not
+qualified, listening-accepted, promoted, or accepted. Do not modify its DSP
+while state reconciliation or qualification planning is in progress.
 
 ## Current DSP Inputs
 
@@ -57,17 +69,17 @@ The `experimental03` work produced two Labs-supported ingredients:
 - modified bass-harmonic/saturation arithmetic.
 
 Those ingredients are useful input, not accepted behavior. The detailed records
-are now archived under `archive/labs/`. The next sound-changing step, if
-approved, should start from `dsp-change-workflow.md` and create only one scoped
-candidate hypothesis.
+are now archived under `archive/labs/`. They are provenance for the existing
+R012 candidate, not active Labs work. The next action is qualification planning,
+not another sound-changing step.
 
 ## Current Signal Chain
 
 ```text
 Input
   -> DC protection
-  -> bass harmonic enhancement
   -> low-mid/high-band mid-side width shaping
+  -> additive bass harmonic enhancement
   -> level-dependent high-frequency exciter
   -> STFT resonance suppression
   -> fixed -1 dB output reserve plus conditional bass-aware reserve
@@ -83,9 +95,10 @@ Axiom script without a separate approved candidate.
 
 None requiring active implementation.
 
-The completed `.11` Sub Harmonics follow-up remains a watch item. Keep
-`Axiom Clean R011` accepted unless a new repeatable normal-material problem
-justifies a separate candidate discussion.
+The completed `.11` Sub Harmonics follow-up remains a historical watch item.
+The active work boundary is review of `qualification-r012-plan.md`; R011 remains
+accepted unless R012 later passes qualification, receives explicit owner
+listening acceptance, and completes the separate promotion gate.
 
 ## Repo Boundaries
 
@@ -140,14 +153,12 @@ Known controller status:
 
 ## Best Next Actions
 
-1. Keep this repo at the simplified halt point until the next project phase is
-   chosen.
-2. Use `AXIOM.md` as the first explanation of what Axiom is and what agents
-   should optimize for.
-3. Use `dsp-change-workflow.md` before any new EEL candidate work.
-4. Do not create `Axiom Clean R012` until the user explicitly approves a
-   candidate from one scoped hypothesis.
-5. Prefer moving stale docs into `docs/archive/` over adding another competing
+1. Review and approve `qualification-r012-plan.md`.
+2. After approval, run serialized technical qualification against accepted
+   R011 without changing either DSP file.
+3. Do not begin listening acceptance, promotion, or R013 work during technical
+   qualification.
+4. Prefer moving stale docs into `docs/archive/` over adding another competing
    system explanation.
 
 ## Refresh Commands

@@ -1,6 +1,9 @@
 # Axiom Current State
 
-Last updated: 2026-06-02
+Last updated: 2026-07-10
+
+`../axiom-state.json` is the machine-readable authority for current accepted,
+candidate, Labs, phase, and next-action state.
 
 ## Accepted Baseline
 
@@ -24,8 +27,11 @@ instead of extending the confusing `v4.1.4.x` sequence. See
 
 ## Active Listening Candidate
 
-None. The next sound-changing version should not be created until a new scoped
-hypothesis has measurement support and a defined listening target.
+`Axiom Clean R012` exists at `src/axiom_clean_r012.eel`. It is an active but
+unqualified listening candidate. Static validation and qualification planning
+are complete; qualification execution and listening are pending; acceptance,
+promotion, and accepted-baseline replacement are not approved. R011 remains
+accepted.
 
 ## Host Baseline
 
@@ -50,8 +56,8 @@ internal crossfeed or internal limiter stage.
   evidence, qualification, listening acceptance, and maintenance ownership.
 - Historical `.eel` files are preserved. Sound-changing work creates a new
   versioned script instead of editing an accepted or historical script.
-- Future Axiom Clean candidates should use `Axiom Clean R012`, `Axiom Clean
-  R013`, and matching `src/axiom_clean_r012.eel` style filenames unless a later
+- Future Axiom Clean candidates after R012 should use `Axiom Clean R013` and
+  matching `src/axiom_clean_r013.eel` style filenames unless a later
   approved naming policy replaces this rule.
 
 ## Public Repo State

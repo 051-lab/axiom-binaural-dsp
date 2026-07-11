@@ -62,11 +62,11 @@ Recommended next actions:
 
 1. Use `AXIOM.md` as the plain-language entry point for what Axiom is and what
    agents should optimize for.
-2. Use `docs/dsp-change-workflow.md` before any new sound-changing EEL work.
-3. Keep `Axiom Clean R011` accepted and keep `Axiom Clean R012` uncreated until
-   the user explicitly approves a candidate from one scoped hypothesis.
-4. Use `task-state`, `next-action`, `guard-check`, and `ready-check` as the
-   machine-readable planning and safety checks.
+2. Treat `axiom-state.json` as operational truth: R011 is accepted and R012 is
+   the active unqualified candidate.
+3. Plan scoped R012 qualification without modifying R011 or R012 DSP.
+4. Use `task-state`, `next-action`, `guard-check`, and `ready-check` as views or
+   validators of the authoritative state, not separate project-state sources.
 5. Use archived Labs/review/planning documents as history only unless a future
    task intentionally promotes them back into active guidance.
 
@@ -174,6 +174,9 @@ Recommended next actions:
 - `AX-TASK-047` simplifies the active guidance layer after the user-identified
   complexity problem: `AXIOM.md` is now the front door, DSP change work has a
   short workflow, and historical reviews/plans/Labs notes are archived.
+- On 2026-07-10 the owner confirmed that subsequent R012 candidate creation was
+  authorized. This backlog remains historical task metadata; current candidate
+  state and next action come from `axiom-state.json`.
 
 ## Graduation Checklist For Sound-Changing Work
 

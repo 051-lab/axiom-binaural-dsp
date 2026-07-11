@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "accepted": {
+    "label": "Axiom Clean R011",
+    "script": "src/axiom_binaural_dsp_v4.1.4.11.eel",
+    "sha256": "ad7dd7b33f2e62ff03ae08d7101c7ac333d707baef26b952806990ad979b0b0e",
+    "status": "accepted"
+  },
+  "candidate": {
+    "label": "Axiom Clean R012",
+    "script": "src/axiom_clean_r012.eel",
+    "sha256": "774e3d601b471f98b1818ee4ba424abf9e71a494f4a5a228d45c3d6af3ce070d",
+    "status": "active_unqualified_listening_candidate",
+    "parentBaseline": "Axiom Clean R011",
+    "changeSummary": [
+      "Global side-width default normalization from 135% to 100%.",
+      "Interpolated generated-sub saturation arithmetic."
+    ],
+    "staticValidation": "passed",
+    "qualificationPlan": "complete",
+    "qualificationPlanDocument": "docs/qualification-r012-plan.md",
+    "qualificationExecution": "pending",
+    "listening": "pending",
+    "promotion": "not_approved",
+    "acceptedBaselineReplacement": "not_approved"
+  },
+  "labs": {
+    "status": "inactive",
+    "activeExperiments": []
+  },
+  "project": {
+    "phase": "r012_qualification_ready",
+    "nextAction": "Review and approve the R012 qualification plan before running serialized technical qualification.",
+    "lastUpdated": "2026-07-10"
+  },
+  "statusDefinitions": {
+    "accepted": "Current owner-accepted baseline behavior.",
+    "active_unqualified_listening_candidate": "Candidate exists for evaluation but is not qualified, listening-accepted, promoted, or accepted.",
+    "passed": "The named static validation completed successfully.",
+    "complete": "The named planning deliverable is present and internally validated; execution approval may still be required.",
+    "pending": "Required work or decision has not been completed.",
+    "not_approved": "The owner has not authorized this transition.",
+    "inactive": "No Labs experiment is currently active."
+  }
+}

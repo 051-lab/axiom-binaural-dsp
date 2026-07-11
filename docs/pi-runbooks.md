@@ -70,7 +70,7 @@ Decision:
 
 Use when:
 
-- considering any sound-changing `Axiom Clean R012`, v5, or profile candidate;
+- considering a future sound-changing candidate after R012;
 - deciding whether measurement foundations are strong enough for DSP work.
 
 Inputs:
@@ -78,7 +78,11 @@ Inputs:
 - accepted baseline hash;
 - strict local material manifest;
 - strict device matrix;
-- no existing active candidate.
+- no existing active candidate, unless the command is being used only to
+  refresh readiness context for the already-created R012 candidate.
+
+R012 already exists and must not be recreated. Its next gate is scoped
+qualification planning against accepted R011.
 
 Steps:
 

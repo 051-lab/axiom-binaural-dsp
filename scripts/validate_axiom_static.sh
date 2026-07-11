@@ -300,6 +300,15 @@ if [ "$script_name" = "axiom_binaural_dsp_v4.1.4.11.eel" ] ||
   fi
 fi
 
+if [ "$script_name" = "axiom_clean_r012.eel" ]; then
+  if python3 "$repo_root/scripts/validate_axiom_r012_candidate.py" "$script_path" \
+      --baseline "$repo_root/src/axiom_binaural_dsp_v4.1.4.11.eel"; then
+    pass "R012 approved change boundary is intact"
+  else
+    fail "R012 contains a change outside the approved candidate boundary"
+  fi
+fi
+
 if grep -Eq 'Perfect|perfect|Mathematically perfect' "$script_path"; then
   fail "unverified perfection claim remains in comments"
 else

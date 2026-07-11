@@ -11,7 +11,10 @@ before changing EEL code or host configuration.
 |------|--------|
 | Current accepted baseline | `src/axiom_binaural_dsp_v4.1.4.11.eel` |
 | Human-facing baseline label | `Axiom Clean R011` |
-| Active listening candidate | none |
+| Active listening candidate | `Axiom Clean R012` (`src/axiom_clean_r012.eel`) |
+| Candidate status | `active_unqualified_listening_candidate` |
+| Candidate qualification plan/execution | complete / pending |
+| Candidate listening | pending |
 | Runtime | JamesDSP / JDSP4Linux EEL2 Liveprog |
 | Device policy | Speaker-neutral script; optional crossfeed belongs to the host |
 | Limiter policy | No script limiter; JDSP terminal limiter owns peak control |
@@ -22,18 +25,22 @@ only the elevated-bass reserve slope above the accepted `+4 dB` Sub Harmonics
 default from `0.750 dB/dB` to `0.500 dB/dB`. It was accepted after listening
 against `v4.1.4.10`; `.10` remains the previous accepted reference.
 
-Future Axiom Clean EEL iterations should use the `Axiom Clean R012+` release
-label and matching `src/axiom_clean_r012.eel` style filenames. Preserve
+Future Axiom Clean EEL iterations after R012 should use the `Axiom Clean R013+`
+release label and matching `src/axiom_clean_r013.eel` style filenames. Preserve
 historical `v4.1.4.x` files as evidence anchors; do not continue that sequence
 for new sound-changing candidates. See `docs/versioning-and-naming.md`.
+
+`axiom-state.json` is the machine-readable authority for accepted, candidate,
+Labs, and next-action state. R012 exists, but it is not qualified, accepted, or
+approved for promotion. R011 remains the accepted reference.
 
 ## Current Signal Chain
 
 ```text
 Input
   -> DC protection
-  -> bass harmonic enhancement
   -> low-mid/high-band mid-side width shaping
+  -> additive bass harmonic enhancement
   -> level-dependent high-frequency exciter
   -> STFT resonance suppression
   -> fixed -1 dB output reserve plus conditional bass-aware reserve
@@ -144,4 +151,4 @@ kept under `docs/archive/`. Treat archived files as evidence/history, not active
 workflow instructions, unless a task explicitly promotes one back into current
 guidance.
 
-*Last updated: v4.1.4.11 accepted baseline - 2026-06-01*
+*Last updated: R012 active unqualified candidate - 2026-07-10*

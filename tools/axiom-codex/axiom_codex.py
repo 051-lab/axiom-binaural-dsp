@@ -17,6 +17,7 @@ from typing import Any
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
+PROJECT_STATE_PATH = REPO_ROOT / "axiom-state.json"
 POLICY_PATH = REPO_ROOT / "tools" / "axiom-team" / "policy.json"
 SYSTEM_STATUS = REPO_ROOT / "docs" / "system-status.md"
 KNOWLEDGE_ROOT = REPO_ROOT / "docs" / "knowledge"
@@ -216,6 +217,13 @@ def load_policy() -> dict[str, Any]:
     return json.loads(POLICY_PATH.read_text(encoding="utf-8"))
 
 
+def load_project_state() -> dict[str, Any]:
+    data = load_json(PROJECT_STATE_PATH)
+    if not isinstance(data, dict):
+        raise SystemExit(f"invalid project state: {PROJECT_STATE_PATH}")
+    return data
+
+
 def load_json(path: pathlib.Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -231,6 +239,179 @@ def file_sha256(path: pathlib.Path) -> str:
         for chunk in iter(lambda: source.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def validate_project_state_data(data: dict[str, Any]) -> list[Check]:
+    checks: list[Check] = []
+    required_top = {"schemaVersion", "accepted", "candidate", "labs", "project", "statusDefinitions"}
+    missing_top = sorted(required_top - set(data))
+    if missing_top:
+        checks.append(Check("project state fields", "fail", f"missing {', '.join(missing_top)}"))
+        return checks
+    if data.get("schemaVersion") != 1:
+        checks.append(Check("project state schema", "fail", "schemaVersion must be 1"))
+
+    accepted = data.get("accepted")
+    candidate = data.get("candidate")
+    labs = data.get("labs")
+    project = data.get("project")
+    if not isinstance(accepted, dict) or not isinstance(candidate, dict):
+        checks.append(Check("project DSP state", "fail", "accepted and candidate must be objects"))
+        return checks
+    if not isinstance(labs, dict) or not isinstance(project, dict):
+        checks.append(Check("project operating state", "fail", "labs and project must be objects"))
+        return checks
+
+    accepted_required = {"label", "script", "sha256", "status"}
+    candidate_required = {
+        "label", "script", "sha256", "status", "parentBaseline", "changeSummary",
+        "staticValidation", "qualificationPlan", "qualificationPlanDocument",
+        "qualificationExecution", "listening", "promotion",
+        "acceptedBaselineReplacement",
+    }
+    labs_required = {"status", "activeExperiments"}
+    project_required = {"phase", "nextAction", "lastUpdated"}
+    for name, value, required in [
+        ("accepted", accepted, accepted_required),
+        ("candidate", candidate, candidate_required),
+        ("labs", labs, labs_required),
+        ("project", project, project_required),
+    ]:
+        missing = sorted(required - set(value))
+        if missing:
+            checks.append(Check(f"project state {name}", "fail", f"missing {', '.join(missing)}"))
+
+    expected_values = {
+        "accepted.status": (accepted.get("status"), "accepted"),
+        "candidate.status": (candidate.get("status"), "active_unqualified_listening_candidate"),
+        "candidate.staticValidation": (candidate.get("staticValidation"), "passed"),
+        "candidate.qualificationPlan": (candidate.get("qualificationPlan"), "complete"),
+        "candidate.qualificationExecution": (candidate.get("qualificationExecution"), "pending"),
+        "candidate.listening": (candidate.get("listening"), "pending"),
+        "candidate.promotion": (candidate.get("promotion"), "not_approved"),
+        "candidate.acceptedBaselineReplacement": (candidate.get("acceptedBaselineReplacement"), "not_approved"),
+        "labs.status": (labs.get("status"), "inactive"),
+    }
+    for field, (actual, expected) in expected_values.items():
+        if actual != expected:
+            checks.append(Check("project state status", "fail", f"{field} must be {expected}, got {actual}"))
+    if candidate.get("parentBaseline") != accepted.get("label"):
+        checks.append(Check("candidate parent baseline", "fail", "candidate parentBaseline must match accepted label"))
+    if not isinstance(candidate.get("changeSummary"), list) or len(candidate.get("changeSummary", [])) != 2:
+        checks.append(Check("candidate change summary", "fail", "changeSummary must contain the two scoped R012 changes"))
+    if not isinstance(labs.get("activeExperiments"), list):
+        checks.append(Check("active Labs state", "fail", "activeExperiments must be an array"))
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(project.get("lastUpdated", ""))):
+        checks.append(Check("project state date", "fail", "lastUpdated must use YYYY-MM-DD"))
+    if not checks:
+        checks.append(Check("project state schema", "pass", "schema and status values are valid"))
+    return checks
+
+
+def validate_project_state_consistency() -> list[Check]:
+    state = load_project_state()
+    checks = validate_project_state_data(state)
+    if any(check.status == "fail" for check in checks):
+        return checks
+
+    accepted = state["accepted"]
+    candidate = state["candidate"]
+    accepted_path = REPO_ROOT / accepted["script"]
+    candidate_path = REPO_ROOT / candidate["script"]
+    if not accepted_path.is_file():
+        checks.append(Check("accepted script", "fail", f"missing {accepted['script']}"))
+    else:
+        actual_hash = file_sha256(accepted_path)
+        checks.append(Check(
+            "accepted script hash",
+            "pass" if actual_hash == accepted["sha256"] else "fail",
+            actual_hash,
+        ))
+    checks.append(Check(
+        "candidate script",
+        "pass" if candidate_path.is_file() else "fail",
+        candidate["script"],
+    ))
+    if candidate_path.is_file():
+        candidate_hash = file_sha256(candidate_path)
+        checks.append(Check(
+            "candidate script hash",
+            "pass" if candidate_hash == candidate["sha256"] else "fail",
+            candidate_hash,
+        ))
+    plan_path = REPO_ROOT / candidate["qualificationPlanDocument"]
+    plan_text = plan_path.read_text(encoding="utf-8") if plan_path.is_file() else ""
+    plan_fragments = [
+        accepted["label"], accepted["script"], accepted["sha256"],
+        candidate["label"], candidate["script"], candidate["sha256"],
+        "Plan complete; technical execution pending",
+    ]
+    plan_missing = [fragment for fragment in plan_fragments if fragment not in plan_text]
+    checks.append(Check(
+        "candidate qualification plan",
+        "pass" if plan_path.is_file() and not plan_missing else "fail",
+        "identity and status agree" if not plan_missing else "missing: " + ", ".join(plan_missing),
+    ))
+
+    policy_accepted = load_policy().get("acceptedBaseline", {})
+    policy_matches = (
+        policy_accepted.get("path") == accepted["script"]
+        and policy_accepted.get("sha256") == accepted["sha256"]
+    )
+    checks.append(Check(
+        "accepted policy alignment",
+        "pass" if policy_matches else "fail",
+        f"path={policy_accepted.get('path')}; sha256={policy_accepted.get('sha256')}",
+    ))
+
+    required_fragments = {
+        REPO_ROOT / "AXIOM.md": [
+            accepted["label"], accepted["script"], candidate["label"], candidate["script"],
+            "Active but unqualified listening candidate", "Qualification plan: complete",
+            "Qualification execution: pending", "Listening: pending",
+        ],
+        REPO_ROOT / "AGENTS.md": [
+            accepted["label"], accepted["script"], candidate["label"], candidate["script"],
+            "active_unqualified_listening_candidate",
+        ],
+        SYSTEM_STATUS: [
+            accepted["label"], accepted["script"], accepted["sha256"], candidate["label"],
+            candidate["script"], "active_unqualified_listening_candidate", "pending", "not_approved",
+        ],
+        REPO_ROOT / "docs" / "dsp-change-workflow.md": [
+            candidate["label"], candidate["script"], "active unqualified listening candidate",
+        ],
+        REPO_ROOT / "docs" / "release-gates.md": [
+            "Candidate Creation Gate", "Candidate Qualification Gate", "Listening Acceptance Gate",
+            "Accepted-Baseline Promotion Gate", candidate["label"], "unqualified",
+        ],
+    }
+    stale_claims = [
+        "There is no active official candidate",
+        "`Axiom Clean R012` is not created",
+        "No official `Axiom Clean R012` script exists yet",
+        "| Active candidate | none |",
+        "| Active listening candidate | none |",
+        "| Accepted baseline | `Axiom Clean R012` |",
+        "Axiom Clean R012 is the accepted baseline",
+        "R012 is the accepted baseline",
+    ]
+    for path, fragments in required_fragments.items():
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        missing = [fragment for fragment in fragments if fragment not in text]
+        stale = [claim for claim in stale_claims if claim in text]
+        status = "pass" if not missing and not stale else "fail"
+        detail_parts = []
+        if missing:
+            detail_parts.append("missing: " + ", ".join(missing))
+        if stale:
+            detail_parts.append("stale: " + ", ".join(stale))
+        checks.append(Check(
+            f"active state document {path.name}",
+            status,
+            "; ".join(detail_parts) or "required state markers agree",
+        ))
+    return checks
 
 
 def git_status() -> str:
@@ -465,8 +646,9 @@ def next_action_payload(
     include_maintenance: bool = False,
     review_path: pathlib.Path | None = None,
 ) -> dict[str, Any]:
+    project_state = load_project_state()
     data = load_task_state()
-    checks = validate_task_state_data(data)
+    checks = [*validate_task_state_data(data), *validate_project_state_consistency()]
     changed_paths = git_changed_paths()
     evidence = evidence_status_payload(evidence_path) if evidence_path else None
     review = agent_review_status_payload(review_path) if review_path else None
@@ -518,8 +700,8 @@ def next_action_payload(
         )
     else:
         task = None
-        action = "No unblocked task is available; inspect blocked or approval-gated tasks."
-        reason = "all open tasks are blocked, approval-gated, initial-maintenance, or seeded"
+        action = project_state["project"]["nextAction"]
+        reason = "authoritative project state defines the next legitimate action"
     return {
         "status": "fail" if any(check.status == "fail" for check in checks) else "pass",
         "recommendedAction": action,
@@ -530,6 +712,7 @@ def next_action_payload(
         "changedPaths": changed_paths,
         "blockedTasks": blocked,
         "includeMaintenance": include_maintenance,
+        "projectState": project_state,
         "checks": [check.__dict__ for check in checks],
         "boundaries": [
             "next-action is planning guidance only",
@@ -541,18 +724,23 @@ def next_action_payload(
 
 
 def task_state(args: argparse.Namespace) -> int:
+    project_state = load_project_state()
     data = load_task_state()
-    checks = validate_task_state_data(data)
+    checks = [*validate_task_state_data(data), *validate_project_state_consistency()]
     failed = any(check.status == "fail" for check in checks)
     tasks = data["tasks"]
     open_task_list = sorted(open_tasks(tasks), key=task_priority)
     if args.json:
-        print(json.dumps({"taskState": data, "checks": [check.__dict__ for check in checks]}, indent=2, sort_keys=True))
+        print(json.dumps({"projectState": project_state, "taskState": data, "checks": [check.__dict__ for check in checks]}, indent=2, sort_keys=True))
         return 1 if failed else 0
     print("# Axiom Task State\n")
     print(f"- source: `{data.get('source', '')}`")
     print(f"- last updated: `{data.get('lastUpdated', '')}`")
     print(f"- task count: `{len(tasks)}`")
+    print(f"- active candidate: `{project_state['candidate']['label']}` (`{project_state['candidate']['status']}`)")
+    print(f"- qualification plan: `{project_state['candidate']['qualificationPlan']}`")
+    print(f"- qualification execution: `{project_state['candidate']['qualificationExecution']}`")
+    print(f"- listening: `{project_state['candidate']['listening']}`")
     print("\n## Checks\n")
     for check in checks:
         print(f"- {check.status}: {check.name} - {check.detail}")
@@ -1217,24 +1405,35 @@ def evidence_ingest(args: argparse.Namespace) -> int:
 
 
 def status_summary(args: argparse.Namespace) -> int:
+    state = load_project_state()
     policy = load_policy()
-    accepted = policy["acceptedBaseline"]
+    accepted = state["accepted"]
+    candidate = state["candidate"]
     system_text = SYSTEM_STATUS.read_text(encoding="utf-8") if SYSTEM_STATUS.exists() else ""
-    active_candidate = section(system_text, "Active Candidate") or "Unknown."
     open_investigation = section(system_text, "Current Open Investigation") or "Unknown."
     dsp_diffs = git_diff_name_only("src", "scripts")
     print("# Axiom Codex Status Summary\n")
-    print(f"- accepted baseline: {accepted['version']}")
-    print(f"- accepted script: {accepted['path']}")
+    print(f"- accepted baseline: {accepted['label']}")
+    print(f"- accepted script: {accepted['script']}")
     print(f"- accepted SHA-256: {accepted['sha256']}")
-    print(f"- qualification: {accepted['qualificationDocument']}")
+    print(f"- accepted status: {accepted['status']}")
     print(f"- git status: {git_status()}")
     print(f"- DSP/script diff files: {len(dsp_diffs)}")
     if dsp_diffs:
         for item in dsp_diffs:
             print(f"  - {item}")
     print("\n## Active Candidate\n")
-    print(active_candidate)
+    print(f"- label: `{candidate['label']}`")
+    print(f"- script: `{candidate['script']}`")
+    print(f"- SHA-256: `{candidate['sha256']}`")
+    print(f"- status: `{candidate['status']}`")
+    print(f"- static validation: `{candidate['staticValidation']}`")
+    print(f"- qualification plan: `{candidate['qualificationPlan']}`")
+    print(f"- qualification plan document: `{candidate['qualificationPlanDocument']}`")
+    print(f"- qualification execution: `{candidate['qualificationExecution']}`")
+    print(f"- listening: `{candidate['listening']}`")
+    print(f"- promotion: `{candidate['promotion']}`")
+    print(f"- accepted baseline replacement: `{candidate['acceptedBaselineReplacement']}`")
     print("\n## Current Open Investigation\n")
     print(open_investigation)
     evidence_path = configured_evidence_path(args.evidence, args.no_evidence)
@@ -1247,7 +1446,7 @@ def status_summary(args: argparse.Namespace) -> int:
         print(f"- warnings: `{evidence['warningCount']}`")
         print(f"- critical failures: `{evidence['criticalFailureCount']}`")
     print("\n## Safe Next Step\n")
-    print("Use Codex for docs/tooling orchestration. Use Pi/harness for real-JDSP, candidate, publication, and merge workflows.")
+    print(state["project"]["nextAction"])
     return 0
 
 
@@ -1274,6 +1473,8 @@ def ready_check(_: argparse.Namespace) -> int:
     baseline = REPO_ROOT / policy["acceptedBaseline"]["path"]
     checks.append(Check("accepted baseline exists", "pass" if baseline.exists() else "fail", str(baseline.relative_to(REPO_ROOT)) if baseline.exists() else str(baseline)))
 
+    checks.extend(validate_project_state_consistency())
+
     checks.extend(validate_command_surface_data(load_command_surface()))
     checks.extend(validate_agent_profiles())
     checks.extend(validate_skill_eval_data(load_skill_eval_cases()))
@@ -1287,8 +1488,9 @@ def ready_check(_: argparse.Namespace) -> int:
 
 
 def local_review_payload(args: argparse.Namespace) -> dict[str, Any]:
+    state = load_project_state()
     policy = load_policy()
-    accepted = policy["acceptedBaseline"]
+    accepted = state["accepted"]
     system_text = SYSTEM_STATUS.read_text(encoding="utf-8") if SYSTEM_STATUS.exists() else ""
     changed_paths = git_changed_paths(include_untracked=not args.no_untracked)
     commands: list[dict[str, Any]] = [
@@ -1332,14 +1534,15 @@ def local_review_payload(args: argparse.Namespace) -> dict[str, Any]:
         recommended = "Run status-summary and inspect docs/system-status.md before choosing work."
     return {
         "acceptedBaseline": {
-            "version": accepted["version"],
-            "path": accepted["path"],
+            "version": policy["acceptedBaseline"]["version"],
+            "label": accepted["label"],
+            "path": accepted["script"],
             "sha256": accepted["sha256"],
-            "qualificationDocument": accepted["qualificationDocument"],
+            "qualificationDocument": policy["acceptedBaseline"]["qualificationDocument"],
         },
         "gitStatus": git_status(),
         "changedPaths": changed_paths,
-        "activeCandidate": section(system_text, "Active Candidate") or "Unknown.",
+        "activeCandidate": state["candidate"],
         "currentOpenInvestigation": section(system_text, "Current Open Investigation") or "Unknown.",
         "bestNextActions": best_next_actions,
         "recommendedNextAction": recommended,
@@ -1380,7 +1583,14 @@ def local_review_markdown(payload: dict[str, Any]) -> str:
         "",
         "## Active Candidate",
         "",
-        one_line(payload["activeCandidate"], 500),
+        (
+            f"`{payload['activeCandidate']['label']}` / "
+            f"`{payload['activeCandidate']['script']}` / "
+            f"`{payload['activeCandidate']['status']}` / qualification plan "
+            f"`{payload['activeCandidate']['qualificationPlan']}` / execution "
+            f"`{payload['activeCandidate']['qualificationExecution']}` / listening "
+            f"`{payload['activeCandidate']['listening']}`"
+        ),
         "",
         "## Current Open Investigation",
         "",
@@ -2531,6 +2741,7 @@ def guard_check(args: argparse.Namespace) -> int:
     paths = args.paths or git_changed_paths(include_untracked=not args.no_untracked)
     text_by_path = {path: git_added_lines(path) for path in paths if (REPO_ROOT / path).is_file()}
     findings = classify_guard_paths(paths, text_by_path=text_by_path)
+    findings.extend(check for check in validate_project_state_consistency() if check.status == "fail")
     failed = any(finding.status == "fail" for finding in findings)
     if args.json:
         print(json.dumps([finding.__dict__ for finding in findings], indent=2, sort_keys=True))

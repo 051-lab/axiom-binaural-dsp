@@ -19,6 +19,7 @@ the artifact is safe to commit.
 | Tool | Purpose | Touches JDSP | Repo writes | Output policy |
 | --- | --- | --- | --- | --- |
 | `scripts/validate_axiom_static.sh` | Static EEL2/JDSP safety gate for reserved constants, forbidden APIs, STFT signatures, final output assignment, and version-specific invariants. Defaults to accepted `.11`. | No | No | Console only. |
+| `scripts/validate_axiom_r012_candidate.py` | Normalized approved-diff gate allowing only the owner-approved R011-to-R012 naming, width-default, interpolation-state, and saturation-arithmetic changes. | No | No | Console only. |
 | `scripts/hot_reload_liveprog.sh` | Load a selected EEL script into JDSP Liveprog, normalize host settings, update `axiom_current.eel`, save a preset, and restore the accepted limiter threshold if JDSP resets it during preset save. Defaults to accepted `.11`. | Yes | No | Updates JDSP config, preset files, and user Liveprog symlink outside repo. |
 | `scripts/build_android_validation_package.py` | Build a local RootlessJamesDSP validation package with scripts, SHA-256 hashes, checklist, and listening template. | No | No | Package output belongs outside repo unless sanitized for release. |
 | `scripts/build_axiom_ab_listening_package.py` | Build a local blinded A/B listening package with loudness-proxy gain recommendations from matched WAV folders; supports include/exclude filters for focused package selection. | No | No | Package output belongs outside repo because it may contain private captures. |

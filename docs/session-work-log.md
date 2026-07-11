@@ -1920,3 +1920,143 @@ guidance without changing DSP behavior.
 - Choose the next phase from the simplified state: either a scoped DSP
   candidate discussion, Knowledge cleanup, Controller packaging/distribution,
   or continued repo organization.
+
+## Run 049 - Simplification Reset Phase 1 Audit
+
+Date: 2026-07-10
+Status: Completed
+Scope: Audit repository authority, candidate state, orchestration complexity,
+external boundaries, and the minimum future operating model without changing
+DSP behavior.
+
+### What Was Implemented
+
+- Added `docs/axiom-simplification-reset-phase-1.md`.
+- Classified repository areas as core, support, historical, conflicting,
+  generated/local-only, or unclear.
+- Compared code, Git history, changelog, active docs, policy, task state, Labs
+  records, helper output, and qualification records.
+- Recorded the R012 contradiction without silently selecting a governing
+  source.
+- Proposed one Axiom Lead, one DSP Specialist capability, one Qualification
+  Specialist capability, one machine-readable state source, one session path,
+  and one DSP change workflow.
+- Defined staged follow-up work for state, agents, documentation, tools,
+  archives, and external runtime/evidence boundaries.
+
+### Why It Matters
+
+- Axiom can return its attention to sound goals and listening decisions instead
+  of requiring the user to navigate internal agent and tooling machinery.
+- The committed but unregistered R012 candidate is now an explicit governance
+  blocker rather than a hidden inconsistency.
+- Broad restructuring has a reviewable sequence and stop conditions before any
+  files or capabilities are removed.
+
+### Validation
+
+- Documentation-only change; no EEL source or host policy was modified.
+- Repository links, diff whitespace, and candidate/baseline hashes were checked.
+
+### Next Recommended Work
+
+- Obtain the project owner's explicit R012 state decision before establishing
+  the single machine-readable project-state source.
+
+## Run 050 - Simplification Reset Phase 2A State Reconciliation
+
+Date: 2026-07-10
+Status: Completed
+Scope: Record the owner-confirmed R011/R012 state in one machine-readable
+authority and reconcile active state reporting without changing DSP behavior.
+
+### What Was Implemented
+
+- Added `axiom-state.json` with accepted R011, active unqualified R012,
+  inactive Labs, current reset phase, and next-action state.
+- Recorded R012 static validation as passed, qualification and listening as
+  pending, and promotion and accepted-baseline replacement as not approved.
+- Updated active documentation to distinguish candidate creation,
+  qualification, listening, acceptance, and baseline promotion.
+- Marked the R012 readiness plan completed and superseded as active instruction
+  while preserving its pre-creation record.
+- Corrected active signal-chain summaries to place multiband width processing
+  before additive bass-harmonic generation, matching R011 implementation.
+- Updated status, task, next-action, guard, ready, and local-review helper paths
+  to read or validate `axiom-state.json`.
+- Added consistency coverage for state schema, accepted hashes and policy,
+  candidate identity/status, stale no-candidate claims, false progress, and
+  false R012 acceptance claims.
+
+### Why It Matters
+
+- A fresh session now receives the same accepted and candidate state from
+  machine-readable state, active documentation, and helper output.
+- Candidate existence no longer implies qualification, listening acceptance,
+  or promotion.
+- Qualification planning can proceed from truthful state without another task
+  database or orchestration layer.
+
+### Validation
+
+- JSON parsing and project-state schema validation passed.
+- Repository-state consistency validation passed.
+- Python suite passed 230 tests.
+- Node/Pi harness passed 23 tests.
+- Static validation passed for accepted R011 and candidate R012.
+- Active Markdown relative-link checks passed.
+- Accepted R011 SHA-256 matched the file, `axiom-state.json`, and policy.
+- `guard-check`, `ready-check`, and `git diff --check` passed.
+- No EEL file changed.
+
+### Next Recommended Work
+
+- Prepare a scoped R012 qualification plan against accepted R011 without
+  changing either DSP file. Do not begin qualification until that plan is
+  reviewed.
+
+## Run 051 - R012 Qualification Readiness
+
+Date: 2026-07-10
+Status: Completed
+Scope: Add candidate-boundary safeguards and an executable technical
+qualification plan without changing DSP behavior or running real-host tests.
+
+### What Was Implemented
+
+- Added `scripts/validate_axiom_r012_candidate.py`, a normalized approved-diff
+  comparison against accepted R011.
+- Integrated the R012 boundary check into `validate_axiom_static.sh`.
+- Added mutation tests covering crossover, exciter, STFT, interpolation order,
+  and unapproved LFO changes.
+- Added `docs/qualification-r012-plan.md` with A/B/C identity, host record,
+  sample-rate/material/control matrix, measurements, focused saturation scope,
+  listening questions, limitations, and decision rules.
+- Reused the existing width-only Labs fixture as comparison B.
+- Updated project state to qualification plan complete and execution pending.
+
+### Boundaries
+
+- R011 and R012 DSP content was not modified.
+- No real-JDSP qualification or listening acceptance was performed.
+- Fleet packages, configuration, DSP ideas, and `v4.1.4.13` were not imported.
+- R013 was not created.
+
+### Validation
+
+- JSON parsing and state/document/policy consistency passed.
+- R011 and R012 static validation passed.
+- The dedicated R012 approved-diff validation passed.
+- Six R012 boundary tests passed, including deliberate unrelated mutations.
+- The full Python suite passed 236 tests.
+- The Node/Pi harness passed 23 tests.
+- Ten active-document relative-link checks passed.
+- `guard-check` passed for the complete change set.
+- `ready-check` passed with the expected validator-script diff warning and no
+  EEL/preset diff.
+- `git diff --check` passed.
+
+### Next Recommended Work
+
+- Review and explicitly approve the R012 qualification plan before starting
+  serialized technical execution.

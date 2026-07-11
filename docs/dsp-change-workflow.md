@@ -74,12 +74,33 @@ Candidate creation requires:
 Accepted-baseline promotion requires the full release gate in
 `docs/release-gates.md`.
 
+Keep these state transitions distinct:
+
+1. **Candidate creation:** a new script exists for controlled evaluation.
+2. **Candidate qualification:** required static/offline/real-host checks have
+   produced a documented result.
+3. **Candidate listening:** the owner has compared the candidate with the
+   accepted baseline and recorded a decision.
+4. **Candidate acceptance:** the owner explicitly accepts the candidate sound.
+5. **Accepted-baseline promotion:** policy, state, release documentation, and
+   repository history are updated through the release gate.
+
+Completing one transition does not imply any later transition.
+
 ## Current Candidate Boundary
 
-`Axiom Clean R012` is not created. The current plan-only gate is:
+`Axiom Clean R012` exists at:
 
 ```text
-docs/axiom-clean-r012-candidate-readiness-plan-2026-07-08.md
+src/axiom_clean_r012.eel
 ```
 
-Do not create `src/axiom_clean_r012.eel` without explicit approval.
+It is an active unqualified listening candidate. Its static validation and
+qualification plan are complete; qualification execution and listening are
+pending; acceptance and promotion are not approved. The earlier readiness plan
+is a completed pre-creation record, not active instruction. Use
+`axiom-state.json` for exact state.
+
+The R012 qualification plan is `qualification-r012-plan.md`. The next
+legitimate action is review and approval of that plan before serialized
+technical execution. Do not change either DSP script during qualification.

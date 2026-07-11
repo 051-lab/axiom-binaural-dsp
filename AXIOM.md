@@ -10,8 +10,22 @@ Axiom Clean R011
 src/axiom_binaural_dsp_v4.1.4.11.eel
 ```
 
-There is no active official candidate. `Axiom Clean R012` is only a future
-candidate-readiness plan until explicitly approved.
+The active candidate is:
+
+```text
+Axiom Clean R012
+src/axiom_clean_r012.eel
+Status: Active but unqualified listening candidate
+Qualification plan: complete
+Qualification execution: pending
+Listening: pending
+Promotion: not approved
+```
+
+Candidate creation is complete and owner-authorized. This does not mean R012
+is qualified, listening-accepted, promoted, or the accepted baseline. R011
+remains accepted. Exact operational state is authoritative in
+`axiom-state.json`.
 
 ## How To Ask Axiom For DSP Work
 
@@ -49,6 +63,10 @@ human sound description
   -> listening/measurement
   -> keep, reject, or candidate-readiness
 ```
+
+For the existing R012 candidate, the qualification plan is
+`docs/qualification-r012-plan.md`. The next step is plan review and explicit
+approval before serialized technical execution, not another sound change.
 
 No accepted or historical EEL file is edited in place.
 

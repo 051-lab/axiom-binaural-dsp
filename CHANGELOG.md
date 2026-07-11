@@ -7,6 +7,21 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 ## [Unreleased] - Agentic Layer Hardening
 
 ### Added
+- Added the R012 A/B/C qualification plan and approved-diff validator. The
+  validator permits only naming, the `135% -> 100%` width default, interpolation
+  state, and interpolated generated-sub saturation changes relative to R011.
+  Qualification execution and listening remain pending.
+- Added `axiom-state.json` as the single machine-readable authority for the
+  accepted R011 baseline, active unqualified R012 candidate, inactive Labs
+  state, current reset phase, and next legitimate action.
+- Reconciled active documentation and helper status output after the owner
+  confirmed R012 candidate creation. Qualification planning is complete;
+  execution and listening remain pending; promotion and accepted-baseline
+  replacement are not approved.
+- Added the Phase 1 Axiom Simplification Reset audit, including a classified
+  repository inventory, explicit R012 state contradictions, a minimal
+  three-capability operating model, and a gated restructuring plan. No DSP
+  behavior changed.
 - Added `src/axiom_clean_r012.eel` as the official `Axiom Clean R012`
   listening candidate, created from accepted `.11` with only the approved
   Labs ingredients: global side-width default `135% -> 100%` and the
@@ -30,8 +45,8 @@ All notable changes to Axiom Binaural DSP are documented in this file.
   bass-saturation justifies `Axiom Clean R012` candidate-readiness planning,
   but not candidate creation or baseline promotion.
 - Added the `Axiom Clean R012` candidate-readiness plan and 2026-07-08
-  development standstill roadmap, leaving no active candidate and no urgent
-  unblocked implementation task before the audit shift.
+  development standstill roadmap, which at that time left no active candidate
+  and no urgent unblocked implementation task before the audit shift.
 - Added Labs review, plan, and listening-target documentation for triaging
   `experimental03` without promoting the full multi-variable script.
 - Added `agentic-audit` to validate command registry/runtime mappings, native

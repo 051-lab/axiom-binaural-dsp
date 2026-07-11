@@ -1,6 +1,13 @@
 # Axiom Clean R012 Candidate-Readiness Plan
 
 Date: 2026-07-08
+Status: **Completed and superseded as active instruction on 2026-07-10**
+
+R012 was subsequently created with project-owner authorization. Preserve this
+document as the pre-creation plan and evidence boundary. Current operational
+state is in `../axiom-state.json`; current workflow is in
+`dsp-change-workflow.md`. R012 remains unqualified, listening is pending, and
+promotion is not approved.
 
 Related task: `AX-TASK-046`
 
@@ -133,3 +140,6 @@ For the audit halt, stop here.
 The project has a clear candidate-readiness plan, no active candidate, no
 accepted-baseline change, and no pending DSP implementation that must be
 completed before the next project shift.
+
+This paragraph records the 2026-07-08 standstill state. It is historical and
+must not be used to infer current candidate state.

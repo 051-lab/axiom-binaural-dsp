@@ -31,6 +31,77 @@ axiom_codex = load_helper()
 
 
 class AxiomCodexHelperTests(unittest.TestCase):
+    def test_authoritative_project_state_is_valid_and_consistent(self) -> None:
+        state = axiom_codex.load_project_state()
+        checks = axiom_codex.validate_project_state_consistency()
+        self.assertEqual(state["accepted"]["label"], "Axiom Clean R011")
+        self.assertEqual(state["candidate"]["label"], "Axiom Clean R012")
+        self.assertEqual(state["candidate"]["sha256"], "774e3d601b471f98b1818ee4ba424abf9e71a494f4a5a228d45c3d6af3ce070d")
+        self.assertEqual(state["candidate"]["status"], "active_unqualified_listening_candidate")
+        self.assertEqual(state["candidate"]["qualificationPlan"], "complete")
+        self.assertEqual(state["candidate"]["qualificationPlanDocument"], "docs/qualification-r012-plan.md")
+        self.assertEqual(state["candidate"]["qualificationExecution"], "pending")
+        self.assertEqual(state["candidate"]["listening"], "pending")
+        self.assertFalse(any(check.status == "fail" for check in checks))
+
+    def test_project_state_validation_rejects_false_candidate_progress(self) -> None:
+        state = json.loads(json.dumps(axiom_codex.load_project_state()))
+        state["candidate"]["qualificationExecution"] = "passed"
+        state["candidate"]["listening"] = "accepted"
+        checks = axiom_codex.validate_project_state_data(state)
+        details = "\n".join(check.detail for check in checks)
+        self.assertTrue(any(check.status == "fail" for check in checks))
+        self.assertIn("candidate.qualificationExecution must be pending", details)
+        self.assertIn("candidate.listening must be pending", details)
+
+    def test_project_state_consistency_rejects_stale_active_status_doc(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            stale_status = Path(directory) / "system-status.md"
+            stale_status.write_text("## Active Candidate\n\nNone.\n", encoding="utf-8")
+            with patch.object(axiom_codex, "SYSTEM_STATUS", stale_status):
+                checks = axiom_codex.validate_project_state_consistency()
+        self.assertTrue(
+            any(check.status == "fail" and check.name == "active state document system-status.md" for check in checks)
+        )
+
+    def test_project_state_consistency_rejects_candidate_as_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            wrong_status = Path(directory) / "system-status.md"
+            wrong_status.write_text(
+                axiom_codex.SYSTEM_STATUS.read_text(encoding="utf-8")
+                + "\nR012 is the accepted baseline.\n",
+                encoding="utf-8",
+            )
+            with patch.object(axiom_codex, "SYSTEM_STATUS", wrong_status):
+                checks = axiom_codex.validate_project_state_consistency()
+        self.assertTrue(
+            any(check.status == "fail" and check.name == "active state document system-status.md" for check in checks)
+        )
+
+    def test_project_state_consistency_rejects_policy_baseline_drift(self) -> None:
+        policy = axiom_codex.load_policy()
+        policy["acceptedBaseline"]["path"] = "src/wrong.eel"
+        with patch.object(axiom_codex, "load_policy", return_value=policy):
+            checks = axiom_codex.validate_project_state_consistency()
+        self.assertTrue(any(check.status == "fail" and check.name == "accepted policy alignment" for check in checks))
+
+    def test_cli_status_summary_reports_authoritative_candidate_state(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(HELPER_PATH), "status-summary", "--no-evidence"],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Axiom Clean R011", result.stdout)
+        self.assertIn("Axiom Clean R012", result.stdout)
+        self.assertIn("active_unqualified_listening_candidate", result.stdout)
+        self.assertIn("qualification plan: `complete`", result.stdout)
+        self.assertIn("qualification execution: `pending`", result.stdout)
+        self.assertIn("listening: `pending`", result.stdout)
+        self.assertIn("accepted baseline replacement: `not_approved`", result.stdout)
+
     def test_command_surface_has_required_safe_workflows(self) -> None:
         commands = axiom_codex.command_surface_lookup()
         for name in [

@@ -461,7 +461,7 @@
       "phase": "done",
       "requiresApproval": false,
       "blockedBy": [],
-      "nextAction": "None. Candidate creation requires a later explicit approval after the audit standstill."
+      "nextAction": "Completed pre-creation plan. Current candidate state is authoritative in axiom-state.json."
     },
     {
       "id": "AX-TASK-047",

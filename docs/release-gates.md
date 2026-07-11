@@ -4,6 +4,12 @@ This document defines what must be true before repository changes are
 published or promoted. It separates documentation, tooling, Labs, candidate,
 and accepted-baseline gates.
 
+Current state: `Axiom Clean R012` exists as an **unqualified** candidate.
+Creation and qualification planning are complete; qualification execution and
+listening are pending; acceptance and promotion are not approved. `Axiom Clean
+R011` remains accepted. Candidate creation, qualification, listening,
+acceptance, and accepted-baseline promotion are separate transitions.
+
 ## Gate Levels
 
 | Level | Scope | May Change DSP Sound? | Required Approval |
@@ -11,7 +17,7 @@ and accepted-baseline gates.
 | Documentation | Public docs, templates, issue forms | No | Normal review |
 | Tooling | Scripts, tests, harness, generators | No, unless explicitly a render path change | Normal review plus relevant tests |
 | Labs | Research branches, fixtures, diagnostics | Not accepted behavior | Review as research |
-| Candidate | New versioned EEL script for listening | Yes | Qualification plus user listening |
+| Candidate | New versioned EEL script for controlled evaluation | Yes | Explicit creation approval; qualification and listening remain separate |
 | Accepted Baseline | Policy update and official promotion | Yes | Explicit user acceptance, PR, merge approval |
 
 ## Documentation Gate
@@ -96,6 +102,9 @@ Required before formal listening:
 Measurement does not replace listening. It decides whether listening is worth
 doing.
 
+Passing this gate marks a candidate qualified or qualified-with-documented
+limitations. It does not accept the candidate sound and does not promote it.
+
 ## Listening Acceptance Gate
 
 Required before promotion:
@@ -109,6 +118,9 @@ Required before promotion:
 
 If the decision is `needs_retest` or `no_decision`, the candidate cannot be
 promoted.
+
+Listening eligibility is not listening acceptance. Only the project owner's
+explicit sound decision can mark a candidate accepted.
 
 ## Accepted-Baseline Promotion Gate
 
