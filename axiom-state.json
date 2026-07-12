@@ -19,7 +19,8 @@
     "staticValidation": "passed",
     "qualificationPlan": "complete",
     "qualificationPlanDocument": "docs/qualification-r012-plan.md",
-    "qualificationExecution": "pending",
+    "qualificationExecution": "requires_investigation",
+    "qualificationRecord": "docs/qualification-r012.md",
     "listening": "pending",
     "promotion": "not_approved",
     "acceptedBaselineReplacement": "not_approved"
@@ -29,9 +30,9 @@
     "activeExperiments": []
   },
   "project": {
-    "phase": "r012_qualification_ready",
-    "nextAction": "Review and approve the R012 qualification plan before running serialized technical qualification.",
-    "lastUpdated": "2026-07-10"
+    "phase": "r012_technical_qualification_requires_investigation",
+    "nextAction": "Review the R012 technical qualification record and decide whether a targeted elevated-bass B/C isolation run is warranted.",
+    "lastUpdated": "2026-07-11"
   },
   "statusDefinitions": {
     "accepted": "Current owner-accepted baseline behavior.",
@@ -40,6 +41,7 @@
     "complete": "The named planning deliverable is present and internally validated; execution approval may still be required.",
     "pending": "Required work or decision has not been completed.",
     "not_approved": "The owner has not authorized this transition.",
+    "requires_investigation": "Technical evidence found a repeatable concern or material limitation that must be resolved before listening eligibility.",
     "inactive": "No Labs experiment is currently active."
   }
 }

@@ -266,7 +266,7 @@ def validate_project_state_data(data: dict[str, Any]) -> list[Check]:
     candidate_required = {
         "label", "script", "sha256", "status", "parentBaseline", "changeSummary",
         "staticValidation", "qualificationPlan", "qualificationPlanDocument",
-        "qualificationExecution", "listening", "promotion",
+        "qualificationExecution", "qualificationRecord", "listening", "promotion",
         "acceptedBaselineReplacement",
     }
     labs_required = {"status", "activeExperiments"}
@@ -286,7 +286,7 @@ def validate_project_state_data(data: dict[str, Any]) -> list[Check]:
         "candidate.status": (candidate.get("status"), "active_unqualified_listening_candidate"),
         "candidate.staticValidation": (candidate.get("staticValidation"), "passed"),
         "candidate.qualificationPlan": (candidate.get("qualificationPlan"), "complete"),
-        "candidate.qualificationExecution": (candidate.get("qualificationExecution"), "pending"),
+        "candidate.qualificationExecution": (candidate.get("qualificationExecution"), "requires_investigation"),
         "candidate.listening": (candidate.get("listening"), "pending"),
         "candidate.promotion": (candidate.get("promotion"), "not_approved"),
         "candidate.acceptedBaselineReplacement": (candidate.get("acceptedBaselineReplacement"), "not_approved"),
@@ -344,13 +344,26 @@ def validate_project_state_consistency() -> list[Check]:
     plan_fragments = [
         accepted["label"], accepted["script"], accepted["sha256"],
         candidate["label"], candidate["script"], candidate["sha256"],
-        "Plan complete; technical execution pending",
+        "Plan complete; technical execution result is recorded in `qualification-r012.md`",
     ]
     plan_missing = [fragment for fragment in plan_fragments if fragment not in plan_text]
     checks.append(Check(
         "candidate qualification plan",
         "pass" if plan_path.is_file() and not plan_missing else "fail",
         "identity and status agree" if not plan_missing else "missing: " + ", ".join(plan_missing),
+    ))
+    record_path = REPO_ROOT / candidate["qualificationRecord"]
+    record_text = record_path.read_text(encoding="utf-8") if record_path.is_file() else ""
+    record_fragments = [
+        accepted["label"], accepted["script"], accepted["sha256"],
+        candidate["label"], candidate["script"], candidate["sha256"],
+        "Requires investigation",
+    ]
+    record_missing = [fragment for fragment in record_fragments if fragment not in record_text]
+    checks.append(Check(
+        "candidate qualification record",
+        "pass" if record_path.is_file() and not record_missing else "fail",
+        "identity and decision agree" if not record_missing else "missing: " + ", ".join(record_missing),
     ))
 
     policy_accepted = load_policy().get("acceptedBaseline", {})
@@ -368,7 +381,7 @@ def validate_project_state_consistency() -> list[Check]:
         REPO_ROOT / "AXIOM.md": [
             accepted["label"], accepted["script"], candidate["label"], candidate["script"],
             "Active but unqualified listening candidate", "Qualification plan: complete",
-            "Qualification execution: pending", "Listening: pending",
+            "Qualification execution: requires investigation", "Listening: pending",
         ],
         REPO_ROOT / "AGENTS.md": [
             accepted["label"], accepted["script"], candidate["label"], candidate["script"],
@@ -740,6 +753,7 @@ def task_state(args: argparse.Namespace) -> int:
     print(f"- active candidate: `{project_state['candidate']['label']}` (`{project_state['candidate']['status']}`)")
     print(f"- qualification plan: `{project_state['candidate']['qualificationPlan']}`")
     print(f"- qualification execution: `{project_state['candidate']['qualificationExecution']}`")
+    print(f"- qualification record: `{project_state['candidate']['qualificationRecord']}`")
     print(f"- listening: `{project_state['candidate']['listening']}`")
     print("\n## Checks\n")
     for check in checks:
@@ -1431,6 +1445,7 @@ def status_summary(args: argparse.Namespace) -> int:
     print(f"- qualification plan: `{candidate['qualificationPlan']}`")
     print(f"- qualification plan document: `{candidate['qualificationPlanDocument']}`")
     print(f"- qualification execution: `{candidate['qualificationExecution']}`")
+    print(f"- qualification record: `{candidate['qualificationRecord']}`")
     print(f"- listening: `{candidate['listening']}`")
     print(f"- promotion: `{candidate['promotion']}`")
     print(f"- accepted baseline replacement: `{candidate['acceptedBaselineReplacement']}`")

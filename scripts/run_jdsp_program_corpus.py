@@ -111,13 +111,25 @@ def main() -> int:
     parser.add_argument("--master-limiter-threshold-db", type=float, default=-1.0)
     parser.add_argument("--ceiling-dbfs", type=float, default=-0.50)
     parser.add_argument("--transparency-db", type=float, default=0.15)
+    parser.add_argument("--sample-rate", type=int, default=48000)
     args = parser.parse_args()
+    if args.sample_rate < 8000:
+        parser.error("--sample-rate must be at least 8000")
     script_dir = pathlib.Path(__file__).resolve().parent
     output_dir = args.output_dir.resolve()
     stimuli_dir = output_dir / "stimuli"
     reports: dict[str, dict[str, Any]] = {}
     output_dir.mkdir(parents=True, exist_ok=True)
-    run([sys.executable, str(script_dir / "generate_axiom_program_corpus.py"), str(stimuli_dir)], "generate corpus")
+    run(
+        [
+            sys.executable,
+            str(script_dir / "generate_axiom_program_corpus.py"),
+            "--sample-rate",
+            str(args.sample_rate),
+            str(stimuli_dir),
+        ],
+        "generate corpus",
+    )
     for name in PROGRAM_NAMES:
         stimulus = stimuli_dir / f"{name}.wav"
         baseline_wav = output_dir / "baseline" / f"{name}.wav"
@@ -174,6 +186,7 @@ def main() -> int:
         "master_limiter_threshold_db": args.master_limiter_threshold_db,
         "ceiling_dbfs": args.ceiling_dbfs,
         "transparency_db": args.transparency_db,
+        "sample_rate_hz": args.sample_rate,
         "checks": checks,
         "captures": reports,
     }

@@ -78,7 +78,7 @@ def read_manifest(path: pathlib.Path) -> list[dict[str, Any]]:
     return parsed
 
 
-def convert_excerpt(item: dict[str, Any], destination: pathlib.Path) -> None:
+def convert_excerpt(item: dict[str, Any], destination: pathlib.Path, sample_rate: int = 48000) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     run(
         [
@@ -98,7 +98,7 @@ def convert_excerpt(item: dict[str, Any], destination: pathlib.Path) -> None:
             "-ac",
             "2",
             "-ar",
-            "48000",
+            str(sample_rate),
             "-c:a",
             "pcm_s16le",
             str(destination),
@@ -189,7 +189,10 @@ def main() -> int:
     parser.add_argument("--master-limiter-threshold-db", type=float, default=-1.0)
     parser.add_argument("--ceiling-dbfs", type=float, default=-0.50)
     parser.add_argument("--transparency-db", type=float, default=0.15)
+    parser.add_argument("--sample-rate", type=int, default=48000)
     args = parser.parse_args()
+    if args.sample_rate < 8000:
+        parser.error("--sample-rate must be at least 8000")
     script_dir = pathlib.Path(__file__).resolve().parent
     output_dir = args.output_dir.resolve()
     items = read_manifest(args.manifest.resolve())
@@ -200,7 +203,7 @@ def main() -> int:
         candidate_wav = output_dir / "candidate" / f"{item['name']}.wav"
         compare_json = output_dir / "comparison" / f"{item['name']}.json"
         compare_md = output_dir / "comparison" / f"{item['name']}.md"
-        convert_excerpt(item, input_wav)
+        convert_excerpt(item, input_wav, args.sample_rate)
         for eel, output, label in (
             (args.baseline_eel.resolve(), baseline_wav, "baseline"),
             (args.candidate_eel.resolve(), candidate_wav, "candidate"),
@@ -263,6 +266,7 @@ def main() -> int:
         "master_limiter_threshold_db": args.master_limiter_threshold_db,
         "ceiling_dbfs": args.ceiling_dbfs,
         "transparency_db": args.transparency_db,
+        "sample_rate_hz": args.sample_rate,
         "items": reports,
         "checks": checks,
     }

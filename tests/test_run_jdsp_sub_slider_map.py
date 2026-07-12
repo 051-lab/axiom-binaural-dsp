@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import subprocess
 import unittest
 from pathlib import Path
 
@@ -45,6 +46,17 @@ def slider(
 
 
 class SubSliderMapTests(unittest.TestCase):
+    def test_cli_rejects_two_repetitions_before_host_work(self) -> None:
+        script = Path(__file__).resolve().parents[1] / "scripts" / "run_jdsp_sub_slider_map.py"
+        result = subprocess.run(
+            [sys.executable, str(script), "--repetitions", "2", "missing.eel", "missing.json", "/tmp/out"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("at least 3", result.stderr)
+
     def test_elevated_clipping_records_boundary_without_rejecting_default(self) -> None:
         evaluation = slider_map.evaluate_map(
             [slider(4.0, -0.7), slider(8.0, -0.4), slider(12.0, 0.0, clipped=3)],

@@ -17,7 +17,7 @@ Axiom Clean R012
 src/axiom_clean_r012.eel
 Status: Active but unqualified listening candidate
 Qualification plan: complete
-Qualification execution: pending
+Qualification execution: requires investigation
 Listening: pending
 Promotion: not approved
 ```
@@ -64,9 +64,12 @@ human sound description
   -> keep, reject, or candidate-readiness
 ```
 
-For the existing R012 candidate, the qualification plan is
-`docs/qualification-r012-plan.md`. The next step is plan review and explicit
-approval before serialized technical execution, not another sound change.
+For the existing R012 candidate, the plan is
+`docs/qualification-r012-plan.md` and its technical record is
+`docs/qualification-r012.md`. Technical execution found an elevated-bass
+question requiring investigation; it did not qualify, accept, promote, or
+replace R011. The next step is an owner decision on narrowly scoped follow-up,
+not another sound change.
 
 No accepted or historical EEL file is edited in place.
 

@@ -13,7 +13,7 @@ before changing EEL code or host configuration.
 | Human-facing baseline label | `Axiom Clean R011` |
 | Active listening candidate | `Axiom Clean R012` (`src/axiom_clean_r012.eel`) |
 | Candidate status | `active_unqualified_listening_candidate` |
-| Candidate qualification plan/execution | complete / pending |
+| Candidate qualification plan/execution | complete / requires investigation |
 | Candidate listening | pending |
 | Runtime | JamesDSP / JDSP4Linux EEL2 Liveprog |
 | Device policy | Speaker-neutral script; optional crossfeed belongs to the host |
@@ -151,4 +151,4 @@ kept under `docs/archive/`. Treat archived files as evidence/history, not active
 workflow instructions, unless a task explicitly promotes one back into current
 guidance.
 
-*Last updated: R012 active unqualified candidate - 2026-07-10*
+*Last updated: R012 technical qualification requires investigation - 2026-07-11*

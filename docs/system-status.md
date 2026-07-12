@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-07-10
+Last updated: 2026-07-11
 
 This is the short dashboard for the Axiom repo. Start here when choosing work,
 then use `../AXIOM.md` for the plain-language system intent and
@@ -19,7 +19,7 @@ then use `../AXIOM.md` for the plain-language system intent and
 | Candidate status | `active_unqualified_listening_candidate` |
 | Candidate static validation | `passed` |
 | Candidate qualification plan | `complete` |
-| Candidate qualification execution | `pending` |
+| Candidate qualification execution | `requires_investigation` |
 | Candidate listening | `pending` |
 | Candidate promotion | `not_approved` |
 | Runtime target | JamesDSP / JDSP4Linux EEL2 Liveprog |
@@ -44,9 +44,9 @@ The current project direction is simplification and clarity:
   a time.
 
 The owner authorized R012 candidate creation. The file exists and passes static
-validation. Qualification planning is complete; qualification execution and
-listening remain pending; promotion and accepted baseline replacement are not
-approved. `axiom-state.json` is authoritative.
+validation. Qualification planning is complete. Technical execution requires
+investigation; listening remains pending; promotion and accepted baseline
+replacement are not approved. `axiom-state.json` is authoritative.
 
 ## Active Candidate
 
@@ -59,7 +59,7 @@ src/axiom_clean_r012.eel
 Its scoped changes are global side-width default normalization from `135%` to
 `100%` and interpolated generated-sub saturation arithmetic. It is not
 qualified, listening-accepted, promoted, or accepted. Do not modify its DSP
-while state reconciliation or qualification planning is in progress.
+while qualification investigation is in progress.
 
 ## Current DSP Inputs
 
@@ -70,8 +70,8 @@ The `experimental03` work produced two Labs-supported ingredients:
 
 Those ingredients are useful input, not accepted behavior. The detailed records
 are now archived under `archive/labs/`. They are provenance for the existing
-R012 candidate, not active Labs work. The next action is qualification planning,
-not another sound-changing step.
+R012 candidate, not active Labs work. The next action is an owner review of the
+technical qualification record, not another sound-changing step.
 
 ## Current Signal Chain
 
@@ -93,12 +93,14 @@ Axiom script without a separate approved candidate.
 
 ## Current Open Investigation
 
-None requiring active implementation.
+R012 technical qualification requires investigation before structured listening.
+The native 44.1 kHz screen was stable and unclipped, but elevated-bass results
+need a targeted B/C isolation before their source can be attributed. See
+`qualification-r012.md`.
 
 The completed `.11` Sub Harmonics follow-up remains a historical watch item.
-The active work boundary is review of `qualification-r012-plan.md`; R011 remains
-accepted unless R012 later passes qualification, receives explicit owner
-listening acceptance, and completes the separate promotion gate.
+R011 remains accepted unless R012 later resolves qualification, receives
+explicit owner listening acceptance, and completes the separate promotion gate.
 
 ## Repo Boundaries
 
@@ -153,11 +155,10 @@ Known controller status:
 
 ## Best Next Actions
 
-1. Review and approve `qualification-r012-plan.md`.
-2. After approval, run serialized technical qualification against accepted
-   R011 without changing either DSP file.
-3. Do not begin listening acceptance, promotion, or R013 work during technical
-   qualification.
+1. Review `qualification-r012.md` and decide whether to run targeted elevated-
+   bass B/C isolation at the supported native rate.
+2. Keep R011 accepted and R012 unqualified while the investigation is open.
+3. Do not begin listening acceptance, promotion, or R013 work.
 4. Prefer moving stale docs into `docs/archive/` over adding another competing
    system explanation.
 

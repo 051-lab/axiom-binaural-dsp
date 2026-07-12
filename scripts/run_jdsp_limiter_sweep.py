@@ -152,9 +152,10 @@ def render_track(
     repetitions: int,
     max_metric_spread_db: float,
     conditioning_renders: int = 0,
+    sample_rate: int = 48000,
 ) -> dict[str, Any]:
     excerpt = output_dir / "excerpt.wav"
-    convert_excerpt(item, excerpt)
+    convert_excerpt(item, excerpt, sample_rate)
     thresholds: dict[str, Any] = {}
     for threshold in thresholds_db:
         key = str(threshold)

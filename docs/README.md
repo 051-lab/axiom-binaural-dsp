@@ -38,6 +38,7 @@ reviews, completed Labs notes, and previous planning records are in
 | --- | --- |
 | [qualification-v4.1.4.11.md](qualification-v4.1.4.11.md) | Accepted `Axiom Clean R011 / v4.1.4.11` qualification record. |
 | [qualification-r012-plan.md](qualification-r012-plan.md) | Active A/B/C technical qualification plan for unqualified R012. |
+| [qualification-r012.md](qualification-r012.md) | Sanitized R012 technical qualification result: investigation required before listening. |
 | [sub-harmonics-follow-up-v4.1.4.11.md](sub-harmonics-follow-up-v4.1.4.11.md) | Closed `.11` Sub Harmonics follow-up and watch-item result. |
 | [perceptual-metrics.md](perceptual-metrics.md) | Offline loudness, true-peak proxy, transient, M/S, and ERB-like metric scope. |
 | [corpus-material.md](corpus-material.md) | Material-class taxonomy and local/private corpus boundary. |

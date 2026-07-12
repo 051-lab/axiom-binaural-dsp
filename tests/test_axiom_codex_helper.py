@@ -40,7 +40,8 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertEqual(state["candidate"]["status"], "active_unqualified_listening_candidate")
         self.assertEqual(state["candidate"]["qualificationPlan"], "complete")
         self.assertEqual(state["candidate"]["qualificationPlanDocument"], "docs/qualification-r012-plan.md")
-        self.assertEqual(state["candidate"]["qualificationExecution"], "pending")
+        self.assertEqual(state["candidate"]["qualificationExecution"], "requires_investigation")
+        self.assertEqual(state["candidate"]["qualificationRecord"], "docs/qualification-r012.md")
         self.assertEqual(state["candidate"]["listening"], "pending")
         self.assertFalse(any(check.status == "fail" for check in checks))
 
@@ -51,7 +52,7 @@ class AxiomCodexHelperTests(unittest.TestCase):
         checks = axiom_codex.validate_project_state_data(state)
         details = "\n".join(check.detail for check in checks)
         self.assertTrue(any(check.status == "fail" for check in checks))
-        self.assertIn("candidate.qualificationExecution must be pending", details)
+        self.assertIn("candidate.qualificationExecution must be requires_investigation", details)
         self.assertIn("candidate.listening must be pending", details)
 
     def test_project_state_consistency_rejects_stale_active_status_doc(self) -> None:
@@ -98,7 +99,8 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("Axiom Clean R012", result.stdout)
         self.assertIn("active_unqualified_listening_candidate", result.stdout)
         self.assertIn("qualification plan: `complete`", result.stdout)
-        self.assertIn("qualification execution: `pending`", result.stdout)
+        self.assertIn("qualification execution: `requires_investigation`", result.stdout)
+        self.assertIn("qualification record: `docs/qualification-r012.md`", result.stdout)
         self.assertIn("listening: `pending`", result.stdout)
         self.assertIn("accepted baseline replacement: `not_approved`", result.stdout)
 

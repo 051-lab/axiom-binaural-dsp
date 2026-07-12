@@ -96,11 +96,12 @@ src/axiom_clean_r012.eel
 ```
 
 It is an active unqualified listening candidate. Its static validation and
-qualification plan are complete; qualification execution and listening are
-pending; acceptance and promotion are not approved. The earlier readiness plan
-is a completed pre-creation record, not active instruction. Use
-`axiom-state.json` for exact state.
+qualification plan are complete; technical qualification requires
+investigation; listening is pending; acceptance and promotion are not approved.
+The earlier readiness plan is a completed pre-creation record, not active
+instruction. Use `axiom-state.json` for exact state.
 
-The R012 qualification plan is `qualification-r012-plan.md`. The next
-legitimate action is review and approval of that plan before serialized
-technical execution. Do not change either DSP script during qualification.
+The R012 qualification plan is `qualification-r012-plan.md`; the recorded
+technical outcome is `qualification-r012.md`. The next legitimate action is an
+owner decision on targeted investigation, not another DSP change. Do not change
+either DSP script during qualification.

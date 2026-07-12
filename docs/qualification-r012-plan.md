@@ -1,10 +1,11 @@
 # Axiom Clean R012 Qualification Plan
 
 Date: 2026-07-10
-Status: Plan complete; technical execution pending
+Status: Plan complete; technical execution result is recorded in `qualification-r012.md`
 
-This plan prepares controlled technical qualification. It does not contain
-qualification results, listening acceptance, or promotion approval.
+This plan prepares controlled technical qualification. The execution record is
+`qualification-r012.md`; neither document grants listening acceptance or
+promotion approval.
 `../axiom-state.json` remains the operational state authority.
 
 ## Identity

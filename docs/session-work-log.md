@@ -2015,6 +2015,38 @@ authority and reconcile active state reporting without changing DSP behavior.
   changing either DSP file. Do not begin qualification until that plan is
   reviewed.
 
+## Run 052 - R012 Technical Qualification Execution
+
+Date: 2026-07-11
+Status: Requires investigation
+Scope: Serialized real-JDSP technical qualification of R012 against accepted
+R011, without DSP or preset edits.
+
+### Outcome
+
+- Completed native `44.1 kHz` A/B/C deterministic, generated-corpus, and
+  sanitized local-material comparisons.
+- Completed a bounded A/C elevated-bass screen at `+4`, `+8`, and `+12 dB`.
+- No completed candidate capture clipped; completed repeated captures were
+  stable and valid.
+- R012 showed repeatable additional RMS retreat on the elevated A/C screen.
+  B/C elevated isolation and limiter telemetry are unavailable, so the result
+  requires investigation before structured listening.
+- Native `48`/`96 kHz`, the full focused saturation matrix, and some control
+  settings were not completed; no missing measurement was invented.
+
+### Boundaries
+
+- R011, R012, Labs fixture, and presets were unchanged.
+- Fleet work and R013 remained outside scope.
+- Raw captures, local manifests, and machine-specific reports stayed outside
+  the repository.
+
+### Next Recommended Work
+
+- Owner review of `qualification-r012.md`, then decide whether a targeted
+  native-rate B/C elevated-bass isolation is warranted.
+
 ## Run 051 - R012 Qualification Readiness
 
 Date: 2026-07-10

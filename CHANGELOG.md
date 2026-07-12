@@ -10,13 +10,13 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added the R012 A/B/C qualification plan and approved-diff validator. The
   validator permits only naming, the `135% -> 100%` width default, interpolation
   state, and interpolated generated-sub saturation changes relative to R011.
-  Qualification execution and listening remain pending.
+  Technical execution now requires investigation; listening remains pending.
 - Added `axiom-state.json` as the single machine-readable authority for the
   accepted R011 baseline, active unqualified R012 candidate, inactive Labs
   state, current reset phase, and next legitimate action.
 - Reconciled active documentation and helper status output after the owner
   confirmed R012 candidate creation. Qualification planning is complete;
-  execution and listening remain pending; promotion and accepted-baseline
+  execution requires investigation and listening remains pending; promotion and accepted-baseline
   replacement are not approved.
 - Added the Phase 1 Axiom Simplification Reset audit, including a classified
   repository inventory, explicit R012 state contradictions, a minimal
@@ -70,6 +70,10 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added adversarial regression coverage for malformed Agentic Layer metadata.
 
 ### Changed
+- Recorded the sanitized R012 technical qualification outcome as requiring
+  investigation before structured listening. Added native-rate options to the
+  relevant qualification runners and require three repetitions for the slider
+  map's repeatability qualification.
 - Simplified `docs/system-status.md` and `docs/README.md` so fresh sessions have
   one clear current-state path instead of competing historical guidance.
 - Added `AX-TASK-047` to track the simplification reset without changing DSP

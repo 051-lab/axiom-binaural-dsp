@@ -1,6 +1,6 @@
 # Axiom Current State
 
-Last updated: 2026-07-10
+Last updated: 2026-07-11
 
 `../axiom-state.json` is the machine-readable authority for current accepted,
 candidate, Labs, phase, and next-action state.
@@ -29,9 +29,9 @@ instead of extending the confusing `v4.1.4.x` sequence. See
 
 `Axiom Clean R012` exists at `src/axiom_clean_r012.eel`. It is an active but
 unqualified listening candidate. Static validation and qualification planning
-are complete; qualification execution and listening are pending; acceptance,
-promotion, and accepted-baseline replacement are not approved. R011 remains
-accepted.
+are complete; technical qualification requires investigation; listening,
+acceptance, promotion, and accepted-baseline replacement remain pending or not
+approved. R011 remains accepted. See `qualification-r012.md`.
 
 ## Host Baseline
 

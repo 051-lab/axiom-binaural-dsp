@@ -5,9 +5,9 @@ published or promoted. It separates documentation, tooling, Labs, candidate,
 and accepted-baseline gates.
 
 Current state: `Axiom Clean R012` exists as an **unqualified** candidate.
-Creation and qualification planning are complete; qualification execution and
-listening are pending; acceptance and promotion are not approved. `Axiom Clean
-R011` remains accepted. Candidate creation, qualification, listening,
+Creation and qualification planning are complete; technical qualification
+requires investigation and listening is pending; acceptance and promotion are
+not approved. `Axiom Clean R011` remains accepted. Candidate creation, qualification, listening,
 acceptance, and accepted-baseline promotion are separate transitions.
 
 ## Gate Levels

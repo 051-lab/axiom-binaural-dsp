@@ -224,6 +224,7 @@ def main() -> int:
     parser.add_argument("--ceiling-dbfs", type=float, default=-0.50)
     parser.add_argument("--max-metric-spread-db", type=float, default=0.10)
     parser.add_argument("--retreat-observation-db", type=float, default=1.0)
+    parser.add_argument("--sample-rate", type=int, default=48000)
     args = parser.parse_args()
     slider_values = args.slider_values_db or [4.0, 6.0, 8.0, 10.0, 12.0]
     if len(set(slider_values)) != len(slider_values) or args.default_slider_db not in slider_values:
@@ -232,10 +233,12 @@ def main() -> int:
         parser.error("slider values must be in [-12, 12] dB")
     if not -30.0 <= args.threshold_db <= 0.0:
         parser.error("--threshold-db must be in [-30, 0] dB")
-    if args.repetitions < 2:
-        parser.error("--repetitions must be at least 2")
+    if args.repetitions < 3:
+        parser.error("--repetitions must be at least 3 for repeatability qualification")
     if args.max_metric_spread_db <= 0.0 or args.retreat_observation_db <= 0.0:
         parser.error("metric spread and retreat observation values must be positive")
+    if args.sample_rate < 8000:
+        parser.error("--sample-rate must be at least 8000")
     eel = args.eel_script.resolve()
     if not eel.is_file():
         parser.error(f"EEL script not found: {eel}")
@@ -266,7 +269,8 @@ def main() -> int:
             tracks = [
                 render_track(
                     script_dir, fixture, item, output_dir / f"slider_{slider_db:g}db" / item["name"],
-                    args.pulse_server, [args.threshold_db], args.repetitions, args.max_metric_spread_db
+                    args.pulse_server, [args.threshold_db], args.repetitions, args.max_metric_spread_db,
+                    sample_rate=args.sample_rate,
                 )
                 for item in items
             ]
@@ -282,6 +286,7 @@ def main() -> int:
             "ceiling_dbfs": args.ceiling_dbfs,
             "max_metric_spread_db": args.max_metric_spread_db,
             "retreat_observation_db": args.retreat_observation_db,
+            "sample_rate_hz": args.sample_rate,
             "slider_tracks": slider_tracks,
         }
         report["evaluation"] = evaluate_map(
