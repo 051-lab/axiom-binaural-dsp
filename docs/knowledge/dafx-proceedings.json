@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "archiveHomepage": "https://www.dafx.de/",
+  "paperArchive": "https://www.dafx.de/paper-archive/",
+  "access": "Open access proceedings published by the DAFx conference.",
+  "lastVerified": "2026-07-12",
+  "proceedings": [
+    {
+      "year": 2025,
+      "location": "Ancona, Italy",
+      "url": "https://www.dafx.de/paper-archive/2025/DAFx-2025.zip"
+    },
+    {
+      "year": 2024,
+      "location": "Guildford, UK",
+      "url": "https://www.dafx.de/paper-archive/2024/DAFx-2024.zip"
+    },
+    {
+      "year": 2023,
+      "location": "Copenhagen, Denmark",
+      "url": "https://www.dafx.de/paper-archive/2023/DAFx-2023.zip"
+    },
+    {
+      "year": 2022,
+      "location": "Vienna, Austria",
+      "url": "https://www.dafx.de/paper-archive/2022/DAFx-2022.zip"
+    },
+    {
+      "year": 2021,
+      "location": "Vienna, Austria",
+      "url": "https://www.dafx.de/paper-archive/2021/DAFx-2021.zip"
+    },
+    {
+      "year": 2020,
+      "location": "Vienna, Austria",
+      "url": "https://www.dafx.de/paper-archive/2020/DAFx-2020.zip"
+    },
+    {
+      "year": 2019,
+      "location": "Birmingham, UK",
+      "url": "https://www.dafx.de/paper-archive/2019/DAFx-2019.zip"
+    },
+    {
+      "year": 2018,
+      "location": "Aveiro, Portugal",
+      "url": "https://www.dafx.de/paper-archive/2018/DAFx-2018.zip"
+    },
+    {
+      "year": 2017,
+      "location": "Edinburgh, UK",
+      "url": "https://www.dafx.de/paper-archive/2017/DAFx-2017.zip"
+    },
+    {
+      "year": 2016,
+      "location": "Brno, Czech Republic",
+      "url": "https://www.dafx.de/paper-archive/2016/DAFx-2016.zip"
+    },
+    {
+      "year": 2015,
+      "location": "Trondheim, Norway",
+      "url": "https://www.dafx.de/paper-archive/2015/DAFx-2015.zip"
+    },
+    {
+      "year": 2014,
+      "location": "Erlangen, Germany",
+      "url": "https://www.dafx.de/paper-archive/2014/DAFx-2014.zip"
+    },
+    {
+      "year": 2013,
+      "location": "Maynooth, Ireland",
+      "url": "https://www.dafx.de/paper-archive/2013/DAFx-2013.zip"
+    },
+    {
+      "year": 2012,
+      "location": "York, UK",
+      "url": "https://www.dafx.de/paper-archive/2012/DAFx-2012.zip"
+    },
+    {
+      "year": 2011,
+      "location": "Paris, France",
+      "url": "https://www.dafx.de/paper-archive/2011/DAFx-2011.zip"
+    },
+    {
+      "year": 2010,
+      "location": "Graz, Austria",
+      "url": "https://www.dafx.de/paper-archive/2010/DAFx-2010.zip"
+    },
+    {
+      "year": 2009,
+      "location": "Como, Italy",
+      "url": "https://www.dafx.de/paper-archive/2009/DAFx-2009.zip"
+    },
+    {
+      "year": 2008,
+      "location": "Espoo, Finland",
+      "url": "https://www.dafx.de/paper-archive/2008/DAFx-2008.zip"
+    },
+    {
+      "year": 2007,
+      "location": "Bordeaux, France",
+      "url": "https://www.dafx.de/paper-archive/2007/DAFx-2007.zip"
+    },
+    {
+      "year": 2006,
+      "location": "Montreal, Canada",
+      "url": "https://www.dafx.de/paper-archive/2006/DAFx-2006.zip"
+    },
+    {
+      "year": 2005,
+      "location": "Madrid, Spain",
+      "url": "https://www.dafx.de/paper-archive/2005/DAFx-2005.zip"
+    },
+    {
+      "year": 2004,
+      "location": "Naples, Italy",
+      "url": "https://www.dafx.de/paper-archive/2004/DAFx-2004.zip"
+    },
+    {
+      "year": 2003,
+      "location": "London, UK",
+      "url": "https://www.dafx.de/paper-archive/2003/DAFx-2003.zip"
+    },
+    {
+      "year": 2002,
+      "location": "Hamburg, Germany",
+      "url": "https://www.dafx.de/paper-archive/2002/DAFx-2002.zip"
+    },
+    {
+      "year": 2001,
+      "location": "Limerick, Ireland",
+      "url": "https://www.dafx.de/paper-archive/2001/DAFx-2001.zip"
+    },
+    {
+      "year": 2000,
+      "location": "Verona, Italy",
+      "url": "https://www.dafx.de/paper-archive/2000/DAFx-2000.zip"
+    },
+    {
+      "year": 1999,
+      "location": "Trondheim, Norway",
+      "url": "https://www.dafx.de/paper-archive/1999/DAFx-1999.zip"
+    },
+    {
+      "year": 1998,
+      "location": "Barcelona, Spain",
+      "url": "https://www.dafx.de/paper-archive/1998/DAFx-1998.zip"
+    }
+  ]
+}
