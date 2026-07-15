@@ -83,6 +83,36 @@ telemetry. The older sub-harmonics model does not represent R012 interpolation.
 The elevated B/C isolation at `+8` and `+12 dB`, `+6`/`+10 dB` settings, and
 native `48`/`96 kHz` coverage are also incomplete.
 
+## Elevated B/C Isolation Follow-Up
+
+Date: 2026-07-14
+
+A serialized native `44.1 kHz` B/C map repeated the two elevated settings that
+had driven the earlier A/C concern. It used the same terminal limiter
+(`-1.00 dB`, `60 ms`, `0 dB` postgain), crossfeed-off host policy, dense
+electronic and hip-hop material, and three renders per condition. Raw evidence
+remains local under `/tmp`.
+
+| Setting | Material | C-B peak | C-B RMS |
+| --- | --- | ---: | ---: |
+| `+8 dB` | Dense electronic | `0.000 dB` | `+0.001 dB` |
+| `+8 dB` | Hip-hop | `0.000 dB` | `-0.001 dB` |
+| `+12 dB` | Dense electronic | `0.000 dB` | `+0.001 dB` |
+| `+12 dB` | Hip-hop | `0.000 dB` | `-0.002 dB` |
+
+Neither B nor C clipped. The completed elevated B/C evidence does not show a
+candidate-specific level, clipping, or repeatability regression from R012's
+interpolated saturation arithmetic. It does not establish true oversampling,
+branch-specific behavior, THD, alias performance, or limiter telemetry.
+
+The B control's `+4 dB` dense-electronic RMS spread was `0.155 dB`, exceeding
+the `0.100 dB` repeatability limit. Its peak metric remained stable and the
+corresponding C condition qualified, but the control's default-level
+instability prevents this follow-up from clearing all technical limitations.
+R012 therefore remains **Requires investigation** and is not yet listening
+eligible. The next safe action is an owner decision on a narrow B default
+repeatability retest, not a DSP change or promotion.
+
 ## Decision
 
 **Requires investigation.** R012 remains active but unqualified. Listening is

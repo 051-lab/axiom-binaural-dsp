@@ -70,6 +70,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added adversarial regression coverage for malformed Agentic Layer metadata.
 
 ### Changed
+- Recorded the R012 elevated-bass B/C isolation: no candidate-specific
+  `+8`/`+12 dB` regression was observed, but a width-control default-level
+  repeatability failure keeps technical qualification investigation-required.
 - Recorded the sanitized R012 technical qualification outcome as requiring
   investigation before structured listening. Added native-rate options to the
   relevant qualification runners and require three repetitions for the slider
