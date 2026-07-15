@@ -11,6 +11,10 @@ coherence, perceived bass extension, clarity, and listening comfort on mobile
 playback systems. It is intended for both headphones and speakers, while
 headphone-specific crossfeed remains controlled by JamesDSP.
 
+Axiom is intended for use across music genres. Bass-heavy, highly dynamic,
+strongly stereo, vocal, acoustic, and mono material are used as qualification
+coverage; no single genre defines the project.
+
 Axiom development begins with a human description of the desired sound. That
 description is converted into one narrow DSP hypothesis, tested through a
 controlled experiment, technically qualified through JamesDSP, and finally
