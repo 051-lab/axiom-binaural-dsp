@@ -98,7 +98,8 @@ Axiom script without a separate approved candidate.
 R012 technical qualification requires investigation before structured listening.
 The native 44.1 kHz elevated B/C isolation was stable, unclipped, and
 near-neutral, but the width-only control's default dense-electronic RMS spread
-exceeded the repeatability policy. See `qualification-r012.md`.
+exceeded the repeatability policy in both three- and five-render runs. See
+`qualification-r012.md`.
 
 The completed `.11` Sub Harmonics follow-up remains a historical watch item.
 R011 remains accepted unless R012 later resolves qualification, receives
@@ -157,8 +158,8 @@ Known controller status:
 
 ## Best Next Actions
 
-1. Review `qualification-r012.md` and decide whether to run a narrow width-
-   control default-repeatability retest at the supported native rate.
+1. Review `qualification-r012.md` and decide whether to investigate the
+   persistent managed-host capture variance or pause R012.
 2. Keep R011 accepted and R012 unqualified while the investigation is open.
 3. Do not begin listening acceptance, promotion, or R013 work.
 4. Prefer moving stale docs into `docs/archive/` over adding another competing

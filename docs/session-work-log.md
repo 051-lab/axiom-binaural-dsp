@@ -2071,6 +2071,27 @@ with dense electronic and hip-hop material and three renders per condition.
 - Owner decision on a narrow B default-repeatability retest before listening
   eligibility. Do not alter DSP, accept R012, promote R012, or create R013.
 
+## Run 054 - Width-Control Repeatability Retest
+
+Date: 2026-07-14
+Status: Requires investigation retained
+Scope: Five-render native `44.1 kHz` B-control retest at default `+4 dB` Sub
+Harmonics on the dense-electronic excerpt.
+
+### Outcome
+
+- No clipped samples; mean peak remained `-1.000 dBFS`.
+- RMS spread was `0.149 dB`, above the `0.100 dB` repeatability policy and
+  consistent with the preceding three-render `0.155 dB` failure.
+- The result confirms a persistent control/managed-host capture variance, not
+  a candidate-specific R012 regression.
+- The managed route restored to ordinary PipeWire-Pulse operation.
+
+### Next Recommended Work
+
+- Owner decision: investigate host/capture variance with a scoped conditioning
+  study, or pause R012. Do not begin structured listening or change DSP.
+
 ## Run 051 - R012 Qualification Readiness
 
 Date: 2026-07-10

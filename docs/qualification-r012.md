@@ -109,9 +109,26 @@ The B control's `+4 dB` dense-electronic RMS spread was `0.155 dB`, exceeding
 the `0.100 dB` repeatability limit. Its peak metric remained stable and the
 corresponding C condition qualified, but the control's default-level
 instability prevents this follow-up from clearing all technical limitations.
-R012 therefore remains **Requires investigation** and is not yet listening
-eligible. The next safe action is an owner decision on a narrow B default
-repeatability retest, not a DSP change or promotion.
+R012 therefore remained **Requires investigation** and was not listening
+eligible pending the B default-repeatability retest documented below.
+
+## Width-Control Repeatability Retest
+
+Date: 2026-07-14
+
+A five-render native `44.1 kHz` retest ran the B width-only control at the
+default `+4 dB` Sub Harmonics setting on the same dense-electronic excerpt.
+The managed route restored normally after the run. It produced zero clipped
+samples and a stable `-1.000 dBFS` peak, but its RMS spread was `0.149 dB`,
+again above the `0.100 dB` repeatability policy. The earlier three-render
+control spread was `0.155 dB`.
+
+This confirms a persistent control/host-capture variability limitation rather
+than a candidate-specific R012 regression. R012 remains **Requires
+investigation** and is not listening eligible. The next safe action is an owner
+decision to investigate the managed-host variance with a specifically scoped
+conditioning/capture study, or to pause R012; do not change DSP or promote the
+candidate.
 
 ## Decision
 

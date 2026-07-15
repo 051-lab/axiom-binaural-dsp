@@ -70,6 +70,9 @@ All notable changes to Axiom Binaural DSP are documented in this file.
 - Added adversarial regression coverage for malformed Agentic Layer metadata.
 
 ### Changed
+- Recorded a five-render width-control retest that repeated the default
+  dense-electronic RMS-spread failure (`0.149 dB` against a `0.100 dB`
+  policy), retaining the R012 technical investigation status.
 - Recorded the R012 elevated-bass B/C isolation: no candidate-specific
   `+8`/`+12 dB` regression was observed, but a width-control default-level
   repeatability failure keeps technical qualification investigation-required.
