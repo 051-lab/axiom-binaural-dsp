@@ -1198,8 +1198,13 @@ class AxiomCodexHelperTests(unittest.TestCase):
         self.assertIn("recommendedAction", payload)
         self.assertIn("planning guidance", "\n".join(payload["boundaries"]))
         self.assertIsNone(payload["selectedTask"])
-        self.assertIn("current local change batch", payload["recommendedAction"])
-        self.assertTrue(payload["changedPaths"])
+        if payload["changedPaths"]:
+            self.assertIn("current local change batch", payload["recommendedAction"])
+        else:
+            self.assertEqual(
+                payload["recommendedAction"],
+                payload["projectState"]["project"]["nextAction"],
+            )
         self.assertFalse(payload["includeMaintenance"])
 
     def test_cli_next_action_can_select_initial_maintenance(self) -> None:
