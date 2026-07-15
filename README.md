@@ -24,8 +24,11 @@ accepted or rejected through human listening.
 | Active candidate | **Axiom Clean R012** | `src/axiom_clean_r012.eel` | Unqualified; investigation required |
 
 R011 remains the accepted and recommended version. R012 has passed static
-validation, but its elevated-bass technical qualification requires further
-investigation before structured listening or promotion.
+validation, and elevated B/C isolation did not identify a candidate-specific
+level or clipping regression from its interpolated saturation change. Its
+remaining blocker is persistent width-control/managed-host capture
+repeatability variance, which must be resolved or explicitly paused before
+structured listening or promotion.
 
 The exact operational state is recorded in [`axiom-state.json`](axiom-state.json).
 
