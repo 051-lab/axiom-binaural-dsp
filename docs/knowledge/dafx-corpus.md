@@ -30,12 +30,16 @@ and removed after extraction.
 
 ## Outputs
 
-- PDFs: `docs/knowledge/pdfs/dafx-<year>-<number>-<source-name>.pdf`
+- PDFs: `docs/knowledge/pdfs/dafx-<year>-<source-name>.pdf`
 - local metadata: `docs/knowledge/source-index.local.json`
 - tracked archive catalog: `docs/knowledge/dafx-proceedings.json`
 
 Both the PDFs and local index remain ignored by Git according to the existing
 knowledge policy.
+
+The importer uses the same normalized filename and source-ID convention as the
+existing local shelf. Re-running it preserves already indexed local records and
+does not create a parallel DAFx corpus.
 
 ## Agent Use
 

@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import shutil
@@ -28,14 +27,6 @@ def slug(text: str) -> str:
 def load_json(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
-
-
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def safe_pdf_members(archive: zipfile.ZipFile):
@@ -69,6 +60,11 @@ def source_record(year: int, output: Path, upstream_name: str, archive_url: str)
         "axiomUse": "Research candidate only. Review before using it to justify an Axiom design, test, or DSP change.",
         "status": "unread",
     }
+
+
+def output_path(pdf_dir: Path, year: int, upstream_name: str) -> Path:
+    """Match the established local DAFx filename and source-ID convention."""
+    return pdf_dir / f"dafx-{year}-{slug(Path(upstream_name).stem)}.pdf"
 
 
 def main() -> int:
@@ -107,15 +103,16 @@ def main() -> int:
                 raise ValueError(f"download is not a ZIP archive: {url}")
             with zipfile.ZipFile(archive_path) as archive:
                 members = list(safe_pdf_members(archive))
-                for position, member in enumerate(members, start=1):
-                    stem = slug(Path(member.filename).stem)
-                    output = args.pdf_dir / f"dafx-{year}-{position:03d}-{stem}.pdf"
+                for member in members:
+                    output = output_path(args.pdf_dir, year, member.filename)
                     if args.force or not output.exists():
                         with archive.open(member) as source, output.open("wb") as target:
                             shutil.copyfileobj(source, target)
                     record = source_record(year, output, member.filename, url)
                     record["id"] = output.stem
-                    records[record["id"]] = record
+                    # Keep richer user-local provenance when this source was
+                    # already indexed by an earlier compatible import.
+                    records.setdefault(record["id"], record)
             print(f"[{year}] indexed {len(members)} PDFs")
 
     if not args.dry_run:
