@@ -31,8 +31,8 @@
   },
   "project": {
     "phase": "r012_technical_qualification_requires_investigation",
-    "nextAction": "Review the R012 technical qualification record and decide whether a targeted elevated-bass B/C isolation run is warranted.",
-    "lastUpdated": "2026-07-11"
+    "nextAction": "Review the persistent width-control repeatability failure and decide whether to investigate the managed-host capture variance or pause R012 before listening eligibility.",
+    "lastUpdated": "2026-07-14"
   },
   "statusDefinitions": {
     "accepted": "Current owner-accepted baseline behavior.",

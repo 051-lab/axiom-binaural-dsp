@@ -2047,6 +2047,51 @@ R011, without DSP or preset edits.
 - Owner review of `qualification-r012.md`, then decide whether a targeted
   native-rate B/C elevated-bass isolation is warranted.
 
+## Run 053 - R012 Elevated-Bass B/C Isolation
+
+Date: 2026-07-14
+Status: Requires investigation retained
+Scope: Native `44.1 kHz` B/C isolation at `+8` and `+12 dB` Sub Harmonics,
+with dense electronic and hip-hop material and three renders per condition.
+
+### Outcome
+
+- Completed 36 serialized real-JDSP renders using the width-only Labs control
+  and R012. No DSP or preset file changed.
+- B/C peak differences were `0.000 dB`; elevated B/C RMS differences ranged
+  from `-0.002 dB` to `+0.001 dB`; no completed capture clipped.
+- The follow-up does not show an elevated candidate-specific regression from
+  R012 interpolation.
+- B's default `+4 dB` dense-electronic RMS spread was `0.155 dB`, above the
+  `0.100 dB` policy, so technical qualification remains investigation-required.
+- The managed route was restored to ordinary PipeWire-Pulse operation.
+
+### Next Recommended Work
+
+- Owner decision on a narrow B default-repeatability retest before listening
+  eligibility. Do not alter DSP, accept R012, promote R012, or create R013.
+
+## Run 054 - Width-Control Repeatability Retest
+
+Date: 2026-07-14
+Status: Requires investigation retained
+Scope: Five-render native `44.1 kHz` B-control retest at default `+4 dB` Sub
+Harmonics on the dense-electronic excerpt.
+
+### Outcome
+
+- No clipped samples; mean peak remained `-1.000 dBFS`.
+- RMS spread was `0.149 dB`, above the `0.100 dB` repeatability policy and
+  consistent with the preceding three-render `0.155 dB` failure.
+- The result confirms a persistent control/managed-host capture variance, not
+  a candidate-specific R012 regression.
+- The managed route restored to ordinary PipeWire-Pulse operation.
+
+### Next Recommended Work
+
+- Owner decision: investigate host/capture variance with a scoped conditioning
+  study, or pause R012. Do not begin structured listening or change DSP.
+
 ## Run 051 - R012 Qualification Readiness
 
 Date: 2026-07-10

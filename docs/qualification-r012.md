@@ -83,6 +83,53 @@ telemetry. The older sub-harmonics model does not represent R012 interpolation.
 The elevated B/C isolation at `+8` and `+12 dB`, `+6`/`+10 dB` settings, and
 native `48`/`96 kHz` coverage are also incomplete.
 
+## Elevated B/C Isolation Follow-Up
+
+Date: 2026-07-14
+
+A serialized native `44.1 kHz` B/C map repeated the two elevated settings that
+had driven the earlier A/C concern. It used the same terminal limiter
+(`-1.00 dB`, `60 ms`, `0 dB` postgain), crossfeed-off host policy, dense
+electronic and hip-hop material, and three renders per condition. Raw evidence
+remains local under `/tmp`.
+
+| Setting | Material | C-B peak | C-B RMS |
+| --- | --- | ---: | ---: |
+| `+8 dB` | Dense electronic | `0.000 dB` | `+0.001 dB` |
+| `+8 dB` | Hip-hop | `0.000 dB` | `-0.001 dB` |
+| `+12 dB` | Dense electronic | `0.000 dB` | `+0.001 dB` |
+| `+12 dB` | Hip-hop | `0.000 dB` | `-0.002 dB` |
+
+Neither B nor C clipped. The completed elevated B/C evidence does not show a
+candidate-specific level, clipping, or repeatability regression from R012's
+interpolated saturation arithmetic. It does not establish true oversampling,
+branch-specific behavior, THD, alias performance, or limiter telemetry.
+
+The B control's `+4 dB` dense-electronic RMS spread was `0.155 dB`, exceeding
+the `0.100 dB` repeatability limit. Its peak metric remained stable and the
+corresponding C condition qualified, but the control's default-level
+instability prevents this follow-up from clearing all technical limitations.
+R012 therefore remained **Requires investigation** and was not listening
+eligible pending the B default-repeatability retest documented below.
+
+## Width-Control Repeatability Retest
+
+Date: 2026-07-14
+
+A five-render native `44.1 kHz` retest ran the B width-only control at the
+default `+4 dB` Sub Harmonics setting on the same dense-electronic excerpt.
+The managed route restored normally after the run. It produced zero clipped
+samples and a stable `-1.000 dBFS` peak, but its RMS spread was `0.149 dB`,
+again above the `0.100 dB` repeatability policy. The earlier three-render
+control spread was `0.155 dB`.
+
+This confirms a persistent control/host-capture variability limitation rather
+than a candidate-specific R012 regression. R012 remains **Requires
+investigation** and is not listening eligible. The next safe action is an owner
+decision to investigate the managed-host variance with a specifically scoped
+conditioning/capture study, or to pause R012; do not change DSP or promote the
+candidate.
+
 ## Decision
 
 **Requires investigation.** R012 remains active but unqualified. Listening is

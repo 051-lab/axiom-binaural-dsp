@@ -1,6 +1,6 @@
 # Axiom System Status
 
-Last updated: 2026-07-11
+Last updated: 2026-07-14
 
 This is the short dashboard for the Axiom repo. Start here when choosing work,
 then use `../AXIOM.md` for the plain-language system intent and
@@ -70,8 +70,10 @@ The `experimental03` work produced two Labs-supported ingredients:
 
 Those ingredients are useful input, not accepted behavior. The detailed records
 are now archived under `archive/labs/`. They are provenance for the existing
-R012 candidate, not active Labs work. The next action is an owner review of the
-technical qualification record, not another sound-changing step.
+R012 candidate, not active Labs work. The elevated B/C isolation is complete:
+it found no candidate-specific `+8`/`+12 dB` regression. The next action is an
+owner decision on the remaining width-control repeatability limitation, not
+another sound-changing step.
 
 ## Current Signal Chain
 
@@ -94,8 +96,9 @@ Axiom script without a separate approved candidate.
 ## Current Open Investigation
 
 R012 technical qualification requires investigation before structured listening.
-The native 44.1 kHz screen was stable and unclipped, but elevated-bass results
-need a targeted B/C isolation before their source can be attributed. See
+The native 44.1 kHz elevated B/C isolation was stable, unclipped, and
+near-neutral, but the width-only control's default dense-electronic RMS spread
+exceeded the repeatability policy in both three- and five-render runs. See
 `qualification-r012.md`.
 
 The completed `.11` Sub Harmonics follow-up remains a historical watch item.
@@ -155,8 +158,8 @@ Known controller status:
 
 ## Best Next Actions
 
-1. Review `qualification-r012.md` and decide whether to run targeted elevated-
-   bass B/C isolation at the supported native rate.
+1. Review `qualification-r012.md` and decide whether to investigate the
+   persistent managed-host capture variance or pause R012.
 2. Keep R011 accepted and R012 unqualified while the investigation is open.
 3. Do not begin listening acceptance, promotion, or R013 work.
 4. Prefer moving stale docs into `docs/archive/` over adding another competing
